@@ -1,0 +1,11 @@
+{
+  "name": "node-red-contrib-sendmail",
+  "version": "1.0.0",
+  "description": "send emails with help of a local senmdmail command.",
+  "license": "GPL-3.0",
+  "node-red": {
+    "nodes": {
+      "sendmail": "sendmail.js"
+    }
+  }
+}

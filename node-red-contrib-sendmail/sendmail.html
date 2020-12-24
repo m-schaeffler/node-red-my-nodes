@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    RED.nodes.registerType('sendmail',{
+        category: 'network',
+        color: "#c7e9c0",
+        defaults: {
+            name: {value:""},
+            from: {value:""},
+            to:   {value:"",required:true}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "envelope.png",
+        label: function() {
+            return this.name||this.to||"sendmail";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="sendmail">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-from"><i class="fa fa-tag"></i> From</label>
+        <input type="text" id="node-input-from" placeholder="From">
+    </div>
+    <div class="form-row">
+        <label for="node-input-to"><i class="fa fa-tag"></i> To</label>
+        <input type="text" id="node-input-to" placeholder="To">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="sendmail">
+    <p>A simple node that sends an email via the local /usr/bin/mail command.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string | buffer</span></dt>
+        <dd> the body of the email. </dd>
+        <dt class="optional">topic <span class="property-type">string</span></dt>
+        <dd> the subject of the email.</dd>
+    </dl>
+</script>

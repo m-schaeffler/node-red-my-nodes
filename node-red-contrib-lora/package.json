@@ -1,7 +1,7 @@
 {
-  "name": "node-red-contrib-loradecode",
+  "name": "node-red-contrib-lora",
   "version": "1.0.0",
-  "description": "Node-RED LoRaWAN packet Decoder",
+  "description": "Node-RED LoRaWAN",
   "author": {
     "name": "Mathias Schaeffler",
     "email": "lorawan@fam-schaeffler.de"

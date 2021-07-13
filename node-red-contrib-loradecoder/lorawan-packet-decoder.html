@@ -1,0 +1,42 @@
+<script type="text/javascript">
+    RED.nodes.registerType('lorawan-packet-decoder',{
+        category: 'network',
+        color: '#E9967A',
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-key",
+        label: function() {
+            return this.name||"lora decoder";
+        },
+        inputLabels: 'full payload',
+        outputLabels: 'decoded payload',
+        paletteLabel: "lora decoder",
+        defaults: {
+            name: {value:""},
+            nsw: {value:"", required: true},
+            asw: {value:"", required: true}
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lorawan-packet-decoder">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-nsw"><i class="icon-key"></i> Network Secret Key</label>
+        <input type="text" id="node-input-nsw" placeholder="Network Secret Key">
+    </div>
+    <div class="form-row">
+        <label for="node-input-asw"><i class="icon-key"></i> Application Secret Key</label>
+        <input type="text" id="node-input-asw" placeholder="Application Secret Key">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="LoraWan Packet Decoder">
+    <p>This node decodes a LoraWan message.<br>
+      Input is the payload with the data as ASCII in msg.payload like 'QIoaASYAYAABTqf1tMolR+Q='' <br>
+      return will be the decoded message'
+    </p>
+</script>

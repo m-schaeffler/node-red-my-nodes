@@ -9,6 +9,10 @@ module.exports = function(RED)
         const keys    = JSON.parse( config.keys );
         var   counter = 0;
 
+        // Retrieve the config node
+        this.server = RED.nodes.getNode( config.lkeys );
+        console.log( this.server );
+
         node.on('input',function(msg) {
             if( ++counter >= 0xFFFF )
             {

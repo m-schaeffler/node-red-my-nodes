@@ -13,7 +13,8 @@
         paletteLabel: "lora encoder",
         defaults: {
             name: {value:""},
-            keys: {value:'{"id":{"nsw":"","asw":""}}', required:true}
+            keys: {value:'{"id":{"nsw":"","asw":""}}', required:true},
+            lkeys: {value:"", type:"lorawan-keys"}
         },
         oneditprepare: function() {
             $("#node-input-keys").typedInput({ type:"json", types:["json"] });
@@ -29,6 +30,10 @@
     <div class="form-row">
         <label for="node-input-keys"><i class="icon-key"></i> LoRa Keys</label>
         <input type="text" id="node-input-keys" placeholder="LoRa Keys">
+    </div>
+    <div class="form-row">
+        <label for="node-input-lkeys"><i class="icon-key"></i> LoRa Keys 2</label>
+        <input type="text" id="node-input-lkeys">
     </div>
 </script>
 

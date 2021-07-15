@@ -13,7 +13,7 @@
         paletteLabel: "lora server",
         defaults: {
             name: {value:""},
-            port: {value:"1700", required:true}
+            port: {value:"1700", required:true, validate:RED.validators.number()}
         }
     });
 </script>

@@ -1,16 +1,16 @@
 <script type="text/javascript">
-    RED.nodes.registerType('lorawan-packet-decoder',{
+    RED.nodes.registerType('lorawan-packet-encoder',{
         category: 'lora',
         color: '#E9967A',
         inputs:1,
         outputs:1,
         icon: "font-awesome/fa-key",
         label: function() {
-            return this.name||"lora decoder";
+            return this.name||"lora encoder";
         },
         inputLabels: 'full payload',
         outputLabels: 'decoded payload',
-        paletteLabel: "lora decoder",
+        paletteLabel: "lora encoder",
         defaults: {
             name: {value:""},
             keys: {value:'{"id":{"nsw":"","asw":""}}', required:true}
@@ -21,7 +21,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="lorawan-packet-decoder">
+<script type="text/html" data-template-name="lorawan-packet-encoder">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -32,9 +32,7 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="lorawan-packet-decoder">
-    <p>This node decodes a LoraWan message.<br>
-      Input is the payload with the data as ASCII in msg.payload.data like 'QIoaASYAYAABTqf1tMolR+Q='' <br>
-      return will be the decoded message'
+<script type="text/html" data-help-name="lorawan-packet-encoder">
+    <p>This node encodes a LoraWan message.<br>
     </p>
 </script>

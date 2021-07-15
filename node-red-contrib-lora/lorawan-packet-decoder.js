@@ -5,30 +5,38 @@ module.exports = function(RED)
     function lorawandecode(config)
     {
         RED.nodes.createNode( this, config );
-        var node = this;
+        var   node = this;
+        const keys = JSON.parse( config.keys );
 
         node.on('input',function(msg) {
             if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length > 1 )
             {
-                const NwkSKey = new Buffer(config.nsw, 'hex');
-                const AppSKey = new Buffer(config.asw, 'hex');
-                let packet = lora_packet.fromWire( new Buffer( msg.payload.data, 'base64' ) );
+                const packet = lora_packet.fromWire( new Buffer( msg.payload.data, 'base64' ) );
                 msg.payload = { rxpk:            msg.payload,
                                 device_address:  packet.getBuffers().DevAddr.toString( 'hex' ),
                                 frame_count:     packet.getFCnt(),
                                 port:            packet.getFPort() };
                 msg.topic = msg.payload.device_address;
-                if( lora_packet.verifyMIC( packet, NwkSKey ) )
+                const key = keys[msg.payload.device_address];
+                if( key )
                 {
-                    msg.payload.data = lora_packet.decrypt( packet, AppSKey, NwkSKey );
-                    //msg.payload.buffers = packet.getBuffers();
-                    node.status( msg.topic );
-                    node.send( msg );
+                    const nsw = Buffer.from( key.nsw, 'hex' );
+                    if( lora_packet.verifyMIC( packet, nsw ) )
+                    {
+                        msg.payload.data = lora_packet.decrypt( packet, Buffer.from( key.asw, 'hex' ), nsw );
+                        node.status( msg.topic );
+                        node.send( msg );
+                    }
+                    else
+                    {
+                        this.error( "MIC check failed! Raw packet: "+packet );
+                        node.send( null );
+                    }
                 }
                 else
                 {
-                    this.error( "Network Key issue! Raw packet: "+packet );
-                    node.send( null );
+                    this.warn( "unknown deviceid: "+msg.payload.device_address );
+                    node.send( msg );
                 }
             }
             else

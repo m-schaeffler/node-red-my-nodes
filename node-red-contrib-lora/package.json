@@ -12,7 +12,9 @@
   },
   "node-red": {
     "nodes": {
-      "lora-decoder": "lorawan-packet-decoder.js"
+      "lora-server": "lorawan-server.js",
+      "lora-decoder": "lorawan-packet-decoder.js",
+      "lora-encoder": "lorawan-packet-encoder.js"
     }
   }
 }

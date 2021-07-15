@@ -29,19 +29,17 @@ module.exports = function(RED)
                     }
                     else
                     {
-                        this.error( "MIC check failed! Raw packet: "+packet );
-                        node.send( null );
+                        node.error( "MIC check failed! Raw packet: "+packet );
                     }
                 }
                 else
                 {
-                    this.warn( "unknown deviceid: "+msg.payload.device_address );
-                    node.send( msg );
+                    node.warn( "unknown deviceid: "+msg.payload.device_address );
                 }
             }
             else
             {
-                node.send( null );
+                node.warn( "invalid message received" );
             }
         });
 

@@ -12,7 +12,8 @@
   },
   "node-red": {
     "nodes": {
-      "lora-server": "lorawan-server.js",
+      "lora-server":  "lorawan-server.js",
+      "lora-keys":    "lorawan-keys.js",
       "lora-decoder": "lorawan-packet-decoder.js",
       "lora-encoder": "lorawan-packet-encoder.js"
     }

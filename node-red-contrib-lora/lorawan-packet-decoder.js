@@ -5,8 +5,8 @@ module.exports = function(RED)
     function lorawandecode(config)
     {
         RED.nodes.createNode( this, config );
-        var   node = this;
-        const keys = JSON.parse( config.keys );
+        var   node    = this;
+        const keyconf = RED.nodes.getNode( config.keys );
 
         node.on('input',function(msg) {
             if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length > 1 )
@@ -17,7 +17,7 @@ module.exports = function(RED)
                                 frame_count:     packet.getFCnt(),
                                 port:            packet.getFPort() };
                 msg.topic = msg.payload.device_address;
-                const key = keys[msg.payload.device_address];
+                const key = keyconf.getKey( msg.payload.device_address );
                 if( key )
                 {
                     const nsw = Buffer.from( key.nsw, 'hex' );

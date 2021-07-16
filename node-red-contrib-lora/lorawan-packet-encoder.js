@@ -6,12 +6,8 @@ module.exports = function(RED)
     {
         RED.nodes.createNode( this, config );
         var   node    = this;
-        const keys    = JSON.parse( config.keys );
         var   counter = 0;
-
-        // Retrieve the config node
-        this.server = RED.nodes.getNode( config.lkeys );
-        console.log( this.server );
+        const keyconf = RED.nodes.getNode( config.keys );
 
         node.on('input',function(msg) {
             if( ++counter >= 0xFFFF )
@@ -23,7 +19,7 @@ module.exports = function(RED)
                            FCnt:    counter,
                            FPort:   msg.payload.port,
                            payload: msg.payload.data };
-            const key = keys[msg.payload.device_address];
+            const key = keyconf.getKey( msg.payload.device_address );
             if( key )
             {
                 const packet = lora_packet.fromFields( lora, Buffer.from( key.asw, 'hex' ), Buffer.from( key.nsw, 'hex' ));

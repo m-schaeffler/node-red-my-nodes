@@ -1,0 +1,7 @@
+{
+  "name": "myUtils",
+  "version": "1.0.0",
+  "description": "utility functions for node red.",
+  "license": "GPL-3.0",
+  "main": "utilities.js"
+}

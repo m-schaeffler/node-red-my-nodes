@@ -23,11 +23,17 @@ module.exports = function(RED)
             if( key )
             {
                 const packet = lora_packet.fromFields( lora, Buffer.from( key.asw, 'hex' ), Buffer.from( key.nsw, 'hex' ));
-                const data = packet.getPHYPayload().toString('Base64');
+                const data = packet.getPHYPayload();
                 msg.payload = { txpk:{ imme: true,
-                                modu: "LORA",
-                                size: data.length,
-                                data: data } };
+                                       freq: 868.5,
+                                       rfch: 0,
+                                       powe: 14,
+                                       modu: "LORA",
+                                       datr: "SF7BW125",
+                                       codr: "4/5",
+                                       ipol: false,
+                                       size: data.length,
+                                       data: data.toString('Base64') } };
                 node.send( msg );
             }
             else

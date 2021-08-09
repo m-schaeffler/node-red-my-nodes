@@ -9,15 +9,18 @@ module.exports = function(RED)
         const keyconf = RED.nodes.getNode( config.keys );
 
         node.on('input',function(msg) {
-            if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length > 1 )
+            if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length >= 7 )
             {
+                if( msg.payload.time === undefined )
+                {
+                    msg.payload.time = Date.now();
+                }
                 const packet = lora_packet.fromWire( new Buffer( msg.payload.data, 'base64' ) );
-if( packet.getBuffers().DevAddr === undefined )
-{
-   node.error("DevAddr === undefined");
-   node.error(msg.payload);
-   return;
-}
+                if( packet.getBuffers().DevAddr === undefined )
+                {
+                    //node.error("DevAddr === undefined");
+                    return;
+                }
                 msg.payload = { rxpk:            msg.payload,
                                 device_address:  packet.getBuffers().DevAddr.toString( 'hex' ),
                                 frame_count:     packet.getFCnt(),
@@ -32,8 +35,12 @@ if( packet.getBuffers().DevAddr === undefined )
                         msg.payload.type = key.type;
                         msg.payload.name = key.name;
                         msg.payload.data = [...lora_packet.decrypt( packet, Buffer.from( key.asw, 'hex' ), nsw )];
+                        if( key.timeout )
+                        {
+                            msg.timeout = key.timeout;
+                        }
                         node.status( msg.topic );
-                        node.send( msg );
+                        node.send( [msg,null] );
                     }
                     else
                     {
@@ -42,7 +49,8 @@ if( packet.getBuffers().DevAddr === undefined )
                 }
                 else
                 {
-                    //node.warn( "unknown deviceid: "+msg.payload.device_address );
+                    node.warn( "unknown deviceid: "+msg.payload.device_address );
+                    node.send( [null,msg] );
                 }
             }
             else

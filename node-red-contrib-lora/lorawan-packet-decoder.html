@@ -3,13 +3,13 @@
         category: 'lora',
         color: '#E9967A',
         inputs:1,
-        outputs:1,
+        outputs:2,
         icon: "font-awesome/fa-unlock",
         label: function() {
             return this.name||"lora decoder";
         },
         inputLabels: 'full payload',
-        outputLabels: 'decoded payload',
+        outputLabels: ['decoded payload','unknown sender'],
         paletteLabel: "lora decoder",
         defaults: {
             name: {value:""},

@@ -7,7 +7,7 @@ module.exports = function(RED) {
         var node = this;
         node.on('input', function(msg) {
             execFileSync( '/usr/bin/mail',
-                          ['-s',msg.topic||'','-r',node.config.from||'node-red','--',node.config.to||'root'],
+                          ['-s',msg.topic||'','-r',msg.from||node.config.from||'node-red','--',msg.to||node.config.to||'root'],
                           { input:msg.payload+"\0x0B.\x0B\x04",
                             timeout:2000 } );
         });

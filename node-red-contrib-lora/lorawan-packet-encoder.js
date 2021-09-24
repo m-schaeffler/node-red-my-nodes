@@ -9,7 +9,7 @@ module.exports = function(RED)
         var   counter = 0;
         const keyconf = RED.nodes.getNode( config.keys );
 
-        node.on('input',function(msg) {
+        node.on('input',function(msg,send,done) {
             if( ++counter >= 0xFFFF )
             {
                 counter = 0;
@@ -34,12 +34,13 @@ module.exports = function(RED)
                                        ipol: false,
                                        size: data.length,
                                        data: data.toString('Base64') } };
-                node.send( msg );
+                send( msg );
             }
             else
             {
                 node.warn( "unknown deviceid: "+msg.payload.device_address );
             }
+            done();
         });
 
         node.on("close", function(){});

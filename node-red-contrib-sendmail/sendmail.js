@@ -1,15 +1,30 @@
 module.exports = function(RED) {
-    var execFileSync = require('child_process').execFileSync;
+    const execFile = require('child_process').execFile;
 
     function SendmailNode(config) {
         RED.nodes.createNode(this,config);
         this.config = config;
         var node = this;
-        node.on('input', function(msg) {
-            execFileSync( '/usr/bin/mail',
-                          ['-s',msg.topic||'','-r',msg.from||node.config.from||'node-red','--',msg.to||node.config.to||'root'],
-                          { input:msg.payload+"\0x0B.\x0B\x04",
-                            timeout:2000 } );
+
+        node.on('input', function(msg,send,done) {
+            node.status( "sending mail" );
+            const child = execFile( '/usr/bin/mail',
+                                    ['-s',msg.topic||'','-r',msg.from||node.config.from||'node-red','--',msg.to||node.config.to||'root'],
+                                    { timeout:5000 },
+                                    function(error, stdout, stderr) {
+                                       if( error )
+                                       {
+                                          node.status( { fill:"red", shape:"ring", text:error } );
+                                          done( error );
+                                       }
+                                       else
+                                       {
+                                          node.status( { fill:"green", shape:"dot", text:"mail sent" } );
+                                          done();
+                                       }
+                                    } );
+            child.stdin.write( msg.payload+"\0x0B.\x0B\x04" );
+            child.stdin.end();
         });
     }
 

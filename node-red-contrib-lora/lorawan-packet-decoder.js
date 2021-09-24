@@ -8,7 +8,7 @@ module.exports = function(RED)
         var   node    = this;
         const keyconf = RED.nodes.getNode( config.keys );
 
-        node.on('input',function(msg) {
+        node.on('input',function(msg,send,done) {
             if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length >= 7 )
             {
                 if( msg.payload.time === undefined )
@@ -40,22 +40,24 @@ module.exports = function(RED)
                             msg.timeout = key.timeout;
                         }
                         node.status( msg.topic );
-                        node.send( [msg,null] );
+                        send( [msg,null] );
+                        done();
                     }
                     else
                     {
-                        node.error( "MIC check failed! Raw packet: "+packet );
+                        done( "MIC check failed! Raw packet: "+packet );
                     }
                 }
                 else
                 {
                     node.warn( "unknown deviceid: "+msg.payload.device_address );
-                    node.send( [null,msg] );
+                    send( [null,msg] );
+                    done();
                 }
             }
             else
             {
-                node.error( "invalid message received" );
+                done( "invalid message received" );
             }
         });
 

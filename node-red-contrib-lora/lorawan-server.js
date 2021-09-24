@@ -80,7 +80,7 @@ module.exports = function(RED)
         });
 
         // NodeRed Callbacks
-        node.on('input',function(msg) {
+        node.on('input',function(msg,send,done) {
             // send message
             if( gateway )
             {
@@ -94,6 +94,7 @@ module.exports = function(RED)
             {
                 node.warn( "yet no gateway known" );
             }
+            done();
         });
 
         node.on("close", function(){

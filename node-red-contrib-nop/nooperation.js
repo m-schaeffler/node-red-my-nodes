@@ -4,8 +4,9 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         this.config = config;
         var node = this;
-        node.on('input', function(msg) {
-            node.send(msg);
+        node.on('input', function(msg,send,done) {
+            send(msg);
+            done();
         });
     }
 

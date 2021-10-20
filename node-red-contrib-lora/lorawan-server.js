@@ -26,7 +26,7 @@ module.exports = function(RED)
         })
 
         server.on('message', function(message, remote) {
-            console.log(message);
+            //console.log(message);
             if( message.length >= 4 && message[0] == 2 )
             {
                 switch( message[3] )

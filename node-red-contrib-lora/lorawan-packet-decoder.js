@@ -1,7 +1,7 @@
 module.exports = function(RED)
 {
     var lora_packet = require( 'lora-packet' );
-    
+
     function lorawandecode(config)
     {
         RED.nodes.createNode( this, config );
@@ -21,16 +21,21 @@ module.exports = function(RED)
                     //node.error("DevAddr === undefined");
                     return;
                 }
-                msg.payload = { rxpk:            msg.payload,
-                                device_address:  packet.getBuffers().DevAddr.toString( 'hex' ),
-                                frame_count:     packet.getFCnt(),
-                                port:            packet.getFPort() };
+                msg.payload = {
+                    rxpk:           msg.payload,
+                    device_address: packet.getBuffers().DevAddr.toString( 'hex' ),
+                    frame_count:    packet.getFCnt(),
+                    port:           packet.getFPort(),
+                    mtype:          packet.getMType(),
+                    confirmed:      packet.isConfirmed()
+                };
                 const key = keyconf.getKey( msg.payload.device_address );
                 if( key )
                 {
                     const nsw = Buffer.from( key.nsw, 'hex' );
                     if( lora_packet.verifyMIC( packet, nsw ) )
                     {
+                        let confirmedMsg = null;
                         msg.topic        = key.name;
                         msg.payload.type = key.type;
                         msg.payload.name = key.name;
@@ -39,8 +44,26 @@ module.exports = function(RED)
                         {
                             msg.timeout = key.timeout;
                         }
+                        if( msg.payload.confirmed )
+                        {
+                            confirmedMsg = {
+                                topic:  'acknowledgement',
+                                payload:{
+                                    device_address:msg.payload.device_address,
+                                    tmst:          ( msg.payload.rxpk.tmst + 1_000_000 ) >>> 0, // 1s delay [µs] as UInt32
+                                    rfch:          msg.payload.rxpk.rfch,
+                                    freq:          msg.payload.rxpk.freq,
+                                    modu:          msg.payload.rxpk.modu,
+                                    datr:          msg.payload.rxpk.datr,
+                                    codr:          msg.payload.rxpk.codr,
+                                    data:          [],
+                                    port:          msg.payload.port,
+                                    ack:           true
+                                }
+                            };
+                        }
                         node.status( msg.topic );
-                        send( [msg,null] );
+                        send( [msg,null,confirmedMsg] );
                         done();
                     }
                     else
@@ -51,7 +74,7 @@ module.exports = function(RED)
                 else
                 {
                     node.warn( "unknown deviceid: "+msg.payload.device_address );
-                    send( [null,msg] );
+                    send( [null,msg,null] );
                     done();
                 }
             }

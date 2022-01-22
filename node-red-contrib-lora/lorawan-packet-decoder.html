@@ -3,13 +3,13 @@
         category: 'lora',
         color: '#E9967A',
         inputs:1,
-        outputs:2,
+        outputs:3,
         icon: "font-awesome/fa-unlock",
         label: function() {
             return this.name||"lora decoder";
         },
         inputLabels: 'full payload',
-        outputLabels: ['decoded payload','unknown sender'],
+        outputLabels: ['decoded payload','unknown sender','confirmation message'],
         paletteLabel: "lora decoder",
         defaults: {
             name: {value:""},
@@ -30,8 +30,9 @@
 </script>
 
 <script type="text/html" data-help-name="lorawan-packet-decoder">
-    <p>This node decodes a LoraWan message.<br>
-      Input is the payload with the data as ASCII in msg.payload.data like 'QIoaASYAYAABTqf1tMolR+Q='' <br>
-      return will be the decoded message'
+    <p>
+      This node decodes a LoraWan message.<br>
+      Input is the payload with the data as ASCII in msg.payload.data like 'QIoaASYAYAABTqf1tMolR+Q=' <br>
+      return will be the decoded message
     </p>
 </script>

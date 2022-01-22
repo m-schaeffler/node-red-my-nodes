@@ -1,14 +1,14 @@
 module.exports = function(RED)
 {
     var dgram = require( 'dgram' );
-    
+
     function lorawanserver(config)
     {
         RED.nodes.createNode( this, config );
         var node    = this;
         var server  = dgram.createSocket( 'udp4' );
         var gateway = null;
-        var counter = 0;
+        var counter = { up:0, down:0 };
         var stamp   = 0;
 
         if( node != null )
@@ -43,7 +43,7 @@ module.exports = function(RED)
                             for( const item of json.rxpk )
                             {
                                 rxMsg.push( {  topic:"rx", gateway:mac, payload:item } );
-                                node.status( ++counter );
+                                node.status( `${counter.down} / ${++(counter.up)}` );
                             }
                         }
                         // stat message
@@ -56,19 +56,31 @@ module.exports = function(RED)
                         // ACK message
                         server.send( Buffer.from([2,message[1],message[2],1]), remote.port, remote.address );
                         break;
-                    
+
                     case 2: // PULL_DATA
-                        gateway = { id:   message.slice( 4, 12 ).toString( 'hex' ),
-                                    ip:   remote.address,
-                                    port: remote.port };
+                        gateway = {
+                            id:   message.slice( 4, 12 ).toString( 'hex' ),
+                            ip:   remote.address,
+                            port: remote.port
+                        };
                         // ACK message
                         server.send( Buffer.from([2,message[1],message[2],4]), remote.port, remote.address );
                         break;
 
                     case 5: // TX_ACK
-                        console.log( "message ACK" );
+                        // data
+                        //const a_mac  = message.slice( 4, 12 ).toString( 'hex' );
+                        const a_data = message.slice( 12 ).toString();
+                        if( a_data )
+                        {
+                            node.error( "message ACK: error " + JSON.parse( a_data ).txpk_ack.error );
+                        }
+                        else
+                        {
+                            //node.warn( "message ACK" );
+                        }
                         break;
-    
+
                     default:
                         node.warn( "invalid message ", message[3] );
                 }
@@ -88,6 +100,8 @@ module.exports = function(RED)
                 {
                     stamp = 0;
                 }
+                //node.warn( msg.payload );
+                node.status( `${++(counter.down)} / ${counter.up}` );
                 server.send( Buffer.concat([Buffer.from([2,stamp>>8,stamp&0xFF,3]),Buffer.from(JSON.stringify(msg.payload))]), gateway.port, gateway.ip );
             }
             else

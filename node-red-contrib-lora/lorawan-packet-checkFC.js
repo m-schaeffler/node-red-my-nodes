@@ -4,7 +4,7 @@ module.exports = function(RED)
     {
         RED.nodes.createNode( this, config );
         var node    = this;
-        var counter = { ok:0, nok:0, miss:0 };
+        var counter = { ok:0, nok:0, miss:0, dup:0 };
         var data    = {}
 
         node.on('input',function(msg,send,done) {
@@ -26,14 +26,20 @@ module.exports = function(RED)
                 missMsg = {topic:"LoRa missing frame", payload:`${msg.topic}: missing Frame; latest ${msg.payload.frame_count}, before ${item}`};
                 data[msg.topic] = msg.payload.frame_count;
             }
+            else if( (item == msg.payload.frame_count) && (msg.payload.frame_count < item+25) )
+            {
+                // same frame => deduplication
+                counter.dup++;
+                msg = null;
+            }
             else
             {
                 counter.nok++;
-                msg    = null;
                 errMsg = {topic:"LoRa error", payload:`${msg.topic}: invalid Frame counter ${msg.payload.frame_count} last good ${item}`};
+                msg    = null;
             }
 
-            node.status( `${counter.ok} / ${counter.miss} / ${counter.nok}` );
+            node.status( `${counter.ok} / ${counter.dup} / ${counter.miss} / ${counter.nok}` );
             send( [msg,errMsg,missMsg] );
             done();
         });

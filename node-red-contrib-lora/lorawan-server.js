@@ -6,10 +6,18 @@ module.exports = function(RED)
     {
         RED.nodes.createNode( this, config );
         var node    = this;
+        var context = this.context();
         var server  = dgram.createSocket( 'udp4' );
         var gateway = null;
-        var counter = { up:0, down:0 };
         var stamp   = 0;
+
+        function incCounter(item)
+        {
+            let counter = context.get( "counter" ) ?? { up:0, down:0 };
+            (counter[item])++;
+            context.set( "counter", counter );
+            node.status( `${counter.down} / ${counter.up}` );
+        }
 
         if( node != null )
         {
@@ -43,7 +51,7 @@ module.exports = function(RED)
                             for( const item of json.rxpk )
                             {
                                 rxMsg.push( {  topic:"rx", gateway:mac, payload:item } );
-                                node.status( `${counter.down} / ${++(counter.up)}` );
+                                incCounter( "up" );
                             }
                         }
                         // stat message
@@ -69,7 +77,6 @@ module.exports = function(RED)
 
                     case 5: // TX_ACK
                         // data
-                        //const a_mac  = message.slice( 4, 12 ).toString( 'hex' );
                         const a_data = message.slice( 12 ).toString();
                         if( a_data )
                         {
@@ -101,7 +108,7 @@ module.exports = function(RED)
                     stamp = 0;
                 }
                 //node.warn( msg.payload );
-                node.status( `${++(counter.down)} / ${counter.up}` );
+                incCounter( "down" );
                 server.send( Buffer.concat([Buffer.from([2,stamp>>8,stamp&0xFF,3]),Buffer.from(JSON.stringify(msg.payload))]), gateway.port, gateway.ip );
             }
             else

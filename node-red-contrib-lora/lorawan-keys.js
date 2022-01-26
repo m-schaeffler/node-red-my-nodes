@@ -6,6 +6,17 @@ module.exports = function(RED) {
         this.getKey = function(devaddr) {
             return keys[devaddr];
         };
+
+        this.name2addr = function(name) {
+            for( const item in keys )
+            {
+                if( name == keys[item].name )
+                {
+                    return item;
+                }
+            }
+            return undefined;
+        };
     }
     RED.nodes.registerType( "lorawan-keys", lorakeys );
 }

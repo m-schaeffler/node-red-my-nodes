@@ -7,6 +7,7 @@ module.exports = function(RED)
         RED.nodes.createNode( this, config );
         var   node    = this;
         const keyconf = RED.nodes.getNode( config.keys );
+        const txdelay = parseInt( config.txdelay );
 
         node.on('input',function(msg,send,done) {
             if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length >= 7 )
@@ -35,7 +36,7 @@ module.exports = function(RED)
                     const nsw = Buffer.from( key.nsw, 'hex' );
                     if( lora_packet.verifyMIC( packet, nsw ) )
                     {
-                        let confirmedMsg = null;
+                        let confirmMsg   = null;
                         msg.topic        = key.name;
                         msg.payload.type = key.type;
                         msg.payload.name = key.name;
@@ -46,11 +47,11 @@ module.exports = function(RED)
                         }
                         if( msg.payload.confirmed )
                         {
-                            confirmedMsg = {
+                            confirmMsg = {
                                 topic:  'acknowledgement',
                                 payload:{
                                     device_address:msg.payload.device_address,
-                                    tmst:          ( msg.payload.rxpk.tmst + 1_000_000 ) >>> 0, // 1s delay [µs] as UInt32
+                                    tmst:          ( msg.payload.rxpk.tmst + txdelay ) >>> 0, // 1s delay [µs] as UInt32
                                     rfch:          msg.payload.rxpk.rfch,
                                     freq:          msg.payload.rxpk.freq,
                                     modu:          msg.payload.rxpk.modu,
@@ -63,7 +64,7 @@ module.exports = function(RED)
                             };
                         }
                         node.status( msg.topic );
-                        send( [msg,null,confirmedMsg] );
+                        send( [msg,null,confirmMsg] );
                         done();
                     }
                     else

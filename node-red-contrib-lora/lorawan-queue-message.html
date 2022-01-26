@@ -1,0 +1,36 @@
+<script type="text/javascript">
+    RED.nodes.registerType('lorawan-queue-message',{
+        category: 'lora',
+        color: '#E9967A',
+        inputs:1,
+        outputs:0,
+        icon: "font-awesome/fa-paper-plane-o",
+        label: function() {
+            return this.name||"lora send";
+        },
+        inputLabels: 'lora message',
+        outputLabels: [],
+        paletteLabel: "lora send",
+        defaults: {
+            name: {value:""},
+            keys: {value:"", type:"lorawan-keys", required:true}
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="lorawan-queue-message">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-keys"><i class="fa fa-key"></i> LoRa Keys</label>
+        <input type="text" id="node-input-keys">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="lorawan-queue-message">
+    <p>
+      This node puts a LoraWan message into the send queue.
+    </p>
+</script>

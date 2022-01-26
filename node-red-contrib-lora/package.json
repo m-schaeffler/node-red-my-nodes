@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-lora",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "Node-RED LoRaWAN",
   "author": {
     "name": "Mathias Schaeffler",
@@ -16,7 +16,8 @@
       "lorawan-keys":    "lorawan-keys.js",
       "lorawan-decoder": "lorawan-packet-decoder.js",
       "lorawan-encoder": "lorawan-packet-encoder.js",
-      "lorawan-checkFC": "lorawan-packet-checkFC.js"
+      "lorawan-checkFC": "lorawan-packet-checkFC.js",
+      "lorawan-send":    "lorawan-queue-message.js"
     }
   }
 }

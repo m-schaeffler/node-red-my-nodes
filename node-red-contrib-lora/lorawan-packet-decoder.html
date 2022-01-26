@@ -13,19 +13,24 @@
         paletteLabel: "lora decoder",
         defaults: {
             name: {value:""},
-            keys: {value:"", type:"lorawan-keys", required:true}
+            keys: {value:"", type:"lorawan-keys", required:true},
+            txdelay: {value:"1012500", required:true, validate:RED.validators.number()}
         }
     });
 </script>
 
 <script type="text/html" data-template-name="lorawan-packet-decoder">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-keys"><i class="icon-key"></i> LoRa Keys</label>
+        <label for="node-input-keys"><i class="fa fa-key"></i> LoRa Keys</label>
         <input type="text" id="node-input-keys">
+    </div>
+    <div class="form-row">
+        <label for="node-input-txdelay"><i class="fa fa-hourglass-o"></i> TX-Delay</label>
+        <input type="text" id="node-input-txdelay">
     </div>
 </script>
 

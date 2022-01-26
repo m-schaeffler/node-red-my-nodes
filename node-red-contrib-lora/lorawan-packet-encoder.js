@@ -6,14 +6,18 @@ module.exports = function(RED)
     {
         RED.nodes.createNode( this, config );
         var   node    = this;
-        var   counter = 0;
+        var   context = this.context();
         const keyconf = RED.nodes.getNode( config.keys );
+        const power   = parseInt( config.power );
+        const storeName = config.storeName;
 
         node.on('input',function(msg,send,done) {
-            if( ++counter >= 0xFFFF )
+            let counter = context.get( "frameCounter", storeName ) ?? 0;
+            if( ++counter > 0xFFFF )
             {
                 counter = 0;
             }
+            context.set( "frameCounter", counter, storeName );
             if( ! Buffer.isBuffer( msg.payload.data ) )
             {
                 msg.payload.data = Buffer.from( msg.payload.data );
@@ -39,7 +43,7 @@ module.exports = function(RED)
                     //tmst: msg.payload.tmst,
                     freq: msg.payload?.freq ?? 869.525,
                     rfch: msg.payload?.rfch ?? 1,
-                    powe: 10,
+                    powe: power,
                     modu: msg.payload?.modu ?? "LORA",
                     datr: msg.payload?.datr ?? "SF7BW125",
                     codr: msg.payload?.codr ?? "4/5",

@@ -3,13 +3,13 @@
         category: 'lora',
         color: '#E9967A',
         inputs:1,
-        outputs:3,
+        outputs:4,
         icon: "font-awesome/fa-check",
         label: function() {
             return this.name||"lora check FC";
         },
         inputLabels: 'lora message',
-        outputLabels: ['checked lora message','error message','missing message'],
+        outputLabels: ['checked lora message','duplicate message','missing message','error message'],
         paletteLabel: "lora check FC",
         defaults: {
             name: {value:""}
@@ -19,7 +19,7 @@
 
 <script type="text/html" data-template-name="lorawan-packet-checkFC">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
 </script>

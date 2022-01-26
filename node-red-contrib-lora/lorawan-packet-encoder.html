@@ -13,19 +13,38 @@
         paletteLabel: "lora encoder",
         defaults: {
             name: {value:""},
-            keys: {value:"", type:"lorawan-keys", required:true}
-        }
+            keys: {value:"", type:"lorawan-keys", required:true},
+            power: {value:"14", required:true, validate:RED.validators.number()},
+            storeName: {value: RED.settings.hasOwnProperty('context') ? RED.settings.context.default : 'default' }
+        },
+        oneditprepare: function() {
+            var node = this
+            RED.settings.context.stores.forEach(
+                function (item) {
+                    $('#node-input-storeName').append(`<option value="${item}">${item}</option>`)
+                }
+            );
+            $('#node-input-storeName').val( node.storeName );
+        }      
     });
 </script>
 
 <script type="text/html" data-template-name="lorawan-packet-encoder">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-keys"><i class="icon-key"></i> LoRa Keys</label>
+        <label for="node-input-keys"><i class="fa fa-key"></i> LoRa Keys</label>
         <input type="text" id="node-input-keys">
+    </div>
+    <div class="form-row">
+        <label for="node-input-power"><i class="fa fa-wifi"></i> TX-Power</label>
+        <input type="text" id="node-input-power">
+    </div>
+    <div class="form-row">
+        <label for="node-input-storeName"><i class="fa fa-database"></i> Kontext</label>
+        <select type="text" id="node-input-storeName"></select>
     </div>
 </script>
 

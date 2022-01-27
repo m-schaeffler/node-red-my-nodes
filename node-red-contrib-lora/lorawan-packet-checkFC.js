@@ -8,7 +8,6 @@ module.exports = function(RED)
 
         node.on('input',function(msg,send,done) {
             let dupMsg  = null;
-            let missMsg = null;
             let errMsg  = null;
             let counter = context.get( "counter" ) ?? { ok:0, nok:0, miss:0, dup:0 };
             let data    = context.get( "data" ) ?? {};
@@ -25,7 +24,7 @@ module.exports = function(RED)
             else if( (item < msg.payload.frame_count) && (msg.payload.frame_count < item+25) )
             {
                 counter.miss++;
-                missMsg = { topic:"LoRa missing frame", payload:`${msg.topic}: missing Frame; latest ${msg.payload.frame_count}, before ${item}` };
+                errMsg = { topic:"LoRa missing frame", payload:`${msg.topic}: missing Frame; latest ${msg.payload.frame_count}, before ${item}` };
                 msg.missing = msg.payload.frame_count - item - 1;
                 data[msg.topic] = msg.payload.frame_count;
             }
@@ -47,7 +46,7 @@ module.exports = function(RED)
             context.set( "counter", counter );
             context.set( "data", data );
             node.status( `${counter.ok} / ${counter.dup} / ${counter.miss} / ${counter.nok}` );
-            send( [msg,dupMsg,missMsg,errMsg] );
+            send( [msg,dupMsg,errMsg] );
             done();
         });
 

@@ -6,6 +6,7 @@ module.exports = function(RED)
     {
         RED.nodes.createNode( this, config );
         var   node    = this;
+        var   flow    = this.context().flow;
         const keyconf = RED.nodes.getNode( config.keys );
         const txdelay = parseInt( config.txdelay );
 
@@ -36,6 +37,8 @@ module.exports = function(RED)
                     const nsw = Buffer.from( key.nsw, 'hex' );
                     if( lora_packet.verifyMIC( packet, nsw ) )
                     {
+                        let sendMsgs     = flow.get( "sendqueue" )?.[msg.payload.device_address];
+                        const sendMsg    = Array.isArray( sendMsgs ) ? sendMsgs.shift() : null;
                         let confirmMsg   = null;
                         msg.topic        = key.name;
                         msg.payload.type = key.type;
@@ -45,7 +48,7 @@ module.exports = function(RED)
                         {
                             msg.timeout = key.timeout;
                         }
-                        if( msg.payload.confirmed )
+                        if( msg.payload.confirmed || sendMsg )
                         {
                             confirmMsg = {
                                 topic:  'acknowledgement',
@@ -57,9 +60,9 @@ module.exports = function(RED)
                                     modu:          msg.payload.rxpk.modu,
                                     datr:          msg.payload.rxpk.datr,
                                     codr:          msg.payload.rxpk.codr,
-                                    data:          [],
+                                    data:          sendMsg ? sendMsg : [],
                                     port:          msg.payload.port,
-                                    ack:           true
+                                    ack:           msg.payload.confirmed
                                 }
                             };
                         }

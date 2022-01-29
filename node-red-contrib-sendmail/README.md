@@ -21,8 +21,10 @@ $ npm install node-red-contrib-sendmail
 
 ### Parameters
 
-from | string | sender address for the email.
-to | string | destination address for the email. 
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|from  | string | sender address for the email.     |
+|to    | string | destination address for the email.|
 
 ## Author
 

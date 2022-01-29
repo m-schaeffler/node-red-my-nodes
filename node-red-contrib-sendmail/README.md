@@ -12,12 +12,12 @@ $ npm install node-red-contrib-sendmail
 
 ### Inputs
 
-|msg.|type|description|
-|---|---|---|
-|payload | string, buffer | the body of the email.|
-|topic | string | the subject of the email.|
-|from | string | sender address for the email.|
-|to | string | destination address for the email.|
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | string | the body of the email.            |
+|topic   | string | the subject of the email.         |
+|from    | string | sender address for the email.     |
+|to      | string | destination address for the email.|
 
 ### Parameters
 

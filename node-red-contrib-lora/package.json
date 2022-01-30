@@ -1,12 +1,19 @@
 {
   "name": "node-red-contrib-lora",
   "version": "1.2.2",
-  "description": "Node-RED LoRaWAN",
-  "author": {
-    "name": "Mathias Schaeffler",
-    "email": "lorawan@fam-schaeffler.de"
+  "description": "Five nodes to send and receive LoRaWan messages via a gateway via the Semtech UDP protocol.",
+  "license": "LGPL-2.1",
+  "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-contrib-lora",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
   },
-  "license": "GPL-3.0",
+  "engines": {
+    "node": ">=12"
+  },
+  "keywords": [
+    "node-red"
+  ],
   "dependencies": {
     "lora-packet": ">=0.8.12"
   },
@@ -19,5 +26,9 @@
       "lorawan-checkFC": "lorawan-packet-checkFC.js",
       "lorawan-send":    "lorawan-queue-message.js"
     }
+  },
+  "author": {
+    "name": "Mathias Schäffler",
+    "url": "https://github.com/m-schaeffler"
   }
 }

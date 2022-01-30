@@ -1,11 +1,26 @@
 {
   "name": "node-red-contrib-nooperation",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "just do nothing.",
-  "license": "GPL-3.0",
+  "license": "LGPL-2.1",
+  "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-contrib-nop",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "keywords": [
+    "node-red"
+  ],
   "node-red": {
     "nodes": {
       "nop": "nooperation.js"
     }
+  },
+  "author": {
+    "name": "Mathias Schäffler",
+    "url": "https://github.com/m-schaeffler"
   }
 }

@@ -1,11 +1,29 @@
 {
   "name": "node-red-contrib-sendmail",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "send emails with help of a local senmdmail command.",
-  "license": "GPL-3.0",
+  "license": "LGPL-2.1",
+  "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-contrib-sendmail",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "os": [
+    "!win32"
+  ],
+  "keywords": [
+    "node-red"
+  ],
   "node-red": {
     "nodes": {
       "sendmail": "sendmail.js"
     }
+  },
+  "author": {
+    "name": "Mathias Schäffler",
+    "url": "https://github.com/m-schaeffler"
   }
 }

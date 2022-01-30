@@ -24,3 +24,30 @@
         <input type="text" id="node-config-input-keys">
     </div>
 </script>
+
+<script type="text/html" data-help-name="lorawan-keys">
+    <p>This configuration node stores data about the LoRa end nodes.</p>
+
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>LoRa-Keys <span class="property-type">object</span></dt>
+        <dd> config data about the end nodes.
+          <pre>{
+    "&lt;device address in lowercase hex&gt;": {
+        "nsw": "&lt;LoRa NwkSKey&gt;",
+        "asw": "&lt;LoRa AppSKey&gt;",
+        "type": "&lt;Type of the node for further processing&gt;",
+        "name": "&lt;Name of the node&gt;",
+        "timeout": &lt;Timeout value for further processing, optional&gt;
+    },
+    "123456ab": {
+        "nsw": "0123456789abcdef0123456789abcdef",
+        "asw": "0123456789abcdef0123456789abcdef",
+        "type": "FooType",
+        "name": "FooBar",
+        "timeout": 3600
+    },
+    ...
+}</pre></dd>
+    </dl>
+</script>

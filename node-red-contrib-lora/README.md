@@ -2,6 +2,8 @@
 
 Five nodes to send and receive LoRaWan messages via a gateway via the Semtech UDP protocol.
 
+![image of example flow](examples/flow.png)
+
 ## Install
 
 ```
@@ -22,6 +24,8 @@ By combining this 5 nodes, you can receive and send LoRaWan messages via a compa
 for documentation please look at the nodes.
 
 ## Example Flow
+
+[example flow](examples/flow.json)
 
 ## Author
 

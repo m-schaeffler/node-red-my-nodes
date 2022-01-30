@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "math functions for node red.",
   "license": "LGPL-2.1",
+  "private": true,
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/my-math",
   "repository": {
     "type": "git",

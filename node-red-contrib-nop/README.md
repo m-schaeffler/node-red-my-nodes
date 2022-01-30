@@ -12,7 +12,7 @@ $ npm install node-red-contrib-
 
 All input messages are just sent out again.
 
-This is useful to prettify n × m connections.
+This is useful to prettify n &times; m connections.
 
 ## Author
 

@@ -50,7 +50,7 @@ module.exports = function(RED)
                         {
                             for( const item of json.rxpk )
                             {
-                                rxMsg.push( {  topic:"rx", gateway:mac, payload:item } );
+                                rxMsg.push( { topic:"rx", gateway:mac, payload:item } );
                                 incCounter( "up" );
                             }
                         }

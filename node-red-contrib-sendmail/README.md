@@ -10,7 +10,7 @@ $ npm install node-red-contrib-sendmail
 
 ## Usage
 
-### Inputs
+### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|

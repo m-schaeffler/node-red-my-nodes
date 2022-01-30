@@ -30,5 +30,36 @@
 </script>
 
 <script type="text/html" data-help-name="lorawan-server">
-    <p>This node is a UDP server to communicate with LoRa gateways.</p>
+    <p>This node is a UDP server to communicate with LoRa gateways via the SEMTECH protocol.
+       
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> encoded txpk object generated py <code>lora encoder</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <h4>tx</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> received message to be processed by <code>lora decoder</code>.</dd>
+        <dt>mac <span class="property-type">string</span></dt>
+        <dd> mac of the gateway.</dd>
+    </dl>
+
+    
+    <h4>stat</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> statistical data from gateway.</dd>
+        <dt>mac <span class="property-type">string</span></dt>
+        <dd> mac of the gateway.</dd>
+    </dl>
+
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>UDP Port <span class="property-type">number</span></dt>
+        <dd> port at which the server receives messages from the gateway.</dd>
+    </dl>
+    </p>
 </script>

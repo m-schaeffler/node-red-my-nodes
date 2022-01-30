@@ -2,6 +2,18 @@
   "name": "myMath",
   "version": "1.0.0",
   "description": "math functions for node red.",
-  "license": "GPL-3.0",
-  "main": "mymath.js"
+  "license": "LGPL-2.1",
+  "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/my-math",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "main": "mymath.js",
+  "author": {
+    "name": "Mathias Schäffler",
+    "url": "https://github.com/m-schaeffler"
+  }
 }

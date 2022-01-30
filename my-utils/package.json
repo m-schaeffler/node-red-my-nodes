@@ -2,6 +2,19 @@
   "name": "myUtils",
   "version": "1.0.0",
   "description": "utility functions for node red.",
-  "license": "GPL-3.0",
-  "main": "utilities.js"
+  "license": "LGPL-2.1",
+  "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/my-utils",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "main": "utilities.js",
+  "author": {
+    "name": "Mathias Schäffler",
+    "url": "https://github.com/m-schaeffler"
+  }
+ 
 }

@@ -30,7 +30,20 @@
 </script>
 
 <script type="text/html" data-help-name="lorawan-queue-message">
-    <p>
-      This node puts a LoraWan message into the send queue.
-    </p>
+    <p>This node puts a LoraWan message into the send queue.</p>
+    <p>The send queue is stored in the flow context <code>sendqueue</code>.</p>
+
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">byte array</span></dt>
+        <dd> lora payload to be sent; as an array of bytes or as a <code>Buffer</code>.</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> name of the LoRa end node as in <code>LoRa Keys</code>.</dd>
+    </dl>
+
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>LoRa Keys <span class="property-type">lorawan-keys</span></dt>
+        <dd> configuration node to define the end nodes.</dd>
+    </dl>
 </script>

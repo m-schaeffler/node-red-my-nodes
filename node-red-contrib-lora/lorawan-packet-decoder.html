@@ -35,9 +35,69 @@
 </script>
 
 <script type="text/html" data-help-name="lorawan-packet-decoder">
-    <p>
-      This node decodes a LoraWan message.<br>
-      Input is the payload with the data as ASCII in msg.payload.data like 'QIoaASYAYAABTqf1tMolR+Q=' <br>
-      return will be the decoded message
-    </p>
+    <p>This node decodes a LoraWan message received by <code>lora server</code>.</p>
+    <p>It also generates messages to be sent to the end node in case of
+       <ul>
+         <li> confirmed messages: the corresponding acknowledgment</li>
+         <li> a message for this node from the send queue (s. <code>lora send</code>).</li>
+       </ul>
+       By this the downlink messages can be timed to be sent in the RX1 receive window of the LoRa end node.</p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> lora message received by <code>lora server</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <h4>decoded payload</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> decoded message to be further processed by <code>lora check FC</code>.
+        <pre>{
+    "rxpk": {                    // data from lora server
+        "tmst": 501680883,
+        "chan": 0,
+        "rfch": 1,
+        "freq": 868.1,
+        "stat": 1,
+        "modu": "LORA",
+        "datr": "SF7BW125",
+        "codr": "4/5",
+        "lsnr": 10.3,
+        "rssi": -67,
+        "size": 23,
+        "data": "...",
+        "time": 1643556838991
+    },
+    "device_address": "12345678",
+    "frame_count": 4592,
+    "port": 10,
+    "mtype": "Confirmed Data Up",
+    "confirmed": true,           // confirmed uplink?
+    "type": "FooType",           // type of the lora node from lorawan-keys
+    "name": "FooBar",            // name of the lora node from lorawan-keys
+    "data": [ 0, 0 ]             // payload of the lora message
+}</pre></dd>
+    </dl>
+
+    <h4>unknown sender</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> messages from unkown end nodes.</dd>
+    </dl>
+
+    <h4>send message for encoder</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> message from send queue to be encoded by <code>lora encoder</code>.</dd>
+    </dl>
+
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>LoRa Keys <span class="property-type">lorawan-keys</span></dt>
+        <dd> configuration node to define the end nodes.</dd>
+        <dt>TX-delay <span class="property-type">number</span></dt>
+        <dd> delay in µs for a downlink message (RECEIVE_DELAY1 in LoRa); possibly needs some tweaking.</dd>
+    </dl>
 </script>

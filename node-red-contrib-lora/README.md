@@ -17,7 +17,8 @@ By combining this 5 nodes, you can receive and send LoRaWan messages via a compa
 
 ### lora server
 
-This node is a UDP server to communicate with LoRa gateways via the SEMTECH protocol.
+This node is a UDP server to communicate with LoRa gateways via the
+[SEMTECH protocol](https://github.com/Lora-net/packet_forwarder/blob/master/PROTOCOL.TXT).
 
 #### Input
 
@@ -36,6 +37,11 @@ This node is a UDP server to communicate with LoRa gateways via the SEMTECH prot
 
 ##### stat
 
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | object | statistical data from gateway.    |
+|mac     | string | mac of the gateway.               |
+
 #### Parameters
 
 |config| type   | description                       |
@@ -43,6 +49,9 @@ This node is a UDP server to communicate with LoRa gateways via the SEMTECH prot
 |UDP Port | number | port at which the server receives messages from the gateway.|
 
 ### lora decoder
+
+
+
 ### lora encoder
 ### lora check FC
 ### lora send

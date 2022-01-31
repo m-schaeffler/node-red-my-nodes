@@ -13,22 +13,21 @@ module.exports = function(RED)
             let data    = context.get( "data" ) ?? {};
             const item  = data[msg.topic];
 
-            if( ( item === undefined ) ||                                                       // new sensor
-                ((item+1 == msg.payload.frame_count) && (msg.payload.frame_count < item+25)) || // normal msg
-                ((item > 0xFFFF - 25) && (msg.payload.frame_count<25)) ||                       // overflow
-                ( msg.payload.frame_count == 0 ) )                                              // rebooted sensor
+            if( ( item === undefined )                || // new sensor
+                ( item+1 == msg.payload.frame_count ) || // normal msg
+                ( msg.payload.frame_count == 0 ) )       // rebooted sensor or roll over
             {
                 counter.ok++;
                 data[msg.topic] = msg.payload.frame_count;
             }
-            else if( (item < msg.payload.frame_count) && (msg.payload.frame_count < item+25) )
+            else if( item+1 < msg.payload.frame_count )
             {
                 counter.miss++;
                 errMsg = { topic:"LoRa missing frame", payload:`${msg.topic}: missing Frame; latest ${msg.payload.frame_count}, before ${item}` };
                 msg.missing = msg.payload.frame_count - item - 1;
                 data[msg.topic] = msg.payload.frame_count;
             }
-            else if( (item == msg.payload.frame_count) && (msg.payload.frame_count < item+25) )
+            else if( item == msg.payload.frame_count )
             {
                 // same frame => deduplication
                 counter.dup++;

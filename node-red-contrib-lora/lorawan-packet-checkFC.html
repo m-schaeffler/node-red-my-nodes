@@ -25,5 +25,47 @@
 </script>
 
 <script type="text/html" data-help-name="lorawan-packet-checkFC">
-    <p>This node checks the frame counter of a LoraWan message.</p>
+    <p>This node checks the frame counter (FC) of a LoraWan message.</p>
+    <p>It recognizes this situations:</p>
+    <ul>
+        <li>first message received: ok</li>
+        <li>FC 0: ok, startup of end node</li>
+        <li>FC increased by one: ok</li>
+        <li>FC rollover: ok</li>
+        <li>FC increased by more then one: ok + error message missing frame</li>
+        <li>FC the same as last valid one: duplicate message</li>
+        <li>anything else: error merssage, LoRa message is discared</li>
+    </ul>
+
+    <h3>Input</h3>
+    <dl class="message-properties">
+    
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> lora message decoded by <code>lora decoder</code>.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <h4>checked lora message</h4>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> name of the end node from <code>lora keys</code>.</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> checked ok message ready for node specific payload decoder.</dd>
+    </dl>
+
+    <h4>duplicate message</h4>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> name of the end node from <code>lora keys</code>.</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> message in case of a reuse of the last valid farme counter value.</dd>
+    </dl>
+
+    <h4>error message</h4>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> subject of the error message.</dd>
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd> error message for logging.</dd>
+    </dl>
 </script>

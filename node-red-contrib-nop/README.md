@@ -5,7 +5,7 @@ A simple node that just does nothing.
 ## Install
 
 ```
-$ npm install node-red-contrib-
+$ npm install node-red-contrib-nooperation
 ```
 
 ## Usage

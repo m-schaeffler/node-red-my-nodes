@@ -1,4 +1,4 @@
-# node-red-contrib-lora
+# @mschaeffler/node-red-lora
 
 Five nodes to send and receive LoRaWan messages via a gateway via the
 [Semtech UDP protocol](https://github.com/Lora-net/packet_forwarder/blob/master/PROTOCOL.TXT).
@@ -8,7 +8,7 @@ Five nodes to send and receive LoRaWan messages via a gateway via the
 ## Install
 
 ```
-$ npm install node-red-contrib-lora
+$ npm install @mschaeffler/node-red-lora
 ```
 
 ## Usage

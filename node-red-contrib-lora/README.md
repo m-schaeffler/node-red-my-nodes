@@ -50,12 +50,41 @@ This node is a UDP server to communicate with LoRa gateways via the
 
 ### lora decoder
 
-
-
 ### lora encoder
+
 ### lora check FC
+
 ### lora send
+
 ### lora keys
+
+This configuration node stores data about the LoRa end nodes.
+
+#### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|LoRa-Keys|object|config data about the end nodes.|
+
+```json
+{
+    "&lt;device address in lowercase hex&gt;": {
+        "nsw": "&lt;LoRa NwkSKey&gt;",
+        "asw": "&lt;LoRa AppSKey&gt;",
+        "type": "&lt;Type of the node for further processing&gt;",
+        "name": "&lt;Name of the node&gt;",
+        "timeout": &lt;Timeout value for further processing, optional&gt;
+    },
+    "123456ab": {
+        "nsw": "0123456789abcdef0123456789abcdef",
+        "asw": "0123456789abcdef0123456789abcdef",
+        "type": "FooType",
+        "name": "FooBar",
+        "timeout": 3600
+    },
+    ...
+}
+```
 
 ## Example Flow
 

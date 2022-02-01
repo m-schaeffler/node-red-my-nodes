@@ -56,15 +56,32 @@ This node is a UDP server to communicate with LoRa gateways via the
 
 ### lora send
 
+This node puts a LoraWan message into the send queue.
+
+The send queue is stored in the flow context `sendqueue`.
+
+####Input
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | byte array | lora payload to be sent; as an array of bytes or as a `Buffer`.|
+|topic   | string     | name of the LoRa end node as in `LoRa Keys`.|
+
+####Parameters
+
+|config   | type         | description                     |
+|:--------|:-------------|:--------------------------------|
+|LoRa Keys|`lorawan-keys`| configuration node to define the end nodes.|
+
 ### lora keys
 
 This configuration node stores data about the LoRa end nodes.
 
 #### Parameters
 
-|config| type   | description                       |
-|:-----|:-------|:----------------------------------|
-|LoRa-Keys|object|config data about the end nodes.
+|config   | type   | description                     |
+|:--------|:-------|:--------------------------------|
+|LoRa-Keys| object | config data about the end nodes.|
 
 ```
 {
@@ -84,7 +101,7 @@ This configuration node stores data about the LoRa end nodes.
     },
     ...
 }
-``` |
+```
 
 ## Example Flow
 

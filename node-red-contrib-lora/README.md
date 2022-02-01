@@ -64,16 +64,16 @@ This configuration node stores data about the LoRa end nodes.
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
-|LoRa-Keys|object|config data about the end nodes.|
+|LoRa-Keys|object|config data about the end nodes.
 
-```json
+```
 {
-    "&lt;device address in lowercase hex&gt;": {
-        "nsw": "&lt;LoRa NwkSKey&gt;",
-        "asw": "&lt;LoRa AppSKey&gt;",
-        "type": "&lt;Type of the node for further processing&gt;",
-        "name": "&lt;Name of the node&gt;",
-        "timeout": &lt;Timeout value for further processing, optional&gt;
+    <device address in lowercase hex>: {
+        "nsw": "<LoRa NwkSKey>",
+        "asw": "<LoRa AppSKey>",
+        "type": "<Type of the node for further processing>",
+        "name": "<Name of the node>",
+        "timeout": <Timeout value for further processing, optional>;
     },
     "123456ab": {
         "nsw": "0123456789abcdef0123456789abcdef",
@@ -84,7 +84,7 @@ This configuration node stores data about the LoRa end nodes.
     },
     ...
 }
-```
+``` |
 
 ## Example Flow
 

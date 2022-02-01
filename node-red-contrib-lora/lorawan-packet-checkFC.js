@@ -20,22 +20,21 @@ module.exports = function(RED)
                 counter.ok++;
                 data[msg.topic] = msg.payload.frame_count;
             }
-            else if( item+1 < msg.payload.frame_count )
+            else if( item+1 < msg.payload.frame_count )  // missing farme
             {
                 counter.miss++;
                 errMsg = { topic:"LoRa missing frame", payload:`${msg.topic}: missing Frame; latest ${msg.payload.frame_count}, before ${item}` };
                 msg.missing = msg.payload.frame_count - item - 1;
                 data[msg.topic] = msg.payload.frame_count;
             }
-            else if( item == msg.payload.frame_count )
+            else if( item == msg.payload.frame_count )   // same frame => deduplication
             {
-                // same frame => deduplication
                 counter.dup++;
                 dupMsg = msg;
                 msg    = null;
                 dupMsg.duplicate = true;
             }
-            else
+            else                                         // error message
             {
                 counter.nok++;
                 errMsg = { topic:"LoRa error", payload:`${msg.topic}: invalid Frame counter ${msg.payload.frame_count} last good ${item}` };

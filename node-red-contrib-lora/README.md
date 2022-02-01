@@ -13,7 +13,7 @@ $ npm install node-red-contrib-lora
 
 ## Usage
 
-By combining this 5 nodes, you can receive and send LoRaWan messages via a compatible gateway.
+By combining this five nodes, you can receive and send LoRaWan messages via a compatible gateway.
 
 ### lora server
 
@@ -50,24 +50,35 @@ This node is a UDP server to communicate with LoRa gateways via the
 
 ### lora decoder
 
+#### Parameters
+
+|config   | type         | description                     |
+|:--------|:-------------|:--------------------------------|
+|LoRa Keys|`lorawan-keys`| configuration node to define the end nodes.|
+
 ### lora encoder
+
+#### Parameters
+
+|config   | type         | description                     |
+|:--------|:-------------|:--------------------------------|
+|LoRa Keys|`lorawan-keys`| configuration node to define the end nodes.|
 
 ### lora check FC
 
 ### lora send
 
 This node puts a LoraWan message into the send queue.
-
 The send queue is stored in the flow context `sendqueue`.
 
-####Input
+#### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | byte array | lora payload to be sent; as an array of bytes or as a `Buffer`.|
 |topic   | string     | name of the LoRa end node as in `LoRa Keys`.|
 
-####Parameters
+#### Parameters
 
 |config   | type         | description                     |
 |:--------|:-------------|:--------------------------------|

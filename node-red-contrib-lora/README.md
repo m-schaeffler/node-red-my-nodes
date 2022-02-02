@@ -50,11 +50,76 @@ This node is a UDP server to communicate with LoRa gateways via the
 
 ### lora decoder
 
+This node decodes a LoraWan message received by `lora server`.
+It also generates messages to be sent to the end node in case of
+
+- confirmed messages: the corresponding acknowledgment
+- a message for this node from the send queue (s. `lora send`).
+
+By this the downlink messages can be timed to be sent in the RX1 receive window of the LoRa end node.
+
+#### Input
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | object | lora message received by `lora server`.|
+
+#### Outputs
+
+##### decoded payload
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | name of the end node from `lora keys`.|
+|payload | object | decoded message to be further processed by `lora check FC`.|
+|timeout | number | timeout, if present in `lora keys` for this node.|
+
+```
+{
+    "rxpk": {                    // data from lora server
+        "tmst": 501680883,
+        "chan": 0,
+        "rfch": 1,
+        "freq": 868.1,
+        "stat": 1,
+        "modu": "LORA",
+        "datr": "SF7BW125",
+        "codr": "4/5",
+        "lsnr": 10.3,
+        "rssi": -67,
+        "size": 23,
+        "data": "...",
+        "time": 1643556838991
+    },
+    "device_address": "123456ab",
+    "frame_count": 4592,
+    "port": 10,
+    "mtype": "Confirmed Data Up",
+    "confirmed": true,           // confirmed uplink?
+    "type": "FooType",           // type of the lora node from lorawan-keys
+    "name": "FooBar",            // name of the lora node from lorawan-keys
+    "data": [ 0, 0 ]             // payload of the lora message
+}
+```
+
+##### unknown sender
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | object | messages from unkown end nodes.   |
+
+##### send message for encoder
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | object  |message from send queue to be encoded by `lora encoder`.|
+
 #### Parameters
 
 |config   | type         | description                     |
 |:--------|:-------------|:--------------------------------|
 |LoRa Keys|`lorawan-keys`| configuration node to define the end nodes.|
+|TX-delay | number       | delay in µs for a downlink message (RECEIVE_DELAY1 in LoRa); possibly needs some tweaking.|
 
 ### lora encoder
 

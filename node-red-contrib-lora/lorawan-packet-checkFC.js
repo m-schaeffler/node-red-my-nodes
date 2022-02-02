@@ -23,7 +23,7 @@ module.exports = function(RED)
             else if( item+1 < msg.payload.frame_count )  // missing farme
             {
                 counter.miss++;
-                errMsg = { topic:"LoRa missing frame", payload:`${msg.topic}: missing Frame; latest ${msg.payload.frame_count}, before ${item}` };
+                errMsg = { topic:"LoRa missing frame", payload:`${msg.topic}: missing Frame; latest ${msg.payload.frame_count}, before ${item}`, lora:msg.payload };
                 msg.missing = msg.payload.frame_count - item - 1;
                 data[msg.topic] = msg.payload.frame_count;
             }
@@ -37,7 +37,7 @@ module.exports = function(RED)
             else                                         // error message
             {
                 counter.nok++;
-                errMsg = { topic:"LoRa error", payload:`${msg.topic}: invalid Frame counter ${msg.payload.frame_count} last good ${item}` };
+                errMsg = { topic:"LoRa error", payload:`${msg.topic}: invalid Frame counter ${msg.payload.frame_count} last good ${item}`, lora:msg.payload };
                 msg    = null;
             }
 

@@ -112,7 +112,7 @@ By this the downlink messages can be timed to be sent in the RX1 receive window 
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|payload | object  |message from send queue to be encoded by `lora encoder`.|
+|payload | object |message from send queue to be encoded by `lora encoder`.|
 
 #### Parameters
 
@@ -123,11 +123,35 @@ By this the downlink messages can be timed to be sent in the RX1 receive window 
 
 ### lora encoder
 
+This node encodes a LoraWan message.
+
+#### Input
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | object | lora message to be sent; normally from `lora decoder, send message for encoder`.|
+|framecounter|number|set frame counter with value from persistent memory.|
+
+#### Outputs
+
+##### encoded payload
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | object | encoded message for `lora sender`.|
+
+##### frame counter for persistence
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | number | frame counter for persistent storage.|
+
 #### Parameters
 
 |config   | type         | description                     |
 |:--------|:-------------|:--------------------------------|
 |LoRa Keys|`lorawan-keys`| configuration node to define the end nodes.|
+|TX-Power | number       | transmit power for the gateway. |
 
 ### lora check FC
 

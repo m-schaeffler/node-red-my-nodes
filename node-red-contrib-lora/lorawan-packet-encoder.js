@@ -9,63 +9,65 @@ module.exports = function(RED)
         var   context = this.context();
         const keyconf = RED.nodes.getNode( config.keys );
         const power   = parseInt( config.power );
-        const storeName = config.storeName;
 
         node.on('input',function(msg,send,done) {
-            let counter = context.get( "frameCounter", storeName ) ?? 0;
-            if( ++counter > 0xFFFF )
+            let counter = "framecounter" in msg ? msg.framecounter : context.get( "frameCounter" ) ?? 0;
+            if( "payload" in msg )
             {
-                counter = 0;
-            }
-            context.set( "frameCounter", counter, storeName );
-            if( ! Buffer.isBuffer( msg.payload.data ) )
-            {
-                msg.payload.data = Buffer.from( msg.payload.data );
-            }
-            const lora = {
-                MType:   "Unconfirmed Data Down",
-                DevAddr: Buffer.from(msg.payload.device_address,"hex"),
-                FCnt:    counter,
-                FPort:   msg.payload.port,
-                FCtrl:   {
-                    ACK:      msg.payload?.ack      ?? false,
-                    FPending: msg.payload?.fpending ?? false
-                },
-                payload: msg.payload.data
-            };
-            //node.warn( lora );
-            const key = keyconf.getKey( msg.payload.device_address );
-            if( key )
-            {
-                const packet = lora_packet.fromFields( lora, Buffer.from( key.asw, 'hex' ), Buffer.from( key.nsw, 'hex' ));
-                const data   = packet.getPHYPayload();
-                let   txpk   = {
-                    //tmst: msg.payload.tmst,
-                    freq: msg.payload?.freq ?? 869.525,
-                    rfch: msg.payload?.rfch ?? 1,
-                    powe: power,
-                    modu: msg.payload?.modu ?? "LORA",
-                    datr: msg.payload?.datr ?? "SF7BW125",
-                    codr: msg.payload?.codr ?? "4/5",
-                    ipol: true,
-                    size: data.length,
-                    data: data.toString('Base64')
-                };
-                if( "tmst" in msg.payload )
+                if( ++counter > 0xFFFF )
                 {
-                    txpk.tmst = msg.payload.tmst;
+                    counter = 0;
+                }
+                if( ! Buffer.isBuffer( msg.payload.data ) )
+                {
+                    msg.payload.data = Buffer.from( msg.payload.data );
+                }
+                const lora = {
+                    MType:   "Unconfirmed Data Down",
+                    DevAddr: Buffer.from(msg.payload.device_address,"hex"),
+                    FCnt:    counter,
+                    FPort:   msg.payload.port,
+                    FCtrl:   {
+                        ACK:      msg.payload?.ack      ?? false,
+                        FPending: msg.payload?.fpending ?? false
+                    },
+                    payload: msg.payload.data
+                };
+                //node.warn( lora );
+                const key = keyconf.getKey( msg.payload.device_address );
+                if( key )
+                {
+                    const packet = lora_packet.fromFields( lora, Buffer.from( key.asw, 'hex' ), Buffer.from( key.nsw, 'hex' ));
+                    const data   = packet.getPHYPayload();
+                    let   txpk   = {
+                        //tmst: msg.payload.tmst,
+                        freq: msg.payload?.freq ?? 869.525,
+                        rfch: msg.payload?.rfch ?? 1,
+                        powe: power,
+                        modu: msg.payload?.modu ?? "LORA",
+                        datr: msg.payload?.datr ?? "SF7BW125",
+                        codr: msg.payload?.codr ?? "4/5",
+                        ipol: true,
+                        size: data.length,
+                        data: data.toString('Base64')
+                    };
+                    if( "tmst" in msg.payload )
+                    {
+                        txpk.tmst = msg.payload.tmst;
+                    }
+                    else
+                    {
+                        txpk.imme = true;
+                    }
+                    node.status( key.name );
+                    send( [ { topic:key.name, payload:{ txpk:txpk } }, { topic:"FrameCounter", payload:counter }  ] );
                 }
                 else
                 {
-                    txpk.imme = true;
+                    node.warn( "unknown deviceid: "+msg.payload.device_address );
                 }
-                node.status( key.name );
-                send( { topic:key.name, payload:{ txpk:txpk } } );
             }
-            else
-            {
-                node.warn( "unknown deviceid: "+msg.payload.device_address );
-            }
+            context.set( "frameCounter", counter );
             done();
         });
 

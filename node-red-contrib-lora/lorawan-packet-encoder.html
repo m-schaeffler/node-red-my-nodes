@@ -3,28 +3,18 @@
         category: 'lora',
         color: '#E9967A',
         inputs:1,
-        outputs:1,
+        outputs:2,
         icon: "font-awesome/fa-lock",
         label: function() {
             return this.name||"lora encoder";
         },
         inputLabels: 'device payload',
-        outputLabels: 'encoded payload',
+        outputLabels: ['encoded payload','frame counter for persistence'],
         paletteLabel: "lora encoder",
         defaults: {
             name: {value:""},
             keys: {value:"", type:"lorawan-keys", required:true},
-            power: {value:"14", required:true, validate:RED.validators.number()},
-            storeName: {value: RED.settings.hasOwnProperty('context') ? RED.settings.context.default : 'default' }
-        },
-        oneditprepare: function() {
-            var node = this
-            RED.settings.context.stores.forEach(
-                function (item) {
-                    $('#node-input-storeName').append(`<option value="${item}">${item}</option>`)
-                }
-            );
-            $('#node-input-storeName').val( node.storeName );
+            power: {value:"14", required:true, validate:RED.validators.number()}
         }      
     });
 </script>
@@ -42,10 +32,6 @@
         <label for="node-input-power"><i class="fa fa-wifi"></i> TX-Power</label>
         <input type="text" id="node-input-power">
     </div>
-    <div class="form-row">
-        <label for="node-input-storeName"><i class="fa fa-database"></i> Context</label>
-        <select type="text" id="node-input-storeName"></select>
-    </div>
 </script>
 
 <script type="text/html" data-help-name="lorawan-packet-encoder">
@@ -55,12 +41,22 @@
     <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
         <dd> lora message to be sent; normally from <code>lora decoder, send message for encoder</code>.</dd>
+        <dt>framecounter <span class="property-type">number</span></dt>
+        <dd> set frame counter with value from persistent memory.</dd>
     </dl>
 
-    <h3>Output</h3>
+    <h3>Outputs</h3>
+
+    <h4>encoded payload</h4>
     <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
         <dd> encoded message for <code>lora sender</code>.</dd>
+    </dl>
+
+    <h4>frame counter for persistence</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">number</span></dt>
+        <dd> frame counter for persistent storage.</dd>
     </dl>
 
     <h3>Parameters</h3>
@@ -69,7 +65,5 @@
         <dd> configuration node to define the end nodes.</dd>
         <dt>TX-Power <span class="property-type">number</span></dt>
         <dd> transmit power for the gateway.</dd>
-        <dt>Context <span class="property-type">context store</span></dt>
-        <dd> context store for storing the frame counter. Must be persistent.</dd>
     </dl>
 </script>

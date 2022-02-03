@@ -2,6 +2,12 @@
 
 A simple node that sends an email via the local `/usr/bin/mail` command.
 
+On a normal host without any mail server functionality, I recomment to use `nullmailer`:
+
+- [Homepage](https://untroubled.org/nullmailer/)
+- [Debian Wiki](https://wiki.debian.org/nullmailer)
+- [ArchLinux Wiki](https://wiki.archlinux.org/title/Nullmailer)
+
 ## Install
 
 ```

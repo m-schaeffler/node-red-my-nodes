@@ -155,6 +155,49 @@ This node encodes a LoraWan message.
 
 ### lora check FC
 
+This node checks the frame counter (FC) of a LoraWan message.
+
+It recognizes this situations:
+
+- first message received: ok
+- FC 0: ok, startup of end node
+- FC increased by one: ok
+- FC rollover: ok
+- FC increased by more then one: ok + error message missing frame
+- FC the same as last valid one: duplicate message
+- anything else: error merssage, LoRa message is discared
+
+#### Input
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | name of the end node from `lora keys`.|
+|payload | object | lora message decoded by `lora decoder`.|
+
+#### Outputs
+
+##### checked lora message
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | name of the end node from `lora keys`.|
+|payload | object | checked ok message ready for node specific payload decoder.|
+
+##### duplicate message
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | name of the end node from `lora keys`.|
+|payload | object | message in case of a reuse of the last valid farme counter value.|
+
+##### error message
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | subject of the error message.     |
+|payload | string | error message for logging.        |
+|lora    | object | lora msg that caused the error message.|
+
 ### lora send
 
 This node puts a LoraWan message into the send queue.

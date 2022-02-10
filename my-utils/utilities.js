@@ -18,7 +18,7 @@ exports.unitStr = function(unit)
 
 exports.iconStr = function(icon)
 {
-    return `<i class=\"fa ${icon}\" aria-hidden=\"true\"/>`;
+    return `<i style="line-height:130%" class=\"fa ${icon}\" aria-hidden=\"true\"/>`;
 }
 
 exports.formatNumber = function(number,limit,unit="")
@@ -57,29 +57,44 @@ exports.colorizeNumber = function(number,low,high,unit="")
 
 exports.formatTime = function(time)
 {
-    const d   = (time instanceof Date) ? time : new Date( time );
-    let   min = d.getMinutes();
-    if( min < 10 )
+    if( time )
     {
-        min = "0"+min;
+        const d   = (time instanceof Date) ? time : new Date( time );
+        let   min = d.getMinutes();
+        if( min < 10 )
+        {
+            min = "0"+min;
+        }
+        return `${d.getHours()}:${min}`;
     }
-    return `${d.getHours()}:${min}`;
+    else
+    {
+        return "";
+    }
 }
 
 exports.colorizeTime = function(time,ok=3,nok=24)
 {
-    const d     = new Date( time );
-    const delta = Date.now() - d;
-    let   color = "";
-    if( delta < ok*3600*1000 )
+    if( time )
     {
-        color = "color:lime";
+        const d     = new Date( time );
+        const delta = Date.now() - d;
+        let   color = "";
+        if( delta < ok*3600*1000 )
+        {
+            color = "color:lime";
+        }
+        else if( delta > nok*3600*1000 )
+        {
+            color = "color:red";
+        }
+        return exports.colorizeValue(
+            delta < 48*3600*1000 ? exports.formatTime( d ) : `${d.getDate()}.${d.getMonth()+1}.`,
+            color
+        );
     }
-    else if( delta > nok*3600*1000 )
+    else
     {
-        color = "color:red";
+        return "";
     }
-    return exports.colorizeValue( 
-        delta < 48*3600*1000 ? exports.formatTime( d ) : `${d.getDate()}.${d.getMonth()+1}.`, 
-        color );
 }

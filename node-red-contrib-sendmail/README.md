@@ -8,6 +8,8 @@ On a normal host without any mail server functionality, I recomment to use `null
 - [Debian Wiki](https://wiki.debian.org/nullmailer)
 - [ArchLinux Wiki](https://wiki.archlinux.org/title/Nullmailer)
 
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-contrib-sendmail/examples/sendmail.png)
+
 ## Install
 
 ```
@@ -31,6 +33,10 @@ $ npm install node-red-contrib-sendmail
 |:-----|:-------|:----------------------------------|
 |from  | string | sender address for the email.     |
 |to    | string | destination address for the email.|
+
+## Example Flow
+
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-contrib-sendmail/examples/sendmail.json)
 
 ## Author
 

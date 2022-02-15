@@ -2,7 +2,7 @@
 
 A simple node that just does nothing.
 
-![image of example flow](examples/NOP-example.png)
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-contrib-nop/examples/NOP-example.png)
 
 ## Install
 
@@ -18,7 +18,7 @@ This is useful to prettify n &times; m connections.
 
 ## Example Flow
 
-[example flow](examples/NOP-example.json)
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/blob/main/node-red-contrib-nop/examples/NOP-example.json)
 
 ## Author
 

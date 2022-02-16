@@ -3,7 +3,7 @@
 Five nodes to send and receive LoRaWan messages via a gateway via the
 [Semtech UDP protocol](https://github.com/Lora-net/packet_forwarder/blob/master/PROTOCOL.TXT).
 
-![image of example flow](examples/flow.png)
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-contrib-lora/examples/lora.png)
 
 ## Install
 
@@ -248,7 +248,7 @@ This configuration node stores data about the LoRa end nodes.
 
 ## Example Flow
 
-[example flow](examples/flow.json)
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-contrib-lora/examples/lora.json)
 
 ## Author
 

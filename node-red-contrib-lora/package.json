@@ -12,7 +12,9 @@
     "node": ">=12"
   },
   "keywords": [
-    "node-red"
+    "node-red",
+    "lora",
+    "LoRaWan"
   ],
   "dependencies": {
     "lora-packet": ">=0.8.12"

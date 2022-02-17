@@ -1,0 +1,48 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ctrlDualLed',{
+        category: 'smart home',
+        color: "#CCCCCC",
+        defaults: {
+            name: {value:""},
+            temp_warm: {value:"2200", required:true, validate:RED.validators.number()},
+            temp_cold: {value:"6800", required:true, validate:RED.validators.number()},
+            transition:{value:"5000", required:true, validate:RED.validators.number()}
+        },
+        inputs:1,
+        outputs:2,
+        icon: "light.svg",
+        label: function() {
+            return this.name||"ctrlDualLed";
+        },
+        inputLabels: 'control dual LED',
+        outputLabels: ['control warm LED','control cold LED']
+    });
+</script>
+
+<script type="text/html" data-template-name="ctrlDualLed">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-temp_warm"><i class="fa fa-tag"></i> Temperature Warm</label>
+        <input type="text" id="node-input-temp_warm" placeholder="temp_warm">
+    </div>
+    <div class="form-row">
+        <label for="node-input-temp_cold"><i class="fa fa-tag"></i> Temperature Cold</label>
+        <input type="text" id="node-input-temp_cold" placeholder="temp_cold">
+    </div>
+    <div class="form-row">
+        <label for="node-input-transition"><i class="fa fa-tag"></i> Transition</label>
+        <input type="text" id="node-input-transition" placeholder="transition">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="ctrlDualLed">
+    <p></p>
+
+    <h3>Input</h3>
+
+    <h3>Parameters</h3>
+
+</script>

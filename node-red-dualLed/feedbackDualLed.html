@@ -1,0 +1,53 @@
+<script type="text/javascript">
+    RED.nodes.registerType('feedbackDualLed',{
+        category: 'smart home',
+        color: "#ECECEC",
+        defaults: {
+            name: {value:""},
+            temp_warm: {value:"2200", required:true, validate:RED.validators.number()},
+            temp_cold: {value:"6800", required:true, validate:RED.validators.number()},
+            indx_warm: {value:"0",    required:true, validate:RED.validators.number()},
+            indx_cold: {value:"1",    required:true, validate:RED.validators.number()}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-lightbulb-o",
+        label: function() {
+            return this.name||"feedbackDualLed";
+        },
+        inputLabels: 'feedback from dual LED',
+        outputLabels: 'processed feedback'
+    });
+</script>
+
+<script type="text/html" data-template-name="feedbackDualLed">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-temp_warm"><i class="fa fa-thermometer-full"></i> Temperature Warm</label>
+        <input type="text" id="node-input-temp_warm" placeholder="temp_warm">
+    </div>
+    <div class="form-row">
+        <label for="node-input-temp_cold"><i class="fa fa-thermometer-empty"></i> Temperature Cold</label>
+        <input type="text" id="node-input-temp_cold" placeholder="temp_cold">
+    </div>
+    <div class="form-row">
+        <label for="node-input-indx_warm"><i class="fa fa-hourglass-half"></i> Index Warm</label>
+        <input type="text" id="node-input-indx_warm" placeholder="transition">
+    </div>
+    <div class="form-row">
+        <label for="node-input-indx_cold"><i class="fa fa-hourglass-half"></i> Index Cold</label>
+        <input type="text" id="node-input-indx_cold" placeholder="transition">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="feedbackDualLed">
+    <p></p>
+
+    <h3>Input</h3>
+
+    <h3>Parameters</h3>
+
+</script>

@@ -1,16 +1,17 @@
 <script type="text/javascript">
     RED.nodes.registerType('ctrlDualLed',{
         category: 'smart home',
-        color: "#CCCCCC",
+        color: "#ECECEC",
         defaults: {
-            name: {value:""},
-            temp_warm: {value:"2200", required:true, validate:RED.validators.number()},
-            temp_cold: {value:"6800", required:true, validate:RED.validators.number()},
-            transition:{value:"5000", required:true, validate:RED.validators.number()}
+            name:{value:""},
+            temp_warm:{value:"2200", required:true, validate:RED.validators.number()},
+            temp_cold:{value:"6800", required:true, validate:RED.validators.number()},
+            transition_short:{value:"1000", required:true, validate:RED.validators.number()},
+            transition_long: {value:"5000", required:true, validate:RED.validators.number()}
         },
         inputs:1,
         outputs:2,
-        icon: "light.svg",
+        icon: "font-awesome/fa-lightbulb-o",
         label: function() {
             return this.name||"ctrlDualLed";
         },
@@ -25,16 +26,20 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-temp_warm"><i class="fa fa-tag"></i> Temperature Warm</label>
+        <label for="node-input-temp_warm"><i class="fa fa-thermometer-full"></i> Temperature Warm</label>
         <input type="text" id="node-input-temp_warm" placeholder="temp_warm">
     </div>
     <div class="form-row">
-        <label for="node-input-temp_cold"><i class="fa fa-tag"></i> Temperature Cold</label>
+        <label for="node-input-temp_cold"><i class="fa fa-thermometer-empty"></i> Temperature Cold</label>
         <input type="text" id="node-input-temp_cold" placeholder="temp_cold">
     </div>
     <div class="form-row">
-        <label for="node-input-transition"><i class="fa fa-tag"></i> Transition</label>
-        <input type="text" id="node-input-transition" placeholder="transition">
+        <label for="node-input-transition_short"><i class="fa fa-hourglass-half"></i> Transition short</label>
+        <input type="text" id="node-input-transition_short" placeholder="transition_short">
+    </div>
+    <div class="form-row">
+        <label for="node-input-transition_long"><i class="fa fa-hourglass"></i> Transition long</label>
+        <input type="text" id="node-input-transition_long" placeholder="transition_long">
     </div>
 </script>
 

@@ -60,13 +60,14 @@ module.exports = function(RED) {
 
             const x_warm = Math.round( data.brightness*(temp_cold-data.temp) / (temp_cold-temp_warm) );
             const x_cold = data.brightness - x_warm;
-            const retain = msg.retain ?? false;
+
+            let warmMsg = msg;
+            let coldMsg = RED.util.cloneMessage( msg );
+            warmMsg.payload = { turn:data.turn, brightness:x_warm, transition:transition };
+            coldMsg.payload = { turn:data.turn, brightness:x_cold, transition:transition };
 
             node.status({ fill: data.turn=="on"?"green":"gray", shape: "dot", text: x_warm+" / "+x_cold });
-            send( [
-                { topic:"warm LED", payload:{turn:data.turn,brightness:x_warm,transition:transition}, retain:retain },
-                { topic:"cold LED", payload:{turn:data.turn,brightness:x_cold,transition:transition}, retain:retain }
-            ] );
+            send( [ warmMsg, coldMsg ] );
             done();
         });
     }

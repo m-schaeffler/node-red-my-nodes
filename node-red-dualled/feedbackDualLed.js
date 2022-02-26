@@ -6,8 +6,8 @@ module.exports = function(RED) {
         var node = this;
         const temp_warm = Number( config.temp_warm );
         const temp_cold = Number( config.temp_cold );
-        const i_warm    = Number( config.indx_warm );
-        const i_cold    = Number( config.indx_cold );
+        const i_warm    = config.indx_warm;
+        const i_cold    = config.indx_cold;
 
         node.on('input', function(msg,send,done) {
             const x_warm = msg.payload.brightness[i_warm];

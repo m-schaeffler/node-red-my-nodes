@@ -11,7 +11,8 @@ module.exports = function(RED) {
         const transition_long  = Number( config.transition_long  );
 
         node.on('input', function(msg,send,done) {
-            let data = context.get( "data" ) ?? { turn:"off", temp:4000, brightness:100 };
+            let data = context.get( "data" ) ?? {};
+            let item = data[msg.topic] ?? { turn:"off", temp:4000, brightness:100 };
             let transition;
             switch( typeof msg.payload )
             {
@@ -20,26 +21,26 @@ module.exports = function(RED) {
                     {
                         case "on":
                         case "off":
-                            data.turn = msg.payload;
+                            item.turn = msg.payload;
                             break;
                         case "toggle":
-                            data.turn = data.turn=="on" ? "off" : "on";
+                            item.turn = data.turn=="on" ? "off" : "on";
                             break;
                     }
                     transition = transition_short;
                     break;
                 case "boolean":
-                    data.turn = msg.payload ? "on" : "off";
+                    item.turn = msg.payload ? "on" : "off";
                     transition = transition_short;
                     break;
                 case "number":
                     switch( msg.topic )
                     {
                         case "temp":
-                            data.temp = msg.payload;
+                            item.temp = msg.payload;
                             break;
                         case "brightness":
-                            data.brightness = msg.payload;
+                            item.brightness = msg.payload;
                             break;
                     }
                     transition = transition_long;
@@ -47,26 +48,27 @@ module.exports = function(RED) {
                 case "object":
                     if( "temp" in msg.payload )
                     {
-                        data.temp = msg.payload.temp;
+                        item.temp = msg.payload.temp;
                     }
                     if( "brightness" in msg.payload )
                     {
-                        data.brightness = msg.payload.brightness;
+                        item.brightness = msg.payload.brightness;
                     }
                     transition = transition_long;
                     break;
             }
+            data[msg.topic] = item;
             context.set( "data", data );
 
-            const x_warm = Math.round( data.brightness*(temp_cold-data.temp) / (temp_cold-temp_warm) );
-            const x_cold = data.brightness - x_warm;
+            const x_warm = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
+            const x_cold = item.brightness - x_warm;
 
             let warmMsg = msg;
             let coldMsg = RED.util.cloneMessage( msg );
-            warmMsg.payload = { turn:data.turn, brightness:x_warm, transition:transition };
-            coldMsg.payload = { turn:data.turn, brightness:x_cold, transition:transition };
+            warmMsg.payload = { turn:item.turn, brightness:x_warm, transition:transition };
+            coldMsg.payload = { turn:item.turn, brightness:x_cold, transition:transition };
 
-            node.status({ fill: data.turn=="on"?"green":"gray", shape: "dot", text: x_warm+" / "+x_cold });
+            node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: x_warm+" / "+x_cold });
             send( [ warmMsg, coldMsg ] );
             done();
         });

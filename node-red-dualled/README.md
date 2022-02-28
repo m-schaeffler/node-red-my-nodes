@@ -12,19 +12,22 @@ $ npm install @mschaeffler/node-red-dualled
 
 ## Usage
 
-With this nodes you can control DualLeds, which are controled by two independant drivers, and use the feedback from the drivers.
+With this nodes you can control pairs of warm and cold leds (called dual leds or CCT leds),
+which are controled by two independant drivers, and use the feedback from the drivers.
 
 ### ctrlDualLed
 
-This node drives the DualLed by calculating the individual brightness values.
+This node drives the dual led by calculating the individual brightness values.
+It works on base of `topic`s so that with each different `topic` another led can be controlled.
 
 #### Input
+
+All inputs are stored in a node local context variable, to always output a complete data set.
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | string | `on`, `off`, `toggle`             |
 |        | boolean| switch on or off.                 |
-|        | number | set `temp` or `brightness` according to `topic`.|
 |        | object | set `temp` or `brightness` according to `key`.|
 
 #### Output
@@ -35,13 +38,17 @@ All values of the msg (incl. `topic`) are preserved, except the payload.
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|payload | object | `turn`, `brightness`, `transition`|
+|payload.turn | string | `on` or `off` for the warm led.|
+|payload.brightness | number | brightness for the warm led.|
+|payload.transition | number | transition time.       |
 
 ##### control cold LED
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|payload | object | `turn`, `brightness`, `transition`|
+|payload.turn | string | `on` or `off` for the cold led.|
+|payload.brightness | number | brightness for the cold led.|
+|payload.transition | number | transition time.       |
 
 #### Parameters
 

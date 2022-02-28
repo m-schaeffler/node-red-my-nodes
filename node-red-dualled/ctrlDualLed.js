@@ -33,6 +33,7 @@ module.exports = function(RED) {
                     item.turn = msg.payload ? "on" : "off";
                     transition = transition_short;
                     break;
+                /*
                 case "number":
                     switch( msg.topic )
                     {
@@ -45,6 +46,7 @@ module.exports = function(RED) {
                     }
                     transition = transition_long;
                     break;
+                */
                 case "object":
                     if( "temp" in msg.payload )
                     {

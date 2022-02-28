@@ -44,9 +44,48 @@
 </script>
 
 <script type="text/html" data-help-name="ctrlDualLed">
-    <p></p>
+    <p>With this nodes you can control pairs of warm and cold leds (called dual leds or CCT leds), 
+    which are controled by two independant drivers, and use the feedback from the drivers.</p>
+    
+    <p>This node drives the dual led by calculating the individual brightness values. 
+    It works on base of `topic`s so that with each different `topic` another led can be controlled.</p>
 
     <h3>Input</h3>
+    All inputs are stored in a node local context variable, to always output a complete data set.
+
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd> <code>on</code>, <code>off</code>, <code>toggle</code></dd>
+        <dt> <span class="property-type">boolean</span></dt>
+        <dd> switch on or off.</dd>
+        <dt> <span class="property-type">object</span></dt>
+        <dd> set `temp` or `brightness` according to `key`.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    
+    <p>All values of the msg (incl. `topic`) are preserved, except the payload.</p>
+    
+    <h4>control warm LED</h4>
+
+    <dl class="message-properties">
+        <dt>payload.turn <span class="property-type">string</span></dt>
+        <dd> <code>on</code> or <code>off</code> for the warm led.</dd>
+        <dt>payload.brightness <span class="property-type">number</span></dt>
+        <dd> brightness for the warm led.</dd>
+        <dt>payload.transition <span class="property-type">number</span></dt>
+        <dd> transition time.</dd>
+    </dl>
+
+    <h4>control cold LED</h4>
+    <dl class="message-properties">
+        <dt>payload.turn <span class="property-type">string</span></dt>
+        <dd> <code>on</code> or <code>off</code> for the cold led.</dd>
+        <dt>payload.brightness <span class="property-type">number</span></dt>
+        <dd> brightness for the cold led.</dd>
+        <dt>payload.transition <span class="property-type">number</span></dt>
+        <dd> transition time.</dd>
+    </dl>
 
     <h3>Parameters</h3>
 

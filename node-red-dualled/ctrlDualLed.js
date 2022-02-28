@@ -11,8 +11,7 @@ module.exports = function(RED) {
         const transition_long  = Number( config.transition_long  );
 
         node.on('input', function(msg,send,done) {
-            let data = context.get( "data" ) ?? {};
-            let item = data[msg.topic] ?? { turn:"off", temp:4000, brightness:100 };
+            let item = context.get( msg.topic ) ?? { turn:"off", temp:4000, brightness:100 };
             let transition;
             switch( typeof msg.payload )
             {
@@ -33,7 +32,7 @@ module.exports = function(RED) {
                     item.turn = msg.payload ? "on" : "off";
                     transition = transition_short;
                     break;
-                /*
+                /* not usefull with topic as LED name
                 case "number":
                     switch( msg.topic )
                     {
@@ -59,8 +58,7 @@ module.exports = function(RED) {
                     transition = transition_long;
                     break;
             }
-            data[msg.topic] = item;
-            context.set( "data", data );
+            context.set( msg.topic, item );
 
             const x_warm = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
             const x_cold = item.brightness - x_warm;

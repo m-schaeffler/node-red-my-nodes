@@ -44,9 +44,64 @@
 </script>
 
 <script type="text/html" data-help-name="feedbackDualLed">
-    <p></p>
+    <p>This node converts brightness values of two individually controlled leds into a brightness / temp tuple.</p>
 
     <h3>Input</h3>
+    <p>All input values are organized in objects with the parameters <code>iWarm</code> and <code>iCold</code> as indexes.</p>
+    
+    <dl class="message-properties">
+        <dt>payload.output[iWarm] <span class="property-type">string</span></dt>
+        <dd> state of warm led.</dd>
+        <dt>payload.output[iCold] <span class="property-type">string</span></dt>
+        <dd> state of cold led.</dd>
+        <dt>payload.brightness[iWarm] <span class="property-type">number</span></dt>
+        <dd> brightness of warm led.</dd>
+        <dt>payload.brightness[iCold] <span class="property-type">number</span></dt>
+        <dd> brightness of cold led.</dd>
+        <dt>payload.power[iWarm] <span class="property-type">number</span></dt>
+        <dd> power of warm led.</dd>
+        <dt>payload.power[iCold] <span class="property-type">number</span></dt>
+        <dd> power of cold led.</dd>
+        <dt>payload.energy[iWarm] <span class="property-type">number</span></dt>
+        <dd> total energy of warm led.</dd>
+        <dt>payload.energy[iCold] <span class="property-type">number</span></dt>
+        <dd> total energy of cold led.</dd>
+    </dl>
+
+    <pre>{
+    "output":{
+        "Warm":"off",
+        "Cold":"off"
+    },
+    "brightness":{
+        "Warm":42,
+        "Cold":38
+    },
+    "power":{
+        "Warm":0,
+        "Cold":0
+    },
+    "energy":{
+        "Warm":45.56666666666667,
+        "Cold":9.8
+    }
+}</pre>
+
+    <h3>Output</h3>
+    <p>All values of the msg (incl. <code>topic</code>) are preserved, only this vales are chaged in the payload.</p>
+    
+    <dl class="message-properties">
+        <dt>payload.output <span class="property-type">string</span></dt>
+        <dd> <code>output</code> of warm led.</dd>
+        <dt>payload.brightness <span class="property-type">number</span></dt>
+        <dd> summed brightness.</dd>
+        <dt>payload.temp <span class="property-type">number</span></dt>
+        <dd> interpolated color temperature.</dd>
+        <dt>payload.power <span class="property-type">number</span></dt>
+        <dd> summed power of both leds.</dd>
+        <dt>payload.energy <span class="property-type">number</span></dt>
+        <dd> summed energy of both leds.</dd>
+    </dl>
 
     <h3>Parameters</h3>
 

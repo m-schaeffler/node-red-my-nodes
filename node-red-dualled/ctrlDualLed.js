@@ -23,7 +23,7 @@ module.exports = function(RED) {
                             item.turn = msg.payload;
                             break;
                         case "toggle":
-                            item.turn = data.turn=="on" ? "off" : "on";
+                            item.turn = item.turn=="on" ? "off" : "on";
                             break;
                     }
                     transition = transition_short;

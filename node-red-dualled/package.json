@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-dualled",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "control dual (CCT) LEDs.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-dualled",

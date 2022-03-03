@@ -1,0 +1,40 @@
+<script type="text/javascript">
+    RED.nodes.registerType('confDualLed',{
+        category: 'config',
+        defaults: {
+            name: {value:""},
+            temp_warm:{value:"2200", required:true, validate:RED.validators.number()},
+            temp_cold:{value:"6800", required:true, validate:RED.validators.number()}
+        },
+        label: function() {
+            return this.name || "confDualLed";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="confDualLed">
+    <div class="form-row">
+        <label for="node-config-input-name">Name</label>
+        <input type="text" id="node-config-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-temp_warm"><i class="fa fa-thermometer-full"></i> Temp_warm</label>
+        <input type="text" id="node-input-temp_warm" placeholder="temp_warm">
+    </div>
+    <div class="form-row">
+        <label for="node-input-temp_cold"><i class="fa fa-thermometer-empty"></i> Temp_cold</label>
+        <input type="text" id="node-input-temp_cold" placeholder="temp_cold">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="confDualLed">
+    <p>.</p>
+
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>Temp_warm <span class="property-type">number</span></dt>
+        <dd> .</dd>
+        <dt>Temp_cold <span class="property-type">number</span></dt>
+        <dd> .</dd>
+    </dl>
+</script>

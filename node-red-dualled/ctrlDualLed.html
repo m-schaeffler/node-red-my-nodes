@@ -4,6 +4,7 @@
         color: "#ECECEC",
         defaults: {
             name:{value:""},
+            dualLed: {value:"", type:"confDualLed", required:true},
             temp_warm:{value:"2200", required:true, validate:RED.validators.number()},
             temp_cold:{value:"6800", required:true, validate:RED.validators.number()},
             transition_short:{value:"1000", required:true, validate:RED.validators.number()},
@@ -24,6 +25,10 @@
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-dualLed"><i class="fa fa-lightbulb-o"></i> dual LED</label>
+        <input type="text" id="node-input-dualLed">
     </div>
     <div class="form-row">
         <label for="node-input-temp_warm"><i class="fa fa-thermometer-full"></i> Temperature Warm</label>

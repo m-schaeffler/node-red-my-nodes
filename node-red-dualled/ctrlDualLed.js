@@ -5,13 +5,14 @@ module.exports = function(RED) {
         //this.config = config;
         var node = this;
         var context = this.context();
-        const temp_warm = Number( config.temp_warm );
-        const temp_cold = Number( config.temp_cold );
+        const dualLed   = RED.nodes.getNode( config.dualLed );
+        const temp_warm = Number( dualLed.temp_warm );
+        const temp_cold = Number( dualLed.temp_cold );
         const transition_short = Number( config.transition_short );
         const transition_long  = Number( config.transition_long  );
 
         node.on('input', function(msg,send,done) {
-            let item = context.get( msg.topic ) ?? { turn:"off", temp:4000, brightness:100 };
+            let item = context.get( msg.topic ) ?? {};
             let transition;
             switch( typeof msg.payload )
             {
@@ -60,16 +61,19 @@ module.exports = function(RED) {
             }
             context.set( msg.topic, item );
 
-            const x_warm = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
-            const x_cold = item.brightness - x_warm;
+            if( "turn" in item && "brightness" in item && "temp" in item )
+            {
+                const x_warm = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
+                const x_cold = item.brightness - x_warm;
 
-            let warmMsg = msg;
-            let coldMsg = RED.util.cloneMessage( msg );
-            warmMsg.payload = { turn:item.turn, brightness:x_warm, transition:transition };
-            coldMsg.payload = { turn:item.turn, brightness:x_cold, transition:transition };
+                let warmMsg = msg;
+                let coldMsg = RED.util.cloneMessage( msg );
+                warmMsg.payload = { turn:item.turn, brightness:x_warm, transition:transition };
+                coldMsg.payload = { turn:item.turn, brightness:x_cold, transition:transition };
 
-            node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: x_warm+" / "+x_cold });
-            send( [ warmMsg, coldMsg ] );
+                node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: x_warm+" / "+x_cold });
+                send( [ warmMsg, coldMsg ] );
+            }
             done();
         });
     }

@@ -1,4 +1,5 @@
 module.exports = function(RED) {
+    var tools = require('./tools.js');
 
     function OrNode(config) {
         RED.nodes.createNode(this,config);

@@ -8,12 +8,10 @@ module.exports = function(RED) {
         const dualLed   = RED.nodes.getNode( config.dualLed );
         const temp_warm = Number( dualLed.temp_warm );
         const temp_cold = Number( dualLed.temp_cold );
-        const transition_short = Number( config.transition_short );
-        const transition_long  = Number( config.transition_long  );
 
         node.on('input', function(msg,send,done) {
             let item = context.get( msg.topic ) ?? {};
-            let transition;
+            const transition = msg.transsition;
             switch( typeof msg.payload )
             {
                 case "string":
@@ -27,11 +25,9 @@ module.exports = function(RED) {
                             item.turn = item.turn=="on" ? "off" : "on";
                             break;
                     }
-                    transition = transition_short;
                     break;
                 case "boolean":
                     item.turn = msg.payload ? "on" : "off";
-                    transition = transition_short;
                     break;
                 /* not usefull with topic as LED name
                 case "number":
@@ -44,7 +40,6 @@ module.exports = function(RED) {
                             item.brightness = msg.payload;
                             break;
                     }
-                    transition = transition_long;
                     break;
                 */
                 case "object":
@@ -56,7 +51,6 @@ module.exports = function(RED) {
                     {
                         item.brightness = msg.payload.brightness;
                     }
-                    transition = transition_long;
                     break;
             }
             context.set( msg.topic, item );

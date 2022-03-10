@@ -16,5 +16,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("bool",BoolNode);
+    RED.nodes.registerType("tobool",BoolNode);
 }

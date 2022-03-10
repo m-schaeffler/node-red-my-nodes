@@ -19,7 +19,7 @@
     "nodes": {
       "or":"logic_or.js",
       "and":"logic_and.js",
-      "bool":"logic_bool.js",
+      "tobool":"logic_bool.js",
       "plus":"math_plus.js"
     }
   },

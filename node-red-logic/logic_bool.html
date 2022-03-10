@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('bool',{
+    RED.nodes.registerType('tobool',{
         category: 'function',
         color: "#C0DEED",
         defaults: {
@@ -10,8 +10,9 @@
         outputs:1,
         icon: "font-awesome/fa-check-square-o",
         label: function() {
-            return this.name||"bool";
+            return this.name||"to bool";
         },
+        paletteLabel: "to bool",
         inputLabels: 'input',
         outputLabels: 'boolean',
         oneditprepare: function() {
@@ -24,7 +25,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="bool">
+<script type="text/html" data-template-name="tobool">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -36,7 +37,7 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="bool">
+<script type="text/html" data-help-name="tobool">
     
     <p>.</p>
 

@@ -11,7 +11,7 @@ module.exports = function(RED) {
 
         node.on('input', function(msg,send,done) {
             let item = context.get( msg.topic ) ?? {};
-            const transition = msg.transsition;
+            const transition = msg.transsition ?? 100;
             switch( typeof msg.payload )
             {
                 case "string":
@@ -43,6 +43,10 @@ module.exports = function(RED) {
                     break;
                 */
                 case "object":
+                    if( "turn" in msg.payload )
+                    {
+                        item.turn = msg.payload.turn;
+                    }
                     if( "temp" in msg.payload )
                     {
                         item.temp = msg.payload.temp;

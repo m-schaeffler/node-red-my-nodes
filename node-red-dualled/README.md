@@ -118,6 +118,15 @@ All values of the msg (incl. `topic`) are preserved, only this vales are chaged 
 
 ### confDualLed
 
+This configuration node stores data about a dual white LED.
+
+#### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+| Temp_warm | number | Color temperature of the warm white LED.|
+| Temp_cold | number | Color temperature of the cold white LED.|
+
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-dualled/examples/dual.json)

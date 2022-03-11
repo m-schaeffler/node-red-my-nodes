@@ -1,5 +1,6 @@
  Editor Backups
 *~
+*.bak
 
 # Dependency directories
 node_modules/

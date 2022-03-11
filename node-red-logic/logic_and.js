@@ -7,6 +7,7 @@ module.exports = function(RED) {
         var node = this;
         var context = this.context();
         this.property = config.property || "payload";
+        this.minData  = Number( config.minData );
 
         node.on('input', function(msg,send,done) {
             const payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
@@ -16,17 +17,26 @@ module.exports = function(RED) {
             context.set( "data", data );
 
             msg.payload = true;
+            let count   = 0;
             for( const item in data )
             {
+                count++;
                 if( ! data[item] )
                 {
                     msg.payload = false;
-                    break;
                 }
             }
 
-            node.status( msg.payload );
-            send( msg );
+            if( count >= node.minData )
+            {
+                node.status( msg.payload );
+                send( msg );
+            }
+            else
+            {
+                node.status( "waiting for data" );
+            }
+
             done();
         });
     }

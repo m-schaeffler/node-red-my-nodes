@@ -4,7 +4,8 @@
         color: "#C0DEED",
         defaults: {
             name:{value:""},
-            property:{value:"payload",required:true}
+            property:{value:"payload",required:true},
+            minData:{value:"1",validate:RED.validators.number(),required:true}
         },
         inputs:1,
         outputs:1,
@@ -33,6 +34,10 @@
         <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
         <input type="text" id="node-input-property">
         <input type="hidden" id="node-input-property-type">
+    </div>
+    <div class="form-row">
+        <label for="node-input-minData"><i class="fa fa-tag"></i> min. Data</label>
+        <input type="text" id="node-input-minData">
     </div>
 </script>
 

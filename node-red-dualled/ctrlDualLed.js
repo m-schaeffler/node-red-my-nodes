@@ -62,18 +62,17 @@ module.exports = function(RED) {
             let warmMsg = msg;
 			warmMsg.payload = { transition:transition };
             if( "turn" in item )
-			{
-				warmMsg.payload.turn = item.turn;
-			}
+            {
+                warmMsg.payload.turn = item.turn;
+            }
             let coldMsg = RED.util.cloneMessage( warmMsg );
-			if( "brightness" in item && "temp" in item )
+            if( "brightness" in item && "temp" in item )
             {
                 warmMsg.payload.brightness = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
-				coldMsg.payload.brightness = item.brightness - warmMsg.payload.brightness;
-			}
+                coldMsg.payload.brightness = item.brightness - warmMsg.payload.brightness;
+            }
 
             node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: warmMsg.payload.brightness+" / "+coldMsg.payload.brightness });
-            
             send( [ warmMsg, coldMsg ] );
             done();
         });

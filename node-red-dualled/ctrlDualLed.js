@@ -11,7 +11,7 @@ module.exports = function(RED) {
 
         node.on('input', function(msg,send,done) {
             let item = context.get( msg.topic ) ?? {};
-            const transition = msg.transsition ?? 100;
+            const transsition = msg.payload.transsition ?? 100;
             switch( typeof msg.payload )
             {
                 case "string":
@@ -59,19 +59,22 @@ module.exports = function(RED) {
             }
             context.set( msg.topic, item );
 
-            if( "turn" in item && "brightness" in item && "temp" in item )
+            let warmMsg = msg;
+			warmMsg.payload = { transsition:transsition };
+            if( "turn" in item )
+			{
+				warmMsg.payload.turn = item.turn;
+			}
+            let coldMsg = RED.util.cloneMessage( warmMsg );
+			if( "brightness" in item && "temp" in item )
             {
-                const x_warm = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
-                const x_cold = item.brightness - x_warm;
+                warmMsg.payload.brightness = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
+				coldMsg.payload.brightness = item.brightness - warmMsg.payload.brightness;
+			}
 
-                let warmMsg = msg;
-                let coldMsg = RED.util.cloneMessage( msg );
-                warmMsg.payload = { turn:item.turn, brightness:x_warm, transition:transition };
-                coldMsg.payload = { turn:item.turn, brightness:x_cold, transition:transition };
-
-                node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: x_warm+" / "+x_cold });
-                send( [ warmMsg, coldMsg ] );
-            }
+            node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: warmMsg.payload.brightness+" / "+coldMsg.payload.brightness });
+            
+            send( [ warmMsg, coldMsg ] );
             done();
         });
     }

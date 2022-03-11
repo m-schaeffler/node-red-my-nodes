@@ -28,7 +28,7 @@ All inputs are stored in a node local context variable, to always output a compl
 |:-------|:-------|:----------------------------------|
 |payload | string | `on`, `off`, `toggle`             |
 |        | boolean| switch on or off.                 |
-|        | object | set `temp` or `brightness` according to `key`.|
+|        | object | set `turn`, `temp`, `brightness` or `transsition` according to `key`.|
 
 #### Output
 
@@ -54,8 +54,7 @@ All values of the msg (incl. `topic`) are preserved, except the payload.
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
-|  | string | .     |
-|    | string | .|
+| dual Led |`confDualLed`| configuration node to define one pair of dual LEDs.|
 
 ### feedbackDualLed
 
@@ -113,8 +112,11 @@ All values of the msg (incl. `topic`) are preserved, only this vales are chaged 
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
-|  | string | .     |
-|    | string | .|
+| dual Led |`confDualLed`| configuration node to define one pair of dual LEDs.|
+| Index Warm | string | Index to the payload properties for the warm led.|
+| Index Cold | string | Index to the payload properties for the cold led.|
+
+### confDualLed
 
 ## Example Flow
 

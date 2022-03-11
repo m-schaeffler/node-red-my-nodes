@@ -31,7 +31,7 @@
 <script type="text/html" data-help-name="ctrlDualLed">
     
     <p>This node drives the dual led by calculating the individual brightness values. 
-    It works on base of `topic`s so that with each different `topic` another led can be controlled.</p>
+    It works on base of <code>topic</code>s so that with each different <code>topic</code> another led can be controlled.</p>
 
     <h3>Input</h3>
     All inputs are stored in a node local context variable, to always output a complete data set.
@@ -42,12 +42,12 @@
         <dt> <span class="property-type">boolean</span></dt>
         <dd> switch on or off.</dd>
         <dt> <span class="property-type">object</span></dt>
-        <dd> set `temp` or `brightness` according to `key`.</dd>
+        <dd> set <code>turn</code>, <code>temp</code>, <code>brightness</code> or <code>transsition</code> according to <code>key</code>.</dd>
     </dl>
 
     <h3>Outputs</h3>
     
-    <p>All values of the msg (incl. `topic`) are preserved, except the payload.</p>
+    <p>All values of the msg (incl. <code>topic</code>) are preserved, except the payload.</p>
     
     <h4>control warm LED</h4>
 
@@ -71,5 +71,10 @@
     </dl>
 
     <h3>Parameters</h3>
+	
+    <dl class="message-properties">
+        <dt>dual Led <span class="property-type">confDualLed</span></dt>
+        <dd> configuration node to define one pair of dual LEDs.</dd>
+    </dl>
 
 </script>

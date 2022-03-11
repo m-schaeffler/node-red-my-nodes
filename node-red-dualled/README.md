@@ -28,7 +28,7 @@ All inputs are stored in a node local context variable, to always output a compl
 |:-------|:-------|:----------------------------------|
 |payload | string | `on`, `off`, `toggle`             |
 |        | boolean| switch on or off.                 |
-|        | object | set `turn`, `temp`, `brightness` or `transsition` according to `key`.|
+|        | object | set `turn`, `temp`, `brightness` or `transition` according to `key`.|
 
 #### Output
 

@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-logic",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "nodes for simple mathematical operations.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-logic",
@@ -21,7 +21,8 @@
       "and":"logic_and.js",
       "tobool":"logic_bool.js",
       "counter":"counter.js",
-      "plus":"math_plus.js"
+      "plus":"math_plus.js",
+      "reduce":"math_reduce.js"
     }
   },
   "author": {

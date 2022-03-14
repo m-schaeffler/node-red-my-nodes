@@ -29,6 +29,7 @@ module.exports = function(RED) {
 
             if( count >= node.minData )
             {
+                msg.count = count;
                 node.status( msg.payload );
                 send( msg );
             }

@@ -1,0 +1,87 @@
+<script type="text/javascript">
+    RED.nodes.registerType('reduce',{
+        category: 'function',
+        color: "#C0DEED",
+        defaults: {
+            name:{value:""},
+            property:{value:"payload",required:true},
+            minMean:{value:"1",validate:RED.validators.number(),required:true},
+            maxMean:{value:"1",validate:RED.validators.number(),required:true},
+            minData:{value:"1",validate:RED.validators.number(),required:true},
+            algo:{value:"",required:true}
+        },
+        inputs:1,
+        outputs:1,
+        icon: function() {
+            switch( this.algo )
+            {
+                case "add":  return "font-awesome/fa-plus";
+                case "mean": return "font-awesome/fa-indent";
+                case "prod": return "font-awesome/fa-asterisk";
+                case "min":  return "font-awesome/fa-sort-numeric-desc";
+                case "max":  return "font-awesome/fa-sort-numeric-asc";
+                default:     return "font-awesome/fa-question";
+            }
+        },
+        label: function() {
+            return this.name||this.algo||"reduce";
+        },
+        inputLabels: 'input',
+        outputLabels: 'output',
+        oneditprepare: function() {
+            $("#node-input-property").typedInput({
+                type:"msg",
+                types:["msg"],
+                typeField: "#node-input-property-type"
+            });
+            $("#node-input-algo").typedInput({
+                types:[{
+                    value:"algo",
+                    options: [
+                        { value: "add", label: "Addition"},
+                        { value: "mean", label: "Mean Value"},
+                        { value: "prod", label: "Product"},
+                        { value: "min", label: "Minimum" },
+                        { value: "max", label: "Maximum" }
+                    ]
+                }]
+            })
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="reduce">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
+        <input type="text" id="node-input-property">
+        <input type="hidden" id="node-input-property-type">
+    </div>
+    <div class="form-row">
+       <label for="node-input-minMean"><i class="fa fa-hourglass-o"></i> min. Mean</label>
+       <input type="text" id="node-input-minMean">
+    </div>
+    <div class="form-row">
+       <label for="node-input-maxMean"><i class="fa fa-hourglass"></i> max. Mean</label>
+       <input type="text" id="node-input-maxMean">
+    </div>
+    <div class="form-row">
+        <label for="node-input-minData"><i class="fa fa-check-square-o "></i> min. Data</label>
+        <input type="text" id="node-input-minData">
+    </div>
+    <div class="form-row">
+        <label for="node-input-algo"><i class="fa fa-flask"></i> Algorithm</label>
+        <input type="text" id="node-input-algo">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="reduce">
+    
+    <p>.</p>
+
+    <h3>Input</h3>
+
+</script>

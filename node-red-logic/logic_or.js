@@ -17,19 +17,18 @@ module.exports = function(RED) {
             context.set( "data", data );
 
             msg.payload = false;
-            let count   = 0;
+            msg.count   = 0;
             for( const item in data )
             {
-                count++;
+                msg.count++;
                 if( data[item] )
                 {
                     msg.payload = true;
                 }
             }
 
-            if( count >= node.minData )
+            if( msg.count >= node.minData )
             {
-                msg.count = count;
                 node.status( msg.payload );
                 send( msg );
             }

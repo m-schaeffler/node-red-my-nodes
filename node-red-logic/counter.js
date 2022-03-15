@@ -7,20 +7,18 @@ module.exports = function(RED) {
         var context = this.context();
 
         node.on('input', function(msg,send,done) {
-            let data = context.get( "data" ) ?? 0;
+            msg.count = context.get( "count" ) ?? 0;
             if( msg.reset || msg.topic==="init" )
             {
-                data = 0;
+                msg.count = 0;
             }
             else
             {
-                data++;
+                msg.count++;
             }
-            context.set( "data", data );
+            context.set( "count", msg.count );
 
-            msg.count = data;
-
-            node.status( data );
+            node.status( msg.count );
             send( msg );
             done();
         });

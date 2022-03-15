@@ -28,19 +28,21 @@ module.exports = function(RED) {
                     item.push( payload )
                     data[msg.topic] = item;
 
-                    let count = 0;
+                    msg.count = 0;
                     switch( node.algo )
                     {
+                        case "add":
+                        case "mean": msg.payload = 0; break;
                         case "prod": msg.payload = 1; break;
                         case "min":  msg.payload = Number.MAX_SAFE_INTEGER; break;
                         case "max":  msg.payload = Number.MIN_SAFE_INTEGER; break;
-                        default:     msg.payload = 0;
+                        default:     done( "invalid algo: "+node.algo ); return;
                     }
                     for( const key in data )
                     {
                         if( data[key].length >= node.minMean )
                         {
-                            count++;
+                            msg.count++;
                             while( data[key].length > node.maxMean )
                             {
                                 data[key].shift();
@@ -58,13 +60,12 @@ module.exports = function(RED) {
                     }
                     context.set( "data", data );
 
-                    if( count >= node.minData )
+                    if( msg.count >= node.minData )
                     {
                         switch( node.algo )
                         {
-                            case "mean": msg.payload /= count; break;
+                            case "mean": msg.payload /= msg.count; break;
                         }
-                        msg.count = count;
                         node.status({fill:"green",shape:"dot",text:msg.payload});
                         send( msg );
                     }
@@ -76,7 +77,8 @@ module.exports = function(RED) {
                 else
                 {
                     node.status({fill:"red",shape:"dot",text:"payload is NaN"});
-                    node.error( "payload is NaN: "+msg.payload );
+                    done( "payload is NaN: "+msg.payload );
+                    return;
                 }
             }
             done();

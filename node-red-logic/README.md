@@ -12,7 +12,41 @@ $ npm install @mschaeffler/node-red-logic
 
 ## Usage
 
-.
+### bool
+
+Converts payload to a bool value:
+|type|value|is converted to|
+|:---|:----|:--------------|
+|bool|false|false|
+||true|true|
+|number|0|false|
+||1|true|
+|string|false|false|
+||0|false|
+||off|false|
+||true|true|
+||1|true|
+||on|true|
+
+#### Input
+
+The message property to be used as payload can be defined with the `Property` property.
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | | input value.          |
+
+#### Output
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | boolean | bool value of payload.|
+
+#### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
 
 ### or
 

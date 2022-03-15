@@ -21,7 +21,6 @@
       "and":"logic_and.js",
       "tobool":"logic_bool.js",
       "counter":"counter.js",
-      "plus":"math_plus.js",
       "reduce":"math_reduce.js"
     }
   },

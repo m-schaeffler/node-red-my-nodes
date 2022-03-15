@@ -4,11 +4,13 @@ My personal Nodes and some small usefull utility functions for Node-Red.
 
 ## Usage
 
-The node red nodes are released in this NPM packages:
+The node red node packages are released in this repository:
 
-- node-red-contrib-nop
+- node-red-contrib-nooperation
 - node-red-contrib-sendmail
-- node-red-contrib-lora
+- @mschaeffler/node-red-lora
+- @mschaeffler/node-red-dualled
+- @mschaeffler/node-red-logic
 
 ## License
 

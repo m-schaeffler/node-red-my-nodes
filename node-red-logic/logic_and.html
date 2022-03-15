@@ -4,8 +4,10 @@
         color: "#C0DEED",
         defaults: {
             name:{value:""},
-            property:{value:"payload",required:true},
-            minData:{value:"1",validate:RED.validators.number(),required:true}
+            property:{value:"payload", required:true},
+            minData:{value:"1", required:true, validate:function(v){
+                return v!=='' && !isNaN(v) && Number(v)>0;
+            }}
         },
         inputs:1,
         outputs:1,

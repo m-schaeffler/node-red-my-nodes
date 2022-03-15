@@ -1,27 +1,26 @@
 module.exports = function(RED) {
-    var tools = require('./tools.js');
 
-    function BoolNode(config) {
+    function NumberNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
         this.property = config.property || "payload";
 
         node.on('input', function(msg,send,done) {
-            msg.payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
+            msg.payload = Number( RED.util.getMessageProperty( msg, node.property ) );
 
-            if( msg.payload !== null )
+            if( ! isNaN( msg.payload ) )
             {
                 node.status( msg.payload );
                 send( msg );
             }
             else
             {
-                node.status( "error" );
+                node.status( "not a Number" );
             }
             done();
         });
     }
 
-    RED.nodes.registerType("tobool",BoolNode);
+    RED.nodes.registerType("tonumber",NumberNode);
 }

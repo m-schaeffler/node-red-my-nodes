@@ -12,29 +12,32 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             const payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
 
-            let data = context.get( "data" ) ?? {};
-            data[msg.topic] = payload;
-            context.set( "data", data );
-
-            msg.payload = false;
-            msg.count   = 0;
-            for( const item in data )
+            if( payload !== null )
             {
-                msg.count++;
-                if( data[item] )
+                let data = context.get( "data" ) ?? {};
+                data[msg.topic] = payload;
+                context.set( "data", data );
+
+                msg.payload = false;
+                msg.count   = 0;
+                for( const item in data )
                 {
-                    msg.payload = true;
+                    msg.count++;
+                    if( data[item] )
+                    {
+                        msg.payload = true;
+                    }
                 }
-            }
 
-            if( msg.count >= node.minData )
-            {
-                node.status( msg.payload );
-                send( msg );
-            }
-            else
-            {
-                node.status( "waiting for data" );
+                if( msg.count >= node.minData )
+                {
+                     node.status( msg.payload );
+                     send( msg );
+                }
+                else
+                {
+                    node.status( "waiting for data" );
+                }
             }
 
             done();

@@ -12,8 +12,6 @@ module.exports = function(RED) {
         this.algo     = config.algo;
 
         node.on('input', function(msg,send,done) {
-            const payload = Number( RED.util.getMessageProperty( msg, node.property ) );
-
             if( msg.reset || msg.topic==="init" )
             {
                 context.set( "data", {} );
@@ -21,6 +19,7 @@ module.exports = function(RED) {
             }
             else
             {
+                const payload = Number( RED.util.getMessageProperty( msg, node.property ) );
                 if( ! isNaN( payload ) )
                 {
                     let data = context.get( "data" ) ?? {};
@@ -77,8 +76,6 @@ module.exports = function(RED) {
                 else
                 {
                     node.status({fill:"red",shape:"dot",text:"payload is NaN"});
-                    done( "payload is NaN: "+msg.payload );
-                    return;
                 }
             }
             done();

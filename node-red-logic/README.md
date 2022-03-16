@@ -12,9 +12,10 @@ $ npm install @mschaeffler/node-red-logic
 
 ## Usage
 
-### bool
+### to bool
 
 Converts payload to a bool value:
+
 |type|value|is converted to|
 |:---|:----|:--------------|
 |bool|false|false|
@@ -84,6 +85,30 @@ The message property to be used as payload can be defined with the `Property` pr
 #### Output
 
 #### Parameters
+
+### to number
+
+Converts payload to a number.
+
+#### Input
+
+The message property to be used as payload can be defined with the `Property` property.
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | | input value.          |
+
+#### Output
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | number | number value of payload.|
+
+#### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
 
 ## Example Flow
 

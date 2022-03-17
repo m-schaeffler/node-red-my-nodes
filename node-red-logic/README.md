@@ -12,6 +12,16 @@ $ npm install @mschaeffler/node-red-logic
 
 ## Usage
 
+### counter
+
+A node that just count the messages.
+
+#### Output
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|count | number | number of messages.|
+
 ### to bool
 
 Converts payload to a bool value:
@@ -51,40 +61,63 @@ The message property to be used as payload can be defined with the `Property` pr
 
 ### or
 
-.
+Combines two or more boolean vales with the `or` operator.
+
+The input values are converted as described in the `to bool` node.
 
 #### Input
 
-.
+The different inputs are differentiated by topics.
+
+The message property to be used as payload can be defined with the `Property` property.
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic   | string | .|
+|topic   | string | name of the input channel.        |
 |payload | boolean| input value for `topic`.          |
 
 #### Output
 
-.
-
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | boolean | result of `or` of all input topics.|
+|count | number | number of data elements.|
 
 #### Parameters
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
-|  | string | .     |
+|Property| string | defines the message property to be used as payload.|
 
 ### and
 
-.
+Combines two or more boolean vales with the `and` operator.
+
+The input values are converted as described in the `to bool` node.
 
 #### Input
 
+The different inputs are differentiated by topics.
+
+The message property to be used as payload can be defined with the `Property` property.
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | name of the input channel.        |
+|payload | boolean| input value for `topic`.          |
+
 #### Output
 
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | boolean | result of `and` of all input topics.|
+|count | number | number of data elements.|
+
 #### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
 
 ### to number
 

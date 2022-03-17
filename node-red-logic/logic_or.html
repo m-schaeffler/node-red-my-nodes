@@ -45,22 +45,28 @@
 
 <script type="text/html" data-help-name="or">
     
-    <p>.</p>
+    <p>.Combines two or more boolean vales with the <code>or</code> operator.</p>
+    <p>The input values are converted as described in the <code>to bool</code> node.</p>
 
     <h3>Input</h3>
     
+    <p>The different inputs are differentiated by topics.</p>
     <p>The message property to be used as payload can be defined with the <code>Property</code> property.</p>
     
     <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> name of the input channel.</dd>
         <dt>payload <span class="property-type">boolean</span></dt>
-        <dd> input value.</dd>
+        <dd> input value for <code>topic</code>.</dd>
     </dl>
     
     <h3>Output</h3>
     
     <dl class="message-properties">
         <dt>payload <span class="property-type">boolean</span></dt>
-        <dd> bool value of payload.</dd>
+        <dd> result of <code>or</code> of all input topics.</dd>
+        <dt>count <span class="property-type">number</span></dt>
+        <dd> number of data elements.</dd>
     </dl>
     
     <h3>Parameter</h3>

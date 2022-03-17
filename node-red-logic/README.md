@@ -88,6 +88,7 @@ The message property to be used as payload can be defined with the `Property` pr
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
+|min. Data|number|min. amount of topics to generate an output.|
 
 ### and
 
@@ -118,6 +119,7 @@ The message property to be used as payload can be defined with the `Property` pr
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
+|min. Data|number|min. amount of topics to generate an output.|
 
 ### to number
 
@@ -142,6 +144,42 @@ The message property to be used as payload can be defined with the `Property` pr
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
+
+### reduce
+
+Combines two or more streams of data (topics) into one single value.
+
+Each stream can be debounced by arithmatic mean.
+
+#### Input
+
+The different inputs are differentiated by topics.
+
+The message property to be used as payload can be defined with the `Property` property.
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | name of the input channel.        |
+|payload | number | input value for `topic`.          |
+
+#### Output
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | number | result of combining of all input topics.|
+|count   | number | number of data elements.|
+
+#### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
+|min. Mean|number|min. amount of values for the arithmatic mean of one topic.|
+|max. Mean|number|max. amount of values for the arithmatic mean of one topic.|
+|min. Data|number|min. amount of topics to generate an output.|
+|Algorithm|string|algorithm to combine the values.|
+
+#### Algorithms
 
 ## Example Flow
 

@@ -5,6 +5,7 @@ module.exports = function(RED) {
         //this.config = config;
         var node = this;
         var context = this.context();
+        this.topic    = config.topic;
         this.property = config.property || "payload";
         this.minMean  = Number( config.minMean );
         this.maxMean  = Number( config.maxMean );
@@ -27,6 +28,7 @@ module.exports = function(RED) {
                     item.push( payload )
                     data[msg.topic] = item;
 
+                    msg.topic = node.topic;
                     msg.count = 0;
                     switch( node.algo )
                     {

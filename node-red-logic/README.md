@@ -87,6 +87,7 @@ The message property to be used as payload can be defined with the `Property` pr
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
+|Topic | string | defines the topic for the output message.|
 |Property| string | defines the message property to be used as payload.|
 |min. Data|number|min. amount of topics to generate an output.|
 
@@ -118,6 +119,7 @@ The message property to be used as payload can be defined with the `Property` pr
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
+|Topic | string | defines the topic for the output message.|
 |Property| string | defines the message property to be used as payload.|
 |min. Data|number|min. amount of topics to generate an output.|
 
@@ -173,6 +175,7 @@ The message property to be used as payload can be defined with the `Property` pr
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
+|Topic | string | defines the topic for the output message.|
 |Property| string | defines the message property to be used as payload.|
 |min. Mean|number|min. amount of values for the arithmatic mean of one topic.|
 |max. Mean|number|max. amount of values for the arithmatic mean of one topic.|

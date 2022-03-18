@@ -4,6 +4,7 @@
         color: "#C0DEED",
         defaults: {
             name:{value:""},
+            topic:{value:""},
             property:{value:"payload", required:true},
             minData:{value:"1", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;
@@ -13,7 +14,7 @@
         outputs:1,
         icon: "font-awesome/fa-chevron-down",
         label: function() {
-            return this.name||"or";
+            return this.name||this.topic||"or";
         },
         inputLabels: 'input',
         outputLabels: 'or',
@@ -31,6 +32,10 @@
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-envelope-o"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
     </div>
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
@@ -72,6 +77,8 @@
     <h3>Parameter</h3>
 
     <dl class="message-properties">
+        <dt>Topic <span class="property-type">string</span></dt>
+        <dd> defines the topic for the output message.</dd>
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
         <dt>min. Data <span class="property-type">number</span></dt>

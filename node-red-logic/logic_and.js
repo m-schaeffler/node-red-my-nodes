@@ -6,6 +6,7 @@ module.exports = function(RED) {
         //this.config = config;
         var node = this;
         var context = this.context();
+        this.topic    = config.topic;
         this.property = config.property || "payload";
         this.minData  = Number( config.minData );
 
@@ -18,6 +19,7 @@ module.exports = function(RED) {
                 data[msg.topic] = payload;
                 context.set( "data", data );
 
+                msg.topic = node.topic;
                 msg.payload = true;
                 msg.count   = 0;
                 for( const item in data )

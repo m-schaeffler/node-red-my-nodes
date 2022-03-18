@@ -10,70 +10,66 @@ module.exports = function(RED) {
         const temp_cold = Number( dualLed.temp_cold );
 
         node.on('input', function(msg,send,done) {
-            let item = context.get( msg.topic ) ?? {};
-            const transition = msg.payload.transition ?? 100;
+
+            function setItem(key,value)
+            {
+                if( value !== undefined && item[key] !== value )
+                {
+                    item[key] = value;
+                    changed   = true;
+                }
+            }
+
+            let item    = context.get( msg.topic ) ?? {};
+            let changed = false;
             switch( typeof msg.payload )
             {
                 case "string":
                     switch( msg.payload )
                     {
                         case "on":
-                        case "off":
-                            item.turn = msg.payload;
-                            break;
-                        case "toggle":
-                            item.turn = item.turn=="on" ? "off" : "on";
-                            break;
+                        case "off":    setItem( "turn", msg.payload ); break;
+                        case "toggle": setItem( "turn", item.turn=="on" ? "off" : "on" ); break;
                     }
                     break;
                 case "boolean":
-                    item.turn = msg.payload ? "on" : "off";
+                    setItem( "turn", msg.payload ? "on" : "off" );
                     break;
                 /* not usefull with topic as LED name
                 case "number":
                     switch( msg.topic )
                     {
-                        case "temp":
-                            item.temp = msg.payload;
-                            break;
-                        case "brightness":
-                            item.brightness = msg.payload;
-                            break;
+                        case "temp":       setItem( "temp", msg.payload );       break;
+                        case "brightness": setItem( "brightness", msg.payload ); break;
                     }
                     break;
                 */
                 case "object":
-                    if( "turn" in msg.payload )
-                    {
-                        item.turn = msg.payload.turn;
-                    }
-                    if( "temp" in msg.payload )
-                    {
-                        item.temp = msg.payload.temp;
-                    }
-                    if( "brightness" in msg.payload )
-                    {
-                        item.brightness = msg.payload.brightness;
-                    }
+                    setItem( "turn",       msg.payload?.turn );
+                    setItem( "temp",       msg.payload?.temp );
+                    setItem( "brightness", msg.payload?.brightness );
                     break;
             }
             context.set( msg.topic, item );
 
-            let warmMsg = msg;
-			warmMsg.payload = { transition:transition };
-            if( "turn" in item )
+            if( changed )
             {
-                warmMsg.payload.turn = item.turn;
-            }
-            let coldMsg = RED.util.cloneMessage( warmMsg );
-            if( "brightness" in item && "temp" in item )
-            {
-                warmMsg.payload.brightness = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
-                coldMsg.payload.brightness = item.brightness - warmMsg.payload.brightness;
-            }
+                let warmMsg = msg;
+                warmMsg.payload = msg.payload.transition!==undefined ? {transition:msg.payload.transition} : {};
+                if( "turn" in item )
+                {
+                    warmMsg.payload.turn = item.turn;
+                }
+                let coldMsg = RED.util.cloneMessage( warmMsg );
+                if( "brightness" in item && "temp" in item )
+                {
+                    warmMsg.payload.brightness = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
+                    coldMsg.payload.brightness = item.brightness - warmMsg.payload.brightness;
+                }
 
-            node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: warmMsg.payload.brightness+" / "+coldMsg.payload.brightness });
-            send( [ warmMsg, coldMsg ] );
+                node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: warmMsg.payload.brightness+" / "+coldMsg.payload.brightness });
+                send( [ warmMsg, coldMsg ] );
+            }
             done();
         });
     }

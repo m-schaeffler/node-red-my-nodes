@@ -13,7 +13,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             const payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
 
-            if( payload !=== null )
+            if( payload !== null )
             {
                 let data = context.get( "data" ) ?? {};
                 data[msg.topic] = payload;

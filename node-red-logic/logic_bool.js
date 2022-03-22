@@ -6,18 +6,25 @@ module.exports = function(RED) {
         //this.config = config;
         var node = this;
         this.property = config.property || "payload";
+        this.showState = config.showState;
 
         node.on('input', function(msg,send,done) {
             msg.payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
 
             if( msg.payload !== null )
             {
-                node.status( msg.payload );
+                if( node.showState )
+                {
+                    node.status( msg.payload );
+                }
                 send( msg );
             }
             else
             {
-                node.status( "error" );
+                if( node.showState )
+                {
+                    node.status( "error" );
+                }
             }
             done();
         });

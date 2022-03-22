@@ -58,6 +58,7 @@ The message property to be used as payload can be defined with the `Property` pr
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
+|Status|boolean|shows the actual value as a node status.|
 
 ### or
 
@@ -146,6 +147,7 @@ The message property to be used as payload can be defined with the `Property` pr
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
+|Status|boolean|shows the actual value as a node status.|
 
 ### reduce
 

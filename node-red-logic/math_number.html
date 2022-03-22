@@ -4,7 +4,8 @@
         color: "#C0DEED",
         defaults: {
             name:{value:""},
-            property:{value:"payload",required:true}
+            property:{value:"payload",required:true},
+            showState:{value:false}
         },
         inputs:1,
         outputs:1,
@@ -35,6 +36,10 @@
         <input type="text" id="node-input-property">
         <input type="hidden" id="node-input-property-type">
     </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
 </script>
 
 <script type="text/html" data-help-name="tonumber">
@@ -62,6 +67,8 @@
     <dl class="message-properties">
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
     </dl>
     
 </script>

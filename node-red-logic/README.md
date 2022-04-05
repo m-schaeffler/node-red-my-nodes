@@ -186,6 +186,34 @@ The message property to be used as payload can be defined with the `Property` pr
 
 #### Algorithms
 
+
+## fallingEdge
+
+Message is only forwarded, if the payload falls below a threshold value.
+
+Each <code>topic</code> is treated seperatly.
+
+### Input
+
+The message property to be used as payload can be defined with the <code>Property</code> property.
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | name of the input channel.        |
+|payload | number | input value for `topic`.          |
+
+### Output
+
+Trigger message, in case a falling edge is detected.
+
+### Parameter
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
+|Threshold|number|threshold value for the edge detection.|
+|Status|boolean|shows the actual value as a node status.|
+
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/logic.json)
@@ -193,6 +221,11 @@ The message property to be used as payload can be defined with the `Property` pr
 ## Author
 
 [Mathias Schäffler](https://github.com/m-schaeffler)
+
+## Contributors
+
+for `falling edge` and `raising edge`:
+* [Eugene Schava](https://github.com/eschava/node-red-contrib-edge-trigger)
 
 ## License
 

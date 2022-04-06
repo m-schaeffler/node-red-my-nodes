@@ -1,6 +1,6 @@
 module.exports = function(RED) {
 
-    function FallingEdgeNode(config) {
+    function RaisingEdgeNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
@@ -23,8 +23,8 @@ module.exports = function(RED) {
                 if( ! isNaN( msg.payload ) )
                 {
                     let   data = context.get( "data" ) ?? {};
-                    const last = data[msg.topic] ?? Number.MIN_SAFE_INTEGER;
-                    if( msg.payload < this.threshold && this.threshold <= last )
+                    const last = data[msg.topic] ?? Number.MAX_SAFE_INTEGER;
+                    if( msg.payload > this.threshold && this.threshold >= last )
                     {
                         status.fill = "green";
                         send( msg );
@@ -47,5 +47,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("fallingEdge",FallingEdgeNode);
+    RED.nodes.registerType("raisingEdge",RaisingEdgeNode);
 }

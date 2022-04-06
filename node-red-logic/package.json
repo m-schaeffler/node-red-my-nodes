@@ -23,7 +23,7 @@
       "or":"logic_or.js",
       "and":"logic_and.js",
       "fallingEdge":"math_falling.js",
-      "fallingEdge":"math_raising.js",
+      "raisingEdge":"math_raising.js",
       "reduce":"math_reduce.js"
     }
   },

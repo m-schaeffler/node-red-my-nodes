@@ -12,6 +12,9 @@ module.exports = function(RED) {
             {
                 msg.count = 0;
             }
+            else if( msg.query || msg.topic==="query" )
+            {
+            }
             else
             {
                 msg.count++;

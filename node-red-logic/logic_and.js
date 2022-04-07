@@ -11,34 +11,42 @@ module.exports = function(RED) {
         this.minData  = Number( config.minData );
 
         node.on('input', function(msg,send,done) {
-            const payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
-
-            if( payload !== null )
+            if( msg.reset || msg.topic==="init" )
             {
-                let data = context.get( "data" ) ?? {};
-                data[msg.topic] = payload;
-                context.set( "data", data );
+                context.set( "data", {} );
+                node.status( "" );
+            }
+            else
+            {
+                const payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
 
-                msg.topic = node.topic;
-                msg.payload = true;
-                msg.count   = 0;
-                for( const item in data )
+                if( payload !== null )
                 {
-                    msg.count++;
-                    if( ! data[item] )
+                    let data = context.get( "data" ) ?? {};
+                    data[msg.topic] = payload;
+                    context.set( "data", data );
+
+                    msg.topic = node.topic;
+                    msg.payload = true;
+                    msg.count   = 0;
+                    for( const item in data )
                     {
-                         msg.payload = false;
+                        msg.count++;
+                        if( ! data[item] )
+                        {
+                             msg.payload = false;
+                        }
                     }
-                }
 
-                if( msg.count >= node.minData )
-                {
-                    node.status( msg.payload );
-                    send( msg );
-                }
-                else
-                {
-                    node.status( "waiting for data" );
+                    if( msg.count >= node.minData )
+                    {
+                        node.status( msg.payload );
+                        send( msg );
+                    }
+                    else
+                    {
+                        node.status( "waiting for data" );
+                    }
                 }
             }
 

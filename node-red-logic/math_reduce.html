@@ -42,6 +42,7 @@
                 types:["msg"],
                 typeField: "#node-input-property-type"
             });
+            /*
             $("#node-input-algo").typedInput({
                 types:[{
                     value:"algo",
@@ -53,7 +54,7 @@
                         { value: "max", label: "Maximum" }
                     ]
                 }]
-            })
+            })*/
         }
     });
 </script>
@@ -86,7 +87,13 @@
     </div>
     <div class="form-row">
         <label for="node-input-algo"><i class="fa fa-flask"></i> Algorithm</label>
-        <input type="text" id="node-input-algo">
+        <select type="text" id="node-input-algo">
+            <option value="add">Adition</option>
+            <option value="mean">Mean Value</option>
+            <option value="prod">Product</option>
+            <option value="min">Minimum</option>
+            <option value="max">Maximum</option>
+        </select>
     </div>
 </script>
 

@@ -1,22 +1,27 @@
 <script type="text/javascript">
-    RED.nodes.registerType('fallingEdge',{
+    RED.nodes.registerType('hysteresisEdge',{
         category: 'function',
         color: "#C0DEED",
         defaults: {
             name:{value:""},
             property:{value:"payload",required:true},
-            threshold:{value:"",required:true,validate:RED.validators.number()},
+            threshold_raise:{value:"",required:true,validate:RED.validators.number()},
+            threshold_fall:{value:"",required:true,validate:function(v){
+                const raise = $("#node-input-threshold_raise").length ? $("#node-input-threshold_raise").val() : this.threshold_raise;
+                return v!=='' && !isNaN(v) && Number(v)<raise;}
+            },
+            initial:{value:""},
             showState:{value:false}
         },
         inputs:1,
         outputs:1,
-        icon: "falling-edge.png",
+        icon: "hysteresis.png",
         label: function() {
-            return this.name||"falling";
+            return this.name||"hysteresis";
         },
-        paletteLabel: "falling edge",
+        paletteLabel: "hysteresis",
         inputLabels: 'input',
-        outputLabels: 'edge trigger',
+        outputLabels: 'hysteresis trigger',
         oneditprepare: function() {
             $("#node-input-property").typedInput({
                 type:"msg",
@@ -27,7 +32,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="fallingEdge">
+<script type="text/html" data-template-name="hysteresisEdge">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -38,8 +43,21 @@
         <input type="hidden" id="node-input-property-type">
     </div>
     <div class="form-row">
-        <label for="node-input-threshold"><i class="fa fa-chevron-down"></i> Threshold</label>
-        <input type="text" id="node-input-threshold">
+        <label for="node-input-threshold_raise"><i class="fa fa-chevron-up"></i> up threshold</label>
+        <input type="text" id="node-input-threshold_raise">
+    </div>
+    <div class="form-row">
+        <label for="node-input-threshold_fall"><i class="fa fa-chevron-down"></i> dn threshold</label>
+        <input type="text" id="node-input-threshold_fall">
+    </div>
+    <div class="form-row">
+        <label for="node-input-initial"><i class="fa fa-play"></i> 1st message</label>
+            <select id="node-input-initial_edge">
+            <option value="">None</option>
+            <option value="rising">Rising</option>
+            <option value="falling">Falling</option>
+            <option value="any">Any</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
@@ -47,7 +65,7 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="fallingEdge">
+<script type="text/html" data-help-name="hysteresisEdge">
     
     <p>Message is only forwarded, if the payload falls below a threshold value.</p>
     <p>Each <code>topic</code> is treated seperatly.</p>

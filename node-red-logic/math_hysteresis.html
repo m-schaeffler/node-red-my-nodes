@@ -67,7 +67,7 @@
 
 <script type="text/html" data-help-name="hysteresisEdge">
     
-    <p>Message is only forwarded, if the payload falls below a threshold value.</p>
+    <p>Message is only forwarded, if the payload raises above an upper limit or falls below a lower limit.</p>
     <p>Each <code>topic</code> is treated seperatly.</p>
 
     <h3>Input</h3>
@@ -83,15 +83,19 @@
     
     <h3>Output</h3>
 
-    <p>Trigger message, in case a falling edge is detected.</p>    
+    <p>Trigger message, in case an edge is detected.</p>    
     
     <h3>Parameter</h3>
 
     <dl class="message-properties">
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
-        <dt>Threshold <span class="property-type">number</span></dt>
-        <dd> threshold value for the edge detection.</dd>
+        <dt>up Threshold <span class="property-type">number</span></dt>
+        <dd> threshold value for the raising edge detection.</dd>
+        <dt>d(ow)n Threshold <span class="property-type">number</span></dt>
+        <dd> threshold value for the falling edge detection.</dd>
+        <dt>1st message <span class="property-type">string</span></dt>
+        <dd> initial behaviour (None, Rising, Falling, Any).</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

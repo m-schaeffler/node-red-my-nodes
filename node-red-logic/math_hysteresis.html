@@ -10,7 +10,7 @@
                 const raise = $("#node-input-threshold_raise").length ? $("#node-input-threshold_raise").val() : this.threshold_raise;
                 return v!=='' && !isNaN(v) && Number(v)<raise;}
             },
-            initial:{value:""},
+            initial:{value:"none"},
             showState:{value:false}
         },
         inputs:1,
@@ -52,8 +52,8 @@
     </div>
     <div class="form-row">
         <label for="node-input-initial"><i class="fa fa-play"></i> 1st message</label>
-            <select id="node-input-initial_edge">
-            <option value="">None</option>
+        <select id="node-input-initial">
+            <option value="none">None</option>
             <option value="rising">Rising</option>
             <option value="falling">Falling</option>
             <option value="any">Any</option>

@@ -10,7 +10,7 @@ Nodes to perform boolean and arithmetic operations on input signals.
 $ npm install @mschaeffler/node-red-logic
 ```
 
-## Usage
+## Nodes
 
 ### counter
 
@@ -187,13 +187,17 @@ The message property to be used as payload can be defined with the `Property` pr
 #### Algorithms
 
 
-## fallingEdge
+## Edge Nodes
+
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/edge.png)
+
+### fallingEdge
 
 Message is only forwarded, if the payload falls below a threshold value.
 
 Each `topic` is treated seperatly.
 
-### Input
+#### Input
 
 The message property to be used as payload can be defined with the `Property` property.
 
@@ -202,11 +206,11 @@ The message property to be used as payload can be defined with the `Property` pr
 |topic   | string | name of the input channel.        |
 |payload | number | input value for `topic`.          |
 
-### Output
+#### Output
 
 Trigger message, in case a falling edge is detected.
 
-### Parameter
+#### Parameters
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
@@ -214,13 +218,13 @@ Trigger message, in case a falling edge is detected.
 |Threshold|number|threshold value for the edge detection.|
 |Status|boolean|shows the actual value as a node status.|
 
-## raisingEdge
+### raisingEdge
 
 Message is only forwarded, if the payload raises above a threshold value.
 
 Each `topic` is treated seperatly.
 
-### Input
+#### Input
 
 The message property to be used as payload can be defined with the `Property` property.
 
@@ -229,11 +233,11 @@ The message property to be used as payload can be defined with the `Property` pr
 |topic   | string | name of the input channel.        |
 |payload | number | input value for `topic`.          |
 
-### Output
+#### Output
 
 Trigger message, in case a raising edge is detected.
 
-### Parameter
+#### Parameters
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
@@ -241,13 +245,13 @@ Trigger message, in case a raising edge is detected.
 |Threshold|number|threshold value for the edge detection.|
 |Status|boolean|shows the actual value as a node status.|
 
-## hysteresis
+### hysteresis
 
 Message is only forwarded, if the payload raises above an upper limit or falls below a lower limit.
 
 Each `topic` is treated seperatly.
 
-### Input
+#### Input
 
 The message property to be used as payload can be defined with the `Property` property.
 
@@ -256,11 +260,11 @@ The message property to be used as payload can be defined with the `Property` pr
 |topic   | string | name of the input channel.        |
 |payload | number | input value for `topic`.          |
 
-### Output
+#### Output
 
 Trigger message, in case an edge is detected.
 
-### Parameter
+#### Parameters
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
@@ -270,9 +274,9 @@ Trigger message, in case an edge is detected.
 |1st message|string|initial behaviour (None, Rising, Falling, Any).|
 |Status|boolean|shows the actual value as a node status.|
 
-## Example Flow
+## Example Flows
 
-[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/logic.json)
+[edge nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/edge.json)
 
 ## Author
 

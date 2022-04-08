@@ -50,11 +50,11 @@ module.exports = function(RED) {
                     else
                     {
                         data[msg.topic] = {};
-                        if( ( this.initial == 'any' || this.initial == 'rising' ) && msg.payload > this.threshold_raise )
+                        if( this.initial in ['any','rising'] && msg.payload > this.threshold_raise )
                         {
                             sendMsg( 'rising' );
                         }
-                        else if( ( this.initial == 'any' || this.initial == 'falling' ) && msg.payload < this.threshold_fall )
+                        else if( this.initial in ['any','falling'] && msg.payload < this.threshold_fall )
                         {
                             sendMsg( 'falling' );
                         }

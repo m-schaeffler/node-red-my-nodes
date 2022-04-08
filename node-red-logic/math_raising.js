@@ -27,6 +27,7 @@ module.exports = function(RED) {
                     if( msg.payload > this.threshold && this.threshold >= last )
                     {
                         status.fill = "green";
+                        msg.edge = "raising";
                         send( msg );
                     }
                     data[msg.topic] = msg.payload;

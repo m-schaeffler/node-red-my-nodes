@@ -2,7 +2,7 @@
 
 A simple node that sends an email via the local `/usr/bin/mail` command.
 
-On a normal host without any mail server functionality, I recomment to use `nullmailer`:
+On a normal host without any mail server functionality, I recomment to use `nullmailer` in combination with `mailx`:
 
 - [Homepage](https://untroubled.org/nullmailer/)
 - [Debian Wiki](https://wiki.debian.org/nullmailer)

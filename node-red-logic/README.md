@@ -118,7 +118,7 @@ The message property to be used as payload can be defined with the `Property` pr
 
 ## Integer Nodes
 
-
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/math.png)
 
 ### counter
 
@@ -283,6 +283,9 @@ Trigger message, in case an edge is detected.
 ## Example Flows
 
 [boolean nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/bool.json)
+
+[integer nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/math.json)
+
 [edge nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/edge.json)
 
 ## Author

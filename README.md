@@ -6,7 +6,7 @@ My personal Nodes and some small usefull utility functions for Node-Red.
 
 The node red node packages are released in this repository:
 
-- node-red-contrib-nooperation
+- [node-red-contrib-nooperation](blob/main/node-red-contrib-nop/README.md)
 - node-red-contrib-sendmail
 - @mschaeffler/node-red-lora
 - @mschaeffler/node-red-dualled

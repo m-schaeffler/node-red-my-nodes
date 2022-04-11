@@ -192,6 +192,13 @@ The message property to be used as payload can be defined with the `Property` pr
 
 #### Algorithms
 
+|algorithm|description|
+|:--------|:----------|
+|add      |ads up the `topic` channels|
+|mean     |averages the `topic` channels|
+|prod     |multiplies the `topic` channels|
+|min      |gets the minimal value of the `topic` channels|
+|max      |gets the maximal value of the `topic` channels|
 
 ## Edge Nodes
 

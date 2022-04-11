@@ -2,7 +2,7 @@
 
 Nodes to perform boolean and arithmetic operations on input signals.
 
-![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/logic.png)
+![image of nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/logic.png)
 
 ## Install
 

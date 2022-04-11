@@ -10,17 +10,9 @@ Nodes to perform boolean and arithmetic operations on input signals.
 $ npm install @mschaeffler/node-red-logic
 ```
 
-## Nodes
+## Boolean Nodes
 
-### counter
-
-A node that just count the messages.
-
-#### Output
-
-|msg.    | type   | description                       |
-|:-------|:-------|:----------------------------------|
-|count | number | number of messages.|
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/bool.png)
 
 ### to bool
 
@@ -123,6 +115,20 @@ The message property to be used as payload can be defined with the `Property` pr
 |Topic | string | defines the topic for the output message.|
 |Property| string | defines the message property to be used as payload.|
 |min. Data|number|min. amount of topics to generate an output.|
+
+## Integer Nodes
+
+
+
+### counter
+
+A node that just count the messages.
+
+#### Output
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|count | number | number of messages.|
 
 ### to number
 
@@ -276,6 +282,7 @@ Trigger message, in case an edge is detected.
 
 ## Example Flows
 
+[boolean nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/bool.json)
 [edge nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/edge.json)
 
 ## Author

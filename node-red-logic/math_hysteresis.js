@@ -12,7 +12,6 @@ module.exports = function(RED) {
         this.showState       = config.showState;
 
         node.on('input', function(msg,send,done) {
-
             if( msg.reset || msg.topic==="init" )
             {
                 context.set( "data", {} );
@@ -50,11 +49,11 @@ module.exports = function(RED) {
                     else
                     {
                         data[msg.topic] = {};
-                        if( this.initial in ['any','rising'] && msg.payload > this.threshold_raise )
+                        if( ['any','rising'].includes(this.initial) && msg.payload > this.threshold_raise )
                         {
                             sendMsg( 'rising' );
                         }
-                        else if( this.initial in ['any','falling'] && msg.payload < this.threshold_fall )
+                        else if( ['any','falling'].includes(this.initial) && msg.payload < this.threshold_fall )
                         {
                             sendMsg( 'falling' );
                         }

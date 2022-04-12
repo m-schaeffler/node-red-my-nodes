@@ -8,6 +8,8 @@ module.exports = function(RED) {
         const dualLed   = RED.nodes.getNode( config.dualLed );
         const temp_warm = Number( dualLed.temp_warm );
         const temp_cold = Number( dualLed.temp_cold );
+        const topicWarm = config.topicWarm;
+        const topicCold = config.topicCold;
 
         node.on('input', function(msg,send,done) {
 
@@ -66,6 +68,8 @@ module.exports = function(RED) {
                     warmMsg.payload.brightness = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
                     coldMsg.payload.brightness = item.brightness - warmMsg.payload.brightness;
                 }
+                warmMsg.topic += topicWarm;
+                coldMsg.topic += topicCold;
 
                 node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: warmMsg.payload.brightness+" / "+coldMsg.payload.brightness });
                 send( [ warmMsg, coldMsg ] );

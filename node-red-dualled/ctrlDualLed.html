@@ -4,7 +4,9 @@
         color: "#ECECEC",
         defaults: {
             name:{value:""},
-            dualLed: {value:"", type:"confDualLed", required:true}
+            dualLed: {value:"", type:"confDualLed", required:true},
+            topicWarm: {value:""},
+            topicCold: {value:""}
         },
         inputs:1,
         outputs:2,
@@ -25,6 +27,14 @@
     <div class="form-row">
         <label for="node-input-dualLed"><i class="fa fa-lightbulb-o"></i> dual LED</label>
         <input type="text" id="node-input-dualLed">
+    </div>
+    <div class="form-row">
+         <label for="node-input-topicWarm"><i class="fa fa-hourglass-half"></i> Topic Warm</label>
+         <input type="text" id="node-input-topicWarm">
+    </div>
+    <div class="form-row">
+         <label for="node-input-topicCold"><i class="fa fa-hourglass-half"></i> Topic Cold</label>
+         <input type="text" id="node-input-topicCold">
     </div>
 </script>
 

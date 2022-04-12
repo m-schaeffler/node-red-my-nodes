@@ -1,1 +1,229 @@
-[]
+[
+    {
+        "id": "4970749d37068d6b",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "2bcd9bd7aadb0d35",
+        "type": "ctrlDualLed",
+        "z": "4970749d37068d6b",
+        "name": "",
+        "dualLed": "94041c0d9c9e24e6",
+        "topicWarm": "/Warm",
+        "topicCold": "/Cold",
+        "x": 370,
+        "y": 160,
+        "wires": [
+            [
+                "d798132dc5a87088"
+            ],
+            [
+                "d798132dc5a87088"
+            ]
+        ]
+    },
+    {
+        "id": "755c957c7d7ea861",
+        "type": "feedbackDualLed",
+        "z": "4970749d37068d6b",
+        "name": "",
+        "dualLed": "94041c0d9c9e24e6",
+        "indx_warm": "0",
+        "indx_cold": "1",
+        "x": 370,
+        "y": 280,
+        "wires": [
+            [
+                "89a124b05b35dccf"
+            ]
+        ]
+    },
+    {
+        "id": "89a124b05b35dccf",
+        "type": "debug",
+        "z": "4970749d37068d6b",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "d798132dc5a87088",
+        "type": "debug",
+        "z": "4970749d37068d6b",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "16520a35eb3f1996",
+        "type": "inject",
+        "z": "4970749d37068d6b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "LED",
+        "payload": "toggle",
+        "payloadType": "str",
+        "x": 180,
+        "y": 80,
+        "wires": [
+            [
+                "2bcd9bd7aadb0d35"
+            ]
+        ]
+    },
+    {
+        "id": "a90b239b5950dcd0",
+        "type": "inject",
+        "z": "4970749d37068d6b",
+        "name": "LED:Color",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "LED",
+        "payload": "{\"temp\":4000,\"brightness\":80,\"transition\":500}",
+        "payloadType": "json",
+        "x": 180,
+        "y": 220,
+        "wires": [
+            [
+                "2bcd9bd7aadb0d35"
+            ]
+        ]
+    },
+    {
+        "id": "ecfbfa2166100aa4",
+        "type": "inject",
+        "z": "4970749d37068d6b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "LED",
+        "payload": "on",
+        "payloadType": "str",
+        "x": 190,
+        "y": 120,
+        "wires": [
+            [
+                "2bcd9bd7aadb0d35"
+            ]
+        ]
+    },
+    {
+        "id": "24776613a58a5d06",
+        "type": "inject",
+        "z": "4970749d37068d6b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "LED",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "2bcd9bd7aadb0d35"
+            ]
+        ]
+    },
+    {
+        "id": "507373ec9cd1c8b8",
+        "type": "inject",
+        "z": "4970749d37068d6b",
+        "name": "LED:feedback",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "LED",
+        "payload": "{\"output\":[true,true],\"brightness\":[60,40],\"power\":[6,4],\"energy\":[100,100]}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 280,
+        "wires": [
+            [
+                "755c957c7d7ea861"
+            ]
+        ]
+    },
+    {
+        "id": "94041c0d9c9e24e6",
+        "type": "confDualLed",
+        "name": "test",
+        "temp_warm": "2200",
+        "temp_cold": "6800"
+    }
+]

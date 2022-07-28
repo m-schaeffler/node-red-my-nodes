@@ -8,8 +8,11 @@ module.exports = function(RED) {
         this.showState = config.showState;
 
         node.on('input', function(msg,send,done) {
+            if( msg.invalid )
+            {
+                return null;
+            }
             msg.payload = Number( RED.util.getMessageProperty( msg, node.property ) );
-
             if( ! isNaN( msg.payload ) )
             {
                 if( node.showState )

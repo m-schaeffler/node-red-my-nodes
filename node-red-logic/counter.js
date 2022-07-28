@@ -7,6 +7,10 @@ module.exports = function(RED) {
         var context = this.context();
 
         node.on('input', function(msg,send,done) {
+            if( msg.invalid )
+            {
+                return null;
+            }
             msg.count = context.get( "count" ) ?? 0;
             if( msg.reset || msg.topic==="init" )
             {

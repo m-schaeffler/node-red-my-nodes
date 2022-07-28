@@ -13,6 +13,10 @@ module.exports = function(RED) {
         this.algo     = config.algo;
 
         node.on('input', function(msg,send,done) {
+            if( msg.invalid )
+            {
+                return null;
+            }
             if( msg.reset || msg.topic==="init" )
             {
                 context.set( "data", {} );

@@ -18,7 +18,14 @@ exports.unitStr = function(unit)
 
 exports.iconStr = function(icon)
 {
-    return `<i style="line-height:130%" class=\"fa ${icon}\" aria-hidden=\"true\"/>`;
+    if( icon != "" )
+    {
+        return `<i style="line-height:130%" class=\"fa ${icon}\" aria-hidden=\"true\"/>`;
+    }
+    else
+    {
+        return "";
+    }
 }
 
 exports.formatNumber = function(number,limit,unit="")

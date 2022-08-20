@@ -46,7 +46,7 @@ module.exports = function(RED)
                         msg.payload.data = [...lora_packet.decrypt( packet, Buffer.from( key.asw, 'hex' ), nsw )];
                         if( key.delta )
                         {
-                            msg.delta = key.delta;
+                            msg.payload.delta = key.delta;
                         }
                         if( key.timeout )
                         {

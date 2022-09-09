@@ -34,6 +34,7 @@ module.exports = function(RED) {
 
                     msg.topic = node.topic;
                     msg.count = 0;
+                    msg.data  = data;
                     switch( node.algo )
                     {
                         case "add":

@@ -1,0 +1,36 @@
+<script type="text/javascript">
+    RED.nodes.registerType('hourmeter',{
+        category: 'storage',
+        color: "#dac4b4",
+        defaults: {
+            name: {value:""},
+            topic:{value:""}
+        },
+        inputs:1,
+        outputs:2,
+        icon: "font-awesome/fa-signal",
+        label: function() {
+            return this.name||"hour meter";
+        },
+        inputLabels: 'on/off message',
+        outputLabels: ['boolean value','hour counter'],
+        paletteLabel: "hour meter"
+    });
+</script>
+
+<script type="text/html" data-template-name="hourmeter">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-envelope-o"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="hourmeter">
+    <p>A working hour meter for NodeRed.</p>
+    <p>
+    </p>
+</script>

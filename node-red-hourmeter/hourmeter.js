@@ -1,12 +1,26 @@
-module.exports = function(RED) {
+module.exports = function(RED)
+{
 
-    function HourMeterNode(config) {
+    function HourMeterNode(config)
+    {
         RED.nodes.createNode(this,config);
         this.config = config;
         this.topic  = config.topic;
-        var node = this;
+        this.cycle  = config.cycle;
+        this.interval_id = null;
+        var node    = this;
         var context = this.context();
-        node.on('input', function(msg,send,done) {
+
+        if( this.cycle > 0 )
+        {
+            this.interval_id = setInterval( function()
+            {
+                node.emit( "input", {querry:true} );
+            }, this.cycle*60*1000 );
+        }
+
+        node.on( 'input', function(msg,send,done)
+        {
             if( msg.reset )
             {
                 context.set( "data", undefined, "storeInFile" );
@@ -62,8 +76,16 @@ module.exports = function(RED) {
                 send( [ { topic:this.topic, payload:data.switchOn!==undefined }, { topic:this.topic, payload:out } ] );
             }
             done();
-        });
+        } );
     }
 
     RED.nodes.registerType("hourmeter",HourMeterNode);
+
+    HourMeterNode.prototype.close = function()
+    {
+        if( this.interval_id != null )
+        {
+            clearInterval( this.interval_id );
+        }
+    }
 }

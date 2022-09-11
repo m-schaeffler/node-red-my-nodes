@@ -4,7 +4,8 @@
         color: "#dac4b4",
         defaults: {
             name: {value:""},
-            topic:{value:""}
+            topic:{value:""},
+            cycle:{value:"0", required:true, validate:RED.validators.number()}
         },
         inputs:1,
         outputs:2,
@@ -26,6 +27,10 @@
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-envelope-o"></i> Topic</label>
         <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+    <div class="form-row">
+        <label for="node-input-cycle"><i class="fa fa-hourglass-o"></i> Cycle [min]</label>
+        <input type="text" id="node-input-cycle">
     </div>
 </script>
 

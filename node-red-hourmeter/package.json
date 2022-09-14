@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-hourmeter",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A working hour meter for NodeRed.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-hourmeter",

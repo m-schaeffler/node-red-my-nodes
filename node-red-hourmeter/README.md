@@ -29,9 +29,9 @@ The counter is started / stopped accortding to the value of the payload:
 ||on|started|
 ||start|started|
 
-### Input
+A [local filesystem context store](https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system)  called `storeInFile` is needed to store the internal data.
 
-The message property to be used as payload can be defined with the `Property` property.
+### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|

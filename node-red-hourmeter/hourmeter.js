@@ -42,6 +42,7 @@ module.exports = function(RED)
                             case "1":
                             case "true":
                             case "on":
+                            case "start":
                                 if( data.switchOn === undefined )
                                 {
                                     data.switchOn = now;
@@ -52,6 +53,7 @@ module.exports = function(RED)
                             case "0":
                             case "false":
                             case "off":
+                            case "stop":
                                 if( data.switchOn !== undefined )
                                 {
                                     data.counter += (now - data.switchOn)/1000;

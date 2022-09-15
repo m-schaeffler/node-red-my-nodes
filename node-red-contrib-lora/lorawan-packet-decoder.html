@@ -8,6 +8,9 @@
         label: function() {
             return this.name||"lora decoder";
         },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
         inputLabels: 'full payload',
         outputLabels: ['decoded payload','unknown sender','send message for encoder'],
         paletteLabel: "lora decoder",

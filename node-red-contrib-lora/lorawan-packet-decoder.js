@@ -7,8 +7,8 @@ module.exports = function(RED)
         RED.nodes.createNode( this, config );
         var   node    = this;
         var   flow    = this.context().flow;
-        const keyconf = RED.nodes.getNode( config.keys );
-        const txdelay = parseInt( config.txdelay );
+        this.keyconf = RED.nodes.getNode( config.keys );
+        this.txdelay = parseInt( config.txdelay );
 
         node.on('input',function(msg,send,done) {
             if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length >= 7 )
@@ -31,7 +31,7 @@ module.exports = function(RED)
                     mtype:          packet.getMType(),
                     confirmed:      packet.isConfirmed()
                 };
-                const key = keyconf.getKey( msg.payload.device_address );
+                const key = node.keyconf.getKey( msg.payload.device_address );
                 if( key )
                 {
                     const nsw = Buffer.from( key.nsw, 'hex' );
@@ -58,7 +58,7 @@ module.exports = function(RED)
                                 topic:  'acknowledgement',
                                 payload:{
                                     device_address:msg.payload.device_address,
-                                    tmst:          ( msg.payload.rxpk.tmst + txdelay ) >>> 0, // 1s delay [µs] as UInt32
+                                    tmst:          ( msg.payload.rxpk.tmst + node.txdelay ) >>> 0, // 1s delay [µs] as UInt32
                                     rfch:          msg.payload.rxpk.rfch,
                                     freq:          msg.payload.rxpk.freq,
                                     modu:          msg.payload.rxpk.modu,

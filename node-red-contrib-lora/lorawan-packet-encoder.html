@@ -17,7 +17,8 @@
         defaults: {
             name: {value:""},
             keys: {value:"", type:"lorawan-keys", required:true},
-            power: {value:"14", required:true, validate:RED.validators.number()}
+            power: {value:"14", required:true, validate:RED.validators.number()},
+            rfch: {value:"", required:true}
         }      
     });
 </script>
@@ -34,6 +35,15 @@
     <div class="form-row">
         <label for="node-input-power"><i class="fa fa-wifi"></i> TX-Power</label>
         <input type="text" id="node-input-power">
+    </div>
+    <div class="form-row">
+        <label for="node-input-rfch"><i class="fa fa-link"></i> TX-Channel</label>
+        <select type="text" id="node-input-rfch">
+            <option value="N">none</option>
+            <option value="P">from payload</option>
+            <option value="0">0</option>
+            <option value="1">1</option>
+        </select>
     </div>
 </script>
 
@@ -68,5 +78,7 @@
         <dd> configuration node to define the end nodes.</dd>
         <dt>TX-Power <span class="property-type">number</span></dt>
         <dd> transmit power for the gateway.</dd>
+        <dt>TX-Channel <span class="property-type"></span></dt>
+        <dd> transmit channel for the gateway.</dd>
     </dl>
 </script>

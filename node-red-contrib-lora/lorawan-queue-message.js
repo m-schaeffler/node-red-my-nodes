@@ -6,10 +6,10 @@ module.exports = function(RED)
         var   node    = this;
         var   context = this.context();
         var   flow    = this.context().flow;
-        const keyconf = RED.nodes.getNode( config.keys );
+        this.keyconf = RED.nodes.getNode( config.keys );
 
         node.on('input',function(msg,send,done) {
-            let dev_adr = keyconf.name2addr( msg.topic );
+            let dev_adr = node.keyconf.name2addr( msg.topic );
             let payload = Buffer.isBuffer( msg.payload ) ? msg.payload : Buffer.from( msg.payload );
             if( dev_adr )
             {

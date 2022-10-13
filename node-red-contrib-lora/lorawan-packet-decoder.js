@@ -55,7 +55,7 @@ module.exports = function(RED)
                         if( msg.payload.confirmed || sendMsg )
                         {
                             confirmMsg = {
-                                topic:  'acknowledgement',
+                                topic:  msg.topic,
                                 payload:{
                                     device_address:msg.payload.device_address,
                                     tmst:          ( msg.payload.rxpk.tmst + node.txdelay ) >>> 0, // 1s delay [µs] as UInt32

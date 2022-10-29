@@ -54,6 +54,7 @@ module.exports = function(RED)
                             case "false":
                             case "off":
                             case "stop":
+                            case "disabled":
                                 if( data.switchOn !== undefined )
                                 {
                                     data.counter += (now - data.switchOn)/1000;

@@ -25,7 +25,7 @@ module.exports = function(RED)
             }
             if( "payload" in msg )
             {
-                let counter = typeof(msg.framecounter)=="number" ? msg.framecounter : counters?.[msg.payload.device_address] ?? 0;
+                let counter = counters?.[msg.payload.device_address] ?? 0;
                 if( ++counter > 0xFFFF )
                 {
                     counter = 0;
@@ -79,7 +79,7 @@ module.exports = function(RED)
                        case "N": break;
                     }
                     node.status( key.name );
-                    send( [ { topic:key.name, payload:{ txpk:txpk } }, { topic:"FrameCounter", payload:counters }  ] );
+                    send( [ { topic:key.name, payload:{ txpk:txpk } }, { topic:"FrameCounter", payload:counters } ] );
                 }
                 else
                 {

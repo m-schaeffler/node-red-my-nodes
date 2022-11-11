@@ -39,6 +39,54 @@
 
 <script type="text/html" data-help-name="hourmeter">
     <p>A working hour meter for NodeRed.</p>
-    <p>
-    </p>
+    
+    <p>The counter is started / stopped according to the value of the payload:</p>
+    <table>
+      <tr> <th>type</th> <th>value</th> <th>counter is</th> </tr>
+      <tr> <td>boolean</td> <td>false</td> <td>stopped</td> </tr>
+      <tr> <td></td> <td>true</td> <td>started</td> </tr>
+      <tr> <td>number</td> <td>0</td> <td>stopped</td> </tr>
+      <tr> <td></td> <td>1</td> <td>started</td> </tr>
+      <tr> <td>string</td> <td>false</td> <td>stopped</td> </tr>
+      <tr> <td></td> <td>true</td> <td>started</td> </tr>
+      <tr> <td></td> <td>0</td> <td>stopped</td> </tr>
+      <tr> <td></td> <td>1</td> <td>started</td> </tr>
+      <tr> <td></td> <td>off</td> <td>stopped</td> </tr>
+      <tr> <td></td> <td>on</td> <td>started</td> </tr>
+    </table>
+    
+    <p>A <a href="https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system">local filesystem context store</a>] called <code>storeInFile</code> is needed to store the internal data.</p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type"></span></dt>
+        <dd> Starts or stopps the counting.</dd>
+        <dt>reset <span class="property-type">boolean</span></dt>
+        <dd> If true, resets the counter to 0.</dd>
+        <dt>querry <span class="property-type">boolean</span></dt>
+        <dd> If true, just querries the state of the counter.</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    
+    <h4>boolean value</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean</span></dt>
+        <dd> Is counting active?</dd>
+    </dl>
+    
+    <h4>hour counter</h4>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">number</span></dt>
+        <dd> Value of the hour counter.</dd>
+    </dl>
+    
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> Topic to send output values with.</dd>
+        <dt>cycle <span class="property-type">number</span></dt>
+        <dd> Cyclic time of output; 0 is only at state change.</dd>
+    </dl>
+
 </script>

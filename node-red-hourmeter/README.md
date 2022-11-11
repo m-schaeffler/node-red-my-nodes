@@ -12,7 +12,7 @@ $ npm install @mschaeffler/node-red-hourmeter
 
 ## Usage
 
-The counter is started / stopped accortding to the value of the payload:
+The counter is started / stopped according to the value of the payload:
 
 |type|value|counter is|
 |:---|:----|:--------------|
@@ -29,7 +29,7 @@ The counter is started / stopped accortding to the value of the payload:
 ||on|started|
 ||start|started|
 
-A [local filesystem context store](https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system)  called `storeInFile` is needed to store the internal data.
+A [local filesystem context store](https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system) called `storeInFile` is needed to store the internal data.
 
 ### Input
 
@@ -51,7 +51,7 @@ A [local filesystem context store](https://nodered.org/docs/user-guide/context#s
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|payload | number | Value of the hour counter|
+|payload | number | Value of the hour counter.|
 
 ### Parameters
 

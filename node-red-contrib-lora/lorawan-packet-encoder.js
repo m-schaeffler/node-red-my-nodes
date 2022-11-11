@@ -5,16 +5,27 @@ module.exports = function(RED)
     function lorawanencode(config)
     {
         RED.nodes.createNode( this, config );
-        var   node    = this;
-        var   context = this.context();
-        this.keyconf  = RED.nodes.getNode( config.keys );
-        this.power    = parseInt( config.power );
-        this.rfch     = config.rfch;
+        var node     = this;
+        var context  = this.context();
+        this.keyconf = RED.nodes.getNode( config.keys );
+        this.power   = parseInt( config.power );
+        this.rfch    = config.rfch;
 
         node.on('input',function(msg,send,done) {
-            let counter = "framecounter" in msg ? msg.framecounter : context.get( "frameCounter" ) ?? 0;
+            let counters = context.get( "counters", "storeInFile" ) ?? {};
+            if( "framecounter" in msg )
+            {
+                for( const i in msg.framecounter )
+                {
+                    if( msg.framecounter[i] > counters[i]??0 )
+                    {
+                        counters[i] = msg.framecounter[i];
+                    }
+                }
+            }
             if( "payload" in msg )
             {
+                let counter = typeof(msg.framecounter)=="number" ? msg.framecounter : counters?.[msg.payload.device_address] ?? 0;
                 if( ++counter > 0xFFFF )
                 {
                     counter = 0;
@@ -38,6 +49,7 @@ module.exports = function(RED)
                 const key = node.keyconf.getKey( msg.payload.device_address );
                 if( key )
                 {
+                    counters[msg.payload.device_address] = counter;
                     const packet = lora_packet.fromFields( lora, Buffer.from( key.asw, 'hex' ), Buffer.from( key.nsw, 'hex' ));
                     const data   = packet.getPHYPayload();
                     let   txpk   = {
@@ -67,14 +79,14 @@ module.exports = function(RED)
                        case "N": break;
                     }
                     node.status( key.name );
-                    send( [ { topic:key.name, payload:{ txpk:txpk } }, { topic:"FrameCounter", payload:counter }  ] );
+                    send( [ { topic:key.name, payload:{ txpk:txpk } }, { topic:"FrameCounter", payload:counters }  ] );
                 }
                 else
                 {
                     node.warn( "unknown deviceid: "+msg.payload.device_address );
                 }
             }
-            context.set( "frameCounter", counter );
+            context.set( "counters", counters, "storeInFile" );
             done();
         });
 

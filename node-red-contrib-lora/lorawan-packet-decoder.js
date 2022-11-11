@@ -5,8 +5,9 @@ module.exports = function(RED)
     function lorawandecode(config)
     {
         RED.nodes.createNode( this, config );
-        var   node    = this;
-        var   flow    = this.context().flow;
+        var node     = this;
+        var context  = this.context();
+        var flow     = this.context().flow;
         this.keyconf = RED.nodes.getNode( config.keys );
         this.txdelay = parseInt( config.txdelay );
 
@@ -35,15 +36,31 @@ module.exports = function(RED)
                 if( key )
                 {
                     const nsw = Buffer.from( key.nsw, 'hex' );
-                    if( lora_packet.verifyMIC( packet, nsw ) )
+                    let counters = context.get( "counters" ) ?? {};
+                    let countMsb = counters?.[msg.payload.device_address] ?? 0;
+                    let countBuf = undefined;
+                    while( countMsb <= 1000 )
                     {
+                        countBuf = Buffer.from( [countMsb&0xFF,(countMsb&0xFF00)>>8] );
+                        if( lora_packet.verifyMIC( packet, nsw, null, countBuf ) )
+                        {
+                            break;
+                        }
+                        countMsb++;
+                        countBuf = undefined;
+                    }
+                    if( countBuf !== undefined )
+                    {
+                        counters[msg.payload.device_address] = countMsb;
+                        context.set( "counters", counters );
                         let sendMsgs     = flow.get( "sendqueue" )?.[msg.payload.device_address];
                         const sendMsg    = Array.isArray( sendMsgs ) ? sendMsgs.shift() : null;
                         let confirmMsg   = null;
                         msg.topic        = key.name;
                         msg.payload.type = key.type;
                         msg.payload.name = key.name;
-                        msg.payload.data = [...lora_packet.decrypt( packet, Buffer.from( key.asw, 'hex' ), nsw )];
+                        msg.payload.frame_count += countMsb<<16;
+                        msg.payload.data = [...lora_packet.decrypt( packet, Buffer.from( key.asw, 'hex' ), nsw, countBuf )];
                         if( key.delta )
                         {
                             msg.payload.delta = key.delta;

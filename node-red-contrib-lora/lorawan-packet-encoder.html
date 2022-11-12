@@ -50,12 +50,17 @@
 <script type="text/html" data-help-name="lorawan-packet-encoder">
     <p>This node encodes a LoraWan message.</p>
 
+    <p>A <a href="https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system">local filesystem context store</a> 
+    called <code>storeInFile</code> is needed to store the internal data.</p>
+
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
         <dd> lora message to be sent; normally from <code>lora decoder, send message for encoder</code>.</dd>
         <dt>framecounter <span class="property-type">number</span></dt>
-        <dd> set frame counter with value from persistent memory.</dd>
+        <dd> set frame counter default value from versions <2.0.0; this default value wil be active until Node-RED will be restarted.</dd>
+        <dt>framecounter <span class="property-type">object</span></dt>
+        <dd> set frame counters with value from persistent memory.</dd>
     </dl>
 
     <h3>Outputs</h3>
@@ -66,10 +71,10 @@
         <dd> encoded message for <code>lora sender</code>.</dd>
     </dl>
 
-    <h4>frame counter for persistence</h4>
+    <h4>frame counters for persistence</h4>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">number</span></dt>
-        <dd> frame counter for persistent storage.</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> frame counters for the different lora nodes for persistent storage.</dd>
     </dl>
 
     <h3>Parameters</h3>

@@ -13,19 +13,28 @@ module.exports = function(RED)
 
         node.on('input',function(msg,send,done) {
             let counters = context.get( "counters", "storeInFile" ) ?? {};
-            if( "framecounter" in msg )
+            switch( typeof( msg.framecounter ) )
             {
-                for( const i in msg.framecounter )
-                {
-                    if( msg.framecounter[i] > counters[i]??0 )
+                case "undefined":
+                    break;
+                case "number":
+                    context.set( "default", msg.framecounter );
+                    break;
+                case "object":
+                    for( const i in msg.framecounter )
                     {
-                        counters[i] = msg.framecounter[i];
+                        if( msg.framecounter[i] > counters[i]??0 )
+                        {
+                            counters[i] = msg.framecounter[i];
+                        }
                     }
-                }
+                    break;
+                default:
+                    node.error( "invalid type of framecouter: "+typeof( msg.framecounter ) );
             }
             if( "payload" in msg )
             {
-                let counter = counters?.[msg.payload.device_address] ?? 0;
+                let counter = counters?.[msg.payload.device_address] ?? ( context.get( "default" ) ?? 0 );
                 if( ++counter > 0xFFFF )
                 {
                     counter = 0;
@@ -79,7 +88,7 @@ module.exports = function(RED)
                        case "N": break;
                     }
                     node.status( key.name );
-                    send( [ { topic:key.name, payload:{ txpk:txpk } }, { topic:"FrameCounter", payload:counters } ] );
+                    send( [ { topic:key.name, payload:{ txpk:txpk } }, { topic:"framecounter", payload:counters } ] );
                 }
                 else
                 {

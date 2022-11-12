@@ -125,12 +125,15 @@ By this the downlink messages can be timed to be sent in the RX1 receive window 
 
 This node encodes a LoraWan message.
 
+A [local filesystem context store](https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system) called `storeInFile` is needed to store the internal data.
+
 #### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | object | lora message to be sent; normally from `lora decoder, send message for encoder`.|
-|framecounter|number|set frame counter with value from persistent memory.|
+|framecounter|number|set frame counter default value from versions <2.0.0; this default value wil be active until Node-RED will be restarted.|
+|framecounter|object|set frame counters with value from persistent memory.|
 
 #### Outputs
 
@@ -140,11 +143,11 @@ This node encodes a LoraWan message.
 |:-------|:-------|:----------------------------------|
 |payload | object | encoded message for `lora sender`.|
 
-##### frame counter for persistence
+##### frame counters for persistence
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|payload | number | frame counter for persistent storage.|
+|payload | number | frame counters for the different lora nodes for persistent storage.|
 
 #### Parameters
 

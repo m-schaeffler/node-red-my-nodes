@@ -3,7 +3,7 @@
         category: 'lora',
         color: '#E9967A',
         inputs:1,
-        outputs:3,
+        outputs:4,
         icon: "font-awesome/fa-check",
         label: function() {
             return this.name||"lora check FC";
@@ -12,7 +12,7 @@
             return this.name?"node_label_italic":"";
         },
         inputLabels: 'lora message',
-        outputLabels: ['checked lora message','duplicate message','error message'],
+        outputLabels: ['checked lora message','duplicate message','error message','counters'],
         paletteLabel: "lora check FC",
         defaults: {
             name: {value:""}
@@ -73,5 +73,17 @@
         <dd> error message for logging.</dd>
         <dt>lora <span class="property-type">string</span></dt>
         <dd> lora msg that caused the error message.</dd>
+    </dl>
+
+    <h4>counters</h4>
+    <dl class="message-properties">
+        <dt>payload.ok <span class="property-type">number</span></dt>
+        <dd> Number of ok messages.</dd>
+        <dt>payload.nok <span class="property-type">number</span></dt>
+        <dd> Number of error messages.</dd>
+        <dt>payload.dup <span class="property-type">number</span></dt>
+        <dd> Number of duplicate messages.</dd>
+        <dt>payload.mis <span class="property-type">number</span></dt>
+        <dd> Number of missing messages.</dd>
     </dl>
 </script>

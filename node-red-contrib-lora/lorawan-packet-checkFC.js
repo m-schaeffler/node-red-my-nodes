@@ -44,7 +44,7 @@ module.exports = function(RED)
             context.set( "counter", counter );
             context.set( "data", data );
             node.status( `${counter.ok} / ${counter.dup} / ${counter.miss} / ${counter.nok}` );
-            send( [msg,dupMsg,errMsg] );
+            send( [msg,dupMsg,errMsg,{topic:"LoRa counters",payload:counter}] );
             done();
         });
 

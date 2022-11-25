@@ -201,6 +201,15 @@ It recognizes this situations:
 |payload | string | error message for logging.        |
 |lora    | object | lora msg that caused the error message.|
 
+##### counters
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload.ok|number| Number of ok messages.            |
+|payload.nok|number| Number of error messages.        |
+|payload.dup|number| Number of duplicate messages.    |
+|payload.mis|number| Number of missing messages.      |
+
 ### lora send
 
 This node puts a LoraWan message into the send queue.

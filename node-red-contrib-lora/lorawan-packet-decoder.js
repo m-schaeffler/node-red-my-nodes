@@ -98,7 +98,7 @@ module.exports = function(RED)
                 }
                 else
                 {
-                    node.warn( "unknown deviceid: "+msg.payload.device_address );
+                    //node.warn( "unknown deviceid: "+msg.payload.device_address );
                     send( [null,msg,null] );
                     done();
                 }

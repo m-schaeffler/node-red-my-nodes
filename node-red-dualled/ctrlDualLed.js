@@ -22,7 +22,7 @@ module.exports = function(RED) {
                 }
             }
 
-            let item    = context.get( msg.topic ) ?? {};
+            let item    = context.get( msg.topic ) ?? { turn:"off", brightness:50, temp:4500 };
             let changed = false;
             switch( typeof msg.payload )
             {

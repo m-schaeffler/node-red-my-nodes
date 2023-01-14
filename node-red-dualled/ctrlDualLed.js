@@ -26,26 +26,22 @@ module.exports = function(RED) {
             let changed = false;
             switch( typeof msg.payload )
             {
+                case "number":
                 case "string":
                     switch( msg.payload )
                     {
-                        case "on":
-                        case "off":    setItem( "turn", msg.payload ); break;
+                        case 1:
+                        case "1":
+                        case "on":     setItem( "turn", "on" ); break;
+                        case 0:
+                        case "0":
+                        case "off":    setItem( "turn", "off" ); break;
                         case "toggle": setItem( "turn", item.turn=="on" ? "off" : "on" ); break;
                     }
                     break;
                 case "boolean":
                     setItem( "turn", msg.payload ? "on" : "off" );
                     break;
-                /* not usefull with topic as LED name
-                case "number":
-                    switch( msg.topic )
-                    {
-                        case "temp":       setItem( "temp", msg.payload );       break;
-                        case "brightness": setItem( "brightness", msg.payload ); break;
-                    }
-                    break;
-                */
                 case "object":
                     setItem( "turn",       msg.payload?.turn );
                     setItem( "temp",       msg.payload?.temp );

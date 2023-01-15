@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-lora",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Five nodes to send and receive LoRaWan messages via a gateway via the Semtech UDP protocol.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-contrib-lora",
@@ -17,7 +17,7 @@
     "LoRaWan"
   ],
   "dependencies": {
-    "lora-packet": ">=0.8.17"
+    "lora-packet": ">=0.8.18"
   },
   "node-red": {
     "version": ">=2.0.0",

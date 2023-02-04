@@ -23,7 +23,7 @@ module.exports = function(RED)
                 case "object":
                     for( const i in msg.framecounter )
                     {
-                        if( msg.framecounter[i] > counters[i]??0 )
+                        if( ( msg.framecounter[i] > counters[i]??0 ) || ( msg.framecounter[i] == 0 ) )
                         {
                             counters[i] = msg.framecounter[i];
                         }

@@ -22,6 +22,7 @@ module.exports = function(RED)
                 if( packet.getBuffers().DevAddr === undefined )
                 {
                     //node.error("DevAddr === undefined");
+                    done();
                     return;
                 }
                 msg.payload = {

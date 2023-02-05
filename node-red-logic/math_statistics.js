@@ -62,7 +62,7 @@ module.exports = function(RED) {
                         }
                         msg.stat.deviation = Math.sqrt( varianz / msg.stat.count );
                         msg.stat.variation = msg.stat.deviation / msg.stat.average;
-                        node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation}`});
+                        node.status({fill:"green",shape:"dot",text:msg.stat.count});
                         send( msg );
                     }
                     else

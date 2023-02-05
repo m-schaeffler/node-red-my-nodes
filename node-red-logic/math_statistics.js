@@ -38,8 +38,31 @@ module.exports = function(RED) {
                     if( item.length >= this.minData )
                     {
                         msg.stat = {
-                            count: item.length };
-                        node.status({fill:"green",shape:"dot",text:msg.stat.count});
+                            count: item.length,
+                            min:   Number.MAX_SAFE_INTEGER,
+                            max:   Number.MIN_SAFE_INTEGER };
+                        let sum = 0;
+                        for( const value of item )
+                        {
+                            sum += value.value;
+                            if( value.value < msg.stat.min )
+                            {
+                                msg.stat.min = value.value;
+                            }
+                            if( value.value > msg.stat.max )
+                            {
+                                msg.stat.max = value.value;
+                            }
+                        }
+                        msg.stat.average = sum/msg.stat.count;
+                        let varianz = 0;
+                        for( const value of item )
+                        {
+                            varianz += ( value.value - msg.stat.average ) ** 2;
+                        }
+                        msg.stat.deviation = Math.sqrt( varianz / msg.stat.count );
+                        msg.stat.variation = msg.stat.deviation / msg.stat.average;
+                        node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation}`});
                         send( msg );
                     }
                     else

@@ -10,6 +10,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
             {
+                done();
                 return null;
             }
             msg.payload = Number( RED.util.getMessageProperty( msg, node.property ) );

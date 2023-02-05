@@ -11,6 +11,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
             {
+                done();
                 return null;
             }
             msg.payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );

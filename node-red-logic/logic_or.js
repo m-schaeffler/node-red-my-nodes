@@ -13,6 +13,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
             {
+                done();
                 return null;
             }
             if( msg.reset || msg.topic==="init" )

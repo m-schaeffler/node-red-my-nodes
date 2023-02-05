@@ -1,0 +1,64 @@
+[
+    {
+        "id": "8b8b9dd67621a97e",
+        "type": "statistics",
+        "z": "3c59326457645408",
+        "name": "",
+        "property": "payload",
+        "deltaTime": "10",
+        "minData": "2",
+        "x": 360,
+        "y": 2100,
+        "wires": [
+            [
+                "1a6086132fd93e1a"
+            ]
+        ]
+    },
+    {
+        "id": "1a6086132fd93e1a",
+        "type": "debug",
+        "z": "3c59326457645408",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 2100,
+        "wires": []
+    },
+    {
+        "id": "40735ba7d52d0d38",
+        "type": "inject",
+        "z": "3c59326457645408",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "random",
+        "payload": "$random()*100",
+        "payloadType": "jsonata",
+        "x": 190,
+        "y": 2100,
+        "wires": [
+            [
+                "8b8b9dd67621a97e"
+            ]
+        ]
+    }
+]

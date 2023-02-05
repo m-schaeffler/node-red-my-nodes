@@ -202,6 +202,45 @@ The message property to be used as payload can be defined with the `Property` pr
 |min      |gets the minimal value of the `topic` channels|
 |max      |gets the maximal value of the `topic` channels|
 
+### statistics
+
+Calculate statistical values of one or more data streams.
+
+Each stream can be debounced by arithmatic mean.
+
+If the msg property `invalid` is present in the message, all nodes ignore the message.
+
+#### Input
+
+The different inputs are differentiated by topics.
+
+The message property to be used as payload can be defined with the `Property` property.
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | name of the input channel.        |
+|payload | number | input value for `topic`.          |
+
+#### Output
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload | | same as in input message.|
+|stats.count | number | number of data elements.|
+|stats.min number | number | minimal value.|
+|stats.max number | number | maximal value.|
+|stats.average number | number | average value.|
+|stats.deviation number | number | standard deviation.|
+|stats.variation number | number | coefficient of variation.|
+
+#### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
+|delta time|number|time frame to collect the data for the analysis.|
+|min. Data|number|min. amount of data points to generate an output.|
+
 ## Edge Nodes
 
 ![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-logic/examples/edge.png)

@@ -76,24 +76,28 @@
     <dl class="message-properties">
         <dt>payload <span class="property-type">number</span></dt>
         <dd> result of combining of all input topics.</dd>
-        <dt>count <span class="property-type">number</span></dt>
+        <dt>stats.count <span class="property-type">number</span></dt>
         <dd> number of data elements.</dd>
-        <dt>data <span class="property-type">object</span></dt>
-        <dd> actual input data.</dd>
+        <dt>stats.min <span class="property-type">number</span></dt>
+        <dd> minimal value.</dd>
+        <dt>stats.max <span class="property-type">number</span></dt>
+        <dd> maximal value.</dd>
+        <dt>stats.average <span class="property-type">number</span></dt>
+        <dd> average value.</dd>
+        <dt>stats.deviation <span class="property-type">number</span></dt>
+        <dd> standard deviation.</dd>
+        <dt>stats.variation <span class="property-type">number</span></dt>
+        <dd> coefficient of variation.</dd>
     </dl>
     
     <h3>Parameter</h3>
 
     <dl class="message-properties">
-        <dt>Topic <span class="property-type">string</span></dt>
-        <dd> defines the topic for the output message.</dd>
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
-        <dt>min. Mean <span class="property-type">number</span></dt>
-        <dd> min. amount of values for the arithmatic mean of one topic.</dd>
-        <dt>max. Mean <span class="property-type">number</span></dt>
-        <dd> max. amount of values for the arithmatic mean of one topic.</dd>
+        <dt>delta time <span class="property-type">number</span></dt>
+        <dd> time frame to collect the data for the analysis.</dd>
         <dt>min. Data <span class="property-type">number</span></dt>
-        <dd> min. amount of topics to generate an output.</dd>
+        <dd> min. amount of data points to generate an output.</dd>
     </dl>
 </script>

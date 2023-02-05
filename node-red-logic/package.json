@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-logic",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "description": "nodes for simple operations.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-logic",
@@ -25,7 +25,8 @@
       "reduce":"math_reduce.js",
       "fallingEdge":"math_falling.js",
       "raisingEdge":"math_raising.js",
-      "hysteresisEdge":"math_hysteresis.js"
+      "hysteresisEdge":"math_hysteresis.js",
+      "statistics":"math_statistics.js"
     }
   },
   "author": {

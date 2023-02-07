@@ -57,6 +57,7 @@ module.exports = function(RED)
                         let sendMsgs     = flow.get( "sendqueue" )?.[msg.payload.device_address];
                         const sendMsg    = Array.isArray( sendMsgs ) ? sendMsgs.shift() : null;
                         let confirmMsg   = null;
+                        let restartMsg   = null;
                         msg.topic        = key.name;
                         msg.payload.type = key.type;
                         msg.payload.name = key.name;
@@ -89,7 +90,7 @@ module.exports = function(RED)
                             };
                         }
                         node.status( msg.topic );
-                        send( [msg,null,confirmMsg] );
+                        send( [msg,null,confirmMsg,restartMsg] );
                         done();
                     }
                     else
@@ -100,7 +101,7 @@ module.exports = function(RED)
                 else
                 {
                     //node.warn( "unknown deviceid: "+msg.payload.device_address );
-                    send( [null,msg,null] );
+                    send( [null,msg,null,null] );
                     done();
                 }
             }

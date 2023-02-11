@@ -89,6 +89,11 @@ module.exports = function(RED)
                                 }
                             };
                         }
+                        if( msg.payload.frame_count === 0 )
+                        {
+                            restartMsg = { topic:msg.topic, framecounter:{} };
+                            restartMsg.framecounter[msg.payload.device_address] = 0;
+                        }
                         node.status( msg.topic );
                         send( [msg,null,confirmMsg,restartMsg] );
                         done();

@@ -11,6 +11,8 @@ module.exports = function(RED) {
         this.maxMean  = Number( config.maxMean );
         this.minData  = Number( config.minData );
         this.algo     = config.algo;
+        this.filter   = Boolean( config.filter );
+        this.last     = null;
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -26,6 +28,7 @@ module.exports = function(RED) {
             else
             {
                 const payload = Number( RED.util.getMessageProperty( msg, node.property ) );
+                let   status  = { shape:"dot" };
                 if( ! isNaN( payload ) )
                 {
                     let data = context.get( "data" ) ?? {};
@@ -73,18 +76,38 @@ module.exports = function(RED) {
                         {
                             case "mean": msg.payload /= msg.count; break;
                         }
-                        node.status({fill:"green",shape:"dot",text:msg.payload});
-                        send( msg );
+                        status.text = msg.payload;
+                        if( node.filter )
+                        {
+                            if( msg.payload !== node.last )
+                            {
+                                node.last = msg.payload;
+                                status.fill = "green";
+                                send( msg );
+                            }
+                            else
+                            {
+                                status.fill = "gray";
+                            }
+                        }
+                        else
+                        {
+                            status.fill = "green";
+                            send( msg );
+                        }
                     }
                     else
                     {
-                        node.status({fill:"gray",shape:"dot",text:"to less data"});
+                        status.fill = "gray";
+                        status.text = "to less data";
                     }
                 }
                 else
                 {
-                    node.status({fill:"red",shape:"dot",text:"payload is NaN"});
+                    status.fill = "red";
+                    status.text = "payload is NaN";
                 }
+                node.status( status );
             }
             done();
         });

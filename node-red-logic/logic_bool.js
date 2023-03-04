@@ -5,8 +5,10 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
-        this.property = config.property || "payload";
+        this.property  = config.property || "payload";
         this.showState = config.showState;
+        this.filter    = Boolean( config.filter );
+        this.last      = null;
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -15,20 +17,31 @@ module.exports = function(RED) {
                 return null;
             }
             msg.payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
+            let status = { text:msg.payload ?? "error" };
             if( msg.payload !== null )
             {
-                if( node.showState )
+                if( node.filter )
                 {
-                    node.status( msg.payload );
+                    status.shape = "dot";
+                    if( msg.payload !== node.last )
+                    {
+                        node.last = msg.payload;
+                        status.fill = "green";
+                        send( msg );
+                    }
+                    else
+                    {
+                        status.fill = "gray";
+                    }
                 }
-                send( msg );
+                else
+                {
+                    send( msg );
+                }
             }
-            else
+            if( node.showState )
             {
-                if( node.showState )
-                {
-                    node.status( "error" );
-                }
+                node.status( status );
             }
             done();
         });

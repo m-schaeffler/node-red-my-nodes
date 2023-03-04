@@ -4,8 +4,10 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
-        this.property = config.property ?? "payload";
+        this.property  = config.property ?? "payload";
         this.showState = config.showState;
+        this.filter    = Boolean( config.filter );
+        this.last      = null;
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -14,20 +16,35 @@ module.exports = function(RED) {
                 return null;
             }
             msg.payload = Number( RED.util.getMessageProperty( msg, node.property ) );
+            let status = { text:msg.payload };
             if( ! isNaN( msg.payload ) )
             {
-                if( node.showState )
+                if( node.filter )
                 {
-                    node.status( msg.payload );
+                    status.shape = "dot";
+                    if( msg.payload !== node.last )
+                    {
+                        node.last = msg.payload;
+                        status.fill = "green";
+                        send( msg );
+                    }
+                    else
+                    {
+                        status.fill = "gray";
+                    }
                 }
-                send( msg );
+                else
+                {
+                    send( msg );
+                }
             }
             else
             {
-                if( node.showState )
-                {
-                    node.status( "not a Number" );
-                }
+                status.text = "not a Number";
+            }
+            if( node.showState )
+            {
+                node.status( status );
             }
             done();
         });

@@ -9,6 +9,8 @@ module.exports = function(RED) {
         this.topic    = config.topic;
         this.property = config.property || "payload";
         this.minData  = Number( config.minData );
+        this.filter   = Boolean( config.filter );
+        this.last     = null;
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -45,8 +47,26 @@ module.exports = function(RED) {
 
                     if( msg.count >= node.minData )
                     {
-                        node.status( msg.payload );
-                        send( msg );
+                        let status = { text:msg.payload };
+                        if( node.filter )
+                        {
+                            status.shape = "dot";
+                            if( msg.payload !== node.last )
+                            {
+                                node.last = msg.payload;
+                                status.fill = "green";
+                                send( msg );
+                            }
+                            else
+                            {
+                                status.fill = "gray";
+                            }
+                        }
+                        else
+                        {
+                            send( msg );
+                        }
+                        node.status( status );
                     }
                     else
                     {

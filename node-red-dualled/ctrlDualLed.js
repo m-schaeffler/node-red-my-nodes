@@ -37,6 +37,7 @@ module.exports = function(RED) {
                         case "0":
                         case "off":    setItem( "turn", "off" ); break;
                         case "toggle": setItem( "turn", item.turn=="on" ? "off" : "on" ); break;
+                        case "trigger": changed=true; break;
                     }
                     break;
                 case "boolean":

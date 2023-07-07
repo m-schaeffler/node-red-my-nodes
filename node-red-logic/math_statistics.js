@@ -8,6 +8,7 @@ module.exports = function(RED) {
         this.property = config.property || "payload";
         this.deltaTime= Number( config.deltaTime )*1000;
         this.minData  = Number( config.minData );
+        this.filter   = Boolean( config.filter );
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -38,33 +39,40 @@ module.exports = function(RED) {
 
                     if( item.length >= this.minData )
                     {
-                        msg.stat = {
-                            count: item.length,
-                            min:   Number.MAX_SAFE_INTEGER,
-                            max:   Number.MIN_SAFE_INTEGER };
-                        let sum = 0;
-                        for( const value of item )
+                        if( !node.filter || payload !== item[item.length-2].value )
                         {
-                            sum += value.value;
-                            if( value.value < msg.stat.min )
+                            msg.stat = {
+                                count: item.length,
+                                min:   Number.MAX_SAFE_INTEGER,
+                                max:   Number.MIN_SAFE_INTEGER };
+                            let sum = 0;
+                            for( const value of item )
                             {
-                                msg.stat.min = value.value;
+                                sum += value.value;
+                                if( value.value < msg.stat.min )
+                                {
+                                    msg.stat.min = value.value;
+                                }
+                                if( value.value > msg.stat.max )
+                                {
+                                    msg.stat.max = value.value;
+                                }
                             }
-                            if( value.value > msg.stat.max )
+                            msg.stat.average = sum/msg.stat.count;
+                            let varianz = 0;
+                            for( const value of item )
                             {
-                                msg.stat.max = value.value;
+                                varianz += ( value.value - msg.stat.average ) ** 2;
                             }
+                            msg.stat.deviation = Math.sqrt( varianz / msg.stat.count );
+                            msg.stat.variation = msg.stat.deviation / msg.stat.average;
+                            node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation}`});
+                            send( msg );
                         }
-                        msg.stat.average = sum/msg.stat.count;
-                        let varianz = 0;
-                        for( const value of item )
+                        else
                         {
-                            varianz += ( value.value - msg.stat.average ) ** 2;
+                            node.status({fill:"gray",shape:"dot",text:item.length});
                         }
-                        msg.stat.deviation = Math.sqrt( varianz / msg.stat.count );
-                        msg.stat.variation = msg.stat.deviation / msg.stat.average;
-                        node.status({fill:"green",shape:"dot",text:msg.stat.count});
-                        send( msg );
                     }
                     else
                     {

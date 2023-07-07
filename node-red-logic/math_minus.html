@@ -1,0 +1,83 @@
+#<script type="text/javascript">
+    RED.nodes.registerType('negate',{
+        category: 'function',
+        color: "#C0DEED",
+        defaults: {
+            name:{value:""},
+            property:{value:"payload",required:true},
+            showState:{value:false},
+            filter:{value:false}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-minus",
+        label: function() {
+            return this.name||"minus";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "minus",
+        inputLabels: 'input',
+        outputLabels: 'number',
+        oneditprepare: function() {
+            $("#node-input-property").typedInput({
+                type:"msg",
+                types:["msg"],
+                typeField: "#node-input-property-type"
+            })
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="negate">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
+        <input type="text" id="node-input-property">
+        <input type="hidden" id="node-input-property-type">
+    </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filter"><i class="fa fa-filter"></i> Filter</label>
+        <input type="checkbox" id="node-input-filter" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="negate">
+    
+    <p>negates the payload.</p>
+    <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
+
+    <h3>Input</h3>
+    
+    <p>The message property to be used as payload can be defined with the <code>Property</code> property.</p>
+    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type"></span></dt>
+        <dd> input value.</dd>
+    </dl>
+    
+    <h3>Output</h3>
+    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">number</span></dt>
+        <dd> number value of payload.</dd>
+    </dl>
+    
+    <h3>Parameter</h3>
+
+    <dl class="message-properties">
+        <dt>Property <span class="property-type">string</span></dt>
+        <dd> defines the message property to be used as payload.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
+    </dl>
+    
+</script>

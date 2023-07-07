@@ -50,7 +50,7 @@ module.exports = function(RED) {
                             }
                             return false;
                         }
-                        
+
                         if( !node.filter || checkFilter() )
                         {
                             msg.stat = {

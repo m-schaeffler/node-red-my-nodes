@@ -39,7 +39,19 @@ module.exports = function(RED) {
 
                     if( item.length >= this.minData )
                     {
-                        if( !node.filter || payload !== item[item.length-2].value )
+                        function checkFilter()
+                        {
+                            let last = context.get( "last" ) ?? {};
+                            if( payload !== last[msg.topic] )
+                            {
+                                last[msg.topic] = payload;
+                                context.set( "last", last );
+                                return true;
+                            }
+                            return false;
+                        }
+                        
+                        if( !node.filter || checkFilter() )
                         {
                             msg.stat = {
                                 count: item.length,
@@ -66,7 +78,7 @@ module.exports = function(RED) {
                             }
                             msg.stat.deviation = Math.sqrt( varianz / msg.stat.count );
                             msg.stat.variation = msg.stat.deviation / msg.stat.average;
-                            node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation}`});
+                            node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation.toPrecision(4)}`});
                             send( msg );
                         }
                         else

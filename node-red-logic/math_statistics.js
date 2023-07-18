@@ -19,6 +19,7 @@ module.exports = function(RED) {
             if( msg.reset || msg.topic==="init" )
             {
                 context.set( "data", {} );
+                context.set( "last", {} );
                 node.status( "" );
             }
             else

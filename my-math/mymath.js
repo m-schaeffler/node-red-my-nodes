@@ -25,3 +25,7 @@ exports.interpolate = function(input,curve)
     }
 }
 
+exports.clamp = function(value,min,max)
+{
+    return value > max ? max : ( value < min ? min : value );
+}

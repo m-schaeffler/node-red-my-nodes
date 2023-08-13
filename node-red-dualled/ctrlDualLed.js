@@ -18,12 +18,10 @@ module.exports = function(RED) {
                 if( value !== undefined && item[key] !== value )
                 {
                     item[key] = value;
-                    changed   = true;
                 }
             }
 
             let item    = context.get( msg.topic ) ?? { turn:"off", brightness:50, temp:4500 };
-            let changed = false;
             switch( typeof msg.payload )
             {
                 case "number":
@@ -37,7 +35,7 @@ module.exports = function(RED) {
                         case "0":
                         case "off":    setItem( "turn", "off" ); break;
                         case "toggle": setItem( "turn", item.turn=="on" ? "off" : "on" ); break;
-                        case "trigger": changed=true; break;
+                        case "trigger":break;
                     }
                     break;
                 case "boolean":
@@ -51,26 +49,23 @@ module.exports = function(RED) {
             }
             context.set( msg.topic, item );
 
-            if( changed )
+            let warmMsg = msg;
+            warmMsg.payload = msg.payload.transition!==undefined ? {transition:msg.payload.transition} : {};
+            if( "turn" in item )
             {
-                let warmMsg = msg;
-                warmMsg.payload = msg.payload.transition!==undefined ? {transition:msg.payload.transition} : {};
-                if( "turn" in item )
-                {
-                    warmMsg.payload.turn = item.turn;
-                }
-                let coldMsg = RED.util.cloneMessage( warmMsg );
-                if( "brightness" in item && "temp" in item )
-                {
-                    warmMsg.payload.brightness = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
-                    coldMsg.payload.brightness = item.brightness - warmMsg.payload.brightness;
-                }
-                warmMsg.topic += topicWarm;
-                coldMsg.topic += topicCold;
-
-                node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: warmMsg.payload.brightness+" / "+coldMsg.payload.brightness });
-                send( [ warmMsg, coldMsg ] );
+                warmMsg.payload.turn = item.turn;
             }
+            let coldMsg = RED.util.cloneMessage( warmMsg );
+            if( "brightness" in item && "temp" in item )
+            {
+                warmMsg.payload.brightness = Math.round( item.brightness*(temp_cold-item.temp) / (temp_cold-temp_warm) );
+                coldMsg.payload.brightness = item.brightness - warmMsg.payload.brightness;
+            }
+            warmMsg.topic += topicWarm;
+            coldMsg.topic += topicCold;
+
+            node.status({ fill: item.turn=="on"?"green":"gray", shape: "dot", text: warmMsg.payload.brightness+" / "+coldMsg.payload.brightness });
+            send( [ warmMsg, coldMsg ] );
             done();
         });
     }

@@ -42,7 +42,7 @@ module.exports = function(RED)
                     let countBuf = undefined;
                     while( countMsb <= 1000 )
                     {
-                        countBuf = Buffer.from( [countMsb&0xFF,(countMsb&0xFF00)>>8] );
+                        countBuf = Buffer.from( [countMsb&0xFF,(countMsb&0xFF00)>>>8] );
                         if( lora_packet.verifyMIC( packet, nsw, null, countBuf ) )
                         {
                             break;

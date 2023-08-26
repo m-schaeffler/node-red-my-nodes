@@ -34,11 +34,7 @@ module.exports = function(RED)
             }
             if( "payload" in msg )
             {
-                let counter = counters?.[msg.payload.device_address] ?? ( context.get( "default" ) ?? 0 );
-                if( ++counter > 0xFFFF )
-                {
-                    counter = 0;
-                }
+                const counter = ( counters?.[msg.payload.device_address] ?? ( context.get( "default" ) ?? 0 ) ) + 1;
                 if( ! Buffer.isBuffer( msg.payload.data ) )
                 {
                     msg.payload.data = Buffer.from( msg.payload.data );
@@ -46,7 +42,7 @@ module.exports = function(RED)
                 const lora = {
                     MType:   "Unconfirmed Data Down",
                     DevAddr: Buffer.from(msg.payload.device_address,"hex"),
-                    FCnt:    counter,
+                    FCnt:    counter & 0xFFFF,
                     FPort:   msg.payload.port,
                     FCtrl:   {
                         ACK:      msg.payload?.ack      ?? false,
@@ -59,7 +55,13 @@ module.exports = function(RED)
                 if( key )
                 {
                     counters[msg.payload.device_address] = counter;
-                    const packet = lora_packet.fromFields( lora, Buffer.from( key.asw, 'hex' ), Buffer.from( key.nsw, 'hex' ));
+                    const countMsb = counter >>> 16;
+                    const packet = lora_packet.fromFields(
+                                       lora,
+                                       Buffer.from( key.asw, 'hex' ),
+                                       Buffer.from( key.nsw, 'hex' ),
+                                       null,
+                                       Buffer.from( [countMsb&0xFF,(countMsb&0xFF00)>>>8] ) );
                     const data   = packet.getPHYPayload();
                     let   txpk   = {
                         //tmst: msg.payload.tmst,

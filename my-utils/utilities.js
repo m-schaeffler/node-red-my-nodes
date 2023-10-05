@@ -1,5 +1,19 @@
 // Utilities for use in NodeRed function nodes
 
+exports.stripFirst = function(str,sep="/")
+{
+    let help = str.split( sep );
+    help.shift();
+    return help.join( sep );
+}
+
+exports.stripLast = function(str,sep="/")
+{
+    let help = str.split( sep );
+    help.pop();
+    return help.join( sep );
+}
+
 exports.sepStr = function(str=null)
 {
     if( str !== "" )

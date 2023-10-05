@@ -1,5 +1,17 @@
 // Math functions for use in NodeRed function nodes
 
+exports.compare = function(a,b)
+{
+    return a == b ? 0 : ( a > b ? +1 : -1 );
+}
+
+exports.linear = function(a,a1,a2,b1,b2)
+{
+    return a < a1 ? a1 :
+           a > a2 ? a2 :
+           b1 + (a-a1)*(b2-b1)/(a2-a1);
+}
+
 exports.interpolate = function(input,curve)
 {
     if( input > curve[0].input )

@@ -15,6 +15,7 @@ exports.property2boolean = function(input)
         case "0":
         case "false":
         case "off":
+        case "overpower":
             return false;
         default:
             return null;

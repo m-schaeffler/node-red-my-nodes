@@ -17,7 +17,8 @@
         defaults: {
             name: {value:""},
             keys: {value:"", type:"lorawan-keys", required:true},
-            txdelay: {value:"1012500", required:true, validate:RED.validators.number()}
+            txdelay: {value:"1012500", required:true, validate:RED.validators.number()},
+            timeout: {vallue:"", validate:RED.validators.number()}
         }
     });
 </script>
@@ -34,6 +35,10 @@
     <div class="form-row">
         <label for="node-input-txdelay"><i class="fa fa-hourglass-o"></i> TX-Delay</label>
         <input type="text" id="node-input-txdelay">
+    </div>
+    <div class="form-row">
+        <label for="node-input-timeout"><i class="fa fa-hourglass-o"></i> Timeout</label>
+        <input type="text" id="node-input-timeout">
     </div>
 </script>
 
@@ -106,5 +111,7 @@
         <dd> configuration node to define the end nodes.</dd>
         <dt>TX-delay <span class="property-type">number</span></dt>
         <dd> delay in µs for a downlink message (RECEIVE_DELAY1 in LoRa); possibly needs some tweaking.</dd>
+        <dt>Timeout <span class="property-type">number</span></dt>
+        <dd> default timeout value to be set in <code>msg.timeout</code>, if there is no timeout specified for the node.</dd>
     </dl>
 </script>

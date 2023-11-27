@@ -10,6 +10,7 @@ module.exports = function(RED)
         var flow     = this.context().flow;
         this.keyconf = RED.nodes.getNode( config.keys );
         this.txdelay = parseInt( config.txdelay );
+        this.timeout = parseInt( config.timeout );
 
         node.on('input',function(msg,send,done) {
             if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length >= 7 )
@@ -67,10 +68,7 @@ module.exports = function(RED)
                         {
                             msg.payload.delta = key.delta;
                         }
-                        if( key.timeout )
-                        {
-                            msg.timeout = key.timeout;
-                        }
+                        msg.timeout = key.timeout ?? node.timeout;
                         if( msg.payload.confirmed || sendMsg )
                         {
                             confirmMsg = {

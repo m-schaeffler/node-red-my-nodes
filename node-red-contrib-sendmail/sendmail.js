@@ -9,7 +9,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             node.status( "sending mail" );
             const child = execFile( '/usr/bin/mail',
-                                    ['-s',msg.topic||'','-r',msg.from||node.config.from||'node-red','--','-a', 'Content-type: text/html',msg.to||node.config.to||'root'],
+                                    ['-s',msg.topic||'','-r',msg.from||node.config.from||'node-red','-a', 'Content-type: text/html','--',msg.to||node.config.to||'root'],
                                     { timeout:5000 },
                                     function(error, stdout, stderr) {
                                        if( error )

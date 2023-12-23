@@ -7,8 +7,8 @@ exports.compare = function(a,b)
 
 exports.linear = function(a,a1,a2,b1,b2)
 {
-    return a < a1 ? a1 :
-           a > a2 ? a2 :
+    return a < a1 ? b1 :
+           a > a2 ? b2 :
            b1 + (a-a1)*(b2-b1)/(a2-a1);
 }
 

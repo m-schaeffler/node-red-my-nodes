@@ -1,6 +1,6 @@
 module.exports = function(RED) {
 
-    function StatsNode(config) {
+    function MeanNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node      = this;
@@ -39,32 +39,13 @@ module.exports = function(RED) {
 
                     if( item.length >= this.minData )
                     {
-                        msg.stat = {
-                            count: item.length,
-                            min:   Number.MAX_SAFE_INTEGER,
-                            max:   Number.MIN_SAFE_INTEGER };
                         let sum = 0;
                         for( const value of item )
                         {
                             sum += value.value;
-                            if( value.value < msg.stat.min )
-                            {
-                                msg.stat.min = value.value;
-                            }
-                            if( value.value > msg.stat.max )
-                            {
-                                msg.stat.max = value.value;
-                            }
                         }
-                        msg.stat.average = sum/msg.stat.count;
-                        let varianz = 0;
-                        for( const value of item )
-                        {
-                            varianz += ( value.value - msg.stat.average ) ** 2;
-                        }
-                        msg.stat.deviation = Math.sqrt( varianz / msg.stat.count );
-                        msg.stat.variation = msg.stat.deviation / msg.stat.average;
-                        node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation.toPrecision(4)}`});
+                        msg.payload = sum/item.length;
+                        node.status({fill:"green",shape:"dot",text:`${item.length} / ${msg.payload.toPrecision(4)}`});
                         send( msg );
                     }
                     else
@@ -81,5 +62,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("statistics",StatsNode);
+    RED.nodes.registerType("mean",MeanNode);
 }

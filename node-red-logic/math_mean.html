@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('statistics',{
+    RED.nodes.registerType('mean',{
         category: 'function',
         color: "#C0DEED",
         defaults: {
@@ -14,9 +14,9 @@
         },
         inputs:1,
         outputs:1,
-        icon:"font-awesome/fa-arrows-alt",
+        icon:"font-awesome/fa-arrows-v",
         label: function() {
-            return this.name||"statistics";
+            return this.name||"mean";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
@@ -33,7 +33,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="statistics">
+<script type="text/html" data-template-name="mean">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -53,10 +53,9 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="statistics">
+<script type="text/html" data-help-name="mean">
     
-    <p>Calculate statistical values of one or more data streams.</p>
-    <p>Each stream can be debounced by arithmatic mean.</p>
+    <p>Calculate mean value of one or more data streams.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
 
     <h3>Input</h3>
@@ -75,19 +74,7 @@
     
     <dl class="message-properties">
         <dt>payload <span class="property-type">number</span></dt>
-        <dd> same as in input message.</dd>
-        <dt>stats.count <span class="property-type">number</span></dt>
-        <dd> number of data elements.</dd>
-        <dt>stats.min <span class="property-type">number</span></dt>
-        <dd> minimal value.</dd>
-        <dt>stats.max <span class="property-type">number</span></dt>
-        <dd> maximal value.</dd>
-        <dt>stats.average <span class="property-type">number</span></dt>
         <dd> average value.</dd>
-        <dt>stats.deviation <span class="property-type">number</span></dt>
-        <dd> standard deviation.</dd>
-        <dt>stats.variation <span class="property-type">number</span></dt>
-        <dd> coefficient of variation.</dd>
     </dl>
     
     <h3>Parameter</h3>

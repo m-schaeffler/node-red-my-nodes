@@ -8,6 +8,7 @@ module.exports = function(RED) {
         this.property = config.property || "payload";
         this.deltaTime= Number( config.deltaTime )*1000;
         this.minData  = Number( config.minData );
+        this.filter   = Number( config.filter ?? 0 )*1000;
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -45,8 +46,18 @@ module.exports = function(RED) {
                             sum += value.value;
                         }
                         msg.payload = sum/item.length;
-                        node.status({fill:"green",shape:"dot",text:`${item.length} / ${msg.payload.toPrecision(4)}`});
-                        send( msg );
+                        let last = context.get( "last" ) ?? {};
+                        if( (last[msg.topic]??0)+this.filter < now )
+                        {
+                            last[msg.topic] = now;
+                            context.set( "last", last );
+                            node.status({fill:"green",shape:"dot",text:`${item.length} / ${msg.payload.toPrecision(4)}`});
+                            send( msg );
+                        }
+                        else
+                        {
+                            node.status({fill:"gray",shape:"dot",text:`${item.length} / ${msg.payload.toPrecision(4)}`});
+                        }
                     }
                     else
                     {

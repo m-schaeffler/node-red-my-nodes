@@ -10,7 +10,8 @@
             },
             minData:{value:"1", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;}
-            }
+            },
+            filter:{value:"", required:true}
         },
         inputs:1,
         outputs:1,
@@ -51,6 +52,10 @@
         <label for="node-input-minData"><i class="fa fa-check-square-o "></i> min. Data</label>
         <input type="text" id="node-input-minData">
     </div>
+    <div class="form-row">
+        <label for="node-input-filter"><i class="fa fa-filter "></i> Filterzeit</label>
+        <input type="text" id="node-input-filter">
+    </div>
 </script>
 
 <script type="text/html" data-help-name="mean">
@@ -86,5 +91,7 @@
         <dd> time frame to collect the data for the analysis.</dd>
         <dt>min. Data <span class="property-type">number</span></dt>
         <dd> min. amount of data points to generate an output.</dd>
+        <dt>Filterzeit <span class="property-type">number</span></dt>
+        <dd> send output only after this time.</dd>
     </dl>
 </script>

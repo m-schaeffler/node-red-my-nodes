@@ -11,7 +11,8 @@
             minData:{value:"1", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
-            filter:{value:"", required:true}
+            filter:{value:"0", validate:RED.validators.number()},
+            zeroIsZero:{value:false}
         },
         inputs:1,
         outputs:1,
@@ -56,6 +57,10 @@
         <label for="node-input-filter"><i class="fa fa-filter "></i> Filterzeit</label>
         <input type="text" id="node-input-filter">
     </div>
+    <div class="form-row">
+        <label for="node-input-zeroIsZero"><i class="fa fa-exclamation-circle"></i> Null ist Null</label>
+        <input type="checkbox" id="node-input-zeroIsZero" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
 </script>
 
 <script type="text/html" data-help-name="mean">
@@ -93,5 +98,7 @@
         <dd> min. amount of data points to generate an output.</dd>
         <dt>Filterzeit <span class="property-type">number</span></dt>
         <dd> send output only after this time.</dd>
+        <dt>Null ist NUll <span class="property-type">boolean</span></dt>
+        <dd> If 0 is received, 0 is send immediately.</dd>
     </dl>
 </script>

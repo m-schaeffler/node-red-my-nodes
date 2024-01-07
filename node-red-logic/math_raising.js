@@ -3,11 +3,22 @@ module.exports = function(RED) {
     function RaisingEdgeNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
-        var node = this;
+        var node    = this;
         var context = this.context();
-        this.property  = config.property ?? "payload";
-        this.threshold = config.threshold;
-        this.showState = config.showState;
+        this.property     = config.property ?? "payload";
+        this.propertyType = config.propertyType ?? "msg";
+        this.threshold    = config.threshold;
+        this.showState    = config.showState;
+        if( this.propertyType === "jsonata" )
+        {
+            try {
+                this.propertyPrepared = RED.util.prepareJSONataExpression( this.property, this );
+            }
+            catch (e) {
+                node.error(RED._("debug.invalid-exp", {error: this.property}));
+                return;
+            }
+        }
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -19,37 +30,62 @@ module.exports = function(RED) {
             {
                 context.set( "data", {} );
                 node.status( "" );
+                done();
             }
             else
             {
-                msg.payload = Number( RED.util.getMessageProperty( msg, node.property ) );
-                let status = { fill:"gray", shape:"dot", text:msg.payload };
-
-                if( ! isNaN( msg.payload ) )
+                function getPayload(callback)
                 {
-                    let   data = context.get( "data" ) ?? {};
-                    const last = data[msg.topic] ?? Number.MAX_SAFE_INTEGER;
-                    if( msg.payload > this.threshold && this.threshold >= last )
+                    if( node.propertyPrepared )
                     {
-                        status.fill = "green";
-                        msg.edge = "raising";
-                        send( msg );
+                        RED.util.evaluateJSONataExpression( node.propertyPrepared, msg, function(err, value)
+                        {
+                            if( err )
+                            {
+                                done( RED._("debug.invalid-exp", {error: editExpression}) );
+                            }
+                            else
+                            {
+                                callback( value );
+                            }
+                        } );
                     }
-                    data[msg.topic] = msg.payload;
-                    context.set( "data", data );
+                    else
+                    {
+                        callback( RED.util.getMessageProperty( msg, node.property ) );
+                    }
                 }
-                else
+                getPayload( function(value)
                 {
-                    status.fill = "red";
-                    status.text = "not a Number";
-                }
+                    msg.payload = Number( value );
+                    let status = { fill:"gray", shape:"dot", text:msg.payload };
 
-                if( node.showState )
-                {
-                    node.status( status );
-                }
+                    if( ! isNaN( msg.payload ) )
+                    {
+                        let   data = context.get( "data" ) ?? {};
+                        const last = data[msg.topic] ?? Number.MAX_SAFE_INTEGER;
+                        if( msg.payload > this.threshold && this.threshold >= last )
+                        {
+                            status.fill = "green";
+                            msg.edge = "raising";
+                            send( msg );
+                        }
+                        data[msg.topic] = msg.payload;
+                        context.set( "data", data );
+                    }
+                    else
+                    {
+                        status.fill = "red";
+                        status.text = "not a Number";
+                    }
+
+                    if( node.showState )
+                    {
+                        node.status( status );
+                    }
+                    done();
+                } );
             }
-            done();
         });
     }
 

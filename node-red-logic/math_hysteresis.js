@@ -3,13 +3,24 @@ module.exports = function(RED) {
     function HysteresisEdgeNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
-        var node = this;
+        var node    = this;
         var context = this.context();
         this.property        = config.property ?? "payload";
+        this.propertyType    = config.propertyType ?? "msg";
         this.threshold_raise = config.threshold_raise;
         this.threshold_fall  = config.threshold_fall;
         this.initial         = config.initial;
         this.showState       = config.showState;
+        if( this.propertyType === "jsonata" )
+        {
+            try {
+                this.propertyPrepared = RED.util.prepareJSONataExpression( this.property, this );
+            }
+            catch (e) {
+                node.error(RED._("debug.invalid-exp", {error: this.property}));
+                return;
+            }
+        }
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -21,63 +32,88 @@ module.exports = function(RED) {
             {
                 context.set( "data", {} );
                 node.status( "" );
+                done();
             }
             else
             {
-                msg.payload = Number( RED.util.getMessageProperty( msg, node.property ) );
-                let status = { fill:"gray", shape:"dot", text:msg.payload };
-
-                if( ! isNaN( msg.payload ) )
+                function getPayload(callback)
                 {
-                    let   data = context.get( "data" ) ?? {};
-                    const last = data[msg.topic];
-
-                    function sendMsg(edge)
+                    if( node.propertyPrepared )
                     {
-                        status.fill = "green";
-                        data[msg.topic].edge = edge;
-                        msg.edge = edge;
-                        send( msg );
-                    }
-
-                    if( last )
-                    {
-                        if( msg.payload > this.threshold_raise && this.threshold_raise >= last.value && last.edge != 'rising')
+                        RED.util.evaluateJSONataExpression( node.propertyPrepared, msg, function(err, value)
                         {
-                            sendMsg( 'rising' );
-                        }
-                        else if( msg.payload < this.threshold_fall && this.threshold_fall <= last.value && last.edge != 'falling')
-                        {
-                            sendMsg( 'falling' );
-                        }
+                            if( err )
+                            {
+                                done( RED._("debug.invalid-exp", {error: editExpression}) );
+                            }
+                            else
+                            {
+                                callback( value );
+                            }
+                        } );
                     }
                     else
                     {
-                        data[msg.topic] = {};
-                        if( ['any','rising'].includes(this.initial) && msg.payload > this.threshold_raise )
-                        {
-                            sendMsg( 'rising' );
-                        }
-                        else if( ['any','falling'].includes(this.initial) && msg.payload < this.threshold_fall )
-                        {
-                            sendMsg( 'falling' );
-                        }
+                        callback( RED.util.getMessageProperty( msg, node.property ) );
                     }
-                    data[msg.topic].value = msg.payload;
-                    context.set( "data", data );
                 }
-                else
+                getPayload( function(value)
                 {
-                    status.fill = "red";
-                    status.text = "not a Number";
-                }
+                    msg.payload = Number( value );
+                    let status = { fill:"gray", shape:"dot", text:msg.payload };
 
-                if( node.showState )
-                {
-                    node.status( status );
-                }
+                    if( ! isNaN( msg.payload ) )
+                    {
+                        let   data = context.get( "data" ) ?? {};
+                        const last = data[msg.topic];
+
+                        function sendMsg(edge)
+                        {
+                            status.fill = "green";
+                            data[msg.topic].edge = edge;
+                            msg.edge = edge;
+                            send( msg );
+                        }
+
+                        if( last )
+                        {
+                            if( msg.payload > this.threshold_raise && this.threshold_raise >= last.value && last.edge != 'rising')
+                            {
+                                sendMsg( 'rising' );
+                            }
+                            else if( msg.payload < this.threshold_fall && this.threshold_fall <= last.value && last.edge != 'falling')
+                            {
+                                sendMsg( 'falling' );
+                            }
+                        }
+                        else
+                        {
+                            data[msg.topic] = {};
+                            if( ['any','rising'].includes(this.initial) && msg.payload > this.threshold_raise )
+                            {
+                                sendMsg( 'rising' );
+                            }
+                            else if( ['any','falling'].includes(this.initial) && msg.payload < this.threshold_fall )
+                            {
+                                sendMsg( 'falling' );
+                            }
+                        }
+                        data[msg.topic].value = msg.payload;
+                        context.set( "data", data );
+                    }
+                    else
+                    {
+                        status.fill = "red";
+                       status.text = "not a Number";
+                    }
+
+                    if( node.showState )
+                    {
+                        node.status( status );
+                    }
+                    done();
+                } );
             }
-            done();
         });
     }
 

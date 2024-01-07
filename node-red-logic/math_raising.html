@@ -5,6 +5,7 @@
         defaults: {
             name:{value:""},
             property:{value:"payload",required:true},
+            propertyType:{value:"msg"},
             threshold:{value:"",required:true,validate:RED.validators.number()},
             showState:{value:false}
         },
@@ -23,8 +24,8 @@
         oneditprepare: function() {
             $("#node-input-property").typedInput({
                 type:"msg",
-                types:["msg"],
-                typeField: "#node-input-property-type"
+                types:["msg","jsonata"],
+                typeField: "#node-input-propertyType"
             })
         }
     });
@@ -38,7 +39,7 @@
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
         <input type="text" id="node-input-property">
-        <input type="hidden" id="node-input-property-type">
+        <input type="hidden" id="node-input-propertyType">
     </div>
     <div class="form-row">
         <label for="node-input-threshold"><i class="fa fa-chevron-up"></i> Threshold</label>

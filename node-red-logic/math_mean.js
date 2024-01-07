@@ -83,18 +83,18 @@ module.exports = function(RED) {
                             send( msg );
                         }
 
-                        if( this.zeroIsZero && payload === 0 )
+                        if( node.zeroIsZero && payload === 0 )
                         {
                             sendValue( 0 );
                         }
-                        else if( item.length >= this.minData )
+                        else if( item.length >= node.minData )
                         {
                             let sum = 0;
                             for( const value of item )
                             {
                                 sum += value.value;
                             }
-                            if( (last[msg.topic]??0)+this.filter < now )
+                            if( (last[msg.topic]??0)+node.filter < now )
                             {
                                 sendValue( sum/item.length );
                             }

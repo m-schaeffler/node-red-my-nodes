@@ -63,7 +63,7 @@ module.exports = function(RED) {
                     {
                         let   data = context.get( "data" ) ?? {};
                         const last = data[msg.topic] ?? Number.MIN_SAFE_INTEGER;
-                        if( msg.payload < this.threshold && this.threshold <= last )
+                        if( msg.payload < node.threshold && node.threshold <= last )
                         {
                             status.fill = "green";
                             msg.edge = "falling";

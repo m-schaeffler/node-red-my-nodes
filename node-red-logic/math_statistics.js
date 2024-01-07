@@ -63,14 +63,14 @@ module.exports = function(RED) {
                         let data = context.get( "data" ) ?? {};
                         let item = data[msg.topic] ?? [];
                         item.push( { time:now, value:payload } );
-                        while( item[0].time < now - this.deltaTime )
+                        while( item[0].time < now - node.deltaTime )
                         {
                             item.shift();
                         }
                         data[msg.topic] = item;
                         context.set( "data", data );
 
-                        if( item.length >= this.minData )
+                        if( item.length >= node.minData )
                         {
                             msg.stat = {
                                 count: item.length,

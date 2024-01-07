@@ -76,11 +76,11 @@ module.exports = function(RED) {
 
                         if( last )
                         {
-                            if( msg.payload > this.threshold_raise && this.threshold_raise >= last.value && last.edge != 'rising')
+                            if( msg.payload > node.threshold_raise && node.threshold_raise >= last.value && last.edge != 'rising')
                             {
                                 sendMsg( 'rising' );
                             }
-                            else if( msg.payload < this.threshold_fall && this.threshold_fall <= last.value && last.edge != 'falling')
+                            else if( msg.payload < node.threshold_fall && node.threshold_fall <= last.value && last.edge != 'falling')
                             {
                                 sendMsg( 'falling' );
                             }
@@ -88,11 +88,11 @@ module.exports = function(RED) {
                         else
                         {
                             data[msg.topic] = {};
-                            if( ['any','rising'].includes(this.initial) && msg.payload > this.threshold_raise )
+                            if( ['any','rising'].includes(node.initial) && msg.payload > node.threshold_raise )
                             {
                                 sendMsg( 'rising' );
                             }
-                            else if( ['any','falling'].includes(this.initial) && msg.payload < this.threshold_fall )
+                            else if( ['any','falling'].includes(node.initial) && msg.payload < node.threshold_fall )
                             {
                                 sendMsg( 'falling' );
                             }

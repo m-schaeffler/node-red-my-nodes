@@ -10,12 +10,11 @@
     "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "main": "utilities.js",
   "author": {
     "name": "Mathias Schäffler",
     "url": "https://github.com/m-schaeffler"
   }
- 
 }

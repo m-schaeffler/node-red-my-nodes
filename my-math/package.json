@@ -10,7 +10,7 @@
     "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "main": "mymath.js",
   "author": {

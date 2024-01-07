@@ -9,7 +9,7 @@
     "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "keywords": [
     "node-red",
@@ -20,7 +20,7 @@
     "lora-packet": ">=0.9.0"
   },
   "node-red": {
-    "version": ">=3.0.0",
+    "version": ">=3.1.0",
     "nodes": {
       "lorawan-server":  "lorawan-server.js",
       "lorawan-keys":    "lorawan-keys.js",

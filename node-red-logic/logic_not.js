@@ -14,7 +14,7 @@ module.exports = function(RED) {
             if( msg.invalid )
             {
                 done();
-                return null;
+                return;
             }
             msg.payload = ! tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
             let status = { text:msg.payload ?? "error" };

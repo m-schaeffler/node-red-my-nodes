@@ -10,7 +10,7 @@ module.exports = function(RED) {
             if( msg.invalid )
             {
                 done();
-                return null;
+                return;
             }
             msg.count = context.get( "count" ) ?? 0;
             if( msg.reset || msg.topic==="init" )

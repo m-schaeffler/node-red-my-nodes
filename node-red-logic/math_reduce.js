@@ -18,12 +18,12 @@ module.exports = function(RED) {
             if( msg.invalid )
             {
                 done();
-                return null;
             }
-            if( msg.reset || msg.topic==="init" )
+            else if( msg.reset || msg.topic==="init" )
             {
                 context.set( "data", {} );
                 node.status( "" );
+                done();
             }
             else
             {
@@ -108,8 +108,8 @@ module.exports = function(RED) {
                     status.text = "payload is NaN";
                 }
                 node.status( status );
+                done();
             }
-            done();
         });
     }
 

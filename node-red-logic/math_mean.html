@@ -5,6 +5,7 @@
         defaults: {
             name:{value:""},
             property:{value:"payload", required:true},
+            propertyType:{value:"msg"},
             deltaTime:{value:"60", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
@@ -28,8 +29,8 @@
         oneditprepare: function() {
             $("#node-input-property").typedInput({
                 type:"msg",
-                types:["msg"],
-                typeField: "#node-input-property-type"
+                types:["msg","jsonata"],
+                typeField: "#node-input-propertyType"
             });
         }
     });
@@ -43,7 +44,7 @@
     <div class="form-row">
         <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
         <input type="text" id="node-input-property">
-        <input type="hidden" id="node-input-property-type">
+        <input type="hidden" id="node-input-propertyType">
     </div>
     <div class="form-row">
        <label for="node-input-minMean"><i class="fa fa-hourglass-o"></i> Zeitspanne</label>

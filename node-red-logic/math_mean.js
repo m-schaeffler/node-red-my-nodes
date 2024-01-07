@@ -60,7 +60,7 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
-                    msg.payload = Number( value );
+                    const payload = Number( value );
                     if( ! isNaN( payload ) )
                     {
                         let last = context.get( "last" ) ?? {};

@@ -6,7 +6,7 @@ module.exports = function(RED) {
         var node = this;
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.showState    = config.showState;
+        this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
         this.last         = null;
         if( this.propertyType === "jsonata" )
@@ -49,7 +49,7 @@ module.exports = function(RED) {
             }
             getPayload( function(value)
             {
-                msg.payload = Number( value );
+                msg.payload = - Number( value );
                 let status = { text:msg.payload };
                 if( ! isNaN( msg.payload ) )
                 {

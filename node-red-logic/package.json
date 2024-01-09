@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-logic",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "nodes for simple operations.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-logic",
@@ -17,19 +17,19 @@
   "node-red": {
     "version": ">=3.1.0",
     "nodes": {
-      "counter":"counter.js",
-      "tobool":"logic_bool.js",
-      "not":"logic_not.js",
-      "or":"logic_or.js",
-      "and":"logic_and.js",
-      "tonumber":"math_number.js",
-      "negate":"math_minus.js",
-      "reduce":"math_reduce.js",
-      "fallingEdge":"math_falling.js",
-      "raisingEdge":"math_raising.js",
-      "hysteresisEdge":"math_hysteresis.js",
-      "statistics":"math_statistics.js",
-      "mean":"math_mean.js"
+      "counter": "counter.js",
+      "tobool": "logic_bool.js",
+      "not": "logic_not.js",
+      "or": "logic_or.js",
+      "and": "logic_and.js",
+      "tonumber": "math_number.js",
+      "negate": "math_minus.js",
+      "reduce": "math_reduce.js",
+      "fallingEdge": "math_falling.js",
+      "raisingEdge": "math_raising.js",
+      "hysteresisEdge": "math_hysteresis.js",
+      "statistics": "math_statistics.js",
+      "mean": "math_mean.js"
     }
   },
   "author": {

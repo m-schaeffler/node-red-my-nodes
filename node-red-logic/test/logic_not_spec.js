@@ -1,8 +1,8 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
-var node   = require("../logic_bool.js");
+var node   = require("../logic_not.js");
 
-describe( 'logic_bool Node', function () {
+describe( 'logic_not Node', function () {
     "use strict";
 
   beforeEach(function (done) {
@@ -16,7 +16,7 @@ describe( 'logic_bool Node', function () {
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "tobool", name: "test" }];
+    var flow = [{ id: "n1", type: "not", name: "test" }];
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
       try {
@@ -35,7 +35,7 @@ describe( 'logic_bool Node', function () {
 
   it('should forward bool values', function (done) {
     const numbers = [false,0,"0","false","off",true,1,"1","true","on"];
-    var flow = [{ id: "n1", type: "tobool", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "not", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -43,7 +43,7 @@ describe( 'logic_bool Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          msg.should.have.property('payload',c>=5);
+          msg.should.have.property('payload',c<5);
           if( ++c === numbers.length )
           {
             done();
@@ -61,7 +61,7 @@ describe( 'logic_bool Node', function () {
   });
 
   it('should not forward invalid data', function (done) {
-    var flow = [{ id: "n1", type: "tobool", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "not", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -87,12 +87,12 @@ describe( 'logic_bool Node', function () {
       n1.receive({ payload: "FooBar" });
       n1.receive({ payload: NaN });
       n1.receive({ payload: null });
-      n1.receive({ payload: true });
+      n1.receive({ payload: false });
     });
   });
 
   it('should not filter data', function (done) {
-    var flow = [{ id: "n1", type: "tobool", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "not", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -112,15 +112,15 @@ describe( 'logic_bool Node', function () {
         }
       });
       n1.should.have.a.property('filter', false);
-      n1.receive({ payload: 0 });
-      n1.receive({ payload: 0 });
-      n1.receive({ payload: 0 });
       n1.receive({ payload: 1 });
+      n1.receive({ payload: 1 });
+      n1.receive({ payload: 1 });
+      n1.receive({ payload: 0 });
     });
   });
 
   it('should filter data', function (done) {
-    var flow = [{ id: "n1", type: "tobool", name: "test", filter:true, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "not", name: "test", filter:true, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -140,23 +140,23 @@ describe( 'logic_bool Node', function () {
         }
       });
       n1.should.have.a.property('filter', true);
-      n1.receive({ payload: 0 });
-      n1.receive({ payload: 0 });
-      n1.receive({ payload: 0 });
       n1.receive({ payload: 1 });
+      n1.receive({ payload: 1 });
+      n1.receive({ payload: 1 });
+      n1.receive({ payload: 0 });
     });
   });
 
 /*
   it('should have Jsonata', function (done) {
-    var flow = [{ id: "n1", type: "tobool", name: "test", property:"payload=5", propertyType:"jsonata", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "not", name: "test", property:"payload=5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',true);
+          msg.should.have.a.property('payload',false);
           done();
         }
         catch(err) {

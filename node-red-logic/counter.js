@@ -16,6 +16,7 @@ module.exports = function(RED) {
             if( msg.reset || msg.topic==="init" )
             {
                 msg.count = 0;
+                delete msg.reset;
             }
             else if( msg.query || msg.topic==="query" )
             {

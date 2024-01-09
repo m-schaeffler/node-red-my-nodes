@@ -8,7 +8,7 @@ module.exports = function(RED) {
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.threshold    = config.threshold;
-        this.showState    = config.showState;
+        this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -33,6 +33,7 @@ module.exports = function(RED) {
             }
             else
             {
+                node.done = done;
                 function getPayload(callback)
                 {
                     if( node.propertyPrepared )

@@ -13,12 +13,12 @@
         outputs:1,
         icon: "raising-edge.png",
         label: function() {
-            return this.name||"raising edge";
+            return this.name||"rising edge";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "raising edge",
+        paletteLabel: "rising edge",
         inputLabels: 'input',
         outputLabels: 'edge trigger',
         oneditprepare: function() {
@@ -53,7 +53,7 @@
 
 <script type="text/html" data-help-name="raisingEdge">
     
-    <p>Message is only forwarded, if the payload raises above a threshold value.</p>
+    <p>Message is only forwarded, if the payload rises above a threshold value.</p>
     <p>Each <code>topic</code> is treated seperatly.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
 

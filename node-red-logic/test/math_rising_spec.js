@@ -1,8 +1,8 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
-var node   = require("../math_raising.js");
+var node   = require("../math_rising.js");
 
-describe( 'math_raising Node', function () {
+describe( 'math_rising Node', function () {
     "use strict";
 
   beforeEach(function (done) {
@@ -33,7 +33,7 @@ describe( 'math_raising Node', function () {
     });
   });
 
-  it('should check for raising edge', function (done) {
+  it('should check for rising edge', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
     var flow = [{ id: "n1", type: "raisingEdge", name: "test", threshold:100, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -45,7 +45,7 @@ describe( 'math_raising Node', function () {
         try {
           c++;
           msg.should.have.property('payload',100.1);
-          msg.should.have.property('edge','raising');
+          msg.should.have.property('edge','rising');
           if( c === 1 )
           {
             done();

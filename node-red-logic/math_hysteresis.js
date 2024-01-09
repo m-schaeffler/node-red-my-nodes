@@ -5,12 +5,12 @@ module.exports = function(RED) {
         //this.config = config;
         var node    = this;
         var context = this.context();
-        this.property        = config.property ?? "payload";
-        this.propertyType    = config.propertyType ?? "msg";
-        this.threshold_raise = config.threshold_raise;
-        this.threshold_fall  = config.threshold_fall;
-        this.initial         = config.initial;
-        this.showState       = config.showState;
+        this.property       = config.property ?? "payload";
+        this.propertyType   = config.propertyType ?? "msg";
+        this.threshold_rise = config.threshold_raise;
+        this.threshold_fall = config.threshold_fall;
+        this.initial        = config.initial ?? "none";
+        this.showState      = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -76,7 +76,7 @@ module.exports = function(RED) {
 
                         if( last )
                         {
-                            if( msg.payload > node.threshold_raise && node.threshold_raise >= last.value && last.edge != 'rising')
+                            if( msg.payload > node.threshold_rise && node.threshold_rise >= last.value && last.edge != 'rising')
                             {
                                 sendMsg( 'rising' );
                             }
@@ -88,7 +88,7 @@ module.exports = function(RED) {
                         else
                         {
                             data[msg.topic] = {};
-                            if( ['any','rising'].includes(node.initial) && msg.payload > node.threshold_raise )
+                            if( ['any','rising'].includes(node.initial) && msg.payload > node.threshold_rise )
                             {
                                 sendMsg( 'rising' );
                             }

@@ -6,7 +6,7 @@ module.exports = function(RED) {
         //this.config = config;
         var node = this;
         this.property  = config.property || "payload";
-        this.showState = config.showState;
+        this.showState = Boolean( config.showState );
         this.filter    = Boolean( config.filter );
         this.last      = null;
 

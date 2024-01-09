@@ -1,6 +1,7 @@
 {
     "name": "node-red-my-nodes",
     "version": "1.0.0",
+    "private": true,
     "description": "Node-RED-my-nodes package to hold the test framework ONLY - use npm to install individual nodes",
     "homepage": "https://github.com/m-schaeffler/node-red-my-nodes",
     "license": "Apache-2.0",

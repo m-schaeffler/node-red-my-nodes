@@ -42,10 +42,15 @@ describe( 'math_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        msg.should.have.property('payload',Number(numbers[c]));
-        if( ++c === numbers.length )
-        {
-          done();
+        try {
+          msg.should.have.property('payload',Number(numbers[c]));
+          if( ++c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
         }
       });
       for( const i of numbers )
@@ -64,10 +69,15 @@ describe( 'math_number Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         c++;
-        msg.should.have.a.property('payload',255);
-        if( c === 1 && msg.payload === 255 )
-        {
-          done();
+        try {
+          msg.should.have.a.property('payload',255);
+          if( c === 1 && msg.payload === 255 )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
         }
       });
       n1.receive({ invalid:true, payload: 12.345 });
@@ -89,17 +99,22 @@ describe( 'math_number Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         c++;
-        msg.should.have.a.property('payload',c===4?255:23);
-        if( c === 4 && msg.payload === 255 )
-        {
-          done();
+        try {
+          msg.should.have.a.property('payload',c===4?255:2);
+          if( c === 4 && msg.payload === 255 )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
         }
       });
       n1.should.have.a.property('filter', false);
-      n1.emit("input", { payload: 2 });
-      n1.emit("input", { payload: 2 });
-      n1.emit("input", { payload: 2 });
-      n1.emit("input", { payload: 255 });
+      n1.receive({ payload: 2 });
+      n1.receive({ payload: 2 });
+      n1.receive({ payload: 2 });
+      n1.receive({ payload: 255 });
     });
   });
 
@@ -112,17 +127,22 @@ describe( 'math_number Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         c++;
-        msg.should.have.a.property('payload',c===2?255:2);
-        if( c === 2 && msg.payload === 255 )
-        {
-          done();
+        try {
+          msg.should.have.a.property('payload',c===2?255:2);
+          if( c === 2 && msg.payload === 255 )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
         }
       });
       n1.should.have.a.property('filter', true);
-      n1.emit("input", { payload: 2 });
-      n1.emit("input", { payload: 2 });
-      n1.emit("input", { payload: 2 });
-      n1.emit("input", { payload: 255 });
+      n1.receive({ payload: 2 });
+      n1.receive({ payload: 2 });
+      n1.receive({ payload: 2 });
+      n1.receive({ payload: 255 });
     });
   });
 
@@ -133,12 +153,17 @@ describe( 'math_number Node', function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
-        msg.should.have.a.property('payload',25);
-        done();
+        try {
+          msg.should.have.a.property('payload',25);
+          done();
+        }
+        catch(err) {
+          done(err);
+        }
       });
       n1.should.have.a.property('property', "payload+5");
       n1.should.have.a.property('propertyType', "jsonata");
-      n1.emit("input", { payload: 20 });
+      n1.receive({ payload: 20 });
     });
   });
 

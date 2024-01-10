@@ -8,7 +8,7 @@ module.exports = function(RED) {
         var context = this.context();
         this.topic    = config.topic;
         this.property = config.property || "payload";
-        this.minData  = Number( config.minData );
+        this.minData  = Number( config.minData ?? 1 );
         this.filter   = Boolean( config.filter );
         this.last     = null;
 

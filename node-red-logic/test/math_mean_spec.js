@@ -23,7 +23,7 @@ describe( 'math_mean Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
-        n1.should.have.a.property('deltaTime', 60);
+        n1.should.have.a.property('deltaTime', 60000);
         n1.should.have.a.property('minData', 1);
         n1.should.have.a.property('filter', 0);
         n1.should.have.a.property('zeroIsZero', false);
@@ -37,39 +37,30 @@ describe( 'math_mean Node', function () {
 
   it('should caclulate mean values', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
-    var flow = [{ id: "n1", type: "mean", deltaTime:1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
+      var s = 0;
       n2.on("input", function (msg) {
         try {
-          c++;
-          msg.should.have.property('payload',100.1);
-          msg.should.have.property('edge','rising');
-          if( c === 1 )
+          s += numbers[c++];
+          msg.should.have.property('payload',s/c);
+          msg.should.have.property('count',c);
+          if( c === numbers.length )
           {
             done();
-          }
-          else
-          {
-            done("too much messages");
           }
         }
         catch(err) {
           done(err);
         }
       });
-      try {
-        n1.should.have.a.property('deltaTime', 1);
-      }
-      catch(err) {
-        done(err);
-      }
       for( const i of numbers )
       {
-        n1.receive({ payload: i });
+        n1.receive({ topic:1, payload: i });
       }
     });
   });

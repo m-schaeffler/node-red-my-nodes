@@ -59,7 +59,7 @@ describe( 'math_rising Node', function () {
           done(err);
         }
       });
-      try @
+      try {
         n1.should.have.a.property('threshold', 100);
       }
       catch(err) {

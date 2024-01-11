@@ -74,9 +74,10 @@ module.exports = function(RED) {
                         data[msg.topic] = item;
                         context.set( "data", data );
 
-                        function sendValue(value)
+                        function sendValue(value,count)
                         {
                             msg.payload = value;
+                            msg.count   = count;
                             last[msg.topic] = now;
                             context.set( "last", last );
                             node.status({fill:"green",shape:"dot",text:`${item.length} / ${msg.payload.toPrecision(4)}`});
@@ -85,7 +86,7 @@ module.exports = function(RED) {
 
                         if( node.zeroIsZero && payload === 0 )
                         {
-                            sendValue( 0 );
+                            sendValue( 0, 1 );
                         }
                         else if( item.length >= node.minData )
                         {
@@ -96,7 +97,7 @@ module.exports = function(RED) {
                             }
                             if( (last[msg.topic]??0)+node.filter < now )
                             {
-                                sendValue( sum/item.length );
+                                sendValue( sum/item.length, item.length );
                             }
                             else
                             {

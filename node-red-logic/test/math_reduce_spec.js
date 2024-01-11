@@ -232,7 +232,7 @@ describe( 'math_reduce Node', function () {
 
   it('should add mean values, min 2 max 2', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"multiply", minData:2, minMean:2, maxMean:2, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"prod", minData:2, minMean:2, maxMean:2, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -241,8 +241,9 @@ describe( 'math_reduce Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.property('payload',(numbers[c]+numbers[c-2])*(numbers[c-1]+numbers[c-3])/4);
+          c++;
           msg.should.have.property('count',2)
-          if( c === numbers.length )
+          if( c === numbers.length-3 )
           {
             done();
           }
@@ -251,8 +252,13 @@ describe( 'math_reduce Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('minMean', 2);
-      n1.should.have.a.property('maxMean', 2);
+      try {
+        n1.should.have.a.property('minMean', 2);
+        n1.should.have.a.property('maxMean', 2);
+      }
+      catch(err) {
+        done(err);
+      }
       for( const i in numbers )
       {
         n1.receive({ topic:i%2, payload: numbers[i] });

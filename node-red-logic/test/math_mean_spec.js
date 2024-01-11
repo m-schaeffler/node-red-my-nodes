@@ -47,6 +47,7 @@ describe( 'math_mean Node', function () {
       n2.on("input", function (msg) {
         try {
           s += numbers[c++];
+          msg.should.have.property('topic',1);
           msg.should.have.property('payload',s/c);
           msg.should.have.property('count',c);
           if( c === numbers.length )
@@ -64,9 +65,9 @@ describe( 'math_mean Node', function () {
       }
     });
   });
-/*
+
   it('should not forward invalid data', function (done) {
-    var flow = [{ id: "n1", type: "raisingEdge", name: "test", threshold:100, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -76,6 +77,7 @@ describe( 'math_mean Node', function () {
         c++;
         try {
           msg.should.have.a.property('payload',5000);
+          msg.should.have.a.property('count',1);
           if( c === 1 && msg.payload === 5000 )
           {
             done();
@@ -85,7 +87,6 @@ describe( 'math_mean Node', function () {
           done(err);
         }
       });
-      n1.receive({ payload: 0 });
       n1.receive({ invalid:true, payload: 1000 });
       n1.receive({ invalid:true, payload: 0 });
       n1.receive({ invalid:true, payload: 1000 });
@@ -95,7 +96,7 @@ describe( 'math_mean Node', function () {
       n1.receive({ payload: 5000 });
     });
   });
-
+/*
   it('should work with different topics', function (done) {
     var flow = [{ id: "n1", type: "raisingEdge", threshold:100, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -123,9 +124,9 @@ describe( 'math_mean Node', function () {
       n1.receive({ topic:"B", payload: 2000 });
     });
   });
-
+*/
   it('should have reset', function (done) {
-    var flow = [{ id: "n1", type: "raisingEdge", name: "test", threshold:100, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -134,10 +135,21 @@ describe( 'math_mean Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',5000);
-          if( c === 1 && msg.payload === 5000 )
+          switch( c )
           {
-            done();
+            case 1:
+              msg.should.have.a.property('payload',0);
+              msg.should.have.a.property('count',1);
+              break;
+            case 2:
+              msg.should.have.a.property('payload',1000);
+              msg.should.have.a.property('count',1);
+              break;
+            case 3:
+              msg.should.have.a.property('payload',5000);
+              msg.should.have.a.property('count',1);
+              done();
+              break;
           }
         }
         catch(err) {
@@ -147,16 +159,13 @@ describe( 'math_mean Node', function () {
       n1.receive({ payload: 0 });
       n1.receive({ reset: true });
       n1.receive({ payload: 1000 });
-      n1.receive({ payload: 0 });
       n1.receive({ topic: "init" });
-      n1.receive({ payload: 1000 });
-      n1.receive({ payload: 0 });
       n1.receive({ payload: 5000 });
     });
   });
 
   it('should have Jsonata', function (done) {
-    var flow = [{ id: "n1", type: "raisingEdge", name: "test", threshold:100, property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -177,9 +186,8 @@ describe( 'math_mean Node', function () {
       catch(err) {
         done(err);
       }
-      n1.receive({ payload: 0 });
       n1.receive({ payload: 98 });
     });
   });
-*/
+
 });

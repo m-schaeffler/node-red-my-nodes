@@ -59,7 +59,12 @@ describe( 'math_falling Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('threshold', 100);
+      try {
+        n1.should.have.a.property('threshold', 100);
+      }
+      catch(err) {
+        done(err);
+      }
       for( const i of numbers )
       {
         n1.receive({ payload: i });
@@ -172,8 +177,13 @@ describe( 'math_falling Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('property', "payload-5");
-      n1.should.have.a.property('propertyType', "jsonata");
+      try {
+        n1.should.have.a.property('property', "payload-5");
+        n1.should.have.a.property('propertyType', "jsonata");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 1000 });
       n1.receive({ payload: 102 });
     });

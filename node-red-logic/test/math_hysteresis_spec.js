@@ -69,8 +69,13 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('threshold_rise', 200);
-      n1.should.have.a.property('threshold_fall', 100);
+      try {
+        n1.should.have.a.property('threshold_rise', 200);
+        n1.should.have.a.property('threshold_fall', 100);
+      }
+      catch(err) {
+        done(err);
+      }
       for( const i of numbers )
       {
         n1.receive({ payload: i });
@@ -192,7 +197,12 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('initial', "rising");
+      try {
+        n1.should.have.a.property('initial', "rising");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ reset: true });
       n1.receive({ payload: 1000 });
@@ -228,7 +238,12 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('initial', "falling");
+      try {
+        n1.should.have.a.property('initial', "falling");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ reset: true });
       n1.receive({ payload: 1000 });
@@ -267,7 +282,12 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('initial', "any");
+      try {
+        n1.should.have.a.property('initial', "any");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ reset: true });
       n1.receive({ payload: 1000 });
@@ -293,8 +313,13 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('property', "payload+5");
-      n1.should.have.a.property('propertyType', "jsonata");
+      try {
+        n1.should.have.a.property('property', "payload+5");
+        n1.should.have.a.property('propertyType', "jsonata");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ payload: 198 });
     });

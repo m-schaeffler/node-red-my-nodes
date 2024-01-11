@@ -7,10 +7,10 @@ module.exports = function(RED) {
         var context   = this.context();
         this.property     = config.property || "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.deltaTime    = Number( config.deltaTime )*1000;
-        this.minData      = Number( config.minData );
+        this.deltaTime    = Number( config.deltaTime ?? 60 )*1000;
+        this.minData      = Number( config.minData ?? 1 );
         this.filter       = Number( config.filter ?? 0 )*1000;
-        this.zeroIsZero   = config.zeroIsZero ?? false;
+        this.zeroIsZero   = Boolean( config.zeroIsZero );
         if( this.propertyType === "jsonata" )
         {
             try {

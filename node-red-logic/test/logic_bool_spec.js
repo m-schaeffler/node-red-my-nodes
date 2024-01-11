@@ -111,7 +111,12 @@ describe( 'logic_bool Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('filter', false);
+      try {
+        n1.should.have.a.property('filter', false);
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ payload: 0 });
       n1.receive({ payload: 0 });
@@ -139,7 +144,12 @@ describe( 'logic_bool Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('filter', true);
+      try {
+        n1.should.have.a.property('filter', true);
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ payload: 0 });
       n1.receive({ payload: 0 });
@@ -163,8 +173,13 @@ describe( 'logic_bool Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('property', "payload=5");
-      n1.should.have.a.property('propertyType', "jsonata");
+      try {
+        n1.should.have.a.property('property', "payload=5");
+        n1.should.have.a.property('propertyType', "jsonata");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 5 });
     });
   });

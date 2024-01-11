@@ -54,7 +54,12 @@ describe( 'logic_or Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('minData', 1);
+      try {
+        n1.should.have.a.property('minData', 1);
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ topic: "a", payload: false });
       n1.receive({ topic: "b", payload: false });
       n1.receive({ topic: "a", payload: true });
@@ -84,7 +89,12 @@ describe( 'logic_or Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('minData', 2);
+      try {
+        n1.should.have.a.property('minData', 2);
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ topic: "a", payload: false });
       n1.receive({ topic: "b", payload: false });
       n1.receive({ topic: "a", payload: true });
@@ -144,7 +154,12 @@ describe( 'logic_or Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('filter', false);
+      try {
+        n1.should.have.a.property('filter', false);
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ payload: 0 });
       n1.receive({ payload: 0 });
@@ -172,7 +187,12 @@ describe( 'logic_or Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('filter', true);
+      try {
+        n1.should.have.a.property('filter', true);
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ payload: 0 });
       n1.receive({ payload: 0 });
@@ -201,7 +221,12 @@ describe( 'logic_or Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('minData', 3);
+      try {
+        n1.should.have.a.property('minData', 3);
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ topic: "a", payload: false });
       n1.receive({ topic: "b", payload: false });
       n1.receive({ topic: "c", payload: false });
@@ -232,8 +257,13 @@ describe( 'logic_or Node', function () {
           done(err);
         }
       });
-      n1.should.have.a.property('property', "payload=5");
-      n1.should.have.a.property('propertyType', "jsonata");
+      try {
+        n1.should.have.a.property('property', "payload=5");
+        n1.should.have.a.property('propertyType', "jsonata");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 5 });
     });
   });

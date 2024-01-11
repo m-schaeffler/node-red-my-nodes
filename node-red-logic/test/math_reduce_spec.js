@@ -355,13 +355,13 @@ describe( 'math_reduce Node', function () {
           switch( c )
           {
             case 3:
-              msg.should.have.property('payload',numbers[c]*numbers[c-1]);
+              msg.should.have.property('payload',(numbers[c]+numbers[c-2])*(numbers[c-1]+numbers[c-3])/4);
               break;
             case 4:
-              msg.should.have.property('payload',(numbers[c]+numbers[c-2])*numbers[c-1]/2);
+              msg.should.have.property('payload',(numbers[c]+numbers[c-2]+numbers[c-4])*(numbers[c-1]+numbers[c-3])/6);
               break;
             default:
-              msg.should.have.property('payload',(numbers[c]+numbers[c-2])*(numbers[c-1]+numbers[c-3])/4);
+              msg.should.have.property('payload').which.is.approximately((numbers[c]+numbers[c-2]+numbers[c-4])*(numbers[c-1]+numbers[c-3]+numbers[c-5])/9,0.00001);
           }
           c++;
           msg.should.have.property('count',2)

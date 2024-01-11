@@ -2,6 +2,12 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../math_mean.js");
 
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 describe( 'math_mean Node', function () {
     "use strict";
 
@@ -142,6 +148,47 @@ describe( 'math_mean Node', function () {
     });
   });
 
+  it('should filter data', function (done) {
+    var flow = [{ id: "n1", type: "mean", filter: 1, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var start = Date.now();
+      n2.on("input", function (msg) {
+        c++;
+        console.log(c);
+        try {
+          var delta = Date.now() - start;
+          console.log("   "+delta);
+          switch( c )
+          {
+            case 1:
+              delta.should.be.lessThan(10);
+              msg.should.have.a.property('payload',1000);
+              msg.should.have.a.property('count',1);
+              break;
+            case 2:
+              delta.should.be.approximately(1100,100);
+              msg.should.have.a.property('payload',(1000+2000+5000)/3);
+              msg.should.have.a.property('count',3);
+              done();
+              break;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n1.receive({ payload: 1000 });
+      await delay(900);
+      n1.receive({ payload: 2000 });
+      await delay(200);
+      n1.receive({ payload: 5000 });
+    });
+  });
+
   it('should not forward invalid data', function (done) {
     var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -239,3 +286,33 @@ describe( 'math_mean Node', function () {
   });
 
 });
+
+/*
+    it('should use msg.delay if overrideDelay is set', function(done) {
+        var flow = [
+            {"id":"n1", "type":"trigger", "name":"triggerNode", overrideDelay: true, duration:"50",wires:[["n2"]] },
+            {id:"n2", type:"helper"}
+        ];
+        helper.load(triggerNode, flow, function() {
+            var n1 = helper.getNode("n1");
+            var n2 = helper.getNode("n2");
+            var c = 0;
+            var firstTime;
+            n2.on("input", function(msg) {
+                if (c === 0) {
+                    firstTime = Date.now();
+                } else if (c === 1) {
+                    try {
+                        var delta = Date.now() - firstTime;
+                        delta.should.be.greaterThan(270);
+                        delta.should.be.lessThan(380);
+                        done();
+                    } catch(err) {
+                        done(err);
+                    }
+                }
+                c++;
+            });
+            n1.emit("input", {payload:null, delay: 300});
+        });
+    });*/

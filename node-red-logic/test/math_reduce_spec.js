@@ -51,7 +51,8 @@ describe( 'math_reduce Node', function () {
           s += numbers[c++];
           msg.should.have.property('topic',"Addition");
           msg.should.have.property('payload',s);
-          msg.should.have.property('count',c)
+          msg.should.have.property('count',c);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();
@@ -88,7 +89,8 @@ describe( 'math_reduce Node', function () {
           s += numbers[c++];
           msg.should.have.property('topic',"Mittelwert");
           msg.should.have.property('payload',s/c);
-          msg.should.have.property('count',c)
+          msg.should.have.property('count',c);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();
@@ -125,7 +127,8 @@ describe( 'math_reduce Node', function () {
           s *= numbers[c++];
           msg.should.have.property('topic',"Multiplikation");
           msg.should.have.property('payload',s);
-          msg.should.have.property('count',c)
+          msg.should.have.property('count',c);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();
@@ -162,7 +165,8 @@ describe( 'math_reduce Node', function () {
           s = Math.min( s, numbers[c++] );
           msg.should.have.property('topic',"Minimum");
           msg.should.have.property('payload',s);
-          msg.should.have.property('count',c)
+          msg.should.have.property('count',c);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();
@@ -199,7 +203,8 @@ describe( 'math_reduce Node', function () {
           s = Math.max( s, numbers[c++] );
           msg.should.have.property('topic',"Maximum");
           msg.should.have.property('payload',s);
-          msg.should.have.property('count',c)
+          msg.should.have.property('count',c);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();
@@ -235,7 +240,8 @@ describe( 'math_reduce Node', function () {
         try {
           s += numbers[c++];
           msg.should.have.property('payload',s);
-          msg.should.have.property('count',c+2)
+          msg.should.have.property('count',c+2);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();
@@ -272,7 +278,8 @@ describe( 'math_reduce Node', function () {
         try {
           msg.should.have.property('payload',(numbers[c]+numbers[c-2])*(numbers[c-1]+numbers[c-3])/4);
           c++;
-          msg.should.have.property('count',2)
+          msg.should.have.property('count',2);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();
@@ -318,7 +325,8 @@ describe( 'math_reduce Node', function () {
               msg.should.have.property('payload',(numbers[c]+numbers[c-2])*(numbers[c-1]+numbers[c-3])/4);
           }
           c++;
-          msg.should.have.property('count',2)
+          msg.should.have.property('count',2);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();
@@ -364,7 +372,8 @@ describe( 'math_reduce Node', function () {
               msg.should.have.property('payload').which.is.approximately((numbers[c]+numbers[c-2]+numbers[c-4])*(numbers[c-1]+numbers[c-3]+numbers[c-5])/9,0.00001);
           }
           c++;
-          msg.should.have.property('count',2)
+          msg.should.have.property('count',2);
+          msg.should.have.property('data');
           if( c === numbers.length )
           {
             done();

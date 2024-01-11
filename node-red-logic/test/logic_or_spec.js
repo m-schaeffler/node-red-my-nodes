@@ -21,6 +21,7 @@ describe( 'logic_or Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', "");
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('filter', false);
@@ -34,7 +35,7 @@ describe( 'logic_or Node', function () {
   });
 
   it('should or two bool values, mindata=1', function (done) {
-    var flow = [{ id: "n1", type: "or", minData:1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "or", minData:1, topic:"Und", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -43,6 +44,7 @@ describe( 'logic_or Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
+          msg.should.have.property('topic',"Und");
           msg.should.have.property('payload',c>=3);
           msg.should.have.property('count',c===1?1:2);
           if( c === 5 )
@@ -69,7 +71,7 @@ describe( 'logic_or Node', function () {
   });
 
   it('should or two bool values, mindata=2', function (done) {
-    var flow = [{ id: "n1", type: "or", minData:2, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "or", topic:"Und", minData:2, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -78,6 +80,7 @@ describe( 'logic_or Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
+          msg.should.have.property('topic',"Und");
           msg.should.have.property('payload',c>=2);
           msg.should.have.property('count',2);
           if( c === 4 )

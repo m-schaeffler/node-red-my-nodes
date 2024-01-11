@@ -151,17 +151,15 @@ describe( 'math_mean Node', function () {
   it('should filter data', function (done) {
     var flow = [{ id: "n1", type: "mean", filter: 1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
-      var start = Date.now();
+      var start;
       n2.on("input", function (msg) {
         c++;
-        console.log(c);
         try {
           var delta = Date.now() - start;
-          console.log("   "+delta);
           switch( c )
           {
             case 1:
@@ -170,7 +168,7 @@ describe( 'math_mean Node', function () {
               msg.should.have.a.property('count',1);
               break;
             case 2:
-              delta.should.be.approximately(1100,100);
+              delta.should.be.approximately(1100,25);
               msg.should.have.a.property('payload',(1000+2000+5000)/3);
               msg.should.have.a.property('count',3);
               done();
@@ -181,6 +179,7 @@ describe( 'math_mean Node', function () {
           done(err);
         }
       });
+      start = Date.now();
       n1.receive({ payload: 1000 });
       await delay(900);
       n1.receive({ payload: 2000 });

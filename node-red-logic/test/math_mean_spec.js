@@ -66,6 +66,76 @@ describe( 'math_mean Node', function () {
     });
   });
 
+  it('should caclulate mean values, minData=3', function (done) {
+    const numbers = [1000,10,99.9,100,100.1,1000,0];
+    var flow = [{ id: "n1", type: "mean", minData:3, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var s = 17+34;
+      n2.on("input", function (msg) {
+        try {
+          s += numbers[c++];
+          msg.should.have.property('topic',2);
+          msg.should.have.property('payload',s/(c+2));
+          msg.should.have.property('count',c+2);
+          if( c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('minData', 3);
+      }
+      n1.receive({ topic:2, payload: 17 });
+      n1.receive({ topic:2, payload: 34 });
+      for( const i of numbers )
+      {
+        n1.receive({ topic:2, payload: i });
+      }
+    });
+  });
+
+  it('should have zeroIsZero', function (done) {
+    const numbers = [1000,10,99.9,100,100.1,1000,0,50];
+    var flow = [{ id: "n1", type: "mean", zeroIsZero:true, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var s = 0;
+      n2.on("input", function (msg) {
+        try {
+          s += numbers[c++];
+          msg.should.have.property('topic',"zero");
+          msg.should.have.property('payload',c===numbers.length-1?0:s/c);
+          msg.should.have.property('count',c);
+          if( c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('zeroIsZero', true);
+      }
+      for( const i of numbers )
+      {
+        n1.receive({ topic:"zero", payload: i });
+      }
+    });
+  });
+
   it('should not forward invalid data', function (done) {
     var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -96,35 +166,7 @@ describe( 'math_mean Node', function () {
       n1.receive({ payload: 5000 });
     });
   });
-/*
-  it('should work with different topics', function (done) {
-    var flow = [{ id: "n1", type: "raisingEdge", threshold:100, name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        c++;
-        try {
-          msg.should.have.a.property('payload',c*1000);
-          msg.should.have.a.property('topic',c===1?"A":"B");
-          if( c === 2 && msg.payload === 2000 )
-          {
-            done();
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      n1.receive({ topic:"A", payload: 0 });
-      n1.receive({ topic:"B", payload: 0 });
-      n1.receive({ topic:"A", payload: 1000 });
-      n1.receive({ topic:"B", payload: 2000 });
-    });
-  });
-*/
+    
   it('should have reset', function (done) {
     var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

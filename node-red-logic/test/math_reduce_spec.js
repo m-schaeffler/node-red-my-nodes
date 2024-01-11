@@ -21,6 +21,7 @@ describe( 'math_reduce Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', "");
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('minMean', 1);
@@ -38,7 +39,7 @@ describe( 'math_reduce Node', function () {
 
   it('should add values', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"add", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", topic:"Addition", algo:"add", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -48,6 +49,7 @@ describe( 'math_reduce Node', function () {
       n2.on("input", function (msg) {
         try {
           s += numbers[c++];
+          msg.should.have.property('topic',"Addition");
           msg.should.have.property('payload',s);
           msg.should.have.property('count',c)
           if( c === numbers.length )
@@ -66,10 +68,10 @@ describe( 'math_reduce Node', function () {
       }
     });
   });
-  
+
   it('should mean values', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"mean", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", topic:"Mittelwert", algo:"mean", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -79,6 +81,7 @@ describe( 'math_reduce Node', function () {
       n2.on("input", function (msg) {
         try {
           s += numbers[c++];
+          msg.should.have.property('topic',"Mittelwert");
           msg.should.have.property('payload',s/c);
           msg.should.have.property('count',c)
           if( c === numbers.length )
@@ -97,10 +100,10 @@ describe( 'math_reduce Node', function () {
       }
     });
   });
-  
+
   it('should multiply values', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"prod", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", topic:"Multiplikation", algo:"prod", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -110,6 +113,7 @@ describe( 'math_reduce Node', function () {
       n2.on("input", function (msg) {
         try {
           s *= numbers[c++];
+          msg.should.have.property('topic',"Multiplikation");
           msg.should.have.property('payload',s);
           msg.should.have.property('count',c)
           if( c === numbers.length )
@@ -128,19 +132,20 @@ describe( 'math_reduce Node', function () {
       }
     });
   });
-  
+
   it('should min values', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"min", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", topic:"Minimum", algo:"min", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
-      var s = 0;
+      var s = 9999;
       n2.on("input", function (msg) {
         try {
           s = Math.min( s, numbers[c++] );
+          msg.should.have.property('topic',"Minimum");
           msg.should.have.property('payload',s);
           msg.should.have.property('count',c)
           if( c === numbers.length )
@@ -159,10 +164,10 @@ describe( 'math_reduce Node', function () {
       }
     });
   });
-  
+
   it('should max values', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"max", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", topic:"Maximum", algo:"max", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -172,6 +177,7 @@ describe( 'math_reduce Node', function () {
       n2.on("input", function (msg) {
         try {
           s = Math.max( s, numbers[c++] );
+          msg.should.have.property('topic',"Maximum");
           msg.should.have.property('payload',s);
           msg.should.have.property('count',c)
           if( c === numbers.length )
@@ -190,7 +196,7 @@ describe( 'math_reduce Node', function () {
       }
     });
   });
-  
+
   it('should check minData', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
     var flow = [{ id: "n1", type: "reduce", name: "test", algo:"add", minData:3, wires: [["n2"]] },
@@ -198,13 +204,13 @@ describe( 'math_reduce Node', function () {
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
-      var c = 34+17;
-      var s = 0;
+      var c = 0;
+      var s = 34+17;
       n2.on("input", function (msg) {
         try {
           s += numbers[c++];
           msg.should.have.property('payload',s);
-          msg.should.have.property('count',c)
+          msg.should.have.property('count',c+2)
           if( c === numbers.length )
           {
             done();
@@ -254,8 +260,8 @@ describe( 'math_reduce Node', function () {
     });
   });
 
-  it('should have reset, initial==none', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:200, threshold_fall:100, wires: [["n2"]] },
+  it('should have reset', function (done) {
+    var flow = [{ id: "n1", type: "reduce", name: "test", algo: "add", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -264,7 +270,7 @@ describe( 'math_reduce Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('count',c===1?1:2);
+          msg.should.have.a.property('count',c!==2?1:2);
           switch( c )
           {
             case 1:

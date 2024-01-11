@@ -93,6 +93,9 @@ describe( 'math_mean Node', function () {
       try {
         n1.should.have.a.property('minData', 3);
       }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ topic:2, payload: 17 });
       n1.receive({ topic:2, payload: 34 });
       for( const i of numbers )
@@ -116,7 +119,7 @@ describe( 'math_mean Node', function () {
           s += numbers[c++];
           msg.should.have.property('topic',"zero");
           msg.should.have.property('payload',c===numbers.length-1?0:s/c);
-          msg.should.have.property('count',c);
+          msg.should.have.property('count',c===numbers.length-1?1:c);
           if( c === numbers.length )
           {
             done();
@@ -128,6 +131,9 @@ describe( 'math_mean Node', function () {
       });
       try {
         n1.should.have.a.property('zeroIsZero', true);
+      }
+      catch(err) {
+        done(err);
       }
       for( const i of numbers )
       {
@@ -166,7 +172,7 @@ describe( 'math_mean Node', function () {
       n1.receive({ payload: 5000 });
     });
   });
-    
+
   it('should have reset', function (done) {
     var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

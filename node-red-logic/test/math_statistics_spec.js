@@ -40,7 +40,7 @@ describe( 'math_statistics Node', function () {
   });
 
   it('should caclulate statistical values', function (done) {
-    const numbers = [1000,10,99.9,100,100.1,1000,0];
+    const numbers = [1000,10,99.9,100,100.1,2000,0];
     var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
@@ -48,18 +48,28 @@ describe( 'math_statistics Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       var s = 0;
+      var min = 10000;
+      var max = -1000;
       n2.on("input", function (msg) {
         try {
-          s += numbers[c++];
+          s += numbers[c];
+          min = Math.min( min, numbers[c] );
+          max = Math.max( max, numbers[c] );
+          const avg = s/(c+1);
+          let varianz = 0;
+          for( let i=0; i<=c; i++) {
+            varianz += ( numbers[i] - avg ) ** 2;
+          }
           msg.should.have.property('topic',1);
-          msg.should.have.property('payload',numbers[c-1]);
+          msg.should.have.property('payload',numbers[c++]);
           msg.should.have.property('stat');
-          msg.should.have.property('stat.count',c);
-          msg.should.have.property('stat.min');
-          msg.should.have.property('stat.max');
-          msg.should.have.property('stat.average');
-          msg.should.have.property('stat.deviation');
-          msg.should.have.property('stat.variation');
+          msg.stat.should.have.property('count',c);
+          msg.stat.should.have.property('min',min);
+          msg.stat.should.have.property('max',max);
+          msg.stat.should.have.property('average',avg);
+          const deviation = Math.sqrt( varianz / c );
+          msg.stat.should.have.property('deviation').which.is.approximately(deviation,0.00001);
+          msg.stat.should.have.property('variation').which.is.approximately(deviation/avg,0.00001);
           if( c === numbers.length )
           {
             done();

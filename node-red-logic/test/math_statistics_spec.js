@@ -62,7 +62,7 @@ describe( 'math_statistics Node', function () {
           }
           msg.should.have.property('topic',1);
           msg.should.have.property('payload',numbers[c]);
-          msg.should.have.property('stat');
+          msg.should.have.property('stat').which.is.Object();
           msg.stat.should.have.property('value',numbers[c++]);
           msg.stat.should.have.property('count',c);
           msg.stat.should.have.property('min',min);
@@ -249,10 +249,11 @@ describe( 'math_statistics Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',98);
-          msg.stat.should.have.a.property('value',98+5);
+          msg.should.have.a.property('payload').which.is.Object();
+          msg.payload.should.have.a.property('value',98);
+          msg.stat.should.have.a.property('value',98);
           msg.stat.should.have.a.property('count',1);
-          msg.stat.should.have.a.property('average',98+5);
+          msg.stat.should.have.a.property('average',98);
           done();
         }
         catch(err) {

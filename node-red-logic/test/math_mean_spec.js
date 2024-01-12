@@ -304,7 +304,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should work with objects', function (done) {
-    var flow = [{ id: "n1", type: "statistics", name: "test", property:"payload.value", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");

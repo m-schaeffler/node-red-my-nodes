@@ -147,7 +147,7 @@ describe( 'math_mean Node', function () {
       }
     });
   });
-  
+
   it('should mean data only for deltaTime window', function (done) {
     var flow = [{ id: "n1", type: "mean", deltaTime: 0.1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

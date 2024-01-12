@@ -67,7 +67,7 @@ module.exports = function(RED) {
                         let data = context.get( "data" ) ?? {};
                         let item = data[msg.topic] ?? [];
                         item.push( { time:now, value:payload } );
-                        while( item[0].time < now - this.deltaTime )
+                        while( item[0].time < now - node.deltaTime )
                         {
                             item.shift();
                         }

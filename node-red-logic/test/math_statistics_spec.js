@@ -85,7 +85,7 @@ describe( 'math_statistics Node', function () {
       }
     });
   });
-/*
+
   it('should caclulate mean values, minData=3', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
     var flow = [{ id: "n1", type: "statistics", minData:3, name: "test", wires: [["n2"]] },
@@ -99,8 +99,9 @@ describe( 'math_statistics Node', function () {
         try {
           s += numbers[c++];
           msg.should.have.property('topic',2);
-          msg.should.have.property('payload',s/(c+2));
+          msg.should.have.property('payload',numbers[c-1]);
           msg.should.have.property('count',c+2);
+          msg.stat.should.have.property('average',s/(c+2));
           if( c === numbers.length )
           {
             done();
@@ -125,43 +126,6 @@ describe( 'math_statistics Node', function () {
     });
   });
 
-  it('should have zeroIsZero', function (done) {
-    const numbers = [1000,10,99.9,100,100.1,1000,0,50];
-    var flow = [{ id: "n1", type: "statistics", zeroIsZero:true, name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      var s = 0;
-      n2.on("input", function (msg) {
-        try {
-          s += numbers[c++];
-          msg.should.have.property('topic',"zero");
-          msg.should.have.property('payload',c===numbers.length-1?0:s/c);
-          msg.should.have.property('count',c===numbers.length-1?1:c);
-          if( c === numbers.length )
-          {
-            done();
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('zeroIsZero', true);
-      }
-      catch(err) {
-        done(err);
-      }
-      for( const i of numbers )
-      {
-        n1.receive({ topic:"zero", payload: i });
-      }
-    });
-  });
-
   it('should mean data only for deltaTime window', function (done) {
     var flow = [{ id: "n1", type: "statistics", deltaTime: 0.1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -177,6 +141,7 @@ describe( 'math_statistics Node', function () {
           delta.should.be.approximately((c-1)*200,25);
           msg.should.have.a.property('payload',c*1000);
           msg.should.have.a.property('count',1);
+          msg.stat.should.have.property('average',c*1000);
           if( c==3 && msg.payload===3000 )
           {
             done();
@@ -201,52 +166,6 @@ describe( 'math_statistics Node', function () {
     });
   });
 
-  it('should filter data', function (done) {
-    var flow = [{ id: "n1", type: "statistics", filter: 1, name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      var start;
-      n2.on("input", function (msg) {
-        c++;
-        try {
-          var delta = Date.now() - start;
-          switch( c )
-          {
-            case 1:
-              delta.should.be.lessThan(10);
-              msg.should.have.a.property('payload',1000);
-              msg.should.have.a.property('count',1);
-              break;
-            case 2:
-              delta.should.be.approximately(1100,25);
-              msg.should.have.a.property('payload',(1000+2000+5000)/3);
-              msg.should.have.a.property('count',3);
-              done();
-              break;
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('filter', 1000);
-      }
-      catch(err) {
-        done(err);
-      }
-      start = Date.now();
-      n1.receive({ payload: 1000 });
-      await delay(900);
-      n1.receive({ payload: 2000 });
-      await delay(200);
-      n1.receive({ payload: 5000 });
-    });
-  });
-
   it('should not forward invalid data', function (done) {
     var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -259,6 +178,7 @@ describe( 'math_statistics Node', function () {
         try {
           msg.should.have.a.property('payload',5000);
           msg.should.have.a.property('count',1);
+          msg.stat.should.have.property('average',5000);
           if( c === 1 && msg.payload === 5000 )
           {
             done();
@@ -293,14 +213,17 @@ describe( 'math_statistics Node', function () {
             case 1:
               msg.should.have.a.property('payload',0);
               msg.should.have.a.property('count',1);
+              msg.stat.should.have.property('average',0);
               break;
             case 2:
               msg.should.have.a.property('payload',1000);
               msg.should.have.a.property('count',1);
+              msg.stat.should.have.property('average',1000);
               break;
             case 3:
               msg.should.have.a.property('payload',5000);
               msg.should.have.a.property('count',1);
+              msg.stat.should.have.property('average',5000);
               done();
               break;
           }
@@ -326,6 +249,8 @@ describe( 'math_statistics Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('payload',98+5);
+          msg.should.have.a.property('count',1);
+          msg.stat.should.have.property('average',98+5);
           done();
         }
         catch(err) {
@@ -342,5 +267,5 @@ describe( 'math_statistics Node', function () {
       n1.receive({ payload: 98 });
     });
   });
-*/
+
 });

@@ -156,6 +156,32 @@ describe( 'math_minus Node', function () {
     });
   });
 
+  it('should work with objects', function (done) {
+    var flow = [{ id: "n1", type: "negate", name: "test", property:"payload.value", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      n2.on("input", function (msg) {
+        try {
+          msg.should.have.a.property('payload',-98);
+          done();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('property', "payload.value");
+        n1.should.have.a.property('propertyType', "msg");
+      }
+      catch(err) {
+        done(err);
+      }
+      n1.receive({ payload: {a:1,value:98,b:88} });
+    });
+  });
+
   it('should have Jsonata', function (done) {
     var flow = [{ id: "n1", type: "negate", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

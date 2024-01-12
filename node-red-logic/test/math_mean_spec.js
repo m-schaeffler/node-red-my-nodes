@@ -147,6 +147,45 @@ describe( 'math_mean Node', function () {
       }
     });
   });
+  
+  it('should mean data only for deltaTime window', function (done) {
+    var flow = [{ id: "n1", type: "mean", deltaTime: 0.1, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var start;
+      n2.on("input", function (msg) {
+        c++;
+        try {
+          var delta = Date.now() - start;
+          delta.should.be.approximately((c-1)*200,25);
+          msg.should.have.a.property('payload',c*1000);
+          msg.should.have.a.property('count',1);
+          if( c==3 && msg.payload===3000 )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('deltaTime', 100);
+      }
+      catch(err) {
+        done(err);
+      }
+      start = Date.now();
+      n1.receive({ payload: 1000 });
+      await delay(200);
+      n1.receive({ payload: 2000 });
+      await delay(200);
+      n1.receive({ payload: 3000 });
+    });
+  });
 
   it('should filter data', function (done) {
     var flow = [{ id: "n1", type: "mean", filter: 1, name: "test", wires: [["n2"]] },
@@ -179,6 +218,12 @@ describe( 'math_mean Node', function () {
           done(err);
         }
       });
+      try {
+        n1.should.have.a.property('filter', 1000);
+      }
+      catch(err) {
+        done(err);
+      }
       start = Date.now();
       n1.receive({ payload: 1000 });
       await delay(900);

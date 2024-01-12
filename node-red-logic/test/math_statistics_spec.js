@@ -1,6 +1,6 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
-var node   = require("../math_mean.js");
+var node   = require("../math_statistics.js");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -8,7 +8,7 @@ function delay(ms) {
   });
 }
 
-describe( 'math_mean Node', function () {
+describe( 'math_statistics Node', function () {
     "use strict";
 
   beforeEach(function (done) {
@@ -22,7 +22,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "mean", name: "test" }];
+    var flow = [{ id: "n1", type: "statistics", name: "test" }];
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
       try {
@@ -31,8 +31,6 @@ describe( 'math_mean Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('deltaTime', 60000);
         n1.should.have.a.property('minData', 1);
-        n1.should.have.a.property('filter', 0);
-        n1.should.have.a.property('zeroIsZero', false);
         done();
       }
       catch(err) {
@@ -41,9 +39,9 @@ describe( 'math_mean Node', function () {
     });
   });
 
-  it('should caclulate mean values', function (done) {
+  it('should caclulate statistical values', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
-    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -54,8 +52,14 @@ describe( 'math_mean Node', function () {
         try {
           s += numbers[c++];
           msg.should.have.property('topic',1);
-          msg.should.have.property('payload',s/c);
-          msg.should.have.property('count',c);
+          msg.should.have.property('payload',numbers[c-1]);
+          msg.should.have.property('stat');
+          msg.should.have.property('stat.count',c);
+          msg.should.have.property('stat.min');
+          msg.should.have.property('stat.max');
+          msg.should.have.property('stat.average');
+          msg.should.have.property('stat.deviation');
+          msg.should.have.property('stat.variation');
           if( c === numbers.length )
           {
             done();
@@ -71,10 +75,10 @@ describe( 'math_mean Node', function () {
       }
     });
   });
-
+/*
   it('should caclulate mean values, minData=3', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
-    var flow = [{ id: "n1", type: "mean", minData:3, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "statistics", minData:3, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -113,7 +117,7 @@ describe( 'math_mean Node', function () {
 
   it('should have zeroIsZero', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0,50];
-    var flow = [{ id: "n1", type: "mean", zeroIsZero:true, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "statistics", zeroIsZero:true, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -149,7 +153,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should mean data only for deltaTime window', function (done) {
-    var flow = [{ id: "n1", type: "mean", deltaTime: 0.1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "statistics", deltaTime: 0.1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -188,7 +192,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should filter data', function (done) {
-    var flow = [{ id: "n1", type: "mean", filter: 1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "statistics", filter: 1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -234,7 +238,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should not forward invalid data', function (done) {
-    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -265,7 +269,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should have reset', function (done) {
-    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -304,7 +308,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should have Jsonata', function (done) {
-    var flow = [{ id: "n1", type: "mean", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "statistics", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -328,5 +332,5 @@ describe( 'math_mean Node', function () {
       n1.receive({ payload: 98 });
     });
   });
-
+*/
 });

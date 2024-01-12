@@ -61,8 +61,9 @@ describe( 'math_statistics Node', function () {
             varianz += ( numbers[i] - avg ) ** 2;
           }
           msg.should.have.property('topic',1);
-          msg.should.have.property('payload',numbers[c++]);
+          msg.should.have.property('payload',numbers[c]);
           msg.should.have.property('stat');
+          msg.stat.should.have.property('value',numbers[c++]);
           msg.stat.should.have.property('count',c);
           msg.stat.should.have.property('min',min);
           msg.stat.should.have.property('max',max);
@@ -100,7 +101,7 @@ describe( 'math_statistics Node', function () {
           s += numbers[c++];
           msg.should.have.property('topic',2);
           msg.should.have.property('payload',numbers[c-1]);
-          msg.should.have.property('count',c+2);
+          msg.stat.should.have.property('count',c+2);
           msg.stat.should.have.property('average',s/(c+2));
           if( c === numbers.length )
           {
@@ -140,7 +141,7 @@ describe( 'math_statistics Node', function () {
           var delta = Date.now() - start;
           delta.should.be.approximately((c-1)*200,25);
           msg.should.have.a.property('payload',c*1000);
-          msg.should.have.a.property('count',1);
+          msg.stat.should.have.a.property('count',1);
           msg.stat.should.have.property('average',c*1000);
           if( c==3 && msg.payload===3000 )
           {
@@ -177,7 +178,7 @@ describe( 'math_statistics Node', function () {
         c++;
         try {
           msg.should.have.a.property('payload',5000);
-          msg.should.have.a.property('count',1);
+          msg.stat.should.have.a.property('count',1);
           msg.stat.should.have.property('average',5000);
           if( c === 1 && msg.payload === 5000 )
           {
@@ -212,17 +213,17 @@ describe( 'math_statistics Node', function () {
           {
             case 1:
               msg.should.have.a.property('payload',0);
-              msg.should.have.a.property('count',1);
+              msg.stat.should.have.a.property('count',1);
               msg.stat.should.have.property('average',0);
               break;
             case 2:
               msg.should.have.a.property('payload',1000);
-              msg.should.have.a.property('count',1);
+              msg.stat.should.have.a.property('count',1);
               msg.stat.should.have.property('average',1000);
               break;
             case 3:
               msg.should.have.a.property('payload',5000);
-              msg.should.have.a.property('count',1);
+              msg.stat.should.have.a.property('count',1);
               msg.stat.should.have.property('average',5000);
               done();
               break;
@@ -248,9 +249,10 @@ describe( 'math_statistics Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',98+5);
-          msg.should.have.a.property('count',1);
-          msg.stat.should.have.property('average',98+5);
+          msg.should.have.a.property('payload',98);
+          msg.stat.should.have.a.property('value',98+5);
+          msg.stat.should.have.a.property('count',1);
+          msg.stat.should.have.a.property('average',98+5);
           done();
         }
         catch(err) {

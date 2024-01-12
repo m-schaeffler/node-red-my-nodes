@@ -33,7 +33,6 @@ module.exports = function(RED) {
             }
             else
             {
-                const now = Date.now();
                 function getPayload(callback)
                 {
                     if( node.propertyPrepared )
@@ -57,6 +56,7 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
+                    const now = Date.now();
                     const payload = Number( value );
                     if( ! isNaN( payload ) )
                     {
@@ -73,6 +73,7 @@ module.exports = function(RED) {
                         if( item.length >= node.minData )
                         {
                             msg.stat = {
+                                value: payload,
                                 count: item.length,
                                 min:   Number.MAX_SAFE_INTEGER,
                                 max:   Number.MIN_SAFE_INTEGER };

@@ -1,0 +1,106 @@
+var should = require("should");
+var helper = require("node-red-node-test-helper");
+var node   = require("../lorawan-packet-checkFC.js");
+
+describe( 'lorawan-packet-checkFC Node', function () {
+    "use strict";
+
+  beforeEach(function (done) {
+      helper.startServer(done);
+  });
+
+  afterEach(function(done) {
+      helper.unload().then(function() {
+          helper.stopServer(done);
+      });
+  });
+
+  it('should be loaded', function (done) {
+    var flow = [{ id: "n1", type: "lorawan-packet-checkFC", name: "test" }];
+    helper.load(node, flow, function () {
+      var n1 = helper.getNode("n1");
+      try {
+        n1.should.have.a.property('name', 'test');
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should receive data frames', function (done) {
+    const fc = [14,255,0,15,15,16];
+    var flow = [{ id: "n1", type: "lorawan-packet-checkFC", name: "test", wires: [["n2"],["n3"],["n4"],["n5"]] },
+                { id: "n2", type: "helper" },
+                { id: "n3", type: "helper" },
+                { id: "n4", type: "helper" },
+                { id: "n5", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var n3 = helper.getNode("n3");
+      var n4 = helper.getNode("n4");
+      var n5 = helper.getNode("n5");
+      var c  = 0;
+      n2.on("input", function (msg) {
+        try {
+          //console.log(msg.payload);
+          msg.should.have.property('payload').which.is.an.Object();
+          msg.payload.should.have.property('frame_count',fc[c]);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n4.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n5.on("input", function (msg) {
+        try {
+          //console.log(msg.payload);
+          msg.should.have.property('payload').which.is.an.Object();
+          msg.payload.should.have.property('ok',++c);
+          msg.payload.should.have.property('nok',0);
+          msg.payload.should.have.property('miss',0);
+          msg.payload.should.have.property('dup',0);
+          if( c === 6 )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.receive({ topic: "LoRa_1", payload: {"frame_count":14} });
+        n1.receive({ topic: "LoRa_3", payload: {"frame_count":255} });
+        n1.receive({ topic: "LoRa_3", payload: {"frame_count":0} });
+        n1.receive({ topic: "LoRa_1", payload: {"frame_count":15} });
+        n1.receive({ topic: "LoRa_2", payload: {"frame_count":15} });
+        n1.receive({ topic: "LoRa_1", payload: {"frame_count":16} });
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+});

@@ -29,5 +29,8 @@
   "author": {
     "name": "Mathias Schäffler",
     "url": "https://github.com/m-schaeffler"
+  },
+  "scripts": {
+    "test": "mocha \"test/*_spec.js\""
   }
 }

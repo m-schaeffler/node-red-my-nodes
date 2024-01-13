@@ -49,12 +49,27 @@ describe( 'sendmail Node', function () {
         arg2[7].should.be.eql('postmaster@mail.lan');
         arg3.should.be.an.Object();
         arg4.should.be.a.Function();
+        arg4(null,arg1,arg1.toUpperCase());
+        return {
+          stdin: {
+            write:function(str){
+              try {
+                str.should.be.eql('this is a test mail for nodered/sendmail unit tests.\0x0B.\x0B\x04');
+              }
+              catch(err) {
+                done(err);
+              }
+            },
+            end:function(){
+              done();
+            }
+          }
+        };
       }
       catch(err) {
         child_process.execFile.restore();
         done(err);
       }
-      arg4(null,arg1,arg1.toUpperCase());
     });
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
@@ -65,7 +80,6 @@ describe( 'sendmail Node', function () {
         n1.receive({ topic: "Unit Test", payload: "this is a test mail for nodered/sendmail unit tests." });
         child_process.execFile.calledOnce.should.be.true();
         child_process.execFile.restore();
-        done();
       }
       catch(err) {
         child_process.execFile.restore();
@@ -90,6 +104,21 @@ describe( 'sendmail Node', function () {
         arg2[7].should.be.eql('root@mail.lan');
         arg3.should.be.an.Object();
         arg4.should.be.a.Function();
+        return {
+          stdin: {
+            write:function(str){
+              try {
+                str.should.be.eql('this is a test mail for nodered/sendmail unit tests.\0x0B.\x0B\x04');
+              }
+              catch(err) {
+                done(err);
+              }
+            },
+            end:function(){
+              done();
+            }
+          }
+        };
       }
       catch(err) {
         child_process.execFile.restore();
@@ -104,7 +133,6 @@ describe( 'sendmail Node', function () {
         n1.receive({ topic: "Unit Test", payload: "this is a test mail for nodered/sendmail unit tests.", from: "nodered@mail.lan", to: "root@mail.lan" });
         child_process.execFile.calledOnce.should.be.true();
         child_process.execFile.restore();
-        done();
       }
       catch(err) {
         child_process.execFile.restore();

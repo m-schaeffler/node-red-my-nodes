@@ -36,6 +36,24 @@ describe( 'sendmail Node', function () {
   it('should send an email with defaults', function (done) {
     var flow = [{ id: "n1", type: "sendmail", from:"unittest@mail.lan", to:"postmaster@mail.lan", name: "test" }];
     var spy = sinon.stub(child_process, 'execFile').callsFake( function(arg1, arg2, arg3, arg4) {
+      try {
+        arg1.should.be.eql('/usr/bin/mail');
+        arg2.should.be.an.Array();
+        arg2[0].should.be.eql('-s');
+        arg2[1].should.be.eql('Unit Test');
+        arg2[2].should.be.eql('-r');
+        arg2[3].should.be.eql('unittest@mail.lan');
+        arg2[4].should.be.eql('-a');
+        arg2[5].should.be.eql('Content-type: text/html');
+        arg2[6].should.be.eql('--');
+        arg2[7].should.be.eql('postmaster@mail.lan');
+        arg3.should.be.an.Object();
+        arg4.should.be.a.Function();
+      }
+      catch(err) {
+        child_process.execFile.restore();
+        done(err);
+      }
       arg4(null,arg1,arg1.toUpperCase());
     });
     helper.load(node, flow, function () {
@@ -59,6 +77,24 @@ describe( 'sendmail Node', function () {
   it('should send an email with from / to', function (done) {
     var flow = [{ id: "n1", type: "sendmail", name: "test" }];
     var spy = sinon.stub(child_process, 'execFile').callsFake( function(arg1, arg2, arg3, arg4) {
+      try {
+        arg1.should.be.eql('/usr/bin/mail');
+        arg2.should.be.an.Array();
+        arg2[0].should.be.eql('-s');
+        arg2[1].should.be.eql('Unit Test');
+        arg2[2].should.be.eql('-r');
+        arg2[3].should.be.eql('nodered@mail.lan');
+        arg2[4].should.be.eql('-a');
+        arg2[5].should.be.eql('Content-type: text/html');
+        arg2[6].should.be.eql('--');
+        arg2[7].should.be.eql('root@mail.lan');
+        arg3.should.be.an.Object();
+        arg4.should.be.a.Function();
+      }
+      catch(err) {
+        child_process.execFile.restore();
+        done(err);
+      }
       arg4(null,arg1,arg1.toUpperCase());
     });
     helper.load(node, flow, function () {

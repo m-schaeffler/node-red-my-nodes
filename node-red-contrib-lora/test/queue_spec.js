@@ -79,7 +79,6 @@ describe( 'lorawan-queue-message Node', function () {
         n1.receive({ topic: "Bar 1", payload: [128] });
         q.should.have.a.property('0000abcd').which.is.an.Array().of.length(1);
         q['0000abcd'][0].should.be.eql(Buffer.from([128]));
-
         //
         n1.receive({ topic: "Charlie", payload: [255] });
         q.should.have.only.keys('12345678','0000abcd');

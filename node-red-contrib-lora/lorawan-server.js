@@ -10,6 +10,7 @@ module.exports = function(RED)
         var server  = dgram.createSocket( 'udp4' );
         var gateway = null;
         var stamp   = 0;
+        this.port = Number( config.port ?? 1700 );
 
         function incCounter(item)
         {
@@ -21,7 +22,7 @@ module.exports = function(RED)
 
         if( node != null )
         {
-            server.bind( config.port );
+            server.bind( node.port );
         }
 
         // UDP Socket Callbacks

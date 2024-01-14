@@ -2,7 +2,7 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../lorawan-keys.js");
 
-const keys = "{\"12345678\":{\"nsw\":\"00000000000000000000000000000000\",\"asw\":\"123456789abcdef00000000000000000\",\"type\":\"foo\",\"name\":\"Foo 1\"},\"0000abcd\":{\"nsw\":\"00000000000000000000000000000000\",\"asw\":\"00000000000000000000000000000000\",\"type\":\"bar\",\"name\":\"Bar 1\"}}";
+exports.keys = "{\"12345678\":{\"nsw\":\"00000000000000000000000000000000\",\"asw\":\"123456789abcdef00000000000000000\",\"type\":\"foo\",\"name\":\"Foo 1\"},\"0000abcd\":{\"nsw\":\"00000000000000000000000000000000\",\"asw\":\"00000000000000000000000000000000\",\"type\":\"bar\",\"name\":\"Bar 1\"}}";
 
 describe( 'lorawan-keys Node', function () {
     "use strict";
@@ -18,7 +18,7 @@ describe( 'lorawan-keys Node', function () {
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "lorawan-keys", keys:keys, name: "test" }];
+    var flow = [{ id: "n1", type: "lorawan-keys", keys:exports.keys, name: "test" }];
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
       try {
@@ -33,7 +33,7 @@ describe( 'lorawan-keys Node', function () {
   });
 
   it('should find device keys', function (done) {
-    var flow = [{ id: "n1", type: "lorawan-keys", keys:keys, name: "test" }];
+    var flow = [{ id: "n1", type: "lorawan-keys", keys:exports.keys, name: "test" }];
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
       try {
@@ -62,7 +62,7 @@ describe( 'lorawan-keys Node', function () {
   });
 
   it('should find device addresses', function (done) {
-    var flow = [{ id: "n1", type: "lorawan-keys", keys:keys, name: "test" }];
+    var flow = [{ id: "n1", type: "lorawan-keys", keys:exports.keys, name: "test" }];
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
       try {

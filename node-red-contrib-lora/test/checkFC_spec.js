@@ -2,6 +2,8 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../lorawan-packet-checkFC.js");
 
+require("./keys_spec.js");
+
 describe( 'lorawan-packet-checkFC Node', function () {
     "use strict";
 

@@ -1,16 +1,17 @@
 module.exports = function(RED) {
-    function lorakeys(n) {
-        RED.nodes.createNode(this,n);
-        var keys = JSON.parse( n.keys );
+    function lorakeys(config) {
+        RED.nodes.createNode(this,config);
+        var node = this;
+        this.keys = JSON.parse( config.keys );
 
-        this.getKey = function(devaddr) {
-            return keys[devaddr];
+        node.getKey = function(devaddr) {
+            return node.keys[devaddr];
         };
 
-        this.name2addr = function(name) {
-            for( const item in keys )
+        node.name2addr = function(name) {
+            for( const item in node.keys )
             {
-                if( name == keys[item].name )
+                if( name == node.keys[item].name )
                 {
                     return item;
                 }

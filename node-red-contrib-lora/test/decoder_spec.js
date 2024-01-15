@@ -1,11 +1,11 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
-var node   = require("../lorawan-queue-message.js");
+var node   = require("../lorawan-packet-decoder.js");
 var nodeKey= require("../lorawan-keys.js");
 var keys   = require("./keys_spec.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 
-describe( 'lorawan-queue-message Node', function () {
+describe( 'lorawan-packet-decoder Node', function () {
 
   beforeEach(function (done) {
     helper.startServer(done);
@@ -35,12 +35,14 @@ describe( 'lorawan-queue-message Node', function () {
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "lorawan-queue-message", name: "test" }];
+    var flow = [{ id: "n1", type: "lorawan-packet-decoder", name: "test" }];
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('keyconf', null);
+        n1.should.have.a.property('txdelay',1012500);
+        n1.should.have.a.property('timeout',900);
         done();
       }
       catch(err) {
@@ -49,6 +51,7 @@ describe( 'lorawan-queue-message Node', function () {
     });
   });
 
+/*
   it('should store messages', function (done) {
     var flow = [{ id:'flow', type:'tab' },
                 { id: "n1", type: "lorawan-queue-message", keys:"nk", name: "test", z: "flow" },
@@ -86,5 +89,5 @@ describe( 'lorawan-queue-message Node', function () {
       }
     });
   });
-
+*/
 });

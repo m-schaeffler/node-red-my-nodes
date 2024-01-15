@@ -9,8 +9,8 @@ module.exports = function(RED)
         var context  = this.context();
         var flow     = this.context().flow;
         this.keyconf = RED.nodes.getNode( config.keys );
-        this.txdelay = parseInt( config.txdelay );
-        this.timeout = parseInt( config.timeout );
+        this.txdelay = parseInt( config.txdelay ?? 1012500 );
+        this.timeout = parseInt( config.timeout ?? 900 );
 
         node.on('input',function(msg,send,done) {
             if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length >= 7 )

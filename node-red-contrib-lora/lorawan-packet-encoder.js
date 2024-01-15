@@ -8,8 +8,8 @@ module.exports = function(RED)
         var node     = this;
         var context  = this.context();
         this.keyconf = RED.nodes.getNode( config.keys );
-        this.power   = parseInt( config.power );
-        this.rfch    = config.rfch;
+        this.power   = parseInt( config.power ?? "14" );
+        this.rfch    = config.rfch ?? "N";
 
         node.on('input',function(msg,send,done) {
             let counters = context.get( "counters", "storeInFile" ) ?? {};

@@ -2,7 +2,7 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../lorawan-keys.js");
 
-exports.keys = "{\"12345678\":{\"nsw\":\"00000000000000000000000000000000\",\"asw\":\"123456789abcdef00000000000000000\",\"type\":\"foo\",\"name\":\"Foo 1\"},\"0000abcd\":{\"nsw\":\"00000000000000000000000000000000\",\"asw\":\"00000000000000000000000000000000\",\"type\":\"bar\",\"name\":\"Bar 1\"}}";
+exports.keys = "{\"12345678\":{\"nsw\":\"00000000000000000000000000000000\",\"asw\":\"123456789abcdef00000000000000000\",\"type\":\"foo\",\"name\":\"Foo 1\"},\"0000abcd\":{\"nsw\":\"00000000000000000000000000000000\",\"asw\":\"00000000000000000000000000000000\",\"type\":\"bar\",\"name\":\"Bar 1\",\"delta\":-1.2}}";
 
 describe( 'lorawan-keys Node', function () {
     "use strict";

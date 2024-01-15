@@ -86,7 +86,11 @@ describe( 'lorawan-packet-decoder Node', function () {
           msg.payload.rxpk.should.have.a.property('test','UnitTest');
           msg.payload.rxpk.should.have.a.property('time');
           if( c === 3 ) {
+            msg.payload.should.have.a.property('delta',-1.2);
             done();
+          }
+          else {
+            msg.payload.should.not.have.a.property('delta');
           }
         }
         catch(err) {
@@ -190,7 +194,7 @@ describe( 'lorawan-packet-decoder Node', function () {
         n1.receive({});
         n1.receive({ payload: {} });
         n1.receive({ payload: { data:"1234" } });
-        //n1.receive({ payload: { data:"YHlWNBIAAQAGDLyYVLOxCmg=" } });
+        n1.receive({ payload: { data:"YHhWNBIAAQAGDLyYVLOxcmg=" } });
         n1.receive({ payload: { data:"1234567890" } });
         done();
       }

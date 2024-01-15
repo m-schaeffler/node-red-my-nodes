@@ -36,7 +36,7 @@ describe( 'lorawan-server Node', function () {
     });
   });
 
-  it('should receive PULL_DATA messages', function (done) {
+  it('should receive PULL_DATA messages and afterwards send a message', function (done) {
     var flow = [{ id: "n1", type: "lorawan-server", name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -110,6 +110,174 @@ describe( 'lorawan-server Node', function () {
         dgram.createSocket.calledOnce.should.be.true();
         receiveLora.should.be.a.Function();
         receiveLora(Buffer.from([2,35,1,2,168,64,65,255,255,31,142,184]),{address:"10.11.12.13",port:30000});
+        n1.should.have.a.property('gateway').which.is.an.Object();
+        n1.gateway.should.have.a.property('port', 30000);
+        n1.gateway.should.have.a.property('ip', '10.11.12.13');
+        n1.gateway.should.have.a.property('id').which.is.eql('a84041ffff1f8eb8');
+        done();
+        dgram.createSocket.restore();
+      }
+      catch(err) {
+        dgram.createSocket.restore();
+        done(err);
+      }
+    });
+  });
+
+  it('should not send message without a PULL_DATA messages', function (done) {
+    var flow = [{ id: "n1", type: "lorawan-server", name: "test", wires: [["n2"],["n3"]] },
+                { id: "n2", type: "helper" },
+                { id: "n3", type: "helper" }];
+    var receiveLora;
+    var spy = sinon.stub(dgram, 'createSocket').callsFake( function(arg1) {
+      try {
+        arg1.should.be.eql('udp4');
+        return {
+          bind: function(port) {
+            try {
+              port.should.be.eql(1700);
+            }
+            catch(err) {
+              done(err);
+            }
+          },
+          on: function(arg1,arg2) {
+            try {
+              arg1.should.be.oneOf("listening","error","message");
+              arg2.should.be.a.Function();
+              if( arg1 === "message" )
+              {
+                receiveLora = arg2;
+              }
+            }
+            catch(err) {
+              done(err);
+            }
+          },
+          send: function(arg1,arg2,arg3) {
+            try {
+              arg1.should.fail();
+            }
+            catch(err) {
+              done(err);
+            }
+          },
+          close: function() {}
+        };
+      }
+      catch(err) {
+        dgram.createSocket.restore();
+        done(err);
+      }
+    });
+    helper.load(node, flow, function () {
+      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var n3 = helper.getNode("n3");
+      n2.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        dgram.createSocket.calledOnce.should.be.true();
+        receiveLora.should.be.a.Function();
+        n1.should.have.a.property('gateway',undefined);
+        done();
+        dgram.createSocket.restore();
+      }
+      catch(err) {
+        dgram.createSocket.restore();
+        done(err);
+      }
+    });
+  });
+
+  it('should receive PUSH_DATA messages', function (done) {
+    var flow = [{ id: "n1", type: "lorawan-server", name: "test", wires: [["n2"],["n3"]] },
+                { id: "n2", type: "helper" },
+                { id: "n3", type: "helper" }];
+    var receiveLora;
+    var spy = sinon.stub(dgram, 'createSocket').callsFake( function(arg1) {
+      try {
+        arg1.should.be.eql('udp4');
+        return {
+          bind: function(port) {
+            try {
+              port.should.be.eql(1700);
+            }
+            catch(err) {
+              done(err);
+            }
+          },
+          on: function(arg1,arg2) {
+            try {
+              arg1.should.be.oneOf("listening","error","message");
+              arg2.should.be.a.Function();
+              if( arg1 === "message" )
+              {
+                receiveLora = arg2;
+              }
+            }
+            catch(err) {
+              done(err);
+            }
+          },
+          send: function(arg1,arg2,arg3) {
+            //console.log("send");
+            //console.log(arg1);
+            try {
+              arg1.should.be.eql(Buffer.from([2,35,1,4]));
+              arg2.should.be.eql(30000);
+              arg3.should.be.eql("10.11.12.13");
+            }
+            catch(err) {
+              done(err);
+            }
+          },
+          close: function() {}
+        };
+      }
+      catch(err) {
+        dgram.createSocket.restore();
+        done(err);
+      }
+    });
+    helper.load(node, flow, function () {
+      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var n3 = helper.getNode("n3");
+      n2.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        dgram.createSocket.calledOnce.should.be.true();
+        receiveLora.should.be.a.Function();
+        receiveLora(Buffer.from([2]),{address:"10.11.12.13",port:30000});
         n1.should.have.a.property('gateway').which.is.an.Object();
         n1.gateway.should.have.a.property('port', 30000);
         n1.gateway.should.have.a.property('ip', '10.11.12.13');

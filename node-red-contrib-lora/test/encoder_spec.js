@@ -114,7 +114,7 @@ describe( 'lorawan-packet-encoder Node', function () {
         should.not.exist( n1.context().get("counters", "storeInFile") );
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
-        n1.receive({ payload: { device_address:"0000abcd", data:[255], port:1 } });
+        n1.receive({ payload: { device_address:"0000abcd", data:[255], port:1, modu:"XxXx", datr:"SF8BW125", codr:"5/6" } });
         should.exist( n1.context().get("counters", "storeInFile") );
       }
       catch(err) {

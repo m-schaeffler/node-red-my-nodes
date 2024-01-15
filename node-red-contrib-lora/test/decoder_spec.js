@@ -51,37 +51,57 @@ describe( 'lorawan-packet-decoder Node', function () {
     });
   });
 
-/*
   it('should store messages', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-queue-message", keys:"nk", name: "test", z: "flow" },
+                { id: "n1", type: "lorawan-queue-message", keys:"nk", name: "test", wires: [["n2"],["n3"],["n4"],["n5"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "n4", type: "helper", z: "flow" },
+                { id: "n5", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
       var n1 = helper.getNode("n1");
       var nk = helper.getNode("nk");
+      n2.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n4.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n5.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
       try {
         n1.should.have.a.property('keyconf').which.is.an.Object();
         should.not.exist( n1.context().flow.get("sendqueue") );
-        n1.receive({ topic: "Foo 1", payload: [0,1,2,3,4,5,6,7] });
-        var q = n1.context().flow.get("sendqueue");
-        q.should.be.an.Object();
-        q.should.have.a.property('12345678').which.is.an.Array().of.length(1);
-        q['12345678'][0].should.be.eql(Buffer.from([0,1,2,3,4,5,6,7]));
-        //
-        n1.receive({ topic: "Foo 1", payload: [255] });
-        q.should.have.a.property('12345678').which.is.an.Array().of.length(2);
-        q['12345678'][0].should.be.eql(Buffer.from([0,1,2,3,4,5,6,7]));
-        q['12345678'][1].should.be.eql(Buffer.from([255]));
-        //
-        n1.receive({ topic: "Foo 2", payload: [255] });
-        q.should.have.only.keys('12345678');
-        //
-        n1.receive({ topic: "Bar 1", payload: [128] });
-        q.should.have.a.property('0000abcd').which.is.an.Array().of.length(1);
-        q['0000abcd'][0].should.be.eql(Buffer.from([128]));
-        //
-        n1.receive({ topic: "Charlie", payload: [255] });
-        q.should.have.only.keys('12345678','0000abcd');
+        n1.receive({ payload: {} );
         done();
       }
       catch(err) {
@@ -89,5 +109,5 @@ describe( 'lorawan-packet-decoder Node', function () {
       }
     });
   });
-*/
+
 });

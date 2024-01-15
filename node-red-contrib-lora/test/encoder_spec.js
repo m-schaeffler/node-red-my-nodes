@@ -73,9 +73,9 @@ describe( 'lorawan-packet-encoder Node', function () {
           msg.payload.should.have.a.property('txpk').which.is.an.Object();
           msg.payload.txpk.should.have.a.property('freq',869.525);
           msg.payload.txpk.should.have.a.property('powe',14);
-          msg.payload.txpk.should.have.a.property('modu','LORA');
-          msg.payload.txpk.should.have.a.property('datr','SF7BW125');
-          msg.payload.txpk.should.have.a.property('codr','4/5');
+          msg.payload.txpk.should.have.a.property('modu',c<3?'LORA':"XxXx");
+          msg.payload.txpk.should.have.a.property('datr',c<3?'SF7BW125':'SF8BW125');
+          msg.payload.txpk.should.have.a.property('codr',c<3?'4/5':"5/6");
           msg.payload.txpk.should.have.a.property('ipol',true);
           msg.payload.txpk.should.have.a.property('size',c<3?17:14);
           msg.payload.txpk.should.have.a.property('data',data[c-1]);

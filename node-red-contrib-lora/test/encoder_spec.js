@@ -399,8 +399,10 @@ describe( 'lorawan-packet-encoder Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
-          console.log(msg.payload);
-          msg.should.have.a.property('topic',c===1?"Foo 1":"Bar 1");
+          //console.log(msg.payload);
+          const name = ["Foo 1","Bar 1"];
+          const data = ['YHhWNBIAlwAGNIfQraTFtNo=','YM2rAAAAlwAGVQ+lrGJK4V4='];
+          msg.should.have.a.property('topic',name[c-1]);
           msg.should.have.a.property('payload').which.is.an.Object();
           msg.payload.should.have.a.property('txpk').which.is.an.Object();
           msg.payload.txpk.should.have.a.property('freq',869.525);
@@ -410,7 +412,7 @@ describe( 'lorawan-packet-encoder Node', function () {
           msg.payload.txpk.should.have.a.property('codr','4/5');
           msg.payload.txpk.should.have.a.property('ipol',true);
           msg.payload.txpk.should.have.a.property('size',17);
-          msg.payload.txpk.should.have.a.property('data','YHhWNBIAAQAGDLyYVLOxCmg=');
+          msg.payload.txpk.should.have.a.property('data',data[c-1]);
           msg.payload.txpk.should.have.a.property('imme',true);
           msg.payload.txpk.should.not.have.a.property('rfch');
         }
@@ -420,7 +422,7 @@ describe( 'lorawan-packet-encoder Node', function () {
       });
       n3.on("input", function (msg) {
         try {
-          console.log(msg.payload);
+          //console.log(msg.payload);
           msg.should.have.a.property('topic',"framecounter");
           msg.should.have.a.property('payload').which.is.an.Object();
           msg.payload.should.have.a.property('12345678',151);
@@ -428,6 +430,7 @@ describe( 'lorawan-packet-encoder Node', function () {
             msg.payload.should.not.have.a.property('0000abcd');
           } else {
             msg.payload.should.have.a.property('0000abcd',151);
+            done();
           }
         }
         catch(err) {
@@ -463,8 +466,10 @@ describe( 'lorawan-packet-encoder Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
-          console.log(msg.payload);
-          msg.should.have.a.property('topic',c===1?"Foo 1":"Bar 1");
+          //console.log(msg.payload);
+          const name = ["Foo 1","Bar 1"];
+          const data = ['YHhWNBIAsAAGeh/v2GsEjiE=','YM2rAAAAfgAGqCEUaKWfWhQ='];
+          msg.should.have.a.property('topic',name[c-1]);
           msg.should.have.a.property('payload').which.is.an.Object();
           msg.payload.should.have.a.property('txpk').which.is.an.Object();
           msg.payload.txpk.should.have.a.property('freq',869.525);
@@ -474,7 +479,7 @@ describe( 'lorawan-packet-encoder Node', function () {
           msg.payload.txpk.should.have.a.property('codr','4/5');
           msg.payload.txpk.should.have.a.property('ipol',true);
           msg.payload.txpk.should.have.a.property('size',17);
-          msg.payload.txpk.should.have.a.property('data','YHhWNBIAAQAGDLyYVLOxCmg=');
+          msg.payload.txpk.should.have.a.property('data',data[c-1]);
           msg.payload.txpk.should.have.a.property('imme',true);
           msg.payload.txpk.should.not.have.a.property('rfch');
         }
@@ -484,14 +489,15 @@ describe( 'lorawan-packet-encoder Node', function () {
       });
       n3.on("input", function (msg) {
         try {
-          console.log(msg.payload);
+          //console.log(msg.payload);
           msg.should.have.a.property('topic',"framecounter");
           msg.should.have.a.property('payload').which.is.an.Object();
-          msg.payload.should.have.a.property('12345678',151);
+          msg.payload.should.have.a.property('12345678',176);
           if( c===1 ) {
-            msg.payload.should.not.have.a.property('0000abcd');
+            msg.payload.should.have.a.property('0000abcd',125);
           } else {
-            msg.payload.should.have.a.property('0000abcd',151);
+            msg.payload.should.have.a.property('0000abcd',126);
+            done();
           }
         }
         catch(err) {
@@ -501,7 +507,10 @@ describe( 'lorawan-packet-encoder Node', function () {
       try {
         n1.should.have.a.property('keyconf').which.is.an.Object();
         should.not.exist( n1.context().get("counters", "storeInFile") );
-        n1.receive({ framecounter: {"12345678":150,"0000abcd":125} });
+        var fc = {};
+        fc["12345678"] = 175;
+        fc["0000abcd"] = 125;
+        n1.receive({ framecounter: fc });
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
         n1.receive({ payload: { device_address:"0000abcd", data:[1,2,3,4], port:6 } });
         should.exist( n1.context().get("counters", "storeInFile") );

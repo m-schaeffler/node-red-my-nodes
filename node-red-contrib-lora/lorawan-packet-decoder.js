@@ -10,7 +10,7 @@ module.exports = function(RED)
         var flow     = this.context().flow;
         this.keyconf = RED.nodes.getNode( config.keys );
         this.txdelay = parseInt( config.txdelay ?? 1012500 );
-        this.timeout = parseInt( config.timeout ?? 900 );
+        this.timeout = parseInt( config.timeout ?? 0 );
 
         node.on('input',function(msg,send,done) {
             if( msg.payload !== undefined && msg.payload.data !== undefined && msg.payload.data.length >= 7 )
@@ -19,7 +19,8 @@ module.exports = function(RED)
                 {
                     msg.payload.time = Date.now();
                 }
-                const packet = lora_packet.fromWire( new Buffer( msg.payload.data, 'base64' ) );
+                //console.log(Buffer.from( msg.payload.data, 'base64' ));
+                const packet = lora_packet.fromWire( Buffer.from( msg.payload.data, 'base64' ) );
                 if( packet.getBuffers().DevAddr === undefined )
                 {
                     //node.error("DevAddr === undefined");
@@ -68,7 +69,11 @@ module.exports = function(RED)
                         {
                             msg.payload.delta = key.delta;
                         }
-                        msg.timeout = key.timeout ?? node.timeout;
+                        const t = key.timeout ?? node.timeout;
+                        if( t > 0 )
+                        {
+                            msg.timeout = key.timeout ?? node.timeout;
+                        }
                         if( msg.payload.confirmed || sendMsg )
                         {
                             confirmMsg = {

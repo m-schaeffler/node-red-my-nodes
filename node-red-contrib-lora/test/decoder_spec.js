@@ -42,7 +42,7 @@ describe( 'lorawan-packet-decoder Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('keyconf', null);
         n1.should.have.a.property('txdelay',1012500);
-        n1.should.have.a.property('timeout',900);
+        n1.should.have.a.property('timeout',0);
         done();
       }
       catch(err) {
@@ -87,10 +87,12 @@ describe( 'lorawan-packet-decoder Node', function () {
           msg.payload.rxpk.should.have.a.property('time');
           if( c === 3 ) {
             msg.payload.should.have.a.property('delta',-1.2);
+            msg.should.have.a.property('timeout',60);
             done();
           }
           else {
             msg.payload.should.not.have.a.property('delta');
+            msg.should.not.have.a.property('timeout');
           }
         }
         catch(err) {
@@ -136,6 +138,12 @@ describe( 'lorawan-packet-decoder Node', function () {
       }
     });
   });
+
+  // should decode with a default timeout
+
+  // should decode confirmed messages
+
+  // should send queued messages
 
   it('should not decode invalid messages', function (done) {
     var flow = [{ id:'flow', type:'tab' },

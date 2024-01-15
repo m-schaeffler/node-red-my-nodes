@@ -41,6 +41,7 @@ describe( 'lorawan-server Node', function () {
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
     var receiveLora;
+    var c = 0;
     var spy = sinon.stub(dgram, 'createSocket').callsFake( function(arg1) {
       try {
         arg1.should.be.eql('udp4');
@@ -70,9 +71,13 @@ describe( 'lorawan-server Node', function () {
             //console.log("send");
             //console.log(arg1);
             try {
-              arg1.should.be.eql(Buffer.from([2,35,1,4]));
+              c++;
+              arg1.should.be.eql(Buffer.from(c===1?[2,35,1,4]:[0x02,0x00,0x01,0x03,0x7b,0x22,0x66,0x72,0x65,0x71,0x22,0x3a,0x38,0x36,0x39,0x2e,0x35,0x32,0x35,0x2c,0x22,0x6d,0x6f,0x64,0x75,0x22,0x3a,0x22,0x4c,0x4f,0x52,0x41,0x22,0x2c,0x22,0x63,0x6f,0x64,0x72,0x22,0x3a,0x22,0x34,0x2f,0x35,0x22,0x7d]));
               arg2.should.be.eql(30000);
               arg3.should.be.eql("10.11.12.13");
+              if( c === 2 ) {
+                done();
+              }
             }
             catch(err) {
               done(err);
@@ -93,6 +98,7 @@ describe( 'lorawan-server Node', function () {
       n2.on("input", function (msg) {
         try {
           console.log(msg.payload);
+          msg.should.fail();
         }
         catch(err) {
           done(err);
@@ -101,6 +107,7 @@ describe( 'lorawan-server Node', function () {
       n3.on("input", function (msg) {
         try {
           console.log(msg.payload);
+          msg.should.fail();
         }
         catch(err) {
           done(err);
@@ -114,7 +121,7 @@ describe( 'lorawan-server Node', function () {
         n1.gateway.should.have.a.property('port', 30000);
         n1.gateway.should.have.a.property('ip', '10.11.12.13');
         n1.gateway.should.have.a.property('id').which.is.eql('a84041ffff1f8eb8');
-        done();
+        n1.receive({payload:{freq:869.525,modu:"LORA",codr:"4/5"}});
         dgram.createSocket.restore();
       }
       catch(err) {
@@ -177,6 +184,7 @@ describe( 'lorawan-server Node', function () {
       n2.on("input", function (msg) {
         try {
           console.log(msg.payload);
+          msg.should.fail();
         }
         catch(err) {
           done(err);
@@ -185,6 +193,7 @@ describe( 'lorawan-server Node', function () {
       n3.on("input", function (msg) {
         try {
           console.log(msg.payload);
+          msg.should.fail();
         }
         catch(err) {
           done(err);
@@ -193,7 +202,8 @@ describe( 'lorawan-server Node', function () {
       try {
         dgram.createSocket.calledOnce.should.be.true();
         receiveLora.should.be.a.Function();
-        n1.should.have.a.property('gateway',undefined);
+        n1.should.have.a.property('gateway',null);
+        n1.receive({payload:{freq:869.525,modu:"LORA",codr:"4/5"}});
         done();
         dgram.createSocket.restore();
       }
@@ -261,6 +271,7 @@ describe( 'lorawan-server Node', function () {
       n2.on("input", function (msg) {
         try {
           console.log(msg.payload);
+          msg.should.fail();
         }
         catch(err) {
           done(err);
@@ -269,6 +280,7 @@ describe( 'lorawan-server Node', function () {
       n3.on("input", function (msg) {
         try {
           console.log(msg.payload);
+          msg.should.fail();
         }
         catch(err) {
           done(err);

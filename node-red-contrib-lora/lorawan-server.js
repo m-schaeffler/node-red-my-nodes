@@ -46,12 +46,12 @@ module.exports = function(RED)
                         const data = message.slice( 12 );
                         const json = JSON.parse( data.toString() );
                         // rx message
-                        let rxMsg = [];
+                        let rxMsgs = [];
                         if( json.rxpk )
                         {
                             for( const item of json.rxpk )
                             {
-                                rxMsg.push( { topic:"rx", gateway:mac, payload:item } );
+                                rxMsgs.push( { topic:"rx", gateway:mac, payload:item } );
                                 incCounter( "up" );
                             }
                         }
@@ -61,7 +61,7 @@ module.exports = function(RED)
                         {
                             statMsg = { topic:"stat", gateway:mac, payload:json.stat };
                         }
-                        node.send( [rxMsg,statMsg] );
+                        node.send( [rxMsgs,statMsg] );
                         // ACK message
                         server.send( Buffer.from([2,message[1],message[2],1]), remote.port, remote.address );
                         break;

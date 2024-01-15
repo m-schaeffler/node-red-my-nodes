@@ -82,7 +82,7 @@ module.exports = function(RED)
                     {
                         txpk.imme = true;
                     }
-                    switch( this.rfch )
+                    switch( node.rfch )
                     {
                        case "0": txpk.rfch = 0; break;
                        case "1": txpk.rfch = 1; break;

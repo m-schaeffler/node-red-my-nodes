@@ -53,7 +53,7 @@ describe( 'lorawan-packet-decoder Node', function () {
 
   it('should store messages', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-queue-message", keys:"nk", name: "test", wires: [["n2"],["n3"],["n4"],["n5"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-decoder", keys:"nk", name: "test", wires: [["n2"],["n3"],["n4"],["n5"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -61,6 +61,10 @@ describe( 'lorawan-packet-decoder Node', function () {
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
       var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var n3 = helper.getNode("n3");
+      var n4 = helper.getNode("n4");
+      var n5 = helper.getNode("n5");
       var nk = helper.getNode("nk");
       n2.on("input", function (msg) {
         try {
@@ -101,7 +105,7 @@ describe( 'lorawan-packet-decoder Node', function () {
       try {
         n1.should.have.a.property('keyconf').which.is.an.Object();
         should.not.exist( n1.context().flow.get("sendqueue") );
-        n1.receive({ payload: {} );
+        n1.receive({ payload: {} });
         done();
       }
       catch(err) {

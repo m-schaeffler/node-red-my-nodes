@@ -536,7 +536,7 @@ describe( 'lorawan-packet-encoder Node', function () {
         try {
           c++;
           //console.log(msg.payload);
-          const data = ['YHhWNBIAAQAGDLyYVLOxCmg=',''];
+          const data = ['YHhWNBIAAQAGDLyYVLOxCmg=','YHhWNBIAWQAGdb6CUF1Lgys='];
           msg.should.have.a.property('topic',"Foo 1");
           msg.should.have.a.property('payload').which.is.an.Object();
           msg.payload.should.have.a.property('txpk').which.is.an.Object();
@@ -563,7 +563,7 @@ describe( 'lorawan-packet-encoder Node', function () {
           if( c===1 ) {
             msg.payload.should.have.a.property('12345678',1);
           } else {
-            msg.payload.should.have.a.property('12345678',126);
+            msg.payload.should.have.a.property('12345678',89);
             done();
           }
         }
@@ -586,5 +586,5 @@ describe( 'lorawan-packet-encoder Node', function () {
       }
     });
   });
-  
+
 });

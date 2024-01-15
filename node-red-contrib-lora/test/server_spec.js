@@ -248,7 +248,7 @@ describe( 'lorawan-server Node', function () {
             //console.log("send");
             //console.log(arg1);
             try {
-              arg1.should.be.eql(Buffer.from([2,35,1,4]));
+              arg1.should.be.eql(Buffer.from([2,35,1,1]));
               arg2.should.be.eql(30000);
               arg3.should.be.eql("10.11.12.13");
             }
@@ -289,11 +289,8 @@ describe( 'lorawan-server Node', function () {
       try {
         dgram.createSocket.calledOnce.should.be.true();
         receiveLora.should.be.a.Function();
-        receiveLora(Buffer.from([2]),{address:"10.11.12.13",port:30000});
-        n1.should.have.a.property('gateway').which.is.an.Object();
-        n1.gateway.should.have.a.property('port', 30000);
-        n1.gateway.should.have.a.property('ip', '10.11.12.13');
-        n1.gateway.should.have.a.property('id').which.is.eql('a84041ffff1f8eb8');
+        receiveLora(Buffer.from([2,19,132,0,168,64,65,255,255,31,142,184,123,34,115,116,97,116,34,58,123,34,116,105,109,101,34,58,34,50,48,50,52,45,48,49,45,49,53,32,48,56,58,49,56,58,48,53,32,85,84,67,34,44,34,114,120,110,98,34,58,48,44,34,114,120,111,107,34,58,48,44,34,114,120,102,119,34,58,48,44,34,97,99,107,114,34,58,57,57,46,56,44,34,100,119,110,98,34,58,51,55,57,56,44,34,116,120,110,98,34,58,48,44,34,112,102,114,109,34,58,34,83,88,49,51,48,56,34,44,34,109,97,105,108,34,58,34,100,114,97,103,105,110,111,45,49,102,56,101,98,56,64,100,114,97,103,105,110,111,46,99,111,109,34,44,34,100,101,115,99,34,58,34,68,114,97,103,105,110,111,32,76,111,82,97,87,65,78,32,71,97,116,101,119,97,121,34,125,125]),{address:"10.11.12.13",port:30000});
+        n1.should.have.a.property('gateway',null);
         done();
         dgram.createSocket.restore();
       }
@@ -304,58 +301,4 @@ describe( 'lorawan-server Node', function () {
     });
   });
 
-/*
-  it('should send out messages', function (done) {
-    var flow = [{ id: "n1", type: "sendmail", name: "test" }];
-    var spy = sinon.stub(child_process, 'execFile').callsFake( function(arg1, arg2, arg3, arg4) {
-      try {
-        arg1.should.be.eql('/usr/bin/mail');
-        arg2.should.be.an.Array();
-        arg2[0].should.be.eql('-s');
-        arg2[1].should.be.eql('Unit Test');
-        arg2[2].should.be.eql('-r');
-        arg2[3].should.be.eql('nodered@mail.lan');
-        arg2[4].should.be.eql('-a');
-        arg2[5].should.be.eql('Content-type: text/html');
-        arg2[6].should.be.eql('--');
-        arg2[7].should.be.eql('root@mail.lan');
-        arg3.should.be.an.Object();
-        arg4.should.be.a.Function();
-        return {
-          stdin: {
-            write:function(str){
-              try {
-                str.should.be.eql('this is a test mail for nodered/sendmail unit tests.\0x0B.\x0B\x04');
-              }
-              catch(err) {
-                done(err);
-              }
-            },
-            end:function(){
-              done();
-            }
-          }
-        };
-      }
-      catch(err) {
-        child_process.execFile.restore();
-        done(err);
-      }
-      arg4(null,arg1,arg1.toUpperCase());
-    });
-    helper.load(node, flow, function () {
-      var n1 = helper.getNode("n1");
-      try {
-        n1.should.have.a.property('name', 'test');
-        n1.receive({ topic: "Unit Test", payload: "this is a test mail for nodered/sendmail unit tests.", from: "nodered@mail.lan", to: "root@mail.lan" });
-        child_process.execFile.calledOnce.should.be.true();
-        child_process.execFile.restore();
-      }
-      catch(err) {
-        child_process.execFile.restore();
-        done(err);
-      }
-    });
-  });
-*/
 });

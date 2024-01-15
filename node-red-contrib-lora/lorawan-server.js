@@ -8,9 +8,9 @@ module.exports = function(RED)
         var node    = this;
         var context = this.context();
         var server  = dgram.createSocket( 'udp4' );
-        var gateway = null;
-        var stamp   = 0;
-        this.port = Number( config.port ?? 1700 );
+        this.port    = Number( config.port ?? 1700 );
+        this.gateway = null;
+        this.stamp   = 0;
 
         function incCounter(item)
         {
@@ -67,7 +67,7 @@ module.exports = function(RED)
                         break;
 
                     case 2: // PULL_DATA
-                        gateway = {
+                        node.gateway = {
                             id:   message.slice( 4, 12 ).toString( 'hex' ),
                             ip:   remote.address,
                             port: remote.port
@@ -102,15 +102,15 @@ module.exports = function(RED)
         // NodeRed Callbacks
         node.on('input',function(msg,send,done) {
             // send message
-            if( gateway )
+            if( node.gateway )
             {
-                if( ++stamp >= 0xFFFF )
+                if( ++node.stamp >= 0xFFFF )
                 {
-                    stamp = 0;
+                    node.stamp = 0;
                 }
                 //node.warn( msg.payload );
                 incCounter( "down" );
-                server.send( Buffer.concat([Buffer.from([2,stamp>>8,stamp&0xFF,3]),Buffer.from(JSON.stringify(msg.payload))]), gateway.port, gateway.ip );
+                server.send( Buffer.concat([Buffer.from([2,node.stamp>>8,node.stamp&0xFF,3]),Buffer.from(JSON.stringify(msg.payload))]), node.gateway.port, node.gateway.ip );
             }
             else
             {

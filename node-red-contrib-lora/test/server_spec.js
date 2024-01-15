@@ -36,7 +36,7 @@ describe( 'lorawan-server Node', function () {
     });
   });
 
-  it('should receive PULL_DATA messages and afterwards send a message', function (done) {
+  it('should receive PULL_DATA message and afterwards send a message', function (done) {
     var flow = [{ id: "n1", type: "lorawan-server", name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -131,7 +131,7 @@ describe( 'lorawan-server Node', function () {
     });
   });
 
-  it('should not send message without a PULL_DATA messages', function (done) {
+  it('should not send message without a PULL_DATA message', function (done) {
     var flow = [{ id: "n1", type: "lorawan-server", name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -214,7 +214,7 @@ describe( 'lorawan-server Node', function () {
     });
   });
 
-  it('should receive PUSH_DATA messages', function (done) {
+  it('should receive PUSH_DATA message without data', function (done) {
     var flow = [{ id: "n1", type: "lorawan-server", name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -248,7 +248,7 @@ describe( 'lorawan-server Node', function () {
             //console.log("send");
             //console.log(arg1);
             try {
-              arg1.should.be.eql(Buffer.from([2,35,1,1]));
+              arg1.should.be.eql(Buffer.from([2,19,132,1]));
               arg2.should.be.eql(30000);
               arg3.should.be.eql("10.11.12.13");
             }
@@ -280,7 +280,14 @@ describe( 'lorawan-server Node', function () {
       n3.on("input", function (msg) {
         try {
           console.log(msg.payload);
-          msg.should.fail();
+          msg.should.have.property('topic','stat');
+          msg.should.have.property('gateway','a84041ffff1f8eb8');
+          msg.should.have.property('payload').which.is.an.Object();
+          msg.payload.should.have.property('time','2024-01-15 08:18:05 UTC');
+          msg.payload.should.have.property('rxnb',0);
+          msg.payload.should.have.property('rxok',0),
+          msg.payload.should.have.property('rxfw',0),
+          msg.payload.should.have.property('desc','Dragino LoRaWAN Gateway');
         }
         catch(err) {
           done(err);

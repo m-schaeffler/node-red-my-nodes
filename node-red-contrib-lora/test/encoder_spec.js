@@ -115,7 +115,7 @@ describe( 'lorawan-packet-encoder Node', function () {
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
         n1.receive({ payload: { device_address:"0000abcd", data:[255], port:1 } });
-        should.not.exist( n1.context().get("counters", "storeInFile") );
+        should.exist( n1.context().get("counters", "storeInFile") );
       }
       catch(err) {
         done(err);
@@ -152,7 +152,7 @@ describe( 'lorawan-packet-encoder Node', function () {
           msg.payload.txpk.should.have.a.property('size',c<3?17:14);
           msg.payload.txpk.should.have.a.property('data',data[c-1]);
           msg.payload.txpk.should.have.a.property('imme',true);
-          msg.payload.txpk.should.not.have.a.property('rfch');
+          msg.payload.txpk.should.have.a.property('rfch',0);
         }
         catch(err) {
           done(err);
@@ -187,7 +187,7 @@ describe( 'lorawan-packet-encoder Node', function () {
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
         n1.receive({ payload: { device_address:"0000abcd", data:[255], port:1 } });
-        should.not.exist( n1.context().get("counters", "storeInFile") );
+        should.exist( n1.context().get("counters", "storeInFile") );
       }
       catch(err) {
         done(err);
@@ -229,7 +229,7 @@ describe( 'lorawan-packet-encoder Node', function () {
         n1.should.have.a.property('keyconf').which.is.an.Object();
         should.not.exist( n1.context().get("counters", "storeInFile") );
         n1.receive({ payload: { device_address:"12340000", data:[1,2,3,4], port:6 } });
-        should.not.exist( n1.context().get("counters", "storeInFile") );
+        should.exist( n1.context().get("counters", "storeInFile") );
         done();
       }
       catch(err) {

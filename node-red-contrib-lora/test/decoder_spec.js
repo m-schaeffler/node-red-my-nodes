@@ -287,7 +287,6 @@ describe( 'lorawan-packet-decoder Node', function () {
           msg.payload.should.have.a.property('data',[]);
           msg.payload.should.have.a.property('port',6);
           msg.payload.should.have.a.property('ack',true);
-          done();
         }
         catch(err) {
           done(err);
@@ -295,8 +294,11 @@ describe( 'lorawan-packet-decoder Node', function () {
       });
       n5.on("input", function (msg) {
         try {
-          console.log(msg);
-          msg.should.fail();
+          //console.log(msg);
+          msg.should.have.a.property('topic',"Foo 1");
+          msg.should.have.a.property('framecounter').which.is.an.Object();
+          msg.framecounter.should.have.a.property('12345678',0);
+          done();
         }
         catch(err) {
           done(err);

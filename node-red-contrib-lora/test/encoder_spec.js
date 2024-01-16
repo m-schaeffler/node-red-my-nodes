@@ -137,7 +137,7 @@ describe( 'lorawan-packet-encoder Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          const data =['YHhWNBIAAQAGDLyYVLOxCmg=','YHhWNBIAAgAGcI+ruBkP3Oc=','YM2rAAAAAQABDpRwwJ0='];
+          const data =['YHhWNBIgAQAGDLyYVDUQvxo=','YHhWNBIgAgAGcI+ruKoX+xA=','YM2rAAAgAQABDj9igQ8='];
           c++;
           //console.log(msg.payload);
           msg.should.have.a.property('topic',c<3?"Foo 1":"Bar 1");
@@ -184,9 +184,9 @@ describe( 'lorawan-packet-encoder Node', function () {
       try {
         n1.should.have.a.property('keyconf').which.is.an.Object();
         should.not.exist( n1.context().get("counters", "storeInFile") );
-        n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
-        n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
-        n1.receive({ payload: { device_address:"0000abcd", data:[255], port:1 } });
+        n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6, ack:true } });
+        n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6, ack:true } });
+        n1.receive({ payload: { device_address:"0000abcd", data:[255], port:1, ack:true } });
         should.exist( n1.context().get("counters", "storeInFile") );
       }
       catch(err) {

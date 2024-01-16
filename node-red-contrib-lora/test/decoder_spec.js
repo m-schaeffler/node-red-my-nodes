@@ -141,7 +141,93 @@ describe( 'lorawan-packet-decoder Node', function () {
 
   // should decode with a default timeout
 
-  // should decode confirmed messages
+  it('should decode confirmed messages', function (done) {
+    var flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "lorawan-packet-decoder", keys:"nk", name: "test", wires: [["n2"],["n3"],["n4"],["n5"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "n4", type: "helper", z: "flow" },
+                { id: "n5", type: "helper", z: "flow" },
+                { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
+    helper.load([node,nodeKey], flow, function () {
+      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var n3 = helper.getNode("n3");
+      var n4 = helper.getNode("n4");
+      var n5 = helper.getNode("n5");
+      var nk = helper.getNode("nk");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          c++;
+          //console.log(msg);
+          msg.should.have.a.property('topic',c<3?"Foo 1":"Bar 1");
+          msg.should.have.a.property('payload').which.is.an.Object();
+          msg.payload.should.have.a.property('device_address',c<3?'12345678':'0000abcd');
+          msg.payload.should.have.a.property('frame_count',c<3?c:1);
+          msg.payload.should.have.a.property('port',c<3?6:1);
+          msg.payload.should.have.a.property('mtype','Confirmed Data Down');
+          msg.payload.should.have.a.property('confirmed',true);
+          msg.payload.should.have.a.property('type',c<3?'foo':'bar');
+          msg.payload.should.have.a.property('name',msg.topic);
+          msg.payload.should.have.a.property('data',c<3?[1,2,3,4]:[255]);
+          msg.payload.should.have.a.property('rxpk').which.is.an.Object();
+          msg.payload.rxpk.should.have.a.property('data').which.is.String();
+          msg.payload.rxpk.should.have.a.property('test','UnitTest');
+          msg.payload.rxpk.should.have.a.property('time');
+          if( c === 3 ) {
+            msg.payload.should.have.a.property('delta',-1.2);
+            msg.should.have.a.property('timeout',60);
+            done();
+          }
+          else {
+            msg.payload.should.not.have.a.property('delta');
+            msg.should.not.have.a.property('timeout');
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n4.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n5.on("input", function (msg) {
+        try {
+          console.log(msg.payload);
+          msg.should.fail();
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('keyconf').which.is.an.Object();
+        should.not.exist( n1.context().flow.get("sendqueue") );
+        n1.receive({ payload: { data:"YHhWNBIgAQAGDLyYVDUQvxo=", test:"UnitTest" } });
+        n1.receive({ payload: { data:"YHhWNBIgAgAGcI+ruKoX+xA=", test:"UnitTest" } });
+        n1.receive({ payload: { data:"YM2rAAAgAQABDj9igQ8=", test:"UnitTest" } });
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
 
   // should send queued messages
 

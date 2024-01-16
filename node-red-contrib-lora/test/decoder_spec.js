@@ -351,17 +351,7 @@ describe( 'lorawan-packet-decoder Node', function () {
           msg.payload.should.have.a.property('data',c<3?[1,2,3,4]:[255]);
           msg.payload.should.have.a.property('rxpk').which.is.an.Object();
           msg.payload.rxpk.should.have.a.property('data').which.is.String();
-          msg.payload.rxpk.should.have.a.property('test','UnitTest');
           msg.payload.rxpk.should.have.a.property('time');
-          if( c === 3 ) {
-            msg.payload.should.have.a.property('delta',-1.2);
-            msg.should.have.a.property('timeout',60);
-            done();
-          }
-          else {
-            msg.payload.should.not.have.a.property('delta');
-            msg.should.not.have.a.property('timeout');
-          }
         }
         catch(err) {
           done(err);
@@ -378,8 +368,23 @@ describe( 'lorawan-packet-decoder Node', function () {
       });
       n4.on("input", function (msg) {
         try {
-          console.log(msg.payload);
-          msg.should.fail();
+          //console.log(msg);
+          c.should.be.not.eql(2);
+          msg.should.have.a.property('topic',c===1?"Foo 1":"Bar 1");
+          msg.should.have.a.property('payload').which.is.an.Object();
+          msg.payload.should.have.a.property('device_address',c===1?'12345678':'0000abcd');
+          msg.payload.should.have.a.property('tmst',0);
+          msg.payload.should.have.a.property('rfch',1);
+          msg.payload.should.have.a.property('freq',869.525);
+          msg.payload.should.have.a.property('modu','LORA');
+          msg.payload.should.have.a.property('datr','SF7BW125');
+          msg.payload.should.have.a.property('codr','4/5');
+          msg.payload.should.have.a.property('data',c===1?Buffer.from([2,3,4]):Buffer.from([6,7]));
+          msg.payload.should.have.a.property('port',c===1?6:1);
+          msg.payload.should.have.a.property('ack',false);
+          if( c === 3 ) {
+            done();
+          }
         }
         catch(err) {
           done(err);
@@ -396,10 +401,16 @@ describe( 'lorawan-packet-decoder Node', function () {
       });
       try {
         n1.should.have.a.property('keyconf').which.is.an.Object();
+        nq.receive({ topic: "Foo 1", payload: [2,3,4] });
+        nq.receive({ topic: "Bar 1", payload: [6,7] });
         should.exist( n1.context().flow.get("sendqueue") );
-        n1.receive({ payload: { data:"YHhWNBIAAQAGDLyYVLOxCmg=", test:"UnitTest" } });
-        n1.receive({ payload: { data:"YHhWNBIAAgAGcI+ruBkP3Oc=", test:"UnitTest" } });
-        n1.receive({ payload: { data:"YM2rAAAAAQABDpRwwJ0=", test:"UnitTest" } });
+        n1.receive({ payload: { data:"YHhWNBIAAQAGDLyYVLOxCmg=", rfch: 1, freq: 869.525, modu: 'LORA', datr: 'SF7BW125', codr: '4/5' } });
+        n1.receive({ payload: { data:"YHhWNBIAAgAGcI+ruBkP3Oc=" } });
+        n1.receive({ payload: { data:"YM2rAAAAAQABDpRwwJ0=", rfch: 1, freq: 869.525, modu: 'LORA', datr: 'SF7BW125', codr: '4/5' } });
+        var q = n1.context().flow.get("sendqueue");
+        q.should.be.an.Object();
+        q.should.have.a.property('12345678',[]);
+        q.should.have.a.property('0000abcd',[]);
       }
       catch(err) {
         done(err);

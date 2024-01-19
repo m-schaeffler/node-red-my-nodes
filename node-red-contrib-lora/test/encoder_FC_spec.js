@@ -6,8 +6,9 @@ var nodeKey= require("../lorawan-keys.js");
 var keys   = require("./keys_spec.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var lora_packet = require( 'lora-packet' );
+require("./encoder_spec.js");
 
-describe( 'lorawan-packet-encoder Node', function () {
+describe( 'lorawan-packet-encoder Node, high FC', function () {
 
   beforeEach(function (done) {
     helper.startServer(done);

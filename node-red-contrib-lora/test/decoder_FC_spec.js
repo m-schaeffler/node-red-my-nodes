@@ -5,6 +5,7 @@ var node   = require("../lorawan-packet-decoder.js");
 var nodeKey= require("../lorawan-keys.js");
 var keys   = require("./keys_spec.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
+var lora_packet = require( 'lora-packet' );
 require("./decoder_spec.js");
 
 describe( 'lorawan-packet-decoder Node, high FC', function () {
@@ -52,6 +53,7 @@ describe( 'lorawan-packet-decoder Node, high FC', function () {
       var n5 = helper.getNode("n5");
       var nk = helper.getNode("nk");
       var c = 0;
+      var spy = sinon.spy(lora_packet,'verifyMIC');
       n2.on("input", function (msg) {
         try {
           c++;
@@ -77,6 +79,8 @@ describe( 'lorawan-packet-decoder Node, high FC', function () {
               break;
             case 3:
               msg.payload.should.have.a.property('frame_count',0x2000020);
+              spy.should.have.a.callCount(1+3+511);
+              //console.log(spy.callCount);
               done();
           }
         }
@@ -115,10 +119,16 @@ describe( 'lorawan-packet-decoder Node, high FC', function () {
         n1.should.have.a.property('keyconf').which.is.an.Object();
         should.not.exist( n1.context().flow.get("sendqueue") );
         n1.receive({ payload: { data:"YHhWNBIAAQAGDLyYVLOxCmg=" } });
+        spy.should.have.a.callCount(1);
+        //
         n1.receive({ payload: { data:"YHhWNBIAEAAGaqNYXlaqgw8=" } });
+        spy.should.have.a.callCount(1+2);
+        //
         n1.receive({ payload: { data:"YHhWNBIAIAAGdjJd4llLFsc=" } });
+        lora-packet.verifyMIC.restore();
       }
       catch(err) {
+        lora-packet.verifyMIC.restore();
         done(err);
       }
     });

@@ -13,7 +13,8 @@
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
             filter:{value:"0", validate:RED.validators.number()},
-            zeroIsZero:{value:false}
+            zeroIsZero:{value:false},
+            showState:{value:false}
         },
         inputs:1,
         outputs:1,
@@ -62,6 +63,10 @@
         <label for="node-input-zeroIsZero"><i class="fa fa-exclamation-circle"></i> Null ist Null</label>
         <input type="checkbox" id="node-input-zeroIsZero" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
 </script>
 
 <script type="text/html" data-help-name="mean">
@@ -101,5 +106,7 @@
         <dd> send output only after this time.</dd>
         <dt>Null ist NUll <span class="property-type">boolean</span></dt>
         <dd> If 0 is received, 0 is send immediately.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
     </dl>
 </script>

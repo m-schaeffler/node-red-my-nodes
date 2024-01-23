@@ -9,6 +9,7 @@ module.exports = function(RED) {
         this.showState = Boolean( config.showState );
         this.filter    = Boolean( config.filter );
         this.last      = null;
+        node.status( "" );
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )

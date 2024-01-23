@@ -21,3 +21,39 @@ exports.property2boolean = function(input)
             return null;
     }
 }
+
+exports.prepareProperty = function(node)
+{
+    if( node.propertyType === "jsonata" )
+    {
+        try {
+            node.propertyPrepared = RED.util.prepareJSONataExpression( node.property, node );
+        }
+        catch (e) {
+            node.error( RED._( "debug.invalid-exp", {error:node.property} ) );
+            return;
+        }
+    }
+}
+
+exports.getPayload = function(node,msg,callback)
+{
+    if( node.propertyPrepared )
+    {
+        RED.util.evaluateJSONataExpression( node.propertyPrepared, msg, function(err, value)
+        {
+            if( err )
+            {
+                node.done( RED._( "debug.invalid-exp", {error:node.property} ) );
+            }
+            else
+            {
+                callback( value );
+            }
+        } );
+    }
+    else
+    {
+        callback( RED.util.getMessageProperty( msg, node.property ) );
+    }
+}

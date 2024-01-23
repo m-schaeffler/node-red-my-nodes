@@ -11,6 +11,7 @@ module.exports = function(RED) {
         this.minData      = Number( config.minData ?? 1 );
         this.filter       = Number( config.filter ?? 0 )*1000;
         this.zeroIsZero   = Boolean( config.zeroIsZero );
+        this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -21,6 +22,15 @@ module.exports = function(RED) {
                 return;
             }
         }
+        this.oldStatus = this.status;
+        this.status = function(state)
+        {
+            if( node.showState )
+            {
+                node.oldStatus( state );
+            }
+        }
+        node.oldStatus( "" );
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )

@@ -19,6 +19,7 @@ module.exports = function(RED) {
                 return;
             }
         }
+        node.status( "" );
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )

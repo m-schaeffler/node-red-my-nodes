@@ -10,6 +10,7 @@ module.exports = function(RED) {
         this.threshold_rise = config.threshold_raise;
         this.threshold_fall = config.threshold_fall;
         this.initial        = config.initial ?? "none";
+        this.consecutive    = Number( config.consecutive ?? 1 );
         this.showState      = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
@@ -21,6 +22,8 @@ module.exports = function(RED) {
                 return;
             }
         }
+        node.cntRise = 0;
+        node.cntFall = 0;
         node.status( "" );
 
         node.on('input', function(msg,send,done) {
@@ -77,13 +80,28 @@ module.exports = function(RED) {
 
                         if( last )
                         {
-                            if( msg.payload > node.threshold_rise && node.threshold_rise >= last.value && last.edge != 'rising')
+                            if( msg.payload > node.threshold_rise && node.threshold_rise >= last.value && last.edge != 'rising' )
                             {
-                                sendMsg( 'rising' );
+                                if( ++cntRise >= this.consecutive )
+                                {
+                                    sendMsg( 'rising' );
+                                    node.cntRise = 0;
+                                }
+                                node.cntFall = 0;
                             }
-                            else if( msg.payload < node.threshold_fall && node.threshold_fall <= last.value && last.edge != 'falling')
+                            else if( msg.payload < node.threshold_fall && node.threshold_fall <= last.value && last.edge != 'falling' )
                             {
-                                sendMsg( 'falling' );
+                                if( ++cntFall >= this.consecutive )
+                                {
+                                    sendMsg( 'falling' );
+                                    node.cntFall = 0;
+                                }
+                                node.cntRise = 0;
+                            }
+                            else
+                            {
+                                node.cntRise = 0;
+                                node.cntFall = 0;
                             }
                         }
                         else
@@ -104,7 +122,7 @@ module.exports = function(RED) {
                     else
                     {
                         status.fill = "red";
-                       status.text = "not a Number";
+                        status.text = "not a Number";
                     }
 
                     if( node.showState )

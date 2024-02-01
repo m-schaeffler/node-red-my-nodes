@@ -26,6 +26,7 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('threshold_rise', undefined);
         n1.should.have.a.property('threshold_fall', undefined);
         n1.should.have.a.property('initial', 'none');
+        n1.should.have.a.property('consecutive', 1);
         n1.should.have.a.property('showState', false);
         done();
       }

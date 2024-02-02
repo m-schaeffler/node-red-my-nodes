@@ -33,6 +33,7 @@ describe( 'math_mean Node', function () {
         n1.should.have.a.property('minData', 1);
         n1.should.have.a.property('filter', 0);
         n1.should.have.a.property('zeroIsZero', false);
+        n1.should.have.a.property('showState', false);
         done();
       }
       catch(err) {
@@ -45,7 +46,7 @@ describe( 'math_mean Node', function () {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
     var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -68,6 +69,7 @@ describe( 'math_mean Node', function () {
       for( const i of numbers )
       {
         n1.receive({ topic:1, payload: i });
+        await delay(50);
       }
     });
   });
@@ -76,7 +78,7 @@ describe( 'math_mean Node', function () {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
     var flow = [{ id: "n1", type: "mean", minData:3, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -107,6 +109,7 @@ describe( 'math_mean Node', function () {
       for( const i of numbers )
       {
         n1.receive({ topic:2, payload: i });
+        await delay(50);
       }
     });
   });
@@ -115,7 +118,7 @@ describe( 'math_mean Node', function () {
     const numbers = [1000,10,99.9,100,100.1,1000,0,50];
     var flow = [{ id: "n1", type: "mean", zeroIsZero:true, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -144,6 +147,7 @@ describe( 'math_mean Node', function () {
       for( const i of numbers )
       {
         n1.receive({ topic:"zero", payload: i });
+        await delay(50);
       }
     });
   });

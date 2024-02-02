@@ -88,6 +88,10 @@ module.exports = function(RED) {
                                     sendMsg( 'rising' );
                                     node.cntRise = 0;
                                 }
+                                else
+                                {
+                                    status.fill = "yellow";
+                                }
                                 node.cntFall = 0;
                             }
                             else if( msg.payload < node.threshold_fall && node.threshold_fall <= last.value && last.edge != 'falling' )
@@ -96,6 +100,10 @@ module.exports = function(RED) {
                                 {
                                     sendMsg( 'falling' );
                                     node.cntFall = 0;
+                                }
+                                else
+                                {
+                                    status.fill = "yellow";
                                 }
                                 node.cntRise = 0;
                             }

@@ -73,7 +73,8 @@ module.exports = function(RED) {
                         function sendMsg(edge)
                         {
                             status.fill = "green";
-                            data[msg.topic].edge = edge;
+                            data[msg.topic].edge  = edge;
+                            data[msg.topic].value = msg.payload;
                             msg.edge = edge;
                             send( msg );
                         }
@@ -82,7 +83,7 @@ module.exports = function(RED) {
                         {
                             if( msg.payload > node.threshold_rise && node.threshold_rise >= last.value && last.edge != 'rising' )
                             {
-                                if( ++cntRise >= this.consecutive )
+                                if( ++node.cntRise >= node.consecutive )
                                 {
                                     sendMsg( 'rising' );
                                     node.cntRise = 0;
@@ -91,7 +92,7 @@ module.exports = function(RED) {
                             }
                             else if( msg.payload < node.threshold_fall && node.threshold_fall <= last.value && last.edge != 'falling' )
                             {
-                                if( ++cntFall >= this.consecutive )
+                                if( ++node.cntFall >= node.consecutive )
                                 {
                                     sendMsg( 'falling' );
                                     node.cntFall = 0;
@@ -102,11 +103,12 @@ module.exports = function(RED) {
                             {
                                 node.cntRise = 0;
                                 node.cntFall = 0;
+                                data[msg.topic].value = msg.payload;
                             }
                         }
                         else
                         {
-                            data[msg.topic] = {};
+                            data[msg.topic] = { value: msg.payload };
                             if( ['any','rising'].includes(node.initial) && msg.payload > node.threshold_rise )
                             {
                                 sendMsg( 'rising' );
@@ -116,7 +118,6 @@ module.exports = function(RED) {
                                 sendMsg( 'falling' );
                             }
                         }
-                        data[msg.topic].value = msg.payload;
                         context.set( "data", data );
                     }
                     else

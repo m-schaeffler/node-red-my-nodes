@@ -9,7 +9,6 @@ module.exports = function(RED) {
         this.propertyType   = config.propertyType ?? "msg";
         this.threshold_rise = config.threshold_raise;
         this.threshold_fall = config.threshold_fall;
-        this.initial        = config.initial ?? "none";
         this.consecutive    = Number( config.consecutive ?? 1 );
         this.showState      = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
@@ -73,60 +72,43 @@ module.exports = function(RED) {
                         function sendMsg(edge)
                         {
                             status.fill = "green";
-                            data[msg.topic].edge  = edge;
-                            data[msg.topic].value = msg.payload;
+                            data[msg.topic] = edge;
+                            context.set( "data", data );
                             msg.edge = edge;
                             send( msg );
                         }
 
-                        if( last )
+                        if( msg.payload > node.threshold_rise && last != 'rising' )
                         {
-                            if( msg.payload > node.threshold_rise && node.threshold_rise >= last.value && last.edge != 'rising' )
+                            if( ++node.cntRise >= node.consecutive )
                             {
-                                if( ++node.cntRise >= node.consecutive )
-                                {
-                                    sendMsg( 'rising' );
-                                    node.cntRise = 0;
-                                }
-                                else
-                                {
-                                    status.fill = "yellow";
-                                }
-                                node.cntFall = 0;
-                            }
-                            else if( msg.payload < node.threshold_fall && node.threshold_fall <= last.value && last.edge != 'falling' )
-                            {
-                                if( ++node.cntFall >= node.consecutive )
-                                {
-                                    sendMsg( 'falling' );
-                                    node.cntFall = 0;
-                                }
-                                else
-                                {
-                                    status.fill = "yellow";
-                                }
+                                sendMsg( 'rising' );
                                 node.cntRise = 0;
                             }
                             else
                             {
-                                node.cntRise = 0;
-                                node.cntFall = 0;
-                                data[msg.topic].value = msg.payload;
+                                status.fill = "yellow";
                             }
+                            node.cntFall = 0;
+                        }
+                        else if( msg.payload < node.threshold_fall && last != 'falling' )
+                        {
+                            if( ++node.cntFall >= node.consecutive )
+                            {
+                                sendMsg( 'falling' );
+                                node.cntFall = 0;
+                            }
+                            else
+                            {
+                                status.fill = "yellow";
+                            }
+                            node.cntRise = 0;
                         }
                         else
                         {
-                            data[msg.topic] = { value: msg.payload };
-                            if( ['any','rising'].includes(node.initial) && msg.payload > node.threshold_rise )
-                            {
-                                sendMsg( 'rising' );
-                            }
-                            else if( ['any','falling'].includes(node.initial) && msg.payload < node.threshold_fall )
-                            {
-                                sendMsg( 'falling' );
-                            }
+                            node.cntRise = 0;
+                            node.cntFall = 0;
                         }
-                        context.set( "data", data );
                     }
                     else
                     {

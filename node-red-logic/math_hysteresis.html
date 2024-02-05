@@ -11,7 +11,6 @@
                 const raise = $("#node-input-threshold_raise").length ? $("#node-input-threshold_raise").val() : this.threshold_raise;
                 return v!=='' && !isNaN(v) && Number(v)<raise;}
             },
-            initial:{value:"none"},
             consecutive:{value:"1",required:true},
             showState:{value:false}
         },
@@ -56,15 +55,6 @@
         <input type="text" id="node-input-threshold_fall">
     </div>
     <div class="form-row">
-        <label for="node-input-initial"><i class="fa fa-play"></i> 1st message</label>
-        <select id="node-input-initial">
-            <option value="none">None</option>
-            <option value="rising">Rising</option>
-            <option value="falling">Falling</option>
-            <option value="any">Any</option>
-        </select>
-    </div>
-    <div class="form-row">
         <label for="node-input-consecutive"><i class="fa fa-line-chart"></i> Consecutive</label>
         <input type="text" id="node-input-consecutive">
     </div>
@@ -104,8 +94,6 @@
         <dd> threshold value for the rising edge detection.</dd>
         <dt>d(ow)n Threshold <span class="property-type">number</span></dt>
         <dd> threshold value for the falling edge detection.</dd>
-        <dt>1st message <span class="property-type">string</span></dt>
-        <dd> initial behaviour (None, Rising, Falling, Any).</dd>
         <dt>Consecutive <span class="property-type">number</span></dt>
         <dd> number of consecutive frames to generate an output.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

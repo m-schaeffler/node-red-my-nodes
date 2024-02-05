@@ -25,7 +25,6 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('threshold_rise', undefined);
         n1.should.have.a.property('threshold_fall', undefined);
-        n1.should.have.a.property('initial', 'none');
         n1.should.have.a.property('consecutive', 1);
         n1.should.have.a.property('showState', false);
         done();
@@ -50,14 +49,18 @@ describe( 'math_hysteresis Node', function () {
           switch( c )
           {
              case 1:
+               msg.should.have.property('payload',1000);
+               msg.should.have.property('edge','rising');
+               break;
+             case 2:
                msg.should.have.property('payload',10);
                msg.should.have.property('edge','falling');
                break;
-             case 2:
+             case 3:
                msg.should.have.property('payload',200.1);
                msg.should.have.property('edge','rising');
                break;
-             case 3:
+             case 4:
                msg.should.have.property('payload',99.9);
                msg.should.have.property('edge','falling');
                done();
@@ -153,7 +156,6 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
-      n1.receive({ payload: 0 });
       n1.receive({ invalid:true, payload: 1000 });
       n1.receive({ invalid:true, payload: 0 });
       n1.receive({ invalid:true, payload: 1000 });
@@ -185,125 +187,12 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
-      n1.receive({ topic:"A", payload: 0 });
-      n1.receive({ topic:"B", payload: 0 });
       n1.receive({ topic:"A", payload: 1000 });
       n1.receive({ topic:"B", payload: 2000 });
     });
   });
 
-  it('should have reset, initial==none', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:200, threshold_fall:100, wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        c++;
-        try {
-          msg.should.have.a.property('payload',5000);
-          if( c === 1 && msg.payload === 5000 )
-          {
-            done();
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      n1.receive({ payload: 0 });
-      n1.receive({ reset: true });
-      n1.receive({ payload: 1000 });
-      n1.receive({ topic: "init" });
-      n1.receive({ payload: 150 });
-      n1.receive({ payload: 5000 });
-    });
-  });
-
-  it('should have initial==rising', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:200, threshold_fall:100, initial:"rising", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        c++;
-        try {
-          switch( c ) {
-            case 1:
-              msg.should.have.a.property('payload',1000);
-              break;
-            case 2:
-              msg.should.have.a.property('payload',5000);
-              done();
-              break;
-            default:
-              done("too much messages");
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('initial', "rising");
-      }
-      catch(err) {
-        done(err);
-      }
-      n1.receive({ payload: 0 });
-      n1.receive({ reset: true });
-      n1.receive({ payload: 1000 });
-      n1.receive({ topic: "init" });
-      n1.receive({ payload: 150 });
-      n1.receive({ payload: 5000 });
-    });
-  });
-
-  it('should have initial==falling', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:200, threshold_fall:100, initial:"falling", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        c++;
-        try {
-          switch( c ) {
-            case 1:
-              msg.should.have.a.property('payload',0);
-              break;
-            case 2:
-              msg.should.have.a.property('payload',2);
-              done();
-              break;
-            default:
-              done("too much messages");
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('initial', "falling");
-      }
-      catch(err) {
-        done(err);
-      }
-      n1.receive({ payload: 0 });
-      n1.receive({ reset: true });
-      n1.receive({ payload: 1000 });
-      n1.receive({ topic: "init" });
-      n1.receive({ payload: 150 });
-      n1.receive({ payload: 2 });
-    });
-  });
-
-  it('should have initial==any', function (done) {
+  it('should have reset', function (done) {
     var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:200, threshold_fall:100, initial:"any", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
@@ -315,12 +204,14 @@ describe( 'math_hysteresis Node', function () {
         try {
           switch( c ) {
             case 1:
+            case 2:
               msg.should.have.a.property('payload',0);
               break;
-            case 2:
+            case 3:
+            case 4:
               msg.should.have.a.property('payload',1000);
               break;
-            case 3:
+            case 5:
               msg.should.have.a.property('payload',2);
               done();
               break;
@@ -332,18 +223,14 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
-      try {
-        n1.should.have.a.property('initial', "any");
-      }
-      catch(err) {
-        done(err);
-      }
       n1.receive({ payload: 0 });
       n1.receive({ reset: true });
+      n1.receive({ payload: 0 });
       n1.receive({ payload: 1000 });
       n1.receive({ reset: true });
-      n1.receive({ payload: 150 });
+      n1.receive({ payload: 1000 });
       n1.receive({ topic: "init" });
+      n1.receive({ payload: 150 });
       n1.receive({ payload: 2 });
     });
   });

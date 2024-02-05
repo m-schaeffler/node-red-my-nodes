@@ -74,8 +74,8 @@ describe( 'math_rising Node', function () {
   });
 
   it('should respect consecutive parameter', function (done) {
-    const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
-    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:100, consecutive:3, wires: [["n2"]] },
+    const numbers = [1000,150,10,400,40,250,251,252];
+    var flow = [{ id: "n1", type: "raisingEdge", name: "test", threshold:100, consecutive:3, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");

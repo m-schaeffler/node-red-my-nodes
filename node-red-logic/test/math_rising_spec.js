@@ -24,6 +24,7 @@ describe( 'math_rising Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('threshold', undefined);
+        n1.should.have.a.property('consecutive', 1);
         n1.should.have.a.property('showState', false);
         done();
       }

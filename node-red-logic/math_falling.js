@@ -8,6 +8,7 @@ module.exports = function(RED) {
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.threshold    = config.threshold;
+        this.consecutive  = Number( config.consecutive ?? 1 );
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
@@ -19,6 +20,7 @@ module.exports = function(RED) {
                 return;
             }
         }
+        node.cntFall = 0;
         node.status( "" );
 
         node.on('input', function(msg,send,done) {
@@ -66,11 +68,24 @@ module.exports = function(RED) {
                         const last = data[msg.topic] ?? Number.MIN_SAFE_INTEGER;
                         if( msg.payload < node.threshold && node.threshold <= last )
                         {
-                            status.fill = "green";
-                            msg.edge = "falling";
-                            send( msg );
+                            if( ++node.cntFall >= node.consecutive )
+                            {
+                                status.fill = "green";
+                                msg.edge = "falling";
+                                send( msg );
+                                data[msg.topic] = msg.payload;
+                                node.cntFall = 0;
+                            }
+                            else
+                            {
+                                status.fill = "yellow";
+                            }
                         }
-                        data[msg.topic] = msg.payload;
+                        else
+                        {
+                            node.cntFall = 0;
+                            data[msg.topic] = msg.payload;
+                        }
                         context.set( "data", data );
                     }
                     else

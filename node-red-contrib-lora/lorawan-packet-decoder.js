@@ -38,8 +38,35 @@ module.exports = function(RED)
                 const key = node.keyconf.getKey( msg.payload.device_address );
                 if( key )
                 {
-                    const nsw = Buffer.from( key.nsw, 'hex' );
-                    let counters = context.get( "counters" ) ?? {};
+                    const nsw      = Buffer.from( key.nsw, 'hex' );
+                    let   counters = context.get( "counters" ) ?? {};
+                    const startMsb = counters?.[msg.payload.device_address] ?? 0;
+                    let   countMsb,countBuf;
+                    
+                    function testMsb(msb)
+                    {
+                        countBuf = Buffer.from( [msb&0xFF,(msb&0xFF00)>>>8] );
+                        if( lora_packet.verifyMIC( packet, nsw, null, countBuf ) )
+                        {
+                            countMsb = msb;
+                            return true;
+                        }
+                        countBuf = undefined;
+                        return false;
+                    }
+                    function testMsbRange(start,stop)
+                    {
+                        for( let i=start; i<stop; i++ )
+                        {
+                            if( testMsb( i ) )
+                            {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    
+                    /*
                     let countMsb = counters?.[msg.payload.device_address] ?? 0;
                     let countBuf = undefined;
                     while( countMsb <= 1000 )
@@ -52,7 +79,10 @@ module.exports = function(RED)
                         countMsb++;
                         countBuf = undefined;
                     }
-                    if( countBuf !== undefined )
+                    */
+                    if( testMsb( startMsb ) ||
+                        testMsb( 0 ) ||
+                        testMsbRange( startMsb+1, 1000 ) )
                     {
                         counters[msg.payload.device_address] = countMsb;
                         context.set( "counters", counters );

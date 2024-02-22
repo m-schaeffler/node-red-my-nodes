@@ -42,7 +42,7 @@ module.exports = function(RED)
                     let   counters = context.get( "counters" ) ?? {};
                     const startMsb = counters?.[msg.payload.device_address] ?? 0;
                     let   countMsb,countBuf;
-                    
+
                     function testMsb(msb)
                     {
                         countBuf = Buffer.from( [msb&0xFF,(msb&0xFF00)>>>8] );
@@ -65,21 +65,7 @@ module.exports = function(RED)
                         }
                         return false;
                     }
-                    
-                    /*
-                    let countMsb = counters?.[msg.payload.device_address] ?? 0;
-                    let countBuf = undefined;
-                    while( countMsb <= 1000 )
-                    {
-                        countBuf = Buffer.from( [countMsb&0xFF,(countMsb&0xFF00)>>>8] );
-                        if( lora_packet.verifyMIC( packet, nsw, null, countBuf ) )
-                        {
-                            break;
-                        }
-                        countMsb++;
-                        countBuf = undefined;
-                    }
-                    */
+
                     if( testMsb( startMsb ) ||
                         testMsb( 0 ) ||
                         testMsbRange( startMsb+1, 1000 ) )

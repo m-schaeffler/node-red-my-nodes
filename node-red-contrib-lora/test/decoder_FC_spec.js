@@ -79,9 +79,13 @@ describe( 'lorawan-packet-decoder Node, high FC', function () {
               break;
             case 3:
               msg.payload.should.have.a.property('frame_count',0x2000020);
-              spy.should.have.a.callCount(1+3+511);
+              break;
+            case 4:
+              msg.payload.should.have.a.property('frame_count',1);
+              spy.should.have.a.callCount(1+3+513+2);
               //console.log(spy.callCount);
               done();
+              break;
           }
         }
         catch(err) {
@@ -122,9 +126,12 @@ describe( 'lorawan-packet-decoder Node, high FC', function () {
         spy.should.have.a.callCount(1);
         //
         n1.receive({ payload: { data:"YHhWNBIAEAAGaqNYXlaqgw8=" } });
-        spy.should.have.a.callCount(1+2);
+        spy.should.have.a.callCount(1+3);
         //
         n1.receive({ payload: { data:"YHhWNBIAIAAGdjJd4llLFsc=" } });
+        spy.should.have.a.callCount(1+3+513);
+        //
+        n1.receive({ payload: { data:"YHhWNBIAAQAGDLyYVLOxCmg=" } });
         lora-packet.verifyMIC.restore();
       }
       catch(err) {

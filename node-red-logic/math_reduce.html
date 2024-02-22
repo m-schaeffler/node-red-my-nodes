@@ -17,6 +17,7 @@
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
             algo:{value:"", required:true},
+            showState:{value:false},
             filter:{value:false}
         },
         inputs:1,
@@ -87,6 +88,10 @@
         </select>
     </div>
     <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter"></i> Filter</label>
         <input type="checkbox" id="node-input-filter" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
@@ -136,6 +141,8 @@
         <dd> min. amount of topics to generate an output.</dd>
         <dt>Algorithm <span class="property-type">string</span></dt>
         <dd> algorithm to combine the values.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
         <dt>Filter <span class="property-type">boolean</span></dt>
         <dd> block sending of unchanged <code>property</code>.</dd>
     </dl>

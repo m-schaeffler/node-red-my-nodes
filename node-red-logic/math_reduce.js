@@ -11,8 +11,10 @@ module.exports = function(RED) {
         this.maxMean  = Number( config.maxMean ?? 1 );
         this.minData  = Number( config.minData ?? 1 );
         this.algo     = config.algo;
+        this.showState= Boolean( config.showState );
         this.filter   = Boolean( config.filter );
         this.last     = null;
+        node.status( "" );
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
@@ -107,7 +109,10 @@ module.exports = function(RED) {
                     status.fill = "red";
                     status.text = "payload is NaN";
                 }
-                node.status( status );
+                if( node.showState )
+                {
+                    node.status( status );
+                }
                 done();
             }
         });

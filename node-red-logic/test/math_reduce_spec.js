@@ -29,6 +29,7 @@ describe( 'math_reduce Node', function () {
         n1.should.have.a.property('minData', 1);
         n1.should.have.a.property('algo', undefined);
         n1.should.have.a.property('filter', false);
+        n1.should.have.a.property('showState', false);
         done();
       }
       catch(err) {

@@ -23,7 +23,7 @@ describe( 'math_reduce Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', "");
         n1.should.have.a.property('property', 'payload');
-        //n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('minMean', 1);
         n1.should.have.a.property('maxMean', 1);
         n1.should.have.a.property('minData', 1);
@@ -488,7 +488,7 @@ describe( 'math_reduce Node', function () {
       });
       try {
         n1.should.have.a.property('property', "payload.value");
-        //n1.should.have.a.property('propertyType', "msg");
+        n1.should.have.a.property('propertyType', "msg");
       }
       catch(err) {
         done(err);
@@ -497,7 +497,6 @@ describe( 'math_reduce Node', function () {
     });
   });
 
-/*
   it('should have Jsonata', function (done) {
     var flow = [{ id: "n1", type: "reduce", name: "test", algo: "add", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -520,9 +519,8 @@ describe( 'math_reduce Node', function () {
       catch(err) {
         done(err);
       }
-      n1.receive({ payload: 0 });
       n1.receive({ payload: 198 });
     });
   });
-*/
+
 });

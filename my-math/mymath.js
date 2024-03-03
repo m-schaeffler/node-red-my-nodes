@@ -5,6 +5,16 @@ exports.compare = function(a,b)
     return a == b ? 0 : ( a > b ? +1 : -1 );
 }
 
+exports.distance = function(a,b)
+{
+    return a>b ? a-b : b-a;
+}
+
+exports.ratio = function(a,b)
+{
+    return exports.distance( a, b ) / b;
+}
+
 exports.linear = function(a,a1,a2,b1,b2)
 {
     return a < a1 ? b1 :

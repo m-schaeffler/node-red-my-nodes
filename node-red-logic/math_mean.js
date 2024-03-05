@@ -9,7 +9,8 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.deltaTime    = Number( config.deltaTime ?? 60 )*1000;
         this.minData      = Number( config.minData ?? 1 );
-        this.filter       = Number( config.filter ?? 0 )*1000;
+        this.filterTime   = Number( config.filter ?? 0 )*1000;
+        this.filterValue  = Number( config.filterVal ?? 0 );
         this.zeroIsZero   = Boolean( config.zeroIsZero );
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
@@ -105,7 +106,7 @@ module.exports = function(RED) {
                             {
                                 sum += value.value;
                             }
-                            if( (last[msg.topic]??0)+node.filter < now )
+                            if( (last[msg.topic]??0)+node.filterTime < now )
                             {
                                 sendValue( sum/item.length, item.length );
                             }

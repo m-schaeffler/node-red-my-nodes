@@ -13,6 +13,7 @@
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
             filter:{value:"0", validate:RED.validators.number()},
+            filterVal:{value:"0", validate:RED.validators.number()},
             zeroIsZero:{value:false},
             showState:{value:false}
         },
@@ -60,6 +61,10 @@
         <input type="text" id="node-input-filter">
     </div>
     <div class="form-row">
+        <label for="node-input-filterVal"><i class="fa fa-filter "></i> Filter Wert</label>
+        <input type="text" id="node-input-filterVal">
+    </div>
+    <div class="form-row">
         <label for="node-input-zeroIsZero"><i class="fa fa-exclamation-circle"></i> Null ist Null</label>
         <input type="checkbox" id="node-input-zeroIsZero" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
@@ -104,6 +109,8 @@
         <dd> min. amount of data points to generate an output.</dd>
         <dt>Filterzeit <span class="property-type">number</span></dt>
         <dd> send output only after this time.</dd>
+        <dt>Filter-Wert <span class="property-type">number</span></dt>
+        <dd> send output only if change is bigger.</dd>
         <dt>Null ist NUll <span class="property-type">boolean</span></dt>
         <dd> If 0 is received, 0 is send immediately.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

@@ -31,7 +31,8 @@ describe( 'math_mean Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('deltaTime', 60000);
         n1.should.have.a.property('minData', 1);
-        n1.should.have.a.property('filter', 0);
+        n1.should.have.a.property('filterTime', 0);
+        n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('zeroIsZero', false);
         n1.should.have.a.property('showState', false);
         done();
@@ -223,7 +224,7 @@ describe( 'math_mean Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('filter', 1000);
+        n1.should.have.a.property('filterTime', 1000);
       }
       catch(err) {
         done(err);

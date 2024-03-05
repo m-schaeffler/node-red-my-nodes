@@ -267,7 +267,7 @@ describe( 'math_mean Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('filterVal', 100);
+        n1.should.have.a.property('filterValue', 100);
       }
       catch(err) {
         done(err);

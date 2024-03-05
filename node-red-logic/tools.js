@@ -57,3 +57,8 @@ exports.getPayload = function(node,msg,callback)
         callback( RED.util.getMessageProperty( msg, node.property ) );
     }
 }
+
+exports.distance = function(a,b)
+{
+    return a>b ? a-b : b-a;
+}

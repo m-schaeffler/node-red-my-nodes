@@ -1,5 +1,5 @@
 module.exports = function(RED) {
-    var myMath = require('my-math');
+    var tools = require('./tools.js');
 
     function MeanNode(config) {
         RED.nodes.createNode(this,config);
@@ -110,8 +110,8 @@ module.exports = function(RED) {
                             const help  = last[msg.topic];
                             const value = sum/item.length;
                             if( help === undefined ||
-                               ( help.time + node.filterTime < now && 
-                                 myMath.distance( help.value, value ) >= node.filterValue )
+                                ( help.time + node.filterTime < now &&
+                                  tools.distance( help.value, value ) >= node.filterValue ) )
                             {
                                 sendValue( value, item.length );
                             }

@@ -1,4 +1,5 @@
 module.exports = function(RED) {
+    var myMath = require('my-math');
 
     function MeanNode(config) {
         RED.nodes.createNode(this,config);
@@ -89,7 +90,7 @@ module.exports = function(RED) {
                         {
                             msg.payload = value;
                             msg.count   = count;
-                            last[msg.topic] = now;
+                            last[msg.topic] = {value:value,time:now};
                             context.set( "last", last );
                             node.status({fill:"green",shape:"dot",text:`${item.length} / ${value.toPrecision(4)}`});
                             send( msg );
@@ -106,13 +107,17 @@ module.exports = function(RED) {
                             {
                                 sum += value.value;
                             }
-                            if( (last[msg.topic]??0)+node.filterTime < now )
+                            const help  = last[msg.topic];
+                            const value = sum/item.length;
+                            if( help === undefined ||
+                               ( help.time + node.filterTime < now && 
+                                 myMath.distance( help.value, value ) >= node.filterValue )
                             {
-                                sendValue( sum/item.length, item.length );
+                                sendValue( value, item.length );
                             }
                             else
                             {
-                                node.status({fill:"gray",shape:"dot",text:`${item.length} / ${(sum/item.length).toPrecision(4)}`});
+                                node.status({fill:"gray",shape:"dot",text:`${item.length} / ${value.toPrecision(4)}`});
                             }
                         }
                         else

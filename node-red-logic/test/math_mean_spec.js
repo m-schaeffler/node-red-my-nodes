@@ -192,7 +192,7 @@ describe( 'math_mean Node', function () {
     });
   });
 
-  it('should filter data', function (done) {
+  it('should filter data in time domain', function (done) {
     var flow = [{ id: "n1", type: "mean", filter: 1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -235,6 +235,47 @@ describe( 'math_mean Node', function () {
       n1.receive({ payload: 2000 });
       await delay(200);
       n1.receive({ payload: 5000 });
+    });
+  });
+
+  it('should filter data in value domain', function (done) {
+    var flow = [{ id: "n1", type: "mean", filterVal: 100, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var start;
+      n2.on("input", function (msg) {
+        c++;
+        try {
+          switch( c )
+          {
+            case 1:
+              msg.should.have.a.property('payload',1000);
+              msg.should.have.a.property('count',1);
+              break;
+            case 2:
+              msg.should.have.a.property('payload',(1000+1199+1102)/3);
+              msg.should.have.a.property('count',3);
+              done();
+              break;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('filterVal', 100);
+      }
+      catch(err) {
+        done(err);
+      }
+      start = Date.now();
+      n1.receive({ payload: 1000 });
+      n1.receive({ payload: 1199 });
+      n1.receive({ payload: 1102 });
     });
   });
 

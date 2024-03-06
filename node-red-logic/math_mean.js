@@ -111,7 +111,7 @@ module.exports = function(RED) {
                             const value = sum/item.length;
                             if( help === undefined ||
                                 ( help.time + node.filterTime < now && tools.distance( help.value, value ) >= node.filterValue ) ||
-                                help.time + 10*node.filterTime < now  )
+                                ( node.filterTime > 0 && help.time + 10*node.filterTime < now  ) )
                             {
                                 sendValue( value, item.length );
                             }

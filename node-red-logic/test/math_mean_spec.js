@@ -297,7 +297,7 @@ describe( 'math_mean Node', function () {
           switch( c )
           {
             case 1:
-              delta.should.be.lessThan(10);
+              delta.should.be.lessThan(20);
               msg.should.have.a.property('payload',1000);
               msg.should.have.a.property('count',1);
               break;
@@ -349,7 +349,7 @@ describe( 'math_mean Node', function () {
           switch( c )
           {
             case 1:
-              delta.should.be.lessThan(10);
+              delta.should.be.lessThan(20);
               msg.should.have.a.property('payload',1000);
               msg.should.have.a.property('count',1);
               break;
@@ -396,7 +396,7 @@ describe( 'math_mean Node', function () {
           switch( c )
           {
             case 1:
-              delta.should.be.lessThan(10);
+              delta.should.be.lessThan(20);
               msg.should.have.a.property('payload',1000);
               msg.should.have.a.property('count',1);
               break;

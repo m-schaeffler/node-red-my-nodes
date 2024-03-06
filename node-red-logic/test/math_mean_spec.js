@@ -33,6 +33,7 @@ describe( 'math_mean Node', function () {
         n1.should.have.a.property('minData', 1);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
+        n1.should.have.a.property('filterLongTime', 0);
         n1.should.have.a.property('zeroIsZero', false);
         n1.should.have.a.property('showState', false);
         done();
@@ -225,6 +226,7 @@ describe( 'math_mean Node', function () {
       });
       try {
         n1.should.have.a.property('filterTime', 1000);
+        n1.should.have.a.property('filterLongTime', 10000);
       }
       catch(err) {
         done(err);
@@ -279,7 +281,6 @@ describe( 'math_mean Node', function () {
     });
   });
 
-
   it('should filter data in both domains 1', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: "n1", type: "mean", filter: 0.25, filterVal: 100, name: "test", wires: [["n2"]] },
@@ -314,6 +315,7 @@ describe( 'math_mean Node', function () {
       });
       try {
         n1.should.have.a.property('filterTime', 250);
+        n1.should.have.a.property('filterLongTime', 2500);
         n1.should.have.a.property('filterValue', 100);
       }
       catch(err) {
@@ -365,6 +367,7 @@ describe( 'math_mean Node', function () {
       });
       try {
         n1.should.have.a.property('filterTime', 250);
+        n1.should.have.a.property('filterLongTime', 2500);
         n1.should.have.a.property('filterValue', 100);
       }
       catch(err) {
@@ -373,6 +376,61 @@ describe( 'math_mean Node', function () {
       start = Date.now();
       n1.receive({ payload: 1000 });
       await delay(300);
+      n1.receive({ payload: 2000 });
+    });
+  });
+
+  it('should filter data in both domains 3', function (done) {
+    this.timeout( 5000 );
+    var flow = [{ id: "n1", type: "mean", filter: 0.25, filterMul: 0, filterVal: 100, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var start;
+      n2.on("input", function (msg) {
+        c++;
+        try {
+          var delta = Date.now() - start;
+          switch( c )
+          {
+            case 1:
+              delta.should.be.lessThan(10);
+              msg.should.have.a.property('payload',1000);
+              msg.should.have.a.property('count',1);
+              break;
+            case 2:
+              delta.should.be.approximately(3500,50);
+              msg.should.have.a.property('payload',1175);
+              msg.should.have.a.property('count',6);
+              done();
+              break;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('filterTime', 250);
+        n1.should.have.a.property('filterLongTime', 0);
+        n1.should.have.a.property('filterValue', 100);
+      }
+      catch(err) {
+        done(err);
+      }
+      start = Date.now();
+      n1.receive({ payload: 1000 });
+      await delay(200);
+      n1.receive({ payload: 1002 });
+      await delay(100);
+      n1.receive({ payload: 1004 });
+      await delay(2000);
+      n1.receive({ payload: 1006 });
+      await delay(600);
+      n1.receive({ payload: 1038 });
+      await delay(600);
       n1.receive({ payload: 2000 });
     });
   });

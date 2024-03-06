@@ -12,6 +12,7 @@ module.exports = function(RED) {
         this.minData      = Number( config.minData ?? 1 );
         this.filterTime   = Number( config.filter ?? 0 )*1000;
         this.filterValue  = Number( config.filterVal ?? 0 );
+        this.filterLongTime = this.filterTime * Number( config.filterMul ?? 10 );
         this.zeroIsZero   = Boolean( config.zeroIsZero );
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
@@ -111,7 +112,7 @@ module.exports = function(RED) {
                             const value = sum/item.length;
                             if( help === undefined ||
                                 ( help.time + node.filterTime < now && tools.distance( help.value, value ) >= node.filterValue ) ||
-                                ( node.filterTime > 0 && help.time + 10*node.filterTime < now  ) )
+                                ( node.filterLongTime > 0 && help.time + node.filterLongTime < now  ) )
                             {
                                 sendValue( value, item.length );
                             }

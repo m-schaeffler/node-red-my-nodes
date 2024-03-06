@@ -279,6 +279,103 @@ describe( 'math_mean Node', function () {
     });
   });
 
+
+  it('should filter data in both domains 1', function (done) {
+    var flow = [{ id: "n1", type: "mean", filter: 0.25, filterVal: 100, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var start;
+      n2.on("input", function (msg) {
+        c++;
+        try {
+          var delta = Date.now() - start;
+          switch( c )
+          {
+            case 1:
+              delta.should.be.lessThan(10);
+              msg.should.have.a.property('payload',1000);
+              msg.should.have.a.property('count',1);
+              break;
+            case 2:
+              delta.should.be.approximately(2900,50);
+              msg.should.have.a.property('payload',1010);
+              msg.should.have.a.property('count',5);
+              done();
+              break;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('filterTime', 1000);
+        n1.should.have.a.property('filterValue', 100);
+      }
+      catch(err) {
+        done(err);
+      }
+      start = Date.now();
+      n1.receive({ payload: 1000 });
+      await delay(200);
+      n1.receive({ payload: 1002 });
+      await delay(100);
+      n1.receive({ payload: 1004 });
+      await delay(2000);
+      n1.receive({ payload: 1006 });
+      await delay(600);
+      n1.receive({ payload: 1038 });
+    });
+  });
+
+  it('should filter data in both domains 2', function (done) {
+    var flow = [{ id: "n1", type: "mean", filter: 0.25, filterVal: 100, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var start;
+      n2.on("input", function (msg) {
+        c++;
+        try {
+          var delta = Date.now() - start;
+          switch( c )
+          {
+            case 1:
+              delta.should.be.lessThan(10);
+              msg.should.have.a.property('payload',1000);
+              msg.should.have.a.property('count',1);
+              break;
+            case 2:
+              delta.should.be.approximately(300,25);
+              msg.should.have.a.property('payload',1500);
+              msg.should.have.a.property('count',2);
+              done();
+              break;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('filterTime', 1000);
+        n1.should.have.a.property('filterValue', 100);
+      }
+      catch(err) {
+        done(err);
+      }
+      start = Date.now();
+      n1.receive({ payload: 1000 });
+      await delay(300);
+      n1.receive({ payload: 2000 });
+    });
+  });
+
   it('should not forward invalid data', function (done) {
     var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

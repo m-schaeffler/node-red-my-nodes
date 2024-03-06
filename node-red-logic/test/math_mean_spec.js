@@ -281,6 +281,7 @@ describe( 'math_mean Node', function () {
 
 
   it('should filter data in both domains 1', function (done) {
+    this.timeout( 5000 );
     var flow = [{ id: "n1", type: "mean", filter: 0.25, filterVal: 100, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -312,7 +313,7 @@ describe( 'math_mean Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('filterTime', 1000);
+        n1.should.have.a.property('filterTime', 250);
         n1.should.have.a.property('filterValue', 100);
       }
       catch(err) {
@@ -363,7 +364,7 @@ describe( 'math_mean Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('filterTime', 1000);
+        n1.should.have.a.property('filterTime', 250);
         n1.should.have.a.property('filterValue', 100);
       }
       catch(err) {

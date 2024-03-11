@@ -348,3 +348,4 @@ for `falling edge`, `raising edge` and `hysteresis`:
 ## License
 
 LGPL-2.1
+

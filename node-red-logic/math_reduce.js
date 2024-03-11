@@ -112,7 +112,7 @@ module.exports = function(RED) {
                             {
                                 case "mean": msg.payload /= msg.count; break;
                             }
-                            status.text = msg.payload;
+                            status.text = msg.payload.toPrecision(4);
                             if( node.filter )
                             {
                                 if( msg.payload !== node.last )

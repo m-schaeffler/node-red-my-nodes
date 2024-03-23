@@ -54,9 +54,9 @@ exports.formatNumber = function(number,limit,unit="")
     }
 }
 
-exports.colorizeValue = function(number,color,unit="")
+exports.colorizeValue = function(number,className,unit="")
 {
-    return `<span style=\"${color}\">${number}${exports.unitStr(unit)}</span>`;
+    return `<span class=\"${className}\">${number}${exports.unitStr(unit)}</span>`;
 }
 
 exports.colorizeNumber = function(number,low,high,unit="")
@@ -65,9 +65,9 @@ exports.colorizeNumber = function(number,low,high,unit="")
     {
         let color = '';
         if( number >= high )
-            color = 'color:lime';
+            color = 'green';
         else if( number < low )
-            color = 'color:red';
+            color = 'red';
         return exports.colorizeValue( number, color, unit );
     }
     else
@@ -103,11 +103,11 @@ exports.colorizeTime = function(time,ok=3,nok=24)
         let   color = "";
         if( delta < ok*3600*1000 )
         {
-            color = "color:lime";
+            color = "green";
         }
         else if( delta > nok*3600*1000 )
         {
-            color = "color:red";
+            color = "red";
         }
         return exports.colorizeValue(
             delta < 48*3600*1000 ? exports.formatTime( d ) : `${d.getDate()}.${d.getMonth()+1}.`,

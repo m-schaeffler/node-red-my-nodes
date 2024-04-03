@@ -121,9 +121,8 @@ describe( 'format_number Node', function () {
     });
   });
 
-/*
   it('should not filter data', function (done) {
-    var flow = [{ id: "n1", type: "tonumber", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -156,7 +155,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should filter data', function (done) {
-    var flow = [{ id: "n1", type: "tonumber", name: "test", filter:true, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", filter:true, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -189,7 +188,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should work with objects', function (done) {
-    var flow = [{ id: "n1", type: "tonumber", name: "test", property:"payload.value", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -215,7 +214,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should have Jsonata', function (done) {
-    var flow = [{ id: "n1", type: "tonumber", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -239,5 +238,5 @@ describe( 'format_number Node', function () {
       n1.receive({ payload: 20 });
     });
   });
-*/
+
 });

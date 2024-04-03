@@ -73,6 +73,11 @@
     <h3>Input</h3>
     
     <p>The message property to be used as payload can be defined with the <code>Property</code> property.</p>
+    <p>This value is then</p>
+    <ul>
+        <li>if the value is a number: converted to a string according to the parameters and a unit is added</li>
+        <li>in other cases: been sent out unmodified</li>
+    </ul>
     
     <dl class="message-properties">
         <dt>payload <span class="property-type"></span></dt>
@@ -82,8 +87,8 @@
     <h3>Output</h3>
     
     <dl class="message-properties">
-        <dt>payload <span class="property-type">number</span></dt>
-        <dd> number value of payload.</dd>
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd> converted value of payload.</dd>
     </dl>
     
     <h3>Parameter</h3>
@@ -91,6 +96,12 @@
     <dl class="message-properties">
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
+        <dt>Einheit <span class="property-type">string</span></dt>
+        <dd> unit of the value.</dd>
+        <dt>Tausender <span class="property-type">string</span></dt>
+        <dd> character to group the number in segments of 3 digits.</dd>
+        <dt>Stellen <span class="property-type">number</span></dt>
+        <dd> number of digits after the decimal point.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
         <dt>Filter <span class="property-type">boolean</span></dt>

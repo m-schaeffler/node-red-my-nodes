@@ -1,0 +1,30 @@
+{
+  "name": "@mschaeffler/node-red-format",
+  "version": "1.0.0",
+  "description": "nodes for formatting of simple data.",
+  "license": "LGPL-2.1",
+  "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-format",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "node-red"
+  ],
+  "node-red": {
+    "version": ">=3.1.0",
+    "nodes": {
+      "formatNumber": "format_number.js"
+    }
+  },
+  "author": {
+    "name": "Mathias Schäffler",
+    "url": "https://github.com/m-schaeffler"
+  },
+  "scripts": {
+    "test": "mocha \"test/*_spec.js\""
+  }
+}

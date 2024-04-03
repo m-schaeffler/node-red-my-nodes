@@ -53,35 +53,37 @@ module.exports = function(RED) {
             }
             getPayload( function(value)
             {
-                msg.payload = Number( value );
-                let status = { text:msg.payload };
+                const number = Number( value );
+                let   status = {};
                 if( ! isNaN( msg.payload ) )
                 {
-                    if( node.filter )
+                    msg.payload = number;
+                }
+                else
+                {
+                    msg.payload = value;
+                }
+                if( node.filter )
+                {
+                    status.shape = "dot";
+                    if( msg.payload !== node.last )
                     {
-                        status.shape = "dot";
-                        if( msg.payload !== node.last )
-                        {
-                            node.last = msg.payload;
-                            status.fill = "green";
-                            send( msg );
-                        }
-                        else
-                        {
-                            status.fill = "gray";
-                        }
+                        node.last = msg.payload;
+                        status.fill = "green";
+                        send( msg );
                     }
                     else
                     {
-                        send( msg );
+                        status.fill = "gray";
                     }
                 }
                 else
                 {
-                    status.text = "not a Number";
+                    send( msg );
                 }
                 if( node.showState )
                 {
+                    status.text = msg.payload;
                     node.status( status );
                 }
                 done();

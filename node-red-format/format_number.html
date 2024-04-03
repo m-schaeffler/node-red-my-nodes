@@ -1,24 +1,27 @@
 <script type="text/javascript">
     RED.nodes.registerType('formatNumber',{
-        category: 'function',
-        color: "#C0DEED",
+        category: RED._('@flowfuse/node-red-dashboard/ui-base:ui-base.label.category'),
+        color: "#C7E9C0",
         defaults: {
             name:{value:""},
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
+            unit:{value:""},
+            grouping:{value:"'"},
+            digits:{value:"0",validate:RED.validators.number(),required:true},
             showState:{value:false},
             filter:{value:false}
         },
         inputs:1,
         outputs:1,
-        icon: "font-awesome/fa-adjust",
+        icon: "font-awesome/fa-quote-right",
         label: function() {
-            return this.name||"format number";
+            return this.name||"formNumber";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "format number",
+        paletteLabel: "formNumber",
         inputLabels: 'input',
         outputLabels: 'formated number',
         oneditprepare: function() {
@@ -40,6 +43,18 @@
         <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
         <input type="text" id="node-input-property">
         <input type="hidden" id="node-input-propertyType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-unit"><i class="fa fa-plus"></i> Einheit</label>
+        <input type="text" id="node-input-unit">
+    </div>
+    <div class="form-row">
+        <label for="node-input-grouping"><i class="fa fa-angle-left"></i> Tausender</label>
+        <input type="text" id="node-input-grouping">
+    </div>
+    <div class="form-row">
+        <label for="node-input-digits"><i class="fa fa-angle-right"></i> Stellen</label>
+        <input type="text" id="node-input-digits">
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>

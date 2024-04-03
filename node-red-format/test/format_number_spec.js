@@ -35,16 +35,17 @@ describe( 'format_number Node', function () {
       }
     });
   });
-/*
+
   it('should forward numbers', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
-    var flow = [{ id: "n1", type: "tonumber", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
+        console.log(msg.payload);
         try {
           msg.should.have.property('payload',Number(numbers[c]));
           if( ++c === numbers.length )
@@ -64,17 +65,17 @@ describe( 'format_number Node', function () {
   });
 
   it('should not forward invalid data', function (done) {
-    var flow = [{ id: "n1", type: "tonumber", name: "test", wires: [["n2"]] },
+    const numbers = [255];
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        c++;
         try {
-          msg.should.have.a.property('payload',255);
-          if( c === 1 && msg.payload === 255 )
+          msg.should.have.a.property('payload',numbers[c]);
+          if( ++c === numbers.length )
           {
             done();
           }
@@ -86,13 +87,41 @@ describe( 'format_number Node', function () {
       n1.receive({ invalid:true, payload: 12.345 });
       n1.receive({ invalid:true, payload: -12.345 });
       n1.receive({ invalid:true, payload: 0 });
-      n1.receive({ payload: undefined });
-      n1.receive({ payload: "FooBar" });
-      n1.receive({ payload: NaN });
-      n1.receive({ payload: 255 });
+      for( const i of numbers )
+      {
+        n1.receive({ payload: i });
+      }
     });
   });
 
+  it('should forward NaN data as it is', function (done) {
+    const numbers = [undefined,"FooBar",NaN,{}];
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          msg.should.have.a.property('payload',numbers[c]);
+          if( ++c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      for( const i of numbers )
+      {
+        n1.receive({ payload: i });
+      }
+    });
+  });
+
+/*
   it('should not filter data', function (done) {
     var flow = [{ id: "n1", type: "tonumber", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

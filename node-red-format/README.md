@@ -37,6 +37,7 @@ This value is then
 |Property| string | defines the message property to be used as payload.|
 |Einheit|string|unit of the value.|
 |Tausender|string|character to group the number in segments of 3 digits.|
+|Dezimal|string|character to decimal separation.|
 |Stellen|number|number of digits after the decimal point.|
 |Status|boolean|shows the actual value as a node status.|
 |Filter|boolean|block sending of unchanged `payload`.|

@@ -11,6 +11,7 @@ The node red node packages are released in this repository:
 - [@mschaeffler/node-red-dualled](node-red-dualled/README.md)
 - [@mschaeffler/node-red-logic](node-red-logic/README.md)
 - [@mschaeffler/node-red-hourmeter](node-red-hourmeter/README.md)
+- [@mschaeffler/node-red-format](node-red-format/README.md)
 
 ## License
 

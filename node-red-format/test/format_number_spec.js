@@ -24,7 +24,8 @@ describe( 'format_number Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('unit', '');
-        n1.should.have.a.property('grouping', "'");
+        n1.should.have.a.property('grouping', "");
+        n1.should.have.a.property('decimal', ".");
         n1.should.have.a.property('digits', 0);
         n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);

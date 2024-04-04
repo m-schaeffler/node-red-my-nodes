@@ -8,6 +8,7 @@
             propertyType:{value:"msg"},
             unit:{value:""},
             grouping:{value:"'"},
+            decimal:{value:",",required:true},
             digits:{value:"0",validate:RED.validators.number(),required:true},
             showState:{value:false},
             filter:{value:false}
@@ -51,6 +52,10 @@
     <div class="form-row">
         <label for="node-input-grouping"><i class="fa fa-angle-left"></i> Tausender</label>
         <input type="text" id="node-input-grouping">
+    </div>
+    <div class="form-row">
+        <label for="node-input-decimal"><i class="fa fa-angle-down"></i> Dezimal</label>
+        <input type="text" id="node-input-decimal">
     </div>
     <div class="form-row">
         <label for="node-input-digits"><i class="fa fa-angle-right"></i> Stellen</label>
@@ -100,6 +105,8 @@
         <dd> unit of the value.</dd>
         <dt>Tausender <span class="property-type">string</span></dt>
         <dd> character to group the number in segments of 3 digits.</dd>
+        <dt>Dezimal <span class="property-type">string</span></dt>
+        <dd> character to decimal separation.</dd>
         <dt>Stellen <span class="property-type">number</span></dt>
         <dd> number of digits after the decimal point.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

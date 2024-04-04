@@ -7,7 +7,8 @@ module.exports = function(RED) {
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.unit         = config.unit ?? "";
-        this.grouping     = config.grouping ?? "'";
+        this.grouping     = config.grouping ?? "";
+        this.decimal      = config.decimal ?? ".";
         this.digits       = Number( config.digits ?? 0 );
         this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
@@ -25,6 +26,11 @@ module.exports = function(RED) {
         if( this.unit )
         {
             this.unit = "\u2009" + this.unit;
+        }
+        if( this.grouping )
+        {
+            this.grouping    = "$1" + this.grouping;
+            this.groupRegExp = /(\d)(?=(\d{3})+(?!\d))/g;
         }
         node.status( "" );
 
@@ -61,7 +67,24 @@ module.exports = function(RED) {
                 let   status = {};
                 if( ! isNaN( number ) )
                 {
-                    msg.payload = number.toFixed( node.digits );
+                    const roundedNumber = number.toFixed( node.digits );
+                    let integer,fractional;
+                    if( node.digits == 0 )
+                    {
+                        integer    = roundedNumber;
+                        fractional = "";
+                    }
+                    else
+                    {
+                        const numberParts = roundedNumber.split( '.' );
+                        integer    = numberParts[0];
+                        fractional = node.decimal + numberParts[1];
+                    }
+                    if( node.grouping )
+                    {
+                        integer = integer.replace( node.groupRegExp, node.grouping );
+                    }
+                    msg.payload = integer + fractional;
                     if( node.unit )
                     {
                         msg.payload += node.unit;

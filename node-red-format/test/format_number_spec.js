@@ -108,7 +108,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         try {
           msg.should.have.property('payload',Number(numbers[c]).toFixed(2).replace('.',','));
           if( ++c === numbers.length )
@@ -178,7 +178,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         try {
           msg.should.have.property('payload',results[c]);
           if( ++c === results.length )
@@ -213,7 +213,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         try {
           msg.should.have.property('payload',results[c]);
           if( ++c === results.length )

@@ -12,7 +12,7 @@ If the msg property `invalid` is present in the message, all nodes ignore the me
 $ npm install @mschaeffler/node-red-format
 ```
 
-## formatNumber
+## formNumber
 
 Formats the payload as a number.
 

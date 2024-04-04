@@ -1,0 +1,152 @@
+[
+    {
+        "id": "51600b1258d45fb1",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6cc20fbbd3d0c6b4",
+        "type": "inject",
+        "z": "51600b1258d45fb1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "12345.6789",
+        "payloadType": "num",
+        "x": 170,
+        "y": 400,
+        "wires": [
+            [
+                "e0271430184ead92"
+            ]
+        ]
+    },
+    {
+        "id": "dcfed7c955725c74",
+        "type": "debug",
+        "z": "51600b1258d45fb1",
+        "name": "debug 15",
+        "active": true,
+        "tosidebar": false,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 560,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "e0271430184ead92",
+        "type": "formatNumber",
+        "z": "51600b1258d45fb1",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "unit": "W",
+        "grouping": "'",
+        "digits": "1",
+        "showState": true,
+        "filter": false,
+        "x": 370,
+        "y": 400,
+        "wires": [
+            [
+                "110066a08d9db162",
+                "dcfed7c955725c74"
+            ]
+        ]
+    },
+    {
+        "id": "110066a08d9db162",
+        "type": "ui-text",
+        "z": "51600b1258d45fb1",
+        "group": "c522a9b22c61bb10",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "formatted Text",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#717171",
+        "className": "",
+        "x": 580,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "c522a9b22c61bb10",
+        "type": "ui-group",
+        "name": "Group Name",
+        "page": "48c0b135ec5b2c64",
+        "width": "6",
+        "height": "1",
+        "order": -1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "48c0b135ec5b2c64",
+        "type": "ui-page",
+        "name": "Page Name",
+        "ui": "fd06eabec55c4e5d",
+        "path": "/page1",
+        "icon": "home",
+        "layout": "flex",
+        "theme": "a965ccfef139317a",
+        "order": 2,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "fd06eabec55c4e5d",
+        "type": "ui-base",
+        "name": "Dashboard 2.0",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "navigationStyle": "default"
+    },
+    {
+        "id": "a965ccfef139317a",
+        "type": "ui-theme",
+        "name": "Default",
+        "colors": {
+            "surface": "#6db046",
+            "primary": "#32cd32",
+            "bgPage": "#000000",
+            "groupBg": "#333333",
+            "groupOutline": "#616161"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

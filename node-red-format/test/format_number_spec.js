@@ -36,7 +36,7 @@ describe( 'format_number Node', function () {
     });
   });
 
-  it('should forward numbers', function (done) {
+  it('should forward numbers rounded to integer', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
     var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -57,6 +57,74 @@ describe( 'format_number Node', function () {
           done(err);
         }
       });
+      for( const i of numbers )
+      {
+        n1.receive({ payload: i });
+      }
+    });
+  });
+
+  it('should forward numbers rounded to two digits', function (done) {
+    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
+    var flow = [{ id: "n1", type: "formatNumber", digits: 2, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg.payload);
+        try {
+          msg.should.have.property('payload',Number(numbers[c]).toFixed(2));
+          if( ++c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('digits', 2);
+      }
+      catch(err) {
+        done(err);
+      }
+      for( const i of numbers )
+      {
+        n1.receive({ payload: i });
+      }
+    });
+  });
+
+  it('should forward numbers with an added unit', function (done) {
+    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
+    var flow = [{ id: "n1", type: "formatNumber", unit: "VAr", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg.payload);
+        try {
+          msg.should.have.property('payload',Number(numbers[c]).toFixed(0)+'\u2009VAr');
+          if( ++c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('unit', '\u2009VAr');
+      }
+      catch(err) {
+        done(err);
+      }
       for( const i of numbers )
       {
         n1.receive({ payload: i });

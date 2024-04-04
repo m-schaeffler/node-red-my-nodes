@@ -45,9 +45,9 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         try {
-          msg.should.have.property('payload',Number(numbers[c]));
+          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
           if( ++c === numbers.length )
           {
             done();
@@ -65,7 +65,6 @@ describe( 'format_number Node', function () {
   });
 
   it('should not forward invalid data', function (done) {
-    const numbers = [255];
     var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
@@ -74,23 +73,16 @@ describe( 'format_number Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',numbers[c]);
-          if( ++c === numbers.length )
-          {
-            done();
-          }
+          msg.should.have.a.property('payload',"255");
+          done();
         }
-        catch(err) {
-          done(err);
+        catch(err) { done(err);
         }
       });
       n1.receive({ invalid:true, payload: 12.345 });
       n1.receive({ invalid:true, payload: -12.345 });
       n1.receive({ invalid:true, payload: 0 });
-      for( const i of numbers )
-      {
-        n1.receive({ payload: i });
-      }
+      n1.receive({ payload: 255 });
     });
   });
 
@@ -131,8 +123,8 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',c===4?255:2);
-          if( c === 4 && msg.payload === 255 )
+          msg.should.have.a.property('payload',c===4?"255":"2");
+          if( c === 4 && msg.payload === "255" )
           {
             done();
           }
@@ -164,8 +156,8 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',c===2?255:2);
-          if( c === 2 && msg.payload === 255 )
+          msg.should.have.a.property('payload',c===2?"255":"2");
+          if( c === 2 && msg.payload === "255" )
           {
             done();
           }
@@ -195,7 +187,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',98);
+          msg.should.have.a.property('payload',"98");
           done();
         }
         catch(err) {
@@ -221,7 +213,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',20+5);
+          msg.should.have.a.property('payload',"25");
           done();
         }
         catch(err) {

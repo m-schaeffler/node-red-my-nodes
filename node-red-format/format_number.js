@@ -22,6 +22,10 @@ module.exports = function(RED) {
                 return;
             }
         }
+        if( this.unit )
+        {
+            this.unit = "\u2009" + this.unit;
+        }
         node.status( "" );
 
         node.on('input', function(msg,send,done) {
@@ -55,9 +59,13 @@ module.exports = function(RED) {
             {
                 const number = Number( value );
                 let   status = {};
-                if( ! isNaN( msg.payload ) )
+                if( ! isNaN( number ) )
                 {
-                    msg.payload = number;
+                    msg.payload = number.toFixed( node.digits );
+                    if( node.unit )
+                    {
+                        msg.payload += node.unit;
+                    }
                 }
                 else
                 {

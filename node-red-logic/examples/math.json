@@ -2,10 +2,37 @@
     {
         "id": "e7a1598e6f6358b9",
         "type": "tab",
-        "label": "Flow 3",
+        "label": "math flow",
         "disabled": false,
         "info": "",
         "env": []
+    },
+    {
+        "id": "abfd3bd5f2b524a9",
+        "type": "junction",
+        "z": "e7a1598e6f6358b9",
+        "x": 300,
+        "y": 180,
+        "wires": [
+            [
+                "244e769e05d8b030",
+                "43298eb40b87f0ac",
+                "7be607a719dad008"
+            ]
+        ]
+    },
+    {
+        "id": "7be607a719dad008",
+        "type": "junction",
+        "z": "e7a1598e6f6358b9",
+        "x": 320,
+        "y": 300,
+        "wires": [
+            [
+                "3c37bb4e8785f015",
+                "b387e894bd2d43ef"
+            ]
+        ]
     },
     {
         "id": "b387e894bd2d43ef",
@@ -18,8 +45,8 @@
         "maxMean": "1",
         "minData": "2",
         "algo": "add",
-        "x": 350,
-        "y": 260,
+        "x": 430,
+        "y": 280,
         "wires": [
             [
                 "ae068d25a90dae25"
@@ -31,7 +58,7 @@
         "type": "counter",
         "z": "e7a1598e6f6358b9",
         "name": "",
-        "x": 360,
+        "x": 440,
         "y": 120,
         "wires": [
             [
@@ -46,7 +73,7 @@
         "name": "",
         "property": "payload",
         "showState": true,
-        "x": 360,
+        "x": 450,
         "y": 200,
         "wires": [
             [
@@ -67,7 +94,7 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 550,
+        "x": 630,
         "y": 120,
         "wires": []
     },
@@ -84,7 +111,7 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 550,
+        "x": 630,
         "y": 200,
         "wires": []
     },
@@ -101,8 +128,8 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 550,
-        "y": 260,
+        "x": 630,
+        "y": 280,
         "wires": []
     },
     {
@@ -131,9 +158,7 @@
         "wires": [
             [
                 "b3daecdca91d5857",
-                "244e769e05d8b030",
-                "b387e894bd2d43ef",
-                "3c37bb4e8785f015"
+                "abfd3bd5f2b524a9"
             ]
         ]
     },
@@ -162,9 +187,7 @@
         "y": 200,
         "wires": [
             [
-                "244e769e05d8b030",
-                "b387e894bd2d43ef",
-                "3c37bb4e8785f015"
+                "abfd3bd5f2b524a9"
             ]
         ]
     },
@@ -193,9 +216,7 @@
         "y": 160,
         "wires": [
             [
-                "244e769e05d8b030",
-                "b387e894bd2d43ef",
-                "3c37bb4e8785f015"
+                "abfd3bd5f2b524a9"
             ]
         ]
     },
@@ -224,8 +245,7 @@
         "y": 260,
         "wires": [
             [
-                "b387e894bd2d43ef",
-                "3c37bb4e8785f015"
+                "7be607a719dad008"
             ]
         ]
     },
@@ -254,8 +274,7 @@
         "y": 340,
         "wires": [
             [
-                "b387e894bd2d43ef",
-                "3c37bb4e8785f015"
+                "7be607a719dad008"
             ]
         ]
     },
@@ -284,8 +303,7 @@
         "y": 300,
         "wires": [
             [
-                "b387e894bd2d43ef",
-                "3c37bb4e8785f015"
+                "7be607a719dad008"
             ]
         ]
     },
@@ -300,8 +318,8 @@
         "maxMean": "3",
         "minData": "2",
         "algo": "mean",
-        "x": 350,
-        "y": 340,
+        "x": 430,
+        "y": 320,
         "wires": [
             [
                 "e48c5acab52f93e3"
@@ -321,8 +339,42 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 550,
-        "y": 340,
+        "x": 630,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "43298eb40b87f0ac",
+        "type": "negate",
+        "z": "e7a1598e6f6358b9",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "showState": false,
+        "filter": false,
+        "x": 430,
+        "y": 160,
+        "wires": [
+            [
+                "1603aaa3760fb2ff"
+            ]
+        ]
+    },
+    {
+        "id": "1603aaa3760fb2ff",
+        "type": "debug",
+        "z": "e7a1598e6f6358b9",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 630,
+        "y": 160,
         "wires": []
     }
 ]

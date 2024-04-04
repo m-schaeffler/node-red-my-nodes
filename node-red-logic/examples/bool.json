@@ -2,10 +2,37 @@
     {
         "id": "874e3c59e7510080",
         "type": "tab",
-        "label": "Flow 2",
+        "label": "boolean flow",
         "disabled": false,
         "info": "",
         "env": []
+    },
+    {
+        "id": "3319084cf1aed1a2",
+        "type": "junction",
+        "z": "874e3c59e7510080",
+        "x": 260,
+        "y": 120,
+        "wires": [
+            [
+                "3638e932e6cd704e",
+                "9b0ce6b2f677fd0c",
+                "ebe75a205d692b15"
+            ]
+        ]
+    },
+    {
+        "id": "ebe75a205d692b15",
+        "type": "junction",
+        "z": "874e3c59e7510080",
+        "x": 280,
+        "y": 240,
+        "wires": [
+            [
+                "7d8ce3c91fad2f4c",
+                "59a5371d04a4ad46"
+            ]
+        ]
     },
     {
         "id": "3638e932e6cd704e",
@@ -14,8 +41,8 @@
         "name": "",
         "property": "payload",
         "showState": false,
-        "x": 310,
-        "y": 120,
+        "x": 370,
+        "y": 140,
         "wires": [
             [
                 "59187eb10a59d119"
@@ -30,8 +57,8 @@
         "topic": "",
         "property": "payload",
         "minData": "1",
-        "x": 310,
-        "y": 200,
+        "x": 370,
+        "y": 220,
         "wires": [
             [
                 "c9d4c13317184fd5"
@@ -46,8 +73,8 @@
         "topic": "",
         "property": "payload",
         "minData": "1",
-        "x": 310,
-        "y": 280,
+        "x": 370,
+        "y": 260,
         "wires": [
             [
                 "1b5361bc5d9fa406"
@@ -67,8 +94,8 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 490,
-        "y": 120,
+        "x": 550,
+        "y": 140,
         "wires": []
     },
     {
@@ -96,8 +123,7 @@
         "y": 320,
         "wires": [
             [
-                "59a5371d04a4ad46",
-                "7d8ce3c91fad2f4c"
+                "ebe75a205d692b15"
             ]
         ]
     },
@@ -126,7 +152,7 @@
         "y": 80,
         "wires": [
             [
-                "3638e932e6cd704e"
+                "3319084cf1aed1a2"
             ]
         ]
     },
@@ -155,9 +181,7 @@
         "y": 120,
         "wires": [
             [
-                "3638e932e6cd704e",
-                "7d8ce3c91fad2f4c",
-                "59a5371d04a4ad46"
+                "3319084cf1aed1a2"
             ]
         ]
     },
@@ -186,9 +210,7 @@
         "y": 160,
         "wires": [
             [
-                "3638e932e6cd704e",
-                "7d8ce3c91fad2f4c",
-                "59a5371d04a4ad46"
+                "3319084cf1aed1a2"
             ]
         ]
     },
@@ -205,8 +227,8 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 490,
-        "y": 200,
+        "x": 550,
+        "y": 220,
         "wires": []
     },
     {
@@ -222,8 +244,8 @@
         "targetType": "msg",
         "statusVal": "payload",
         "statusType": "auto",
-        "x": 490,
-        "y": 280,
+        "x": 550,
+        "y": 260,
         "wires": []
     },
     {
@@ -251,8 +273,7 @@
         "y": 260,
         "wires": [
             [
-                "59a5371d04a4ad46",
-                "7d8ce3c91fad2f4c"
+                "ebe75a205d692b15"
             ]
         ]
     },
@@ -281,9 +302,41 @@
         "y": 220,
         "wires": [
             [
-                "7d8ce3c91fad2f4c",
-                "59a5371d04a4ad46"
+                "ebe75a205d692b15"
             ]
         ]
+    },
+    {
+        "id": "9b0ce6b2f677fd0c",
+        "type": "not",
+        "z": "874e3c59e7510080",
+        "name": "",
+        "property": "payload",
+        "showState": false,
+        "filter": false,
+        "x": 370,
+        "y": 100,
+        "wires": [
+            [
+                "30f2426c23193783"
+            ]
+        ]
+    },
+    {
+        "id": "30f2426c23193783",
+        "type": "debug",
+        "z": "874e3c59e7510080",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 100,
+        "wires": []
     }
 ]

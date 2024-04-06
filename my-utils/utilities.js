@@ -17,7 +17,7 @@ exports.stripLast = function(str,sep="/")
 exports.sepStr = function(str=null)
 {
     if( str !== "" )
-        return "&thinsp;/&thinsp;";
+        return "\u2009/\u2009";
     else
         return "";
 }
@@ -25,7 +25,7 @@ exports.sepStr = function(str=null)
 exports.unitStr = function(unit)
 {
     if( unit != "" )
-        return `&thinsp;${unit}`;
+        return `\u2009${unit}`;
     else
         return "";
 }
@@ -94,24 +94,38 @@ exports.formatTime = function(time)
     }
 }
 
+function intTime2color(delta,ok,nok)
+{
+    if( delta < ok*3600*1000 )
+    {
+        return "green";
+    }
+    else if( delta > nok*3600*1000 )
+    {
+        return "red";
+    }
+    else
+    {
+        return "";
+    }
+}
+
+exports.time2color = function(time,ok=3,nok=24)
+{
+    const d     = new Date( time );
+    const delta = Date.now() - d;
+    return intTime2color( delta, ok, nok );
+}
+
 exports.colorizeTime = function(time,ok=3,nok=24)
 {
     if( time )
     {
         const d     = new Date( time );
         const delta = Date.now() - d;
-        let   color = "";
-        if( delta < ok*3600*1000 )
-        {
-            color = "green";
-        }
-        else if( delta > nok*3600*1000 )
-        {
-            color = "red";
-        }
         return exports.colorizeValue(
             delta < 48*3600*1000 ? exports.formatTime( d ) : `${d.getDate()}.${d.getMonth()+1}.`,
-            color
+            intTime2color( delta, ok, nok )
         );
     }
     else

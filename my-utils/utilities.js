@@ -25,7 +25,7 @@ exports.sepStr = function(str=null)
 exports.unitStr = function(unit)
 {
     if( unit != "" )
-        return `\u2009${unit}`;
+        return `\u202F${unit}`;
     else
         return "";
 }
@@ -59,16 +59,21 @@ exports.colorizeValue = function(number,className,unit="")
     return `<span class=\"${className}\">${number}${exports.unitStr(unit)}</span>`;
 }
 
+exports.number2color = function(number,low,high)
+{
+    if( number >= high )
+        return 'green';
+    else if( number < low )
+        return 'red';
+    else
+        return '';
+}
+
 exports.colorizeNumber = function(number,low,high,unit="")
 {
     if( typeof number === 'number' )
     {
-        let color = '';
-        if( number >= high )
-            color = 'green';
-        else if( number < low )
-            color = 'red';
-        return exports.colorizeValue( number, color, unit );
+        return exports.colorizeValue( number, exports.number2color( number, low, high ), unit );
     }
     else
     {

@@ -25,7 +25,7 @@ module.exports = function(RED) {
         }
         if( this.unit )
         {
-            this.unit = "\u2009" + this.unit;
+            this.unit = "\u202F" + this.unit;
         }
         if( this.grouping )
         {

@@ -62,17 +62,17 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.payload = Number( value );
-                    let status = { fill:"gray", shape:"dot", text:msg.payload.toPrecision(4) };
+                    let data   = context.get( "data" ) ?? {};
+                    let status = { fill:data[msg.topic]?.status??"gray", shape:"dot", text:msg.payload.toPrecision(4) };
 
                     if( ! isNaN( msg.payload ) )
                     {
-                        let   data = context.get( "data" ) ?? {};
-                        const last = data[msg.topic];
+                        const last = data[msg.topic]?.edge;
 
                         function sendMsg(edge)
                         {
-                            status.fill = "green";
-                            data[msg.topic] = edge;
+                            status.fill = edge=="rising" ? "green" : "gray";
+                            data[msg.topic] = { edge:edge, status:status.fill };
                             context.set( "data", data );
                             msg.edge = edge;
                             send( msg );

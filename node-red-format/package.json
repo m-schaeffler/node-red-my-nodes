@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-format",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "nodes for formatting of simple data.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-format",
@@ -17,7 +17,8 @@
   "node-red": {
     "version": ">=3.1.0",
     "nodes": {
-      "formatNumber": "format_number.js"
+      "formatNumber": "format_number.js",
+      "collectChart": "collect_chart.js"
     }
   },
   "author": {

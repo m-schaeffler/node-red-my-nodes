@@ -7,6 +7,7 @@
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
             topics:{value:"[]",required:true},
+            cyclic:{value:"60",validate:RED.validators.number(),required:true},
             hours:{value:"24",validate:RED.validators.number(),required:true},
             showState:{value:false}
         },
@@ -21,7 +22,7 @@
         },
         paletteLabel: "collectChart",
         inputLabels: 'input',
-        outputLabels: 'formated number',
+        outputLabels: 'complete chart',
         oneditprepare: function() {
             $("#node-input-property").typedInput({
                 type:"msg",
@@ -49,6 +50,10 @@
     <div class="form-row">
         <label for="node-input-topics"><i class="fa fa-tags"></i> Topics</label>
         <input type="text" id="node-input-topics">
+    </div>
+    <div class="form-row">
+        <label for="node-input-cyclic"><i class="fa fa-refresh"></i> Zykluszeit</label>
+        <input type="text" id="node-input-cyclic">
     </div>
     <div class="form-row">
         <label for="node-input-hours"><i class="fa fa-hourglass-end"></i> Stunden</label>
@@ -87,8 +92,10 @@
     <dl class="message-properties">
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
-        <dt>Topicst <span class="property-type">JSON array</span></dt>
+        <dt>Topics <span class="property-type">JSON array</span></dt>
         <dd> array of the serieses of the chart.</dd>
+        <dt>Cyclic <span class="property-type">number</span></dt>
+        <dd> cyclic time to send out the chart in seconds.</dd>
         <dt>Hours <span class="property-type">number</span></dt>
         <dd> how many hours the chart should span over.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

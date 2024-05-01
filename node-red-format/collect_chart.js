@@ -6,8 +6,9 @@ module.exports = function(RED) {
         var node = this;
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.unit         = config.topics ?? "[]";
-        this.hours        = Number( config.digits ?? 24 );
+        this.topics       = config.topics ?? "[]";
+        this.cyclic       = Number( config.cyclic ?? 60 );
+        this.hours        = Number( config.hours ?? 24 );
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
@@ -20,7 +21,7 @@ module.exports = function(RED) {
             }
         }
         this.onceTimeout = setTimeout( function() { node.emit("started"); }, 500 );
-        this.interval_id = setInterval( function() { node.emit("cyclic"); }, 10*1000 );
+        this.interval_id = setInterval( function() { node.emit("cyclic"); }, this.cyclic*1000 );
         node.status( "" );
 
         node.on('input', function(msg,send,done) {
@@ -71,8 +72,15 @@ module.exports = function(RED) {
             node.send( { topic:"test", payload:[{c:1,t:2,v:3}] } );
         });
 
+        this.cycleCounter = 0;
         node.on('cyclic', function() {
-            console.log( "collect chart cyclic" );
+            node.cycleCounter++;
+            console.log( "collect chart cyclic "+node.cycleCounter );
+            if( node.cycleCounter >= 10 )
+            {
+                node.cycleCounter = 0;
+                node.send( { topic:"cyclic", payload:[{c:1,t:2,v:3}] } );
+            }
         });
 
         node.on('close', function() {

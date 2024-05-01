@@ -19,6 +19,8 @@ module.exports = function(RED) {
                 return;
             }
         }
+        this.onceTimeout = setTimeout( function() { node.emit("started"); }, 500 );
+        this.interval_id = setInterval( function() { node.emit("cyclic"); }, 10*1000 );
         node.status( "" );
 
         node.on('input', function(msg,send,done) {
@@ -62,6 +64,19 @@ module.exports = function(RED) {
                 }
                 done();
             } );
+        });
+
+        node.on('started', function() {
+            console.log( "collect chart started" );
+            node.send( { topic:"test", payload:[{c:1,t:2,v:3}] } );
+        });
+
+        node.on('cyclic', function() {
+            console.log( "collect chart cyclic" );
+        });
+
+        node.on('close', function() {
+            clearInterval( node.interval_id );
         });
     }
 

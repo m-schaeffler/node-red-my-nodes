@@ -1,8 +1,8 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
-var node   = require("../format_number.js");
+var node   = require("../collect_chart.js");
 
-describe( 'format_number Node', function () {
+describe( 'collect_chart Node', function () {
     "use strict";
 
   beforeEach(function (done) {
@@ -16,18 +16,16 @@ describe( 'format_number Node', function () {
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "formatNumber", name: "test" }];
+    var flow = [{ id: "n1", type: "collectChart", name: "test" }];
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
-        n1.should.have.a.property('unit', '');
-        n1.should.have.a.property('grouping', "");
-        n1.should.have.a.property('decimal', ".");
-        n1.should.have.a.property('digits', 0);
-        n1.should.have.a.property('filter', false);
+        n1.should.have.a.property('topics', '[]');
+        n1.should.have.a.property('cyclic', 60);
+        n1.should.have.a.property('hours', 24);
         n1.should.have.a.property('showState', false);
         done();
       }
@@ -36,7 +34,7 @@ describe( 'format_number Node', function () {
       }
     });
   });
-
+/*
   it('should forward numbers rounded to integer', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
     var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
@@ -145,7 +143,7 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg.payload);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(0)+'\u202FVAr');
+          msg.should.have.property('payload',Number(numbers[c]).toFixed(0)+'\u2009VAr');
           if( ++c === numbers.length )
           {
             done();
@@ -156,7 +154,7 @@ describe( 'format_number Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('unit', '\u202FVAr');
+        n1.should.have.a.property('unit', '\u2009VAr');
       }
       catch(err) {
         done(err);
@@ -404,5 +402,5 @@ describe( 'format_number Node', function () {
       n1.receive({ payload: 20 });
     });
   });
-
+*/
 });

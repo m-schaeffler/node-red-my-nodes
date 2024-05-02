@@ -47,7 +47,7 @@ describe( 'collect_chart Node', function () {
     this.timeout( 10000 );
     const numbers1 = [0,1,2,3,4];
     const numbers2 = ["128","255"];
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 2, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -64,6 +64,18 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload',[])
               break;
             case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','series1');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
+                v.should.have.a.property('v',Number(numbers1[i]));
+              }
+              break;
+            case 3:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length+numbers2.length);
               for(const i in msg.payload)
@@ -84,7 +96,7 @@ describe( 'collect_chart Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('cyclic', 2);
+        n1.should.have.a.property('cyclic', 1);
       }
       catch(err) {
         done(err);
@@ -99,7 +111,7 @@ describe( 'collect_chart Node', function () {
       {
         n1.receive({ topic:"series2", payload: i });
       }
-      await delay(5000);
+      await delay(2000);
       done();
     });
   });
@@ -164,99 +176,6 @@ describe( 'collect_chart Node', function () {
     });
   });
 /*
-  it('should forward NaN data as it is', function (done) {
-    const numbers = [undefined,"FooBar",NaN,{}];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        try {
-          msg.should.have.a.property('payload',numbers[c]);
-          if( ++c === numbers.length )
-          {
-            done();
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      for( const i of numbers )
-      {
-        n1.receive({ payload: i });
-      }
-    });
-  });
-
-  it('should not filter data', function (done) {
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        c++;
-        try {
-          msg.should.have.a.property('payload',c===4?"255":"2");
-          if( c === 4 && msg.payload === "255" )
-          {
-            done();
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('filter', false);
-      }
-      catch(err) {
-        done(err);
-      }
-      n1.receive({ payload: 2 });
-      n1.receive({ payload: 2 });
-      n1.receive({ payload: 2 });
-      n1.receive({ payload: 255 });
-    });
-  });
-
-  it('should filter data', function (done) {
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", filter:true, wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        c++;
-        try {
-          msg.should.have.a.property('payload',c===2?"255":"2");
-          if( c === 2 && msg.payload === "255" )
-          {
-            done();
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('filter', true);
-      }
-      catch(err) {
-        done(err);
-      }
-      n1.receive({ payload: 2 });
-      n1.receive({ payload: 2 });
-      n1.receive({ payload: 2 });
-      n1.receive({ payload: 255 });
-    });
-  });
-
   it('should work with objects', function (done) {
     var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

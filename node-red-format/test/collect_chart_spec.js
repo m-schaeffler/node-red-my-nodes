@@ -137,6 +137,66 @@ describe( 'collect_chart Node', function () {
     });
   });
 
+  it('should collect data with steps', function (done) {
+    this.timeout( 10000 );
+    const numbers1 = [0,0,0,10,10,5];
+    const numbers2 = [0,0,0,0,10,10,10,5];
+    const time = [0,200,400,570,600,800,970,1000];
+    var flow = [{ id: "n1", type: "collectChart", cyclic: 2, steps: true, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[]);
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers2.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','steps');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-1250+time[i]),20);
+                v.should.have.a.property('v',Number(numbers2[i]));
+              }
+              break;
+            default:
+              done("too much output messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('steps', true);
+      }
+      catch(err) {
+        done(err);
+      }
+      await delay(750);
+      c.should.match(1);
+      for( const i of numbers1 )
+      {
+        n1.receive({ topic:"steps", payload: i });
+        await delay(200);
+      }
+      await delay(1750);
+      c.should.match(2);
+      done();
+    });
+  });
+
   it('should have preset topics', function (done) {
     this.timeout( 10000 );
     var flow = [{ id: "n1", type: "collectChart", topics: '["s1","s2"]', cyclic:1, name: "test", wires: [["n2"]] },

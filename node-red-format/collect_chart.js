@@ -102,7 +102,7 @@ module.exports = function(RED) {
                         {
                             data.push( {
                                 c: msg.topic,
-                                t: now - 100,
+                                t: now - 30,
                                 v: last[msg.topic]
                             } );
                         }

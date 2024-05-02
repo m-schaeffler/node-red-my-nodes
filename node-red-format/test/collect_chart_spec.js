@@ -2,6 +2,12 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../collect_chart.js");
 
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 describe( 'collect_chart Node', function () {
     "use strict";
 
@@ -17,16 +23,18 @@ describe( 'collect_chart Node', function () {
 
   it('should be loaded', function (done) {
     var flow = [{ id: "n1", type: "collectChart", name: "test" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
-        n1.should.have.a.property('topics', '[]');
+        n1.should.have.a.property('topics', []);
         n1.should.have.a.property('cyclic', 60);
         n1.should.have.a.property('hours', 24);
+        n1.should.have.a.property('steps', false);
         n1.should.have.a.property('showState', false);
+        await delay(750);
         done();
       }
       catch(err) {
@@ -34,35 +42,68 @@ describe( 'collect_chart Node', function () {
       }
     });
   });
-/*
-  it('should forward numbers rounded to integer', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
+
+  it('should collect data', function (done) {
+    this.timeout( 10000 );
+    const numbers1 = [0,1,2,3,4];
+    const numbers2 = ["128","255"];
+    var flow = [{ id: "n1", type: "collectChart", cyclic: 2, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg.payload);
+        console.log(msg);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
-          if( ++c === numbers.length )
+          c++;
+          switch( c )
           {
-            done();
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[])
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length+numbers2.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c',i<numbers1.length?'series1':'series2');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-(i<numbers1.length?1250:750),20);
+                v.should.have.a.property('v',Number(i<numbers1.length?numbers1[i]:numbers2[i-numbers1.length]));
+              }
+              break;
+            default:
+              done("too much output messages");
           }
         }
         catch(err) {
           done(err);
         }
       });
-      for( const i of numbers )
-      {
-        n1.receive({ payload: i });
+      try {
+        n1.should.have.a.property('cyclic', 2);
       }
+      catch(err) {
+        done(err);
+      }
+      await delay(750);
+      for( const i of numbers1 )
+      {
+        n1.receive({ topic:"series1", payload: i });
+      }
+      await delay(500);
+      for( const i of numbers2 )
+      {
+        n1.receive({ topic:"series2", payload: i });
+      }
+      await delay(5000);
+      done();
     });
   });
-
+/*
   it('should forward numbers rounded to two digits', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
     var flow = [{ id: "n1", type: "formatNumber", digits: 2, name: "test", wires: [["n2"]] },

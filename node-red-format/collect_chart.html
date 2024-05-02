@@ -9,6 +9,7 @@
             topics:{value:"[]",required:true},
             cyclic:{value:"60",validate:RED.validators.number(),required:true},
             hours:{value:"24",validate:RED.validators.number(),required:true},
+            steps:{value:false},
             showState:{value:false}
         },
         inputs:1,
@@ -60,6 +61,10 @@
         <input type="text" id="node-input-hours">
     </div>
     <div class="form-row">
+        <label for="node-input-steps"><i class="fa fa-angle-up"></i> Steps</label>
+        <input type="checkbox" id="node-input-steps" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
         <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
@@ -98,6 +103,8 @@
         <dd> cyclic time to send out the chart in seconds.</dd>
         <dt>Hours <span class="property-type">number</span></dt>
         <dd> how many hours the chart should span over.</dd>
+        <dt>Steps <span class="property-type">boolean</span></dt>
+        <dd> make steps instead of linear chart.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

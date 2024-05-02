@@ -103,41 +103,40 @@ describe( 'collect_chart Node', function () {
       done();
     });
   });
-/*
-  it('should forward numbers rounded to two digits', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
-    var flow = [{ id: "n1", type: "formatNumber", digits: 2, name: "test", wires: [["n2"]] },
+
+  it('should have preset topics', function (done) {
+    this.timeout( 10000 );
+    var flow = [{ id: "n1", type: "collectChart", topics: '["s1","s2"]', cyclic:1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg.payload);
+        //console.log(msg);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(2));
-          if( ++c === numbers.length )
-          {
-            done();
-          }
+          c++;
+          c.should.match(1);
+          msg.should.have.property('init',true);
+          msg.should.have.property('payload').which.is.an.Array().of.length(2);
+          msg.payload[0].should.match({c:"s1"});
+          msg.payload[1].should.match({c:"s2"});
         }
         catch(err) {
           done(err);
         }
       });
       try {
-        n1.should.have.a.property('digits', 2);
+        n1.should.have.a.property('topics', ['s1','s2']);
       }
       catch(err) {
         done(err);
       }
-      for( const i of numbers )
-      {
-        n1.receive({ payload: i });
-      }
+      await delay(2500);
+      done();
     });
   });
-
+/*
   it('should forward numbers rounded to two digits and changed decimal', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
     var flow = [{ id: "n1", type: "formatNumber", decimal: ",", digits: 2, name: "test", wires: [["n2"]] },

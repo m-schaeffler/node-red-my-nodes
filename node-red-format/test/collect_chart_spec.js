@@ -193,6 +193,8 @@ describe( 'collect_chart Node', function () {
       n1.receive({ invalid:true, topic:"s", payload: 12.345 });
       n1.receive({ invalid:true, topic:"s", payload: -12.345 });
       n1.receive({ invalid:true, topic:"s", payload: 0 });
+      n1.receive({ topic:"s", payload: NaN });
+      n1.receive({ topic:"s", payload: "Test-Text" });
       await delay(1750);
       c.should.match(1);
       done();

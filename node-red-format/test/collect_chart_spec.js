@@ -112,6 +112,7 @@ describe( 'collect_chart Node', function () {
         n1.receive({ topic:"series2", payload: i });
       }
       await delay(2000);
+      c.should.match(3);
       done();
     });
   });
@@ -145,6 +146,7 @@ describe( 'collect_chart Node', function () {
         done(err);
       }
       await delay(2500);
+      c.should.match(1);
       done();
     });
   });
@@ -172,20 +174,39 @@ describe( 'collect_chart Node', function () {
       n1.receive({ invalid:true, topic:"s", payload: -12.345 });
       n1.receive({ invalid:true, topic:"s", payload: 0 });
       await delay(1750);
+      c.should.match(1);
       done();
     });
   });
-/*
+
   it('should work with objects', function (done) {
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload.value", wires: [["n2"]] },
+    this.timeout( 10000 );
+    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
+      var c = 0;
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',"98");
-          done();
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[])
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(1);
+              msg.payload[0].should.be.a.Object();
+              msg.payload[0].should.have.a.property('c','object');
+              msg.payload[0].should.have.a.property('t');
+              msg.payload[0].should.have.a.property('v',98);
+              break;
+            default:
+              done("too much output messages");
+          }
         }
         catch(err) {
           done(err);
@@ -198,20 +219,42 @@ describe( 'collect_chart Node', function () {
       catch(err) {
         done(err);
       }
-      n1.receive({ payload: {a:1,value:98,b:88} });
+      await delay(750);
+      n1.receive({ topic:"object", payload: {a:1,value:98,b:88} });
+      await delay(2750);
+      c.should.match(2);
+      done();
     });
   });
 
   it('should have Jsonata', function (done) {
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
+    this.timeout( 10000 );
+    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
+      var c = 0;
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',"25");
-          done();
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[])
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(1);
+              msg.payload[0].should.be.a.Object();
+              msg.payload[0].should.have.a.property('c','jsonata');
+              msg.payload[0].should.have.a.property('t');
+              msg.payload[0].should.have.a.property('v',25);
+              break;
+            default:
+              done("too much output messages");
+          }
         }
         catch(err) {
           done(err);
@@ -224,8 +267,12 @@ describe( 'collect_chart Node', function () {
       catch(err) {
         done(err);
       }
-      n1.receive({ payload: 20 });
+      await delay(750);
+      n1.receive({ topic:"jsonata", payload: 20 });
+      await delay(2750);
+      c.should.match(2);
+      done();
     });
   });
-*/
+
 });

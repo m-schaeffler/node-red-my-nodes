@@ -100,7 +100,7 @@ module.exports = function(RED) {
                         const lv = last[msg.topic];
                         if( lv !== undefined && lv != number )
                         {
-                            data.push( {
+                            node.data.push( {
                                 c: msg.topic,
                                 t: now - 30,
                                 v: last[msg.topic]

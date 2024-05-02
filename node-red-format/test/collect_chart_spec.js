@@ -166,7 +166,7 @@ describe( 'collect_chart Node', function () {
                 const v = msg.payload[i];
                 v.should.be.a.Object();
                 v.should.have.a.property('c','steps');
-                v.should.have.a.property('t').which.is.approximately(Date.now()-1250+time[i]),20);
+                v.should.have.a.property('t').which.is.approximately(Date.now()-1250+time[i],20);
                 v.should.have.a.property('v',Number(numbers2[i]));
               }
               break;
@@ -191,7 +191,7 @@ describe( 'collect_chart Node', function () {
         n1.receive({ topic:"steps", payload: i });
         await delay(200);
       }
-      await delay(1750);
+      await delay(3750);
       c.should.match(2);
       done();
     });

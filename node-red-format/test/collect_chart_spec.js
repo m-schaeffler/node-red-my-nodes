@@ -61,7 +61,7 @@ describe( 'collect_chart Node', function () {
           {
             case 1:
               msg.should.have.property('init',true);
-              msg.should.have.property('payload',[])
+              msg.should.have.property('payload',[]);
               break;
             case 2:
               msg.should.not.have.property('init');
@@ -88,6 +88,10 @@ describe( 'collect_chart Node', function () {
               }
               break;
             case 4:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload',[]);
+              break;
+            case 5:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(1);
               msg.payload[0].should.be.a.Object();
@@ -125,10 +129,10 @@ describe( 'collect_chart Node', function () {
       c.should.match(3);
       n1.receive({ reset:true });
       await delay(2000);
-      c.should.match(3);
+      c.should.match(4);
       n1.receive({ topic:"series3", payload: 42 });
       await delay(2000);
-      c.should.match(4);
+      c.should.match(5);
       done();
     });
   });

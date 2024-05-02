@@ -62,6 +62,7 @@ module.exports = function(RED) {
             {
                 node.data = newData();
                 context.set( "data", node.data );
+                node.newData = true;
                 setStatus();
                 done();
                 return;

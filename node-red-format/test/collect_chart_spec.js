@@ -43,7 +43,7 @@ describe( 'collect_chart Node', function () {
     });
   });
 
-  it('should collect data', function (done) {
+  it('should collect data and get a reset', function (done) {
     this.timeout( 10000 );
     const numbers1 = [0,1,2,3,4];
     const numbers2 = ["128","255"];
@@ -87,6 +87,14 @@ describe( 'collect_chart Node', function () {
                 v.should.have.a.property('v',Number(i<numbers1.length?numbers1[i]:numbers2[i-numbers1.length]));
               }
               break;
+            case 4:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(1);
+              msg.payload[0].should.be.a.Object();
+              msg.payload[0].should.have.a.property('c','series3');
+              msg.payload[0].should.have.a.property('t').which.is.approximately(Date.now()-750,50);
+              msg.payload[0].should.have.a.property('v',42);
+              break;
             default:
               done("too much output messages");
           }
@@ -102,17 +110,25 @@ describe( 'collect_chart Node', function () {
         done(err);
       }
       await delay(750);
+      c.should.match(1);
       for( const i of numbers1 )
       {
         n1.receive({ topic:"series1", payload: i });
       }
       await delay(500);
+      c.should.match(2);
       for( const i of numbers2 )
       {
         n1.receive({ topic:"series2", payload: i });
       }
       await delay(2000);
       c.should.match(3);
+      n1.receive({ reset:true });
+      await delay(2000);
+      c.should.match(3);
+      n1.receive({ topic:"series3", payload: 42 });
+      await delay(2000);
+      c.should.match(4);
       done();
     });
   });

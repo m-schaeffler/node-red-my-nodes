@@ -460,6 +460,79 @@ describe( 'collect_chart Node', function () {
     });
   });
 
+  it('should store data in file context', function (done) {
+    this.timeout( 10000 );
+    const numbers = [0,1,2,3,4];
+    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, contextStore:"storeInFile", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[]);
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','file');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
+                v.should.have.a.property('v',Number(numbers[i]));
+              }
+              break;
+            default:
+              done("too much output messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('contextStore', 'storeInFile');
+        await delay(750);
+        c.should.match(1);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:"file", payload: i });
+        }
+        await delay(500);
+        c.should.match(2);
+        should.not.exist( n1.context().get("last") );
+        should.not.exist( n1.context().get("data") );
+        should.not.exist( n1.context().get("data", "memoryOnly") );
+        should.exist( n1.context().get("data", "storeInFile") );
+        var q = n1.context().get("data", "storeInFile");
+        q.should.be.an.Array().of.length(numbers.length);
+        for(const i in q)
+        {
+          const v = q[i];
+          v.should.be.a.Object();
+          v.should.have.a.property('c','file');
+          v.should.have.a.property('t').which.is.approximately(Date.now()-500,20);
+          v.should.have.a.property('v',Number(numbers[i]));
+        }
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
   it('should not collect invalid data', function (done) {
     this.timeout( 10000 );
     var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", wires: [["n2"]] },

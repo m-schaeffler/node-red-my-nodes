@@ -39,7 +39,18 @@ module.exports = function(RED) {
             }
             return data;
         }
-        this.data = context.get( "data" ) ?? newData();
+        function getData()
+        {
+            return node.contextStore != "none" ? context.get( "data", node.contextStore ) : null;
+        }
+        function setData()
+        {
+            if( node.contextStore != "none" )
+            {
+                context.set( "data", node.data, node.contextStore );
+            }
+        }
+        this.data = getData() ?? newData();
 
         function setStatus()
         {
@@ -63,7 +74,7 @@ module.exports = function(RED) {
             if( msg.reset )
             {
                 node.data = newData();
-                context.set( "data", node.data );
+                setData();
                 node.newData = true;
                 setStatus();
                 done();
@@ -117,7 +128,7 @@ module.exports = function(RED) {
                         v: number
                     } );
                     node.newData = true;
-                    context.set( "data", node.data );
+                    setData();
                 }
                 setStatus();
                 done();

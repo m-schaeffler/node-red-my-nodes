@@ -1,4 +1,5 @@
 var should = require("should");
+var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../collect_chart.js");
 
@@ -15,8 +16,28 @@ describe( 'collect_chart Node', function () {
       helper.startServer(done);
   });
 
+  function initContext(done) {
+    Context.init({
+      contextStorage: {
+        memoryOnly: {
+          module: "memory"
+        },
+        storeInFile: {
+          module: "memory"
+        }
+      }
+    });
+    Context.load().then(function () {
+      done();
+    });
+  }
+
   afterEach(function(done) {
       helper.unload().then(function() {
+          return Context.clean({allNodes: {}});
+      }).then(function () {
+          return Context.close();
+      }).then(function () {
           helper.stopServer(done);
       });
   });
@@ -51,7 +72,8 @@ describe( 'collect_chart Node', function () {
     const numbers2 = ["128","255"];
     var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
+    helper.load(node, flow, function () {
+     initContext(async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -111,31 +133,36 @@ describe( 'collect_chart Node', function () {
       });
       try {
         n1.should.have.a.property('cyclic', 1);
+        await delay(750);
+        c.should.match(1);
+        for( const i of numbers1 )
+        {
+          n1.receive({ topic:"series1", payload: i });
+        }
+        await delay(500);
+        c.should.match(2);
+        for( const i of numbers2 )
+        {
+          n1.receive({ topic:"series2", payload: i });
+        }
+        await delay(2000);
+        c.should.match(3);
+        n1.receive({ reset:true });
+        await delay(2000);
+        c.should.match(4);
+        n1.receive({ topic:"series3", payload: 42 });
+        await delay(2000);
+        c.should.match(5);
+        should.not.exist( n1.context().get("last") );
+        should.not.exist( n1.context().get("data") );
+        should.not.exist( n1.context().get("data", "memoryOnly") );
+        should.not.exist( n1.context().get("data", "storeInFile") );
+        done();
       }
       catch(err) {
         done(err);
       }
-      await delay(750);
-      c.should.match(1);
-      for( const i of numbers1 )
-      {
-        n1.receive({ topic:"series1", payload: i });
-      }
-      await delay(500);
-      c.should.match(2);
-      for( const i of numbers2 )
-      {
-        n1.receive({ topic:"series2", payload: i });
-      }
-      await delay(2000);
-      c.should.match(3);
-      n1.receive({ reset:true });
-      await delay(2000);
-      c.should.match(4);
-      n1.receive({ topic:"series3", payload: 42 });
-      await delay(2000);
-      c.should.match(5);
-      done();
+     });
     });
   });
 
@@ -182,20 +209,21 @@ describe( 'collect_chart Node', function () {
       });
       try {
         n1.should.have.a.property('steps', true);
+        await delay(750);
+        c.should.match(1);
+        for( const i of numbers1 )
+        {
+          n1.receive({ topic:"steps", payload: i });
+          await delay(200);
+        }
+        await delay(3750);
+        c.should.match(2);
+        should.exist( n1.context().get("last") );
+        done();
       }
       catch(err) {
         done(err);
       }
-      await delay(750);
-      c.should.match(1);
-      for( const i of numbers1 )
-      {
-        n1.receive({ topic:"steps", payload: i });
-        await delay(200);
-      }
-      await delay(3750);
-      c.should.match(2);
-      done();
     });
   });
 
@@ -223,13 +251,13 @@ describe( 'collect_chart Node', function () {
       });
       try {
         n1.should.have.a.property('topics', ['s1','s2']);
+        await delay(2500);
+        c.should.match(1);
+        done();
       }
       catch(err) {
         done(err);
       }
-      await delay(2500);
-      c.should.match(1);
-      done();
     });
   });
 
@@ -359,6 +387,79 @@ describe( 'collect_chart Node', function () {
     });
   });
 
+  it('should store data in memory context', function (done) {
+    this.timeout( 10000 );
+    const numbers = [0,1,2,3,4];
+    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, contextStore:"memoryOnly", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[]);
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','memory');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
+                v.should.have.a.property('v',Number(numbers[i]));
+              }
+              break;
+            default:
+              done("too much output messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('contextStore', 'memoryOnly');
+        await delay(750);
+        c.should.match(1);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:"memory", payload: i });
+        }
+        await delay(500);
+        c.should.match(2);
+        should.not.exist( n1.context().get("last") );
+        should.exist( n1.context().get("data") );
+        should.exist( n1.context().get("data", "memoryOnly") );
+        should.not.exist( n1.context().get("data", "storeInFile") );
+        var q = n1.context().get("data");
+        q.should.be.an.Array().of.length(numbers.length);
+        for(const i in q)
+        {
+          const v = q[i];
+          v.should.be.a.Object();
+          v.should.have.a.property('c','memory');
+          v.should.have.a.property('t').which.is.approximately(Date.now()-500,20);
+          v.should.have.a.property('v',Number(numbers[i]));
+        }
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
   it('should not collect invalid data', function (done) {
     this.timeout( 10000 );
     var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", wires: [["n2"]] },
@@ -425,15 +526,15 @@ describe( 'collect_chart Node', function () {
       try {
         n1.should.have.a.property('property', "payload.value");
         n1.should.have.a.property('propertyType', "msg");
+        await delay(750);
+        n1.receive({ topic:"object", payload: {a:1,value:98,b:88} });
+        await delay(2750);
+        c.should.match(2);
+        done();
       }
       catch(err) {
         done(err);
       }
-      await delay(750);
-      n1.receive({ topic:"object", payload: {a:1,value:98,b:88} });
-      await delay(2750);
-      c.should.match(2);
-      done();
     });
   });
 
@@ -473,15 +574,15 @@ describe( 'collect_chart Node', function () {
       try {
         n1.should.have.a.property('property', "payload+5");
         n1.should.have.a.property('propertyType', "jsonata");
+        await delay(750);
+        n1.receive({ topic:"jsonata", payload: 20 });
+        await delay(2750);
+        c.should.match(2);
+        done();
       }
       catch(err) {
         done(err);
       }
-      await delay(750);
-      n1.receive({ topic:"jsonata", payload: 20 });
-      await delay(2750);
-      c.should.match(2);
-      done();
     });
   });
 

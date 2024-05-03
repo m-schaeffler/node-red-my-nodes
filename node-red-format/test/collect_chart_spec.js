@@ -234,7 +234,7 @@ describe( 'collect_chart Node', function () {
 
   it('should delete old data', function (done) {
     this.timeout( 30000 );
-    const numbers = [0,1,2,3,4,6,7,8,9];
+    const numbers = [0,1,2,3,4,5,6,7,8,9];
     var flow = [{ id: "n1", type: "collectChart", cyclic: 0.5, eraseCycles: 5, hours: 4/3600, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -253,39 +253,70 @@ describe( 'collect_chart Node', function () {
               break;
             case 2:
               msg.should.not.have.property('init');
-              msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length);
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
               for(const i in msg.payload)
               {
                 const v = msg.payload[i];
                 v.should.be.a.Object();
-                v.should.have.a.property('c','series1');
+                v.should.have.a.property('c','series');
                 v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
-                v.should.have.a.property('v',Number(numbers1[i]));
+                v.should.have.a.property('v',Number(i));
               }
               break;
             case 3:
               msg.should.not.have.property('init');
-              msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length+numbers2.length);
+              msg.should.have.property('payload').which.is.an.Array().of.length(2*numbers.length);
               for(const i in msg.payload)
               {
                 const v = msg.payload[i];
                 v.should.be.a.Object();
-                v.should.have.a.property('c',i<numbers1.length?'series1':'series2');
-                v.should.have.a.property('t').which.is.approximately(Date.now()-(i<numbers1.length?1250:750),20);
-                v.should.have.a.property('v',Number(i<numbers1.length?numbers1[i]:numbers2[i-numbers1.length]));
+                v.should.have.a.property('c','series');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-(i<numbers.length?2750:250),30);
+                v.should.have.a.property('v',Number(i));
               }
               break;
             case 4:
               msg.should.not.have.property('init');
-              msg.should.have.property('payload',[]);
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','series');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-1750,40);
+                v.should.have.a.property('v',Number(i)+10);
+              }
               break;
             case 5:
               msg.should.not.have.property('init');
-              msg.should.have.property('payload').which.is.an.Array().of.length(1);
-              msg.payload[0].should.be.a.Object();
-              msg.payload[0].should.have.a.property('c','series3');
-              msg.payload[0].should.have.a.property('t').which.is.approximately(Date.now()-750,50);
-              msg.payload[0].should.have.a.property('v',42);
+              msg.should.have.property('payload').which.is.an.Array().of.length(2*numbers.length);
+              //console.log(msg.payload[0].t-Date.now())
+              //console.log(msg.payload[10].t-Date.now())
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','series');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-(i<numbers.length?2750:250),50);
+                v.should.have.a.property('v',Number(i)+10);
+              }
+              break;
+            case 6:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
+              //console.log(msg.payload[0].t-Date.now())
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','series');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-1750,50);
+                v.should.have.a.property('v',Number(i)+20);
+              }
+              break;
+            case 7:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload',[]);
               break;
             default:
               done("too much output messages");
@@ -300,25 +331,25 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('eraseCycles', 5);
         n1.should.have.a.property('hours', 4/3600);
         await delay(750);
-        c.should.match(1);
+        c.should.be.equal(1);
         for( const i of numbers )
         {
           n1.receive({ topic:"series", payload: i });
         }
-        await delay(6000);
-        c.should.match(2);
+        await delay(2500);
+        c.should.be.equal(2);
         for( const i of numbers )
         {
           n1.receive({ topic:"series", payload: i+10 });
         }
-        await delay(6000);
-        c.should.match(3);
+        await delay(2500);
+        c.should.be.equal(4);
         for( const i of numbers )
         {
           n1.receive({ topic:"series", payload: i+20 });
         }
-        await delay(6000);
-        c.should.match(4);
+        await delay(8000);
+        c.should.be.equal(7);
         done();
       }
       catch(err) {

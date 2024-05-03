@@ -135,7 +135,6 @@ module.exports = function(RED) {
             if( node.cycleCounter >= node.eraseCycles )
             {
                 node.cycleCounter = 0;
-                /*
                 const date  = Date.now() - node.hours * 3600*1000;
                 const start = node.topics.length;
                 let   end   = start;
@@ -149,7 +148,6 @@ module.exports = function(RED) {
                     node.data.splice( start, end - start );
                     node.newData = true;
                 }
-                */
             }
             if( node.newData )
             {

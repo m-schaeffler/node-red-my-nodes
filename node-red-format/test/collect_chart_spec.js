@@ -31,6 +31,7 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('topics', []);
         n1.should.have.a.property('cyclic', 60);
+        n1.should.have.a.property('eraseCycles',10);
         n1.should.have.a.property('hours', 24);
         n1.should.have.a.property('steps', false);
         n1.should.have.a.property('showState', false);

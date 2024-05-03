@@ -8,6 +8,7 @@
             propertyType:{value:"msg"},
             topics:{value:"[]",required:true},
             cyclic:{value:"60",validate:RED.validators.number(),required:true},
+            eraseCycles:{value:"10",validate:RED.validators.number(),required:true},
             hours:{value:"24",validate:RED.validators.number(),required:true},
             steps:{value:false},
             showState:{value:false}
@@ -57,6 +58,10 @@
         <input type="text" id="node-input-cyclic">
     </div>
     <div class="form-row">
+        <label for="node-input-eraseCycles"><i class="fa fa-trash"></i> Löschzyklen</label>
+        <input type="text" id="node-input-eraseCycles">
+    </div>
+    <div class="form-row">
         <label for="node-input-hours"><i class="fa fa-hourglass-end"></i> Stunden</label>
         <input type="text" id="node-input-hours">
     </div>
@@ -101,6 +106,8 @@
         <dd> array of the serieses of the chart.</dd>
         <dt>Cyclic <span class="property-type">number</span></dt>
         <dd> cyclic time to send out the chart in seconds.</dd>
+        <dt>Löschzyklen <span class="property-type">number</span></dt>
+        <dd> every how many <code>cycles</code> old data is deleted from the chart.</dd>
         <dt>Hours <span class="property-type">number</span></dt>
         <dd> how many hours the chart should span over.</dd>
         <dt>Steps <span class="property-type">boolean</span></dt>

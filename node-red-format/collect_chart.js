@@ -9,6 +9,7 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.topics       = JSON.parse( config.topics ?? "[]" );
         this.cyclic       = Number( config.cyclic ?? 60 );
+        this.eraseCycles  = Number( config.eraseCycles ?? 10 );
         this.hours        = Number( config.hours ?? 24 );
         this.steps        = Boolean( config.steps );
         this.showState    = Boolean( config.showState );
@@ -131,9 +132,24 @@ module.exports = function(RED) {
         node.on('cyclic', function() {
             node.cycleCounter++;
             console.log( "collect chart cyclic "+node.cycleCounter+" "+node.newData );
-            if( node.cycleCounter >= 10 )
+            if( node.cycleCounter >= node.eraseCycles )
             {
                 node.cycleCounter = 0;
+                /*
+                const date  = Date.now() - node.hours * 3600*1000;
+                const start = node.topics.length;
+                let   end   = start;
+                while( node.data[end]?.t < date )
+                {
+                    end++;
+                }
+                if( end > start )
+                {
+                    console.log( `delete data ${end-start}` );
+                    node.data.splice( start, end - start );
+                    node.newData = true;
+                }
+                */
             }
             if( node.newData )
             {

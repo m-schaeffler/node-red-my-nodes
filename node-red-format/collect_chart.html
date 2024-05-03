@@ -6,6 +6,7 @@
             name:{value:""},
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
+            contextStore:{value:"",required:true},
             topics:{value:"[]",required:true},
             cyclic:{value:"60",validate:RED.validators.number(),required:true},
             eraseCycles:{value:"10",validate:RED.validators.number(),required:true},
@@ -26,6 +27,7 @@
         inputLabels: 'input',
         outputLabels: 'complete chart',
         oneditprepare: function() {
+            const node = this
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
@@ -35,6 +37,19 @@
                 type:"json", 
                 types:["json"]
             });
+            // populate store names
+            $("#node-input-contextStore").empty();
+            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : ''
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                   $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
         }
     });
 </script>
@@ -48,6 +63,11 @@
         <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
         <input type="text" id="node-input-property">
         <input type="hidden" id="node-input-propertyType">
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
     </div>
     <div class="form-row">
         <label for="node-input-topics"><i class="fa fa-tags"></i> Topics</label>

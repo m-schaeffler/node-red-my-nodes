@@ -29,6 +29,7 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('contextStore', 'none');
         n1.should.have.a.property('topics', []);
         n1.should.have.a.property('cyclic', 60);
         n1.should.have.a.property('eraseCycles',10);

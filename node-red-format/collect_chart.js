@@ -7,6 +7,7 @@ module.exports = function(RED) {
         var context  = this.context();
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
+        this.contextStore = config.contextStore ?? "none";
         this.topics       = JSON.parse( config.topics ?? "[]" );
         this.cyclic       = Number( config.cyclic ?? 60 );
         this.eraseCycles  = Number( config.eraseCycles ?? 10 );

@@ -14,6 +14,7 @@ module.exports = function(RED) {
         this.hours        = Number( config.hours ?? 24 );
         this.steps        = Boolean( config.steps );
         this.showState    = Boolean( config.showState );
+        this.cycleJitter  = Number( config.cycleJitter ?? 2000 );
         this.newData      = false;
         if( this.propertyType === "jsonata" )
         {
@@ -26,7 +27,7 @@ module.exports = function(RED) {
             }
         }
         this.onceTimeout = setTimeout( function() { node.emit("started"); }, 500 );
-        this.interval_id = setInterval( function() { node.emit("cyclic"); }, this.cyclic*1000 );
+        this.interval_id = setInterval( function() { node.emit("cyclic"); }, this.cyclic*1000 + Math.random()*2*this.cycleJitter-this.cycleJitter );
         node.status( "" );
 
         function newData()

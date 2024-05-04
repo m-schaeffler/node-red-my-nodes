@@ -57,6 +57,7 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('hours', 24);
         n1.should.have.a.property('steps', false);
         n1.should.have.a.property('showState', false);
+        n1.should.have.a.property('cycleJitter', 2000);
         await delay(750);
         done();
       }
@@ -70,7 +71,7 @@ describe( 'collect_chart Node', function () {
     this.timeout( 10000 );
     const numbers1 = [0,1,2,3,4];
     const numbers2 = ["128","255"];
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -133,6 +134,7 @@ describe( 'collect_chart Node', function () {
       });
       try {
         n1.should.have.a.property('cyclic', 1);
+        n1.should.have.a.property('cycleJitter', 0);
         await delay(750);
         c.should.match(1);
         for( const i of numbers1 )
@@ -171,7 +173,7 @@ describe( 'collect_chart Node', function () {
     const numbers1 = [0,0,0,10,10,5];
     const numbers2 = [0,0,0,0,10,10,10,5];
     const time = [0,200,400,570,600,800,970,1000];
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 2, steps: true, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 2, steps: true, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -229,7 +231,7 @@ describe( 'collect_chart Node', function () {
 
   it('should have preset topics', function (done) {
     this.timeout( 10000 );
-    var flow = [{ id: "n1", type: "collectChart", topics: '["s1","s2"]', cyclic:1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, topics: '["s1","s2"]', cyclic:1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -264,7 +266,7 @@ describe( 'collect_chart Node', function () {
   it('should delete old data', function (done) {
     this.timeout( 30000 );
     const numbers = [0,1,2,3,4,5,6,7,8,9];
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 0.5, eraseCycles: 5, hours: 4/3600, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 0.5, eraseCycles: 5, hours: 4/3600, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -390,7 +392,7 @@ describe( 'collect_chart Node', function () {
   it('should store data in memory context', function (done) {
     this.timeout( 10000 );
     const numbers = [0,1,2,3,4];
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, contextStore:"memoryOnly", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 1, contextStore:"memoryOnly", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -463,7 +465,7 @@ describe( 'collect_chart Node', function () {
   it('should store data in file context', function (done) {
     this.timeout( 10000 );
     const numbers = [0,1,2,3,4];
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, contextStore:"storeInFile", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 1, contextStore:"storeInFile", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -535,7 +537,7 @@ describe( 'collect_chart Node', function () {
 
   it('should not collect invalid data', function (done) {
     this.timeout( 10000 );
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -565,7 +567,7 @@ describe( 'collect_chart Node', function () {
 
   it('should work with objects', function (done) {
     this.timeout( 10000 );
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", property:"payload.value", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 1, name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -613,7 +615,7 @@ describe( 'collect_chart Node', function () {
 
   it('should have Jsonata', function (done) {
     this.timeout( 10000 );
-    var flow = [{ id: "n1", type: "collectChart", cyclic: 1, name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 1, name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");

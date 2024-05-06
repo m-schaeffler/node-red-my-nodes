@@ -137,14 +137,14 @@ module.exports = function(RED) {
         });
 
         node.on('started', function() {
-            console.log( "collect chart started" );
+            //console.log( "collect chart started" );
             node.send( { payload:node.data, init:true } );
         });
 
         this.cycleCounter = 0;
         node.on('cyclic', function() {
             node.cycleCounter++;
-            console.log( "collect chart cyclic "+node.cycleCounter+" "+node.newData );
+            //console.log( "collect chart cyclic "+node.cycleCounter+" "+node.newData );
             if( node.cycleCounter >= node.eraseCycles )
             {
                 node.cycleCounter = 0;
@@ -157,7 +157,7 @@ module.exports = function(RED) {
                 }
                 if( end > start )
                 {
-                    console.log( `delete data ${end-start}` );
+                    //console.log( `delete data ${end-start}` );
                     node.data.splice( start, end - start );
                     node.newData = true;
                 }

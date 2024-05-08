@@ -553,6 +553,7 @@ describe( 'collect_chart Node', function () {
         catch(err) { done(err);
         }
       });
+      n1.receive({ topic:"s", payload: 37 });
       await delay(750);
       n1.receive({ invalid:true, topic:"s", payload: 12.345 });
       n1.receive({ invalid:true, topic:"s", payload: -12.345 });
@@ -664,7 +665,7 @@ describe( 'collect_chart Node', function () {
   it('should fix changed topics, to less data points', function (done) {
     this.timeout( 10000 );
     const topics = ["a","b","c","d"];
-    var flow = [{ id: "n1", type: "collectChart", topics: JSON.stringify(topics), cycleJitter: 0, cyclic: 1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", topics: JSON.stringify(topics), contextStore:"memoryOnly", cycleJitter: 0, cyclic: 1, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -681,9 +682,11 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('init',true);
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length);
               for( const i in topics )
-              {              
+              {
                 msg.payload[i].should.match({c:topics[i]});
               }
+              break;
+            case 2:
               break;
             default:
               done("too much output messages");
@@ -694,14 +697,18 @@ describe( 'collect_chart Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('topics', []);
-        n1.context().set("data", [{c:'old',t:0,v:0},{c:'old',t:100,v:1}], "memoryOnly");
+        n1.should.have.a.property('topics', topics);
+        n1.should.have.a.property('contextStore', 'memoryOnly');
+        n1.context().set("data", [{c:'old'},{c:'old2'}], "memoryOnly");
         await delay(750);
         c.should.match(1);
+        n1.receive({ topic:"end", payload: 255 });
+        await delay(2750);
+        c.should.match(2);
         should.not.exist( n1.context().get("last") );
         const q = n1.context().get("data", "memoryOnly");
-        q.should.be.an.Array().of.length(topics.length);
-        for(const i in q)
+        q.should.be.an.Array().of.length(topics.length+1);
+        for(const i in topics)
         {
           const v = q[i];
           v.should.be.a.Object();

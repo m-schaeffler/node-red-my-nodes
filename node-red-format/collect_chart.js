@@ -150,24 +150,27 @@ module.exports = function(RED) {
                         console.log( "data too short" );
                         node.data = null;
                     }
-                    // overwrite topics, in case they were changed or added
-                    for( const i in node.topics )
+                    else
                     {
-                        node.data[i].c = node.topics[i];
-                        if( node.data[i].t !== undefined )
+                        // overwrite topics, in case they were changed or added
+                        for( const i in node.topics )
                         {
-                            node.warn( "additional topic" );
-                            console.log( "additional topic" );
-                            delete node.data[i].t;
-                            delete node.data[i].v;
+                            node.data[i].c = node.topics[i];
+                            if( node.data[i].t !== undefined )
+                            {
+                                node.warn( "additional topic" );
+                                console.log( "additional topic" );
+                                delete node.data[i].t;
+                                delete node.data[i].v;
+                            }
                         }
-                    }
-                    // check for deleted topics
-                    while( node.data[node.topics.length].t !== undefined )
-                    {
-                        node.warn( "susplus topic deleted" );
-                        console.log( "topic deleted" );
-                        node.data.splice( node.topics.length, 1 );
+                        // check for deleted topics
+                        while( node.data[node.topics.length]?.t !== undefined )
+                        {
+                            node.warn( "susplus topic deleted" );
+                            console.log( "topic deleted" );
+                            node.data.splice( node.topics.length, 1 );
+                        }
                     }
                 }
             }

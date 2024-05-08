@@ -26,7 +26,7 @@ module.exports = function(RED) {
                 return;
             }
         }
-        this.onceTimeout = setTimeout( function() { node.emit("started"); }, 500 );
+        this.onceTimeout = setTimeout( function() { node.emit("started"); }, 250 );
         this.interval_id = setInterval( function() { node.emit("cyclic"); }, this.cyclic*1000 + Math.random()*2*this.cycleJitter-this.cycleJitter );
         node.status( "" );
 
@@ -52,7 +52,7 @@ module.exports = function(RED) {
                 context.set( "data", node.data, node.contextStore );
             }
         }
-        this.data = getData() ?? createData();
+        this.data = null;
 
         function setStatus()
         {
@@ -68,7 +68,7 @@ module.exports = function(RED) {
         setStatus();
 
         node.on('input', function(msg,send,done) {
-            if( msg.invalid )
+            if( msg.invalid || node.data === null )
             {
                 done();
                 return;
@@ -138,7 +138,40 @@ module.exports = function(RED) {
         });
 
         node.on('started', function() {
-            //console.log( "collect chart started" );
+            console.log( "collect chart started" );
+            if( node.contextStore != "none" )
+            {
+                node.data ??= getData();
+                if( node.data !== undefined )
+                {
+                    if( node.data.length < node.topics.length )
+                    {
+                        node.warn( "too less topics => resetting chart" );
+                        console.log( "data too short" );
+                        node.data = null;
+                    }
+                    // overwrite topics, in case they were changed or added
+                    for( const i in node.topics )
+                    {
+                        node.data[i].c = node.topics[i];
+                        if( node.data[i].t !== undefined )
+                        {
+                            node.warn( "additional topic" );
+                            console.log( "additional topic" );
+                            delete node.data[i].t;
+                            delete node.data[i].v;
+                        }
+                    }
+                    // check for deleted topics
+                    while( node.data[node.topics.length].t !== undefined )
+                    {
+                        node.warn( "susplus topic deleted" );
+                        console.log( "topic deleted" );
+                        node.data.splice( node.topics.length, 1 );
+                    }
+                }
+            }
+            node.data ??= createData();
             node.send( { payload:node.data, init:true } );
         });
 

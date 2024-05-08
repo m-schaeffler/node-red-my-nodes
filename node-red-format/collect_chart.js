@@ -165,7 +165,7 @@ module.exports = function(RED) {
                             }
                         }
                         // check for deleted topics
-                        while( node.data[node.topics.length]?.t !== undefined )
+                        while( node.data[node.topics.length] && node.data[node.topics.length].t === undefined )
                         {
                             node.warn( "susplus topic deleted" );
                             console.log( "topic deleted" );

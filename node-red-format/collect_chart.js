@@ -43,40 +43,7 @@ module.exports = function(RED) {
         }
         function getData()
         {
-            let help = null;
-            if( node.contextStore != "none" )
-            {
-                help = context.get( "data", node.contextStore );
-                if( help !== undefined )
-                {
-                    if( help.length < node.topics.length )
-                    {
-                        node.warn( "too less topics => resetting chart" );
-                        console.log( "data too short" );
-                        help = null;
-                    }
-                    // overwrite topics, in case they were changed or added
-                    for( const i in node.topics )
-                    {
-                        help[i].c = node.topics[i];
-                        if( help[i].t !== undefined )
-                        {
-                            node.warn( "additional topic" );
-                            console.log( "additional topic" );
-                            delete help[i].t;
-                            delete help[i].v;
-                        }
-                    }
-                    // check for deleted topics
-                    while( help[node.topics.length].t !== undefined )
-                    {
-                        node.warn( "susplus topic deleted" );
-                        console.log( "topic deleted" );
-                        help.splice( node.topics.length, 1 );
-                    }
-                }
-            }
-            return help;
+            return node.contextStore != "none" ? context.get( "data", node.contextStore ) : null;
         }
         function setData()
         {

@@ -30,9 +30,10 @@ module.exports = function(RED) {
         this.interval_id = setInterval( function() { node.emit("cyclic"); }, this.cyclic*1000 + Math.random()*2*this.cycleJitter-this.cycleJitter );
         node.status( "" );
 
-        function newData()
+        function createData()
         {
-            node.warn( "resetting chart!" )
+            node.warn( "resetting chart!" );
+            console.log( "createData" );
             let data = [];
             for( const t of node.topics )
             {
@@ -42,7 +43,40 @@ module.exports = function(RED) {
         }
         function getData()
         {
-            return node.contextStore != "none" ? context.get( "data", node.contextStore ) : null;
+            let help = null;
+            if( node.contextStore != "none" )
+            {
+                help = context.get( "data", node.contextStore );
+                if( help !== undefined )
+                {
+                    if( help.length < node.topics.length )
+                    {
+                        node.warn( "too less topics => resetting chart" );
+                        console.log( "data too short" );
+                        help = null;
+                    }
+                    // overwrite topics, in case they were changed or added
+                    for( const i in node.topics )
+                    {
+                        help[i].c = node.topics[i];
+                        if( help[i].t !== undefined )
+                        {
+                            node.warn( "additional topic" );
+                            console.log( "additional topic" );
+                            delete help[i].t;
+                            delete help[i].v;
+                        }
+                    }
+                    // check for deleted topics
+                    while( help[node.topics.length].t !== undefined )
+                    {
+                        node.warn( "susplus topic deleted" );
+                        console.log( "topic deleted" );
+                        help.splice( node.topics.length, 1 );
+                    }
+                }
+            }
+            return help;
         }
         function setData()
         {
@@ -51,7 +85,7 @@ module.exports = function(RED) {
                 context.set( "data", node.data, node.contextStore );
             }
         }
-        this.data = getData() ?? newData();
+        this.data = getData() ?? createData();
 
         function setStatus()
         {
@@ -74,7 +108,7 @@ module.exports = function(RED) {
             }
             if( msg.reset )
             {
-                node.data = newData();
+                node.data = createData();
                 setData();
                 node.newData = true;
                 setStatus();

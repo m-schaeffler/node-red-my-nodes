@@ -661,4 +661,61 @@ describe( 'collect_chart Node', function () {
     });
   });
 
+  it('should fix changed topics, to less data points', function (done) {
+    this.timeout( 10000 );
+    const topics = ["a","b","c","d"];
+    var flow = [{ id: "n1", type: "collectChart", topics: JSON.stringify(topics), cycleJitter: 0, cyclic: 1, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload').which.is.an.Array().of.length(topics.length);
+              for( const i in topics )
+              {              
+                msg.payload[i].should.match({c:topics[i]});
+              }
+              break;
+            default:
+              done("too much output messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('topics', []);
+        n1.context().set("data", [{c:'old',t:0,v:0},{c:'old',t:100,v:1}], "memoryOnly");
+        await delay(750);
+        c.should.match(1);
+        should.not.exist( n1.context().get("last") );
+        const q = n1.context().get("data", "memoryOnly");
+        q.should.be.an.Array().of.length(topics.length);
+        for(const i in q)
+        {
+          const v = q[i];
+          v.should.be.a.Object();
+          v.should.have.a.property('c',topics[i]);
+          v.should.not.have.a.property('t');
+          v.should.not.have.a.property('v');
+        }
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
 });

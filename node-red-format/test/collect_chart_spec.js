@@ -71,7 +71,7 @@ describe( 'collect_chart Node', function () {
     this.timeout( 10000 );
     const numbers1 = [0,1,2,3,4];
     const numbers2 = ["128","255"];
-    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 1, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: 0, cyclic: 1, showState:true, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -135,6 +135,7 @@ describe( 'collect_chart Node', function () {
       try {
         n1.should.have.a.property('cyclic', 1);
         n1.should.have.a.property('cycleJitter', 0);
+        n1.should.have.a.property('showState', true);
         await delay(750);
         c.should.match(1);
         for( const i of numbers1 )
@@ -815,7 +816,7 @@ describe( 'collect_chart Node', function () {
       try {
         n1.should.have.a.property('topics', topics);
         n1.should.have.a.property('contextStore', 'memoryOnly');
-        n1.context().set("data", [{c:'old'},{c:'old2'},{c:'old3'},{c:'old4'},{c:'old',t:0,v:0},{c:'old',t:0,v:100}], "memoryOnly");
+        n1.context().set("data", [{c:'old'},{c:'old2'},{c:'old3'},{c:'old4'},{c:'old',t:0,v:0},{c:'old',t:100,v:100}], "memoryOnly");
         await delay(750);
         c.should.match(1);
         n1.receive({ topic:"end", payload: 255 });
@@ -832,6 +833,8 @@ describe( 'collect_chart Node', function () {
           v.should.not.have.a.property('t');
           v.should.not.have.a.property('v');
         }
+        q[4].should.match({c:'old',t:0,v:0});
+        q[5].should.match({c:'old',t:100,v:100});
         done();
       }
       catch(err) {

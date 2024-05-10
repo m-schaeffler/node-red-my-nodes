@@ -65,7 +65,7 @@ module.exports = function(RED) {
                 } );
             }
         }
-        setStatus();
+        node.status( "" );
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid || node.data === null )
@@ -142,7 +142,7 @@ module.exports = function(RED) {
             if( node.contextStore != "none" )
             {
                 node.data ??= getData();
-                if( node.data !== undefined )
+                if( node.data )
                 {
                     if( node.data.length < node.topics.length )
                     {

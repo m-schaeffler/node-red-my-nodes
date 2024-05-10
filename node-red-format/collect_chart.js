@@ -176,6 +176,7 @@ module.exports = function(RED) {
             }
             node.data ??= createData();
             node.send( { payload:node.data, init:true } );
+            setStatus();
         });
 
         this.cycleCounter = 0;

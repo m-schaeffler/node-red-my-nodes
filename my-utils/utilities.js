@@ -54,11 +54,6 @@ exports.formatNumber = function(number,limit,unit="")
     }
 }
 
-exports.colorizeValue = function(number,className,unit="")
-{
-    return `<span class=\"${className}\">${number}${exports.unitStr(unit)}</span>`;
-}
-
 exports.number2color = function(number,low,high)
 {
     if( number >= high )
@@ -69,29 +64,25 @@ exports.number2color = function(number,low,high)
         return '';
 }
 
-exports.colorizeNumber = function(number,low,high,unit="")
-{
-    if( typeof number === 'number' )
-    {
-        return exports.colorizeValue( number, exports.number2color( number, low, high ), unit );
-    }
-    else
-    {
-        return "";
-    }
-}
-
 exports.formatTime = function(time)
 {
     if( time )
     {
-        const d   = (time instanceof Date) ? time : new Date( time );
-        let   min = d.getMinutes();
-        if( min < 10 )
+        const d     = (time instanceof Date) ? time : new Date( time );
+        const delta = Date.now() - d;
+        if( delta < 48*3600*1000 )
         {
-            min = "0"+min;
+            let min = d.getMinutes();
+            if( min < 10 )
+            {
+                min = "0"+min;
+            }
+            return `${d.getHours()}:${min}`;
         }
-        return `${d.getHours()}:${min}`;
+        else
+        {
+            return `${d.getDate()}.${d.getMonth()+1}.`;
+        }
     }
     else
     {
@@ -120,21 +111,4 @@ exports.time2color = function(time,ok=3,nok=24)
     const d     = new Date( time );
     const delta = Date.now() - d;
     return intTime2color( delta, ok, nok );
-}
-
-exports.colorizeTime = function(time,ok=3,nok=24)
-{
-    if( time )
-    {
-        const d     = new Date( time );
-        const delta = Date.now() - d;
-        return exports.colorizeValue(
-            delta < 48*3600*1000 ? exports.formatTime( d ) : `${d.getDate()}.${d.getMonth()+1}.`,
-            intTime2color( delta, ok, nok )
-        );
-    }
-    else
-    {
-        return "";
-    }
 }

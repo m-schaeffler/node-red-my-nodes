@@ -25,6 +25,8 @@ describe( 'math_falling Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('threshold', undefined);
         n1.should.have.a.property('consecutive', 1);
+        n1.should.have.a.property('output', true);
+        n1.should.have.a.property('outputType', "bool");
         n1.should.have.a.property('showState', false);
         done();
       }
@@ -36,7 +38,7 @@ describe( 'math_falling Node', function () {
 
   it('should check for falling edge', function (done) {
     const numbers = [10,1000,100.1,100,99.9,0,1000];
-    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:100, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", output: "Text", outputType:"str", name: "test", threshold:100, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -45,7 +47,8 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
-          msg.should.have.property('payload',99.9);
+          msg.should.have.property('payload','Text');
+          msg.should.have.property('value',99.9);
           msg.should.have.property('edge','falling');
           if( c === 1 )
           {
@@ -62,6 +65,8 @@ describe( 'math_falling Node', function () {
       });
       try {
         n1.should.have.a.property('threshold', 100);
+        n1.should.have.a.property('output', 'Text');
+        n1.should.have.a.property('outputType', "str");
       }
       catch(err) {
         done(err);
@@ -75,7 +80,7 @@ describe( 'math_falling Node', function () {
 
   it('should respect consecutive parameter', function (done) {
     const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
-    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:100, consecutive:3, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", output: 42, outputType:"num", name: "test", threshold:100, consecutive:3, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -84,7 +89,8 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
-          msg.should.have.property('payload',2);
+          msg.should.have.property('payload',42);
+          msg.should.have.property('value',2);
           msg.should.have.property('edge','falling');
           if( c === 1 )
           {
@@ -102,6 +108,8 @@ describe( 'math_falling Node', function () {
       try {
         n1.should.have.a.property('threshold', 100);
         n1.should.have.a.property('consecutive', 3);
+        n1.should.have.a.property('output', 42);
+        n1.should.have.a.property('outputType', "num");
       }
       catch(err) {
         done(err);
@@ -123,8 +131,9 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',0);
-          if( c === 1 && msg.payload === 0 )
+          msg.should.have.property('payload',true);
+          msg.should.have.property('value',2);
+          if( c === 1 && msg.value === 2 )
           {
             done();
           }
@@ -133,6 +142,13 @@ describe( 'math_falling Node', function () {
           done(err);
         }
       });
+      try {
+        n1.should.have.a.property('output', true);
+        n1.should.have.a.property('outputType', "bool");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 1000 });
       n1.receive({ invalid:true, payload: 1000 });
       n1.receive({ invalid:true, payload: 0 });
@@ -140,12 +156,12 @@ describe( 'math_falling Node', function () {
       n1.receive({ payload: undefined });
       n1.receive({ payload: "FooBar" });
       n1.receive({ payload: NaN });
-      n1.receive({ payload: 0 });
+      n1.receive({ payload: 2 });
     });
   });
 
   it('should work with different topics', function (done) {
-    var flow = [{ id: "n1", type: "fallingEdge", threshold:100, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", threshold:100, output:false, outputType:"bool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -154,9 +170,10 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',c*10);
+          msg.should.have.property('payload',false);
+          msg.should.have.a.property('value',c*10);
           msg.should.have.a.property('topic',c===1?"A":"B");
-          if( c === 2 && msg.payload === 20 )
+          if( c === 2 && msg.value === 20 )
           {
             done();
           }
@@ -165,6 +182,13 @@ describe( 'math_falling Node', function () {
           done(err);
         }
       });
+      try {
+        n1.should.have.a.property('output', false);
+        n1.should.have.a.property('outputType', "bool");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ topic:"A", payload: 1000 });
       n1.receive({ topic:"B", payload: 1000 });
       n1.receive({ topic:"A", payload: 10 });
@@ -173,7 +197,8 @@ describe( 'math_falling Node', function () {
   });
 
   it('should have reset', function (done) {
-    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:100, wires: [["n2"]] },
+    const json = { text:"Text", num:42 };
+    var flow = [{ id: "n1", type: "fallingEdge", name: "test", output:JSON.stringify(json), outputType:"json", threshold:100, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -182,8 +207,9 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',5);
-          if( c === 1 && msg.payload === 5 )
+          msg.should.have.property('payload',json);
+          msg.should.have.a.property('value',5);
+          if( c === 1 && msg.value === 5 )
           {
             done();
           }
@@ -192,6 +218,13 @@ describe( 'math_falling Node', function () {
           done(err);
         }
       });
+      try {
+        n1.should.have.a.property('output', json);
+        n1.should.have.a.property('outputType', "json");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 1000 });
       n1.receive({ reset: true });
       n1.receive({ payload: 0 });
@@ -211,7 +244,8 @@ describe( 'math_falling Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',90);
+          msg.should.have.property('payload',true);
+          msg.should.have.a.property('value',90);
           done();
         }
         catch(err) {
@@ -238,7 +272,8 @@ describe( 'math_falling Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',102-5);
+          msg.should.have.property('payload',true);
+          msg.should.have.a.property('value',102-5);
           done();
         }
         catch(err) {

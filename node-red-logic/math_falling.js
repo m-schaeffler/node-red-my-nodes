@@ -9,6 +9,8 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.threshold    = config.threshold;
         this.consecutive  = Number( config.consecutive ?? 1 );
+        this.output       = config.output ?? true;
+        this.outputType   = config.outputType ?? "bool";
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
@@ -19,6 +21,10 @@ module.exports = function(RED) {
                 node.error(RED._("debug.invalid-exp", {error: this.property}));
                 return;
             }
+        }
+        if( this.outputType === "json" )
+        {
+            this.output = JSON.parse( this.output );
         }
         node.cntFall = 0;
         node.status( "" );
@@ -59,21 +65,22 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
-                    msg.payload = Number( value );
-                    let status = { fill:"gray", shape:"dot", text:msg.payload };
+                    msg.value = Number( value );
+                    let status = { fill:"gray", shape:"dot", text:msg.value };
 
-                    if( ! isNaN( msg.payload ) )
+                    if( ! isNaN( msg.value ) )
                     {
                         let   data = context.get( "data" ) ?? {};
                         const last = data[msg.topic] ?? Number.MIN_SAFE_INTEGER;
-                        if( msg.payload < node.threshold && node.threshold <= last )
+                        if( msg.value < node.threshold && node.threshold <= last )
                         {
                             if( ++node.cntFall >= node.consecutive )
                             {
                                 status.fill = "green";
-                                msg.edge = "falling";
+                                msg.payload = node.output;
+                                msg.edge    = "falling";
                                 send( msg );
-                                data[msg.topic] = msg.payload;
+                                data[msg.topic] = msg.value;
                                 node.cntFall = 0;
                             }
                             else
@@ -84,7 +91,7 @@ module.exports = function(RED) {
                         else
                         {
                             node.cntFall = 0;
-                            data[msg.topic] = msg.payload;
+                            data[msg.topic] = msg.value;
                         }
                         context.set( "data", data );
                     }

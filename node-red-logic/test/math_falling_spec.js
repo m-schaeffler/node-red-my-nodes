@@ -208,7 +208,7 @@ describe( 'math_falling Node', function () {
         c++;
         try {
           msg.should.have.property('payload',json);
-          msg.should.have.a.property('value',5);
+          msg.should.have.property('value',5);
           if( c === 1 && msg.value === 5 )
           {
             done();
@@ -245,7 +245,7 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.property('payload',true);
-          msg.should.have.a.property('value',90);
+          msg.should.have.property('value',90);
           done();
         }
         catch(err) {
@@ -273,7 +273,7 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.property('payload',true);
-          msg.should.have.a.property('value',102-5);
+          msg.should.have.property('value',102-5);
           done();
         }
         catch(err) {

@@ -138,7 +138,7 @@ module.exports = function(RED) {
         });
 
         node.on('started', function() {
-            console.log( "collect chart started" );
+            //console.log( "collect chart started" );
             if( node.contextStore != "none" )
             {
                 node.data ??= getData();

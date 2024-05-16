@@ -8,6 +8,8 @@
             propertyType:{value:"msg"},
             threshold:{value:"",required:true,validate:RED.validators.number()},
             consecutive:{value:"1",required:true},
+            output:{value:true,required:true},
+            outputType:{value:"bool"},
             showState:{value:false}
         },
         inputs:1,
@@ -28,6 +30,11 @@
                 types:["msg","jsonata"],
                 typeField: "#node-input-propertyType"
             })
+            $("#node-input-output").typedInput({
+                type:"bool",
+                types:["str","num","bool","json"],
+                typeField: "#node-input-outputType"
+            })
         }
     });
 </script>
@@ -38,7 +45,7 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
+        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
         <input type="text" id="node-input-property">
         <input type="hidden" id="node-input-propertyType">
     </div>
@@ -49,6 +56,11 @@
     <div class="form-row">
         <label for="node-input-consecutive"><i class="fa fa-line-chart"></i> Consecutive</label>
         <input type="text" id="node-input-consecutive">
+    </div>
+    <div class="form-row">
+        <label for="node-input-output"><i class="fa fa-sign-out"></i> Output</label>
+        <input type="text" id="node-input-output">
+        <input type="hidden" id="node-input-outputType">
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
@@ -86,6 +98,8 @@
         <dd> threshold value for the edge detection.</dd>
         <dt>Consecutive <span class="property-type">number</span></dt>
         <dd> number of consecutive frames to generate an output.</dd>
+        <dt>Output <span class="property-type">multi</span></dt>
+        <dd> Value to be sent in case of a falling edge.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

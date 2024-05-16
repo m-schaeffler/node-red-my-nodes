@@ -29,7 +29,7 @@ module.exports = function(RED) {
         {
             this.outputRise = JSON.parse( this.outputRise );
         }
-        if( this.outputType === "json" )
+        if( this.outputFallType === "json" )
         {
             this.outputFall = JSON.parse( this.outputFall );
         }

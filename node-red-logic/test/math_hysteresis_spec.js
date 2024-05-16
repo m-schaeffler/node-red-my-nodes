@@ -248,7 +248,7 @@ describe( 'math_hysteresis Node', function () {
           switch( c ) {
             case 1:
             case 2:
-              msg.should.have.property('payload',jsonR);
+              msg.should.have.property('payload',jsonF);
               msg.should.have.a.property('value',0);
               break;
             case 3:
@@ -257,7 +257,7 @@ describe( 'math_hysteresis Node', function () {
               msg.should.have.a.property('value',1000);
               break;
             case 5:
-              msg.should.have.property('payload',jsonR);
+              msg.should.have.property('payload',jsonF);
               msg.should.have.a.property('value',2);
               done();
               break;
@@ -270,10 +270,10 @@ describe( 'math_hysteresis Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('outputRise', json);
-        n1.should.have.a.property('outputRiseType', "jsonR");
-        n1.should.have.a.property('outputFall', json);
-        n1.should.have.a.property('outputFallType', "jsonF");
+        n1.should.have.a.property('outputRise', jsonR);
+        n1.should.have.a.property('outputRiseType', "json");
+        n1.should.have.a.property('outputFall', jsonF);
+        n1.should.have.a.property('outputFallType', "json");
       }
       catch(err) {
         done(err);

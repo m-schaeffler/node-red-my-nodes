@@ -101,7 +101,7 @@ describe( 'math_hysteresis Node', function () {
 
   it('should respect consecutive parameter', function (done) {
     const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:200, threshold_fall:100, consecutive:3, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: 42, outputRiseType:"num", outputFall: -1, outputFallType:"num", name: "test", threshold_raise:200, threshold_fall:100, consecutive:3, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -113,15 +113,18 @@ describe( 'math_hysteresis Node', function () {
           switch( c )
           {
              case 1:
-               msg.should.have.property('payload',252);
+               msg.should.have.property('payload',42);
+               msg.should.have.property('value',252);
                msg.should.have.property('edge','rising');
                break;
              case 2:
-               msg.should.have.property('payload',2);
+               msg.should.have.property('payload',-1);
+               msg.should.have.property('value',2);
                msg.should.have.property('edge','falling');
                break;
              case 3:
-               msg.should.have.property('payload',302);
+               msg.should.have.property('payload',42);
+               msg.should.have.property('value',302);
                msg.should.have.property('edge','rising');
                done();
                break;
@@ -137,6 +140,10 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('threshold_rise', 200);
         n1.should.have.a.property('threshold_fall', 100);
         n1.should.have.a.property('consecutive', 3);
+        n1.should.have.a.property('outputRise', 42);
+        n1.should.have.a.property('outputRiseType', "num");
+        n1.should.have.a.property('outputFall', -1);
+        n1.should.have.a.property('outputFallType', "num");
       }
       catch(err) {
         done(err);
@@ -158,8 +165,9 @@ describe( 'math_hysteresis Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',5000);
-          if( c === 1 && msg.payload === 5000 )
+          msg.should.have.property('payload',true);
+          msg.should.have.property('value',5000);
+          if( c === 1 && msg.value === 5000 )
           {
             done();
           }
@@ -168,18 +176,28 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
+      try {
+        n1.should.have.a.property('outputRise', true);
+        n1.should.have.a.property('outputRiseType', "bool");
+        n1.should.have.a.property('outputFall', false);
+        n1.should.have.a.property('outputFallType', "bool");
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ invalid:true, payload: 1000 });
       n1.receive({ invalid:true, payload: 0 });
       n1.receive({ invalid:true, payload: 1000 });
       n1.receive({ payload: undefined });
       n1.receive({ payload: "FooBar" });
       n1.receive({ payload: NaN });
-      n1.receive({ payload: 5000 });0
+      n1.receive({ payload: 5000 });
     });
   });
 
   it('should work with different topics', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", threshold_raise:200, threshold_fall:100, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "hysteresisEdge", threshold_raise:200, threshold_fall:100, outputRise:false, outputRiseType:"bool", outputFall:true, outputFallType:"bool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -188,9 +206,10 @@ describe( 'math_hysteresis Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',c*1000);
-          msg.should.have.a.property('topic',c===1?"A":"B");
-          if( c === 2 && msg.payload === 2000 )
+          msg.should.have.property('payload',false);
+          msg.should.have.property('value',c*1000);
+          msg.should.have.property('topic',c===1?"A":"B");
+          if( c === 2 && msg.value === 2000 )
           {
             done();
           }
@@ -199,13 +218,25 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
+      try {
+        n1.should.have.a.property('outputRise', false);
+        n1.should.have.a.property('outputRiseType', "bool");
+        n1.should.have.a.property('outputFall', true);
+        n1.should.have.a.property('outputFallType', "bool");
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ topic:"A", payload: 1000 });
       n1.receive({ topic:"B", payload: 2000 });
     });
   });
 
   it('should have reset', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:200, threshold_fall:100, initial:"any", wires: [["n2"]] },
+    const jsonR = { text:"Text R", num:42 };
+    const jsonF = { text:"Text F", num:-1 };
+    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:200, threshold_fall:100, outputRise:JSON.stringify(jsonR), outputRiseType:"json", outputFall:JSON.stringify(jsonF), outputFallType:"json", initial:"any", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -217,14 +248,17 @@ describe( 'math_hysteresis Node', function () {
           switch( c ) {
             case 1:
             case 2:
-              msg.should.have.a.property('payload',0);
+              msg.should.have.property('payload',jsonR);
+              msg.should.have.a.property('value',0);
               break;
             case 3:
             case 4:
-              msg.should.have.a.property('payload',1000);
+              msg.should.have.property('payload',jsonR);
+              msg.should.have.a.property('value',1000);
               break;
             case 5:
-              msg.should.have.a.property('payload',2);
+              msg.should.have.property('payload',jsonR);
+              msg.should.have.a.property('value',2);
               done();
               break;
             default:
@@ -235,6 +269,15 @@ describe( 'math_hysteresis Node', function () {
           done(err);
         }
       });
+      try {
+        n1.should.have.a.property('outputRise', json);
+        n1.should.have.a.property('outputRiseType', "jsonR");
+        n1.should.have.a.property('outputFall', json);
+        n1.should.have.a.property('outputFallType', "jsonF");
+      }
+      catch(err) {
+        done(err);
+      }
       n1.receive({ payload: 0 });
       n1.receive({ reset: true });
       n1.receive({ payload: 0 });
@@ -255,7 +298,8 @@ describe( 'math_hysteresis Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',210);
+          msg.should.have.property('payload',true);
+          msg.should.have.property('value',210);
           done();
         }
         catch(err) {
@@ -282,7 +326,8 @@ describe( 'math_hysteresis Node', function () {
       var n1 = helper.getNode("n1");
       n2.on("input", function (msg) {
         try {
-          msg.should.have.a.property('payload',198+5);
+          msg.should.have.property('payload',true);
+          msg.should.have.property('value',198+5);
           done();
         }
         catch(err) {

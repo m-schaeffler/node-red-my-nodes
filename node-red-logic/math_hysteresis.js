@@ -10,6 +10,10 @@ module.exports = function(RED) {
         this.threshold_rise = config.threshold_raise;
         this.threshold_fall = config.threshold_fall;
         this.consecutive    = Number( config.consecutive ?? 1 );
+        this.outputRise     = config.outputRise ?? true;
+        this.outputRiseType = config.outputRiseType ?? "bool";
+        this.outputFall     = config.outputFall ?? false;
+        this.outputFallType = config.outputFallType ?? "bool";
         this.showState      = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
@@ -20,6 +24,14 @@ module.exports = function(RED) {
                 node.error(RED._("debug.invalid-exp", {error: this.property}));
                 return;
             }
+        }
+        if( this.outputRiseType === "json" )
+        {
+            this.outputRise = JSON.parse( this.outputRise );
+        }
+        if( this.outputType === "json" )
+        {
+            this.outputFall = JSON.parse( this.outputFall );
         }
         node.cntRise = 0;
         node.cntFall = 0;
@@ -61,28 +73,29 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
-                    msg.payload = Number( value );
+                    msg.value = Number( value );
                     let data   = context.get( "data" ) ?? {};
-                    let status = { fill:data[msg.topic]?.status??"gray", shape:"dot", text:msg.payload.toPrecision(4) };
+                    let status = { fill:data[msg.topic]?.status??"gray", shape:"dot", text:msg.value.toPrecision(4) };
 
-                    if( ! isNaN( msg.payload ) )
+                    if( ! isNaN( msg.value ) )
                     {
                         const last = data[msg.topic]?.edge;
 
                         function sendMsg(edge)
                         {
-                            status.fill = edge=="rising" ? "green" : "gray";
+                            status.fill = edge ? "green" : "gray";
                             data[msg.topic] = { edge:edge, status:status.fill };
                             context.set( "data", data );
-                            msg.edge = edge;
+                            msg.payload = edge ? node.outputRise : node.outputFall;
+                            msg.edge    = edge ? "rising" : 'falling';
                             send( msg );
                         }
 
-                        if( msg.payload > node.threshold_rise && last != 'rising' )
+                        if( msg.value > node.threshold_rise && last !== true )
                         {
                             if( ++node.cntRise >= node.consecutive )
                             {
-                                sendMsg( 'rising' );
+                                sendMsg( true );
                                 node.cntRise = 0;
                             }
                             else
@@ -91,11 +104,11 @@ module.exports = function(RED) {
                             }
                             node.cntFall = 0;
                         }
-                        else if( msg.payload < node.threshold_fall && last != 'falling' )
+                        else if( msg.value < node.threshold_fall && last !== false )
                         {
                             if( ++node.cntFall >= node.consecutive )
                             {
-                                sendMsg( 'falling' );
+                                sendMsg( false );
                                 node.cntFall = 0;
                             }
                             else

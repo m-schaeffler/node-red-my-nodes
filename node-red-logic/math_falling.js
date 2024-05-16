@@ -7,9 +7,9 @@ module.exports = function(RED) {
         var context = this.context();
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.threshold    = config.threshold;
+        this.threshold    = Number( config.threshold );
         this.consecutive  = Number( config.consecutive ?? 1 );
-        this.output       = config.output ?? true;
+        this.output       = config.output ?? "true";
         this.outputType   = config.outputType ?? "bool";
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
@@ -22,9 +22,17 @@ module.exports = function(RED) {
                 return;
             }
         }
-        if( this.outputType === "json" )
+        switch( this.outputType )
         {
-            this.output = JSON.parse( this.output );
+            case "num":
+                this.output = Number( this.output );
+                break;
+            case "bool":
+                this.output = this.output == "true";
+                break;
+            case "json":
+                this.output = JSON.parse( this.output );
+                break;
         }
         node.cntFall = 0;
         node.status( "" );

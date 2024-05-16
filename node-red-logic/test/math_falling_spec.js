@@ -23,7 +23,7 @@ describe( 'math_falling Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
-        n1.should.have.a.property('threshold', undefined);
+        n1.should.have.a.property('threshold', NaN);
         n1.should.have.a.property('consecutive', 1);
         n1.should.have.a.property('output', true);
         n1.should.have.a.property('outputType', "bool");
@@ -38,7 +38,7 @@ describe( 'math_falling Node', function () {
 
   it('should check for falling edge', function (done) {
     const numbers = [10,1000,100.1,100,99.9,0,1000];
-    var flow = [{ id: "n1", type: "fallingEdge", output: "Text", outputType:"str", name: "test", threshold:100, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", output: "Text", outputType:"str", name: "test", threshold:"100", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -80,7 +80,7 @@ describe( 'math_falling Node', function () {
 
   it('should respect consecutive parameter', function (done) {
     const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
-    var flow = [{ id: "n1", type: "fallingEdge", output: 42, outputType:"num", name: "test", threshold:100, consecutive:3, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", output: "42", outputType:"num", name: "test", threshold:"100", consecutive:"3", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -122,7 +122,7 @@ describe( 'math_falling Node', function () {
   });
 
   it('should not forward invalid data', function (done) {
-    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:100, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:"100", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -161,7 +161,7 @@ describe( 'math_falling Node', function () {
   });
 
   it('should work with different topics', function (done) {
-    var flow = [{ id: "n1", type: "fallingEdge", threshold:100, output:false, outputType:"bool", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", threshold:"100", output:"false", outputType:"bool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -198,7 +198,7 @@ describe( 'math_falling Node', function () {
 
   it('should have reset', function (done) {
     const json = { text:"Text", num:42 };
-    var flow = [{ id: "n1", type: "fallingEdge", name: "test", output:JSON.stringify(json), outputType:"json", threshold:100, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", name: "test", output:JSON.stringify(json), outputType:"json", threshold:"100", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -237,7 +237,7 @@ describe( 'math_falling Node', function () {
   });
 
   it('should work with objects', function (done) {
-    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:100, property:"payload.value", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:"100", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -265,7 +265,7 @@ describe( 'math_falling Node', function () {
   });
 
   it('should have Jsonata', function (done) {
-    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:100, property:"payload-5", propertyType:"jsonata", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", name: "test", threshold:"100", property:"payload-5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");

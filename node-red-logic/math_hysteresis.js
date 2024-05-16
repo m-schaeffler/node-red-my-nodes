@@ -7,12 +7,12 @@ module.exports = function(RED) {
         var context = this.context();
         this.property       = config.property ?? "payload";
         this.propertyType   = config.propertyType ?? "msg";
-        this.threshold_rise = config.threshold_raise;
-        this.threshold_fall = config.threshold_fall;
+        this.threshold_rise = Number( config.threshold_raise );
+        this.threshold_fall = Number( config.threshold_fall );
         this.consecutive    = Number( config.consecutive ?? 1 );
-        this.outputRise     = config.outputRise ?? true;
+        this.outputRise     = config.outputRise ?? "true";
         this.outputRiseType = config.outputRiseType ?? "bool";
-        this.outputFall     = config.outputFall ?? false;
+        this.outputFall     = config.outputFall ?? "false";
         this.outputFallType = config.outputFallType ?? "bool";
         this.showState      = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
@@ -25,13 +25,29 @@ module.exports = function(RED) {
                 return;
             }
         }
-        if( this.outputRiseType === "json" )
+        switch( this.outputRiseType )
         {
-            this.outputRise = JSON.parse( this.outputRise );
+            case "num":
+                this.outputRise = Number( this.outputRise );
+                break;
+            case "bool":
+                this.outputRise = this.outputRise == "true";
+                break;
+            case "json":
+                this.outputRise = JSON.parse( this.outputRise );
+                break;
         }
-        if( this.outputFallType === "json" )
+        switch( this.outputFallType )
         {
-            this.outputFall = JSON.parse( this.outputFall );
+            case "num":
+                this.outputFall = Number( this.outputFall );
+                break;
+            case "bool":
+                this.outputFall = this.outputFall == "true";
+                break;
+            case "json":
+                this.outputFall = JSON.parse( this.outputFall );
+                break;
         }
         node.cntRise = 0;
         node.cntFall = 0;

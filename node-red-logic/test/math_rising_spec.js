@@ -133,7 +133,7 @@ describe( 'math_rising Node', function () {
         try {
           msg.should.have.property('payload',true);
           msg.should.have.property('value',5000);
-          if( c === 1 && msg.payload === 5000 )
+          if( c === 1 && msg.value === 5000 )
           {
             done();
           }
@@ -173,7 +173,7 @@ describe( 'math_rising Node', function () {
           msg.should.have.property('payload',false);
           msg.should.have.a.property('value',c*1000);
           msg.should.have.a.property('topic',c===1?"A":"B");
-          if( c === 2 && msg.payload === 2000 )
+          if( c === 2 && msg.value === 2000 )
           {
             done();
           }
@@ -209,7 +209,7 @@ describe( 'math_rising Node', function () {
         try {
           msg.should.have.property('payload',json);
           msg.should.have.property('value',5000);
-          if( c === 1 && msg.payload === 5000 )
+          if( c === 1 && msg.value === 5000 )
           {
             done();
           }

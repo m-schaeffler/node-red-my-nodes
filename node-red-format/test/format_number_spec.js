@@ -67,7 +67,7 @@ describe( 'format_number Node', function () {
 
   it('should forward numbers rounded to two digits', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
-    var flow = [{ id: "n1", type: "formatNumber", digits: 2, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "formatNumber", digits: "2", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -101,7 +101,7 @@ describe( 'format_number Node', function () {
 
   it('should forward numbers rounded to two digits and changed decimal', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
-    var flow = [{ id: "n1", type: "formatNumber", decimal: ",", digits: 2, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "formatNumber", decimal: ",", digits: "2", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");

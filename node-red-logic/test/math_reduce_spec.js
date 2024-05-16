@@ -230,7 +230,7 @@ describe( 'math_reduce Node', function () {
 
   it('should check minData', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"add", minData:3, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"add", minData:"3", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -269,7 +269,7 @@ describe( 'math_reduce Node', function () {
 
   it('should add mean values, min 2 max 2', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"prod", minData:2, minMean:2, maxMean:2, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"prod", minData:"2", minMean:"2", maxMean:"2", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -306,7 +306,7 @@ describe( 'math_reduce Node', function () {
 
   it('should add mean values, min 1 max 2', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"prod", minData:2, minMean:1, maxMean:2, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"prod", minData:"2", minMean:"1", maxMean:"2", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -353,7 +353,7 @@ describe( 'math_reduce Node', function () {
 
   it('should add mean values, min 2 max 3', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"prod", minData:2, minMean:2, maxMean:3, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "reduce", name: "test", algo:"prod", minData:"2", minMean:"2", maxMean:"3", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");

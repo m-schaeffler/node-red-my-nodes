@@ -35,7 +35,7 @@ describe( 'logic_or Node', function () {
   });
 
   it('should or two bool values, mindata=1', function (done) {
-    var flow = [{ id: "n1", type: "or", minData:1, topic:"Und", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "or", minData:"1", topic:"Und", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -71,7 +71,7 @@ describe( 'logic_or Node', function () {
   });
 
   it('should or two bool values, mindata=2', function (done) {
-    var flow = [{ id: "n1", type: "or", topic:"Und", minData:2, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "or", topic:"Und", minData:"2", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -204,7 +204,7 @@ describe( 'logic_or Node', function () {
   });
 
   it('should have reset', function (done) {
-    var flow = [{ id: "n1", type: "or", minData:3, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "or", minData:"3", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");

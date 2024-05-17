@@ -18,8 +18,25 @@
             name: {value:""},
             keys: {value:"", type:"lorawan-keys", required:true},
             power: {value:"14", required:true, validate:RED.validators.number()},
-            rfch: {value:"", required:true}
-        }      
+            rfch: {value:"", required:true},
+            contextStore:{value:"",required:true}
+        },
+        oneditprepare: function() {
+            const node = this;
+            // populate store names
+            $("#node-input-contextStore").empty();
+            //$("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : ''
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                    const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                    $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
+        }
     });
 </script>
 
@@ -45,13 +62,14 @@
             <option value="1">1</option>
         </select>
     </div>
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
+    </div>
 </script>
 
 <script type="text/html" data-help-name="lorawan-packet-encoder">
     <p>This node encodes a LoraWan message.</p>
-
-    <p>A <a href="https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system">local filesystem context store</a> 
-    called <code>storeInFile</code> is needed to store the internal data.</p>
 
     <h3>Input</h3>
     <dl class="message-properties">
@@ -85,5 +103,7 @@
         <dd> transmit power for the gateway.</dd>
         <dt>TX-Channel <span class="property-type"></span></dt>
         <dd> transmit channel for the gateway.</dd>
+        <dt>Contextstore <span class="property-type">context store</span></dt>
+        <dd> context store for storing the values; <code>none</code> is no storage.</dd>
     </dl>
 </script>

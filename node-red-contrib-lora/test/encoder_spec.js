@@ -14,7 +14,10 @@ describe( 'lorawan-packet-encoder Node', function () {
   function initContext(done) {
     Context.init({
       contextStorage: {
-        memory0: {
+        memoryOnly: {
+          module: "memory"
+        },
+        storeInFile: {
           module: "memory"
         }
       }
@@ -43,6 +46,7 @@ describe( 'lorawan-packet-encoder Node', function () {
         n1.should.have.a.property('keyconf', null);
         n1.should.have.a.property('power', 14);
         n1.should.have.a.property('rfch', 'N');
+        n1.should.have.a.property('contextStore', 'none');
         done();
       }
       catch(err) {
@@ -53,11 +57,12 @@ describe( 'lorawan-packet-encoder Node', function () {
 
   it('should encode messages', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", contextStore:"storeInFile", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -120,16 +125,18 @@ describe( 'lorawan-packet-encoder Node', function () {
       catch(err) {
         done(err);
       }
+     });
     });
   });
 
   it('should encode messages, rfch=0', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", rfch:"0", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", rfch:"0", contextStore:"memoryOnly", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -183,25 +190,27 @@ describe( 'lorawan-packet-encoder Node', function () {
       });
       try {
         n1.should.have.a.property('keyconf').which.is.an.Object();
-        should.not.exist( n1.context().get("counters", "storeInFile") );
+        should.not.exist( n1.context().get("counters", "memoryOnly") );
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6, ack:true } });
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6, ack:true } });
         n1.receive({ payload: { device_address:"0000abcd", data:[255], port:1, ack:true } });
-        should.exist( n1.context().get("counters", "storeInFile") );
+        should.exist( n1.context().get("counters", "memoryOnly") );
       }
       catch(err) {
         done(err);
       }
+     });
     });
   });
 
   it('should encode messages, rfch=1', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", rfch:"1", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", rfch:"1", contextStore:"memoryOnly", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -255,25 +264,29 @@ describe( 'lorawan-packet-encoder Node', function () {
       });
       try {
         n1.should.have.a.property('keyconf').which.is.an.Object();
+        should.not.exist( n1.context().get("counters", "memoryOnly") );
         should.not.exist( n1.context().get("counters", "storeInFile") );
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
         n1.receive({ payload: { device_address:"12345678", data:[1,2,3,4], port:6 } });
         n1.receive({ payload: { device_address:"0000abcd", data:[255], port:1 } });
-        should.exist( n1.context().get("counters", "storeInFile") );
+        should.exist( n1.context().get("counters", "memoryOnly") );
+        should.not.exist( n1.context().get("counters", "storeInFile") );
       }
       catch(err) {
         done(err);
       }
+     });
     });
   });
 
   it('should encode messages, rfch=P', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", rfch:"P", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", rfch:"P", contextStore:"storeInFile", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -337,16 +350,18 @@ describe( 'lorawan-packet-encoder Node', function () {
       catch(err) {
         done(err);
       }
+     });
     });
   });
 
   it('should not encode invalid messages', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", contextStore:"storeInFile", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -380,16 +395,18 @@ describe( 'lorawan-packet-encoder Node', function () {
       catch(err) {
         done(err);
       }
+     });
     });
   });
 
   it('should set the default framecounter', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", contextStore:"storeInFile", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -447,16 +464,18 @@ describe( 'lorawan-packet-encoder Node', function () {
       catch(err) {
         done(err);
       }
+     });
     });
   });
 
   it('should set the framecounter', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", contextStore:"storeInFile", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -517,16 +536,18 @@ describe( 'lorawan-packet-encoder Node', function () {
       catch(err) {
         done(err);
       }
+     });
     });
   });
 
   it('should change the framecounter', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", contextStore:"storeInFile", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -584,6 +605,7 @@ describe( 'lorawan-packet-encoder Node', function () {
       catch(err) {
         done(err);
       }
+     });
     });
   });
 

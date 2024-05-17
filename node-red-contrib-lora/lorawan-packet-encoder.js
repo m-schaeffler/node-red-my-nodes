@@ -10,9 +10,22 @@ module.exports = function(RED)
         this.keyconf = RED.nodes.getNode( config.keys );
         this.power   = parseInt( config.power ?? "14" );
         this.rfch    = config.rfch ?? "N";
+        this.contextStore = config.contextStore ?? "none";
+
+        function getCounters()
+        {
+            return ( node.contextStore != "none" ? context.get( "counters", node.contextStore ) : null ) ?? {};
+        }
+        function setCounters(counters)
+        {
+            if( node.contextStore != "none" )
+            {
+                context.set( "counters", counters, node.contextStore );
+            }
+        }
 
         node.on('input',function(msg,send,done) {
-            let counters = context.get( "counters", "storeInFile" ) ?? {};
+            let counters = getCounters();
             switch( typeof( msg.framecounter ) )
             {
                 case "undefined":
@@ -97,7 +110,7 @@ module.exports = function(RED)
                     node.warn( "unknown deviceid: "+msg.payload.device_address );
                 }
             }
-            context.set( "counters", counters, "storeInFile" );
+            setCounters( counters );
             done();
         });
 

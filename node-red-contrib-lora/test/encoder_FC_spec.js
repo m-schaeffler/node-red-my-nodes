@@ -17,7 +17,10 @@ describe( 'lorawan-packet-encoder Node, high FC', function () {
   function initContext(done) {
     Context.init({
       contextStorage: {
-        memory0: {
+        memoryOnly: {
+          module: "memory"
+        },
+        storeInFile: {
           module: "memory"
         }
       }
@@ -39,11 +42,12 @@ describe( 'lorawan-packet-encoder Node, high FC', function () {
 
   it('should encode messages with high frame counter', function (done) {
     var flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "lorawan-packet-encoder", keys:"nk", contextStore:"storeInFile", name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nk", type: "lorawan-keys", keys:keys.keys, name: "TestKeys", z: "flow" }];
     helper.load([node,nodeKey], flow, function () {
+     initContext(async function () {
       var n1 = helper.getNode("n1");
       var n2 = helper.getNode("n2");
       var n3 = helper.getNode("n3");
@@ -125,6 +129,7 @@ describe( 'lorawan-packet-encoder Node, high FC', function () {
         lora-packet.fromFields.restore();
         done(err);
       }
+     });
     });
   });
 

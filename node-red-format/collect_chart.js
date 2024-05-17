@@ -111,7 +111,7 @@ module.exports = function(RED) {
                     const now = Date.now();
                     if( node.steps )
                     {
-                        let last = context.get( "last" ) ?? {};
+                        let last = context.get( "last", node.contextStore ) ?? {};
                         const lv = last[msg.topic];
                         if( lv !== undefined && lv != number )
                         {
@@ -122,7 +122,7 @@ module.exports = function(RED) {
                             } );
                         }
                         last[msg.topic] = number;
-                        context.set( "last", last );
+                        context.set( "last", last, node.contextStore );
                     }
                     node.data.push( {
                         c: msg.topic,

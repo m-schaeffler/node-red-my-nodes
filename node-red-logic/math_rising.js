@@ -10,8 +10,7 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.threshold    = Number( config.threshold );
         this.consecutive  = Number( config.consecutive ?? 1 );
-        this.output       = config.output ?? "true";
-        this.outputType   = config.outputType ?? "bool";
+        this.output       = tools.convertTypedInput( config.output ?? "true", config.outputType ?? "bool" );
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
@@ -22,18 +21,6 @@ module.exports = function(RED) {
                 node.error(RED._("debug.invalid-exp", {error: this.property}));
                 return;
             }
-        }
-        switch( this.outputType )
-        {
-            case "num":
-                this.output = Number( this.output );
-                break;
-            case "bool":
-                this.output = tools.property2boolean( this.output );
-                break;
-            case "json":
-                this.output = JSON.parse( this.output );
-                break;
         }
         node.cntRise = 0;
         node.status( "" );

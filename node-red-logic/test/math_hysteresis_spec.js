@@ -27,9 +27,7 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('threshold_fall', NaN);
         n1.should.have.a.property('consecutive', 1);
         n1.should.have.a.property('outputRise', true);
-        n1.should.have.a.property('outputRiseType', "bool");
         n1.should.have.a.property('outputFall', false);
-        n1.should.have.a.property('outputFallType', "bool");
         n1.should.have.a.property('showState', false);
         done();
       }
@@ -85,9 +83,7 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('threshold_rise', 200);
         n1.should.have.a.property('threshold_fall', 100);
         n1.should.have.a.property('outputRise', 'Text R');
-        n1.should.have.a.property('outputRiseType', "str");
         n1.should.have.a.property('outputFall', 'Text F');
-        n1.should.have.a.property('outputFallType', "str");
       }
       catch(err) {
         done(err);
@@ -141,9 +137,7 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('threshold_fall', 100);
         n1.should.have.a.property('consecutive', 3);
         n1.should.have.a.property('outputRise', 42);
-        n1.should.have.a.property('outputRiseType', "num");
         n1.should.have.a.property('outputFall', -1);
-        n1.should.have.a.property('outputFallType', "num");
       }
       catch(err) {
         done(err);
@@ -178,9 +172,7 @@ describe( 'math_hysteresis Node', function () {
       });
       try {
         n1.should.have.a.property('outputRise', true);
-        n1.should.have.a.property('outputRiseType', "bool");
         n1.should.have.a.property('outputFall', false);
-        n1.should.have.a.property('outputFallType', "bool");
         done();
       }
       catch(err) {
@@ -220,9 +212,7 @@ describe( 'math_hysteresis Node', function () {
       });
       try {
         n1.should.have.a.property('outputRise', false);
-        n1.should.have.a.property('outputRiseType', "bool");
         n1.should.have.a.property('outputFall', true);
-        n1.should.have.a.property('outputFallType', "bool");
         done();
       }
       catch(err) {
@@ -271,9 +261,7 @@ describe( 'math_hysteresis Node', function () {
       });
       try {
         n1.should.have.a.property('outputRise', jsonR);
-        n1.should.have.a.property('outputRiseType', "json");
         n1.should.have.a.property('outputFall', jsonF);
-        n1.should.have.a.property('outputFallType', "json");
       }
       catch(err) {
         done(err);

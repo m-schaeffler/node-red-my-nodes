@@ -11,10 +11,8 @@ module.exports = function(RED) {
         this.threshold_rise = Number( config.threshold_raise );
         this.threshold_fall = Number( config.threshold_fall );
         this.consecutive    = Number( config.consecutive ?? 1 );
-        this.outputRise     = config.outputRise ?? "true";
-        this.outputRiseType = config.outputRiseType ?? "bool";
-        this.outputFall     = config.outputFall ?? "false";
-        this.outputFallType = config.outputFallType ?? "bool";
+        this.outputRise     = tools.convertTypedInput( config.outputRise ?? "true", config.outputRiseType ?? "bool" );
+        this.outputFall     = tools.convertTypedInput( config.outputFall ?? "false",config.outputFallType ?? "bool" );
         this.showState      = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
@@ -25,30 +23,6 @@ module.exports = function(RED) {
                 node.error(RED._("debug.invalid-exp", {error: this.property}));
                 return;
             }
-        }
-        switch( this.outputRiseType )
-        {
-            case "num":
-                this.outputRise = Number( this.outputRise );
-                break;
-            case "bool":
-                this.outputRise = tools.property2boolean( this.outputRise );
-                break;
-            case "json":
-                this.outputRise = JSON.parse( this.outputRise );
-                break;
-        }
-        switch( this.outputFallType )
-        {
-            case "num":
-                this.outputFall = Number( this.outputFall );
-                break;
-            case "bool":
-                this.outputFall = this.outputFall == "true";
-                break;
-            case "json":
-                this.outputFall = JSON.parse( this.outputFall );
-                break;
         }
         node.cntRise = 0;
         node.cntFall = 0;

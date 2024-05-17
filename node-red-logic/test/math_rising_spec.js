@@ -26,7 +26,6 @@ describe( 'math_rising Node', function () {
         n1.should.have.a.property('threshold', NaN);
         n1.should.have.a.property('consecutive', 1);
         n1.should.have.a.property('output', true);
-        n1.should.have.a.property('outputType', "bool");
         n1.should.have.a.property('showState', false);
         done();
       }
@@ -66,7 +65,6 @@ describe( 'math_rising Node', function () {
       try {
         n1.should.have.a.property('threshold', 100);
         n1.should.have.a.property('output', 'Text');
-        n1.should.have.a.property('outputType', "str");
       }
       catch(err) {
         done(err);
@@ -109,7 +107,6 @@ describe( 'math_rising Node', function () {
         n1.should.have.a.property('threshold', 100);
         n1.should.have.a.property('consecutive', 3);
         n1.should.have.a.property('output', 42);
-        n1.should.have.a.property('outputType', "num");
       }
       catch(err) {
         done(err);
@@ -144,7 +141,6 @@ describe( 'math_rising Node', function () {
       });
       try {
         n1.should.have.a.property('output', true);
-        n1.should.have.a.property('outputType', "bool");
       }
       catch(err) {
         done(err);
@@ -184,7 +180,6 @@ describe( 'math_rising Node', function () {
       });
       try {
         n1.should.have.a.property('output', false);
-        n1.should.have.a.property('outputType', "bool");
       }
       catch(err) {
         done(err);
@@ -220,7 +215,6 @@ describe( 'math_rising Node', function () {
       });
       try {
         n1.should.have.a.property('output', json);
-        n1.should.have.a.property('outputType', "json");
       }
       catch(err) {
         done(err);

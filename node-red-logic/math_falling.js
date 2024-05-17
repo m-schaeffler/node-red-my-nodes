@@ -1,4 +1,5 @@
 module.exports = function(RED) {
+    var tools = require('./tools.js');
 
     function FallingEdgeNode(config) {
         RED.nodes.createNode(this,config);
@@ -28,7 +29,7 @@ module.exports = function(RED) {
                 this.output = Number( this.output );
                 break;
             case "bool":
-                this.output = this.output == "true";
+                this.output = tools.property2boolean( this.output );
                 break;
             case "json":
                 this.output = JSON.parse( this.output );

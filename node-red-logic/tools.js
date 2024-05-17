@@ -58,6 +58,21 @@ exports.getPayload = function(node,msg,callback)
     }
 }
 
+exports.convertTypedInput = function(value,type)
+{
+    switch( type )
+    {
+        case "num":
+            return Number( value );
+        case "bool":
+            return exports.property2boolean( value );
+        case "json":
+            return JSON.parse( value );
+        default:
+            return value;
+    }
+}
+
 exports.distance = function(a,b)
 {
     return a>b ? a-b : b-a;

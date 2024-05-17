@@ -1,4 +1,5 @@
 module.exports = function(RED) {
+    var tools = require('./tools.js');
 
     function HysteresisEdgeNode(config) {
         RED.nodes.createNode(this,config);
@@ -31,7 +32,7 @@ module.exports = function(RED) {
                 this.outputRise = Number( this.outputRise );
                 break;
             case "bool":
-                this.outputRise = this.outputRise == "true";
+                this.outputRise = tools.property2boolean( this.outputRise );
                 break;
             case "json":
                 this.outputRise = JSON.parse( this.outputRise );

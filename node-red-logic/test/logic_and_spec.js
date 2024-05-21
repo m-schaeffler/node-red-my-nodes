@@ -35,7 +35,7 @@ describe( 'logic_and Node', function () {
   });
 
   it('should and two bool values, mindata=1', function (done) {
-    var flow = [{ id: "n1", type: "and", topic:"Oder", minData:"1", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "and", topic:"Und", minData:"1", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -44,7 +44,7 @@ describe( 'logic_and Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
-          msg.should.have.property('topic',"Oder");
+          msg.should.have.property('topic',"Und");
           msg.should.have.property('payload',c===4);
           msg.should.have.property('count',c===1?1:2);
           if( c === 5 )
@@ -71,7 +71,7 @@ describe( 'logic_and Node', function () {
   });
 
   it('should and two bool values, mindata=2', function (done) {
-    var flow = [{ id: "n1", type: "and", topic:"Oder", minData:"2", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "and", topic:"", minData:"2", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -80,7 +80,7 @@ describe( 'logic_and Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
-          msg.should.have.property('topic',"Oder");
+          msg.should.have.property('topic',c==2?"a":"b");
           msg.should.have.property('payload',c===3);
           msg.should.have.property('count',2);
           if( c === 4 )
@@ -241,6 +241,54 @@ describe( 'logic_and Node', function () {
       n1.receive({ topic: "a", payload: true });
       n1.receive({ topic: "b", payload: true });
       n1.receive({ topic: "c", payload: true });
+    });
+  });
+
+  it('should have reset with output', function (done) {
+    var flow = [{ id: "n1", type: "or", minData:"0", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('topic','a');
+              msg.should.have.property('payload',true);
+              msg.should.have.property('count',1);
+              break;
+            case 2:
+              msg.should.have.property('topic','init');
+              msg.should.have.property('payload',false);
+              msg.should.have.property('count',0);
+              break;
+            case 3:
+              msg.should.have.property('topic','s');
+              msg.should.have.property('payload',false);
+              msg.should.have.property('count',1);
+              done();
+              break;
+            default:
+              done("additinal message")
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('minData', 0);
+      }
+      catch(err) {
+        done(err);
+      }
+      n1.receive({ topic: "a", payload: true });
+      n1.receive({ reset: true });
+      n1.receive({ topic: "s", payload: false });
     });
   });
 

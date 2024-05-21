@@ -7,7 +7,7 @@
             topic:{value:""},
             property:{value:"payload", required:true},
             minData:{value:"1", required:true, validate:function(v){
-                return v!=='' && !isNaN(v) && Number(v)>0;
+                return v!=='' && !isNaN(v) && Number(v)>=0;
             }},
             filter:{value:false}
         },
@@ -91,7 +91,7 @@
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
         <dt>min. Data <span class="property-type">number</span></dt>
-        <dd> min. amount of topics to generate an output.</dd>
+        <dd> min. amount of topics to generate an output. If set to 0, the <code>reset</reset> command also generates a <code>false</code> output payload</dd>
         <dt>Filter <span class="property-type">boolean</span></dt>
         <dd> block sending of unchanged <code>property</code>.</dd>
     </dl>

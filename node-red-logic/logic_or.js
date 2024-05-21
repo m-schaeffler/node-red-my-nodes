@@ -20,7 +20,15 @@ module.exports = function(RED) {
             else if( msg.reset || msg.topic==="init" )
             {
                 context.set( "data", {} );
-                node.status( "" );
+                if( node.minData === 0 )
+                {
+                    send( { topic:node.topic||"init", payload:false, count:0 } );
+                    node.status( false );
+                }
+                else
+                {
+                    node.status( "" );
+                }
                 done();
             }
             else
@@ -33,7 +41,10 @@ module.exports = function(RED) {
                     data[msg.topic] = payload;
                     context.set( "data", data );
 
-                    msg.topic = node.topic;
+                    if( node.topic )
+                    {
+                        msg.topic = node.topic;
+                    }
                     msg.payload = false;
                     msg.count   = 0;
                     for( const item in data )

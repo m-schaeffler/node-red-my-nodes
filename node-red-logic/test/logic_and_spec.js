@@ -245,7 +245,7 @@ describe( 'logic_and Node', function () {
   });
 
   it('should have reset with output', function (done) {
-    var flow = [{ id: "n1", type: "or", minData:"0", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "and", minData:"0", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");

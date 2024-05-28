@@ -230,6 +230,93 @@ describe( 'collect_chart Node', function () {
     });
   });
 
+  it('should collect data with partial steps', function (done) {
+    this.timeout( 10000 );
+    const numbers1 = [0,0,0,10,10,5];
+    const numbers2 = [0,0,0,0,10,10,10,5];
+    const time = [0,200,400,570,600,800,970,1000];
+    const topics = [{topic:"direct"},{topic:"step",step:true}];
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "2", topics: JSON.stringify(topics), name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var cS = 0;
+      var cD = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload').which.is.an.Array().of.length(topics.length);
+              for( const i in topics )
+              {
+                msg.payload[i].should.match({c:topics[i].topic});
+              }
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+numbers1.length+numbers2.length);
+              for(const i in msg.payload)
+              {
+                if( i < 2 )
+                {
+                  msg.payload[i].should.match({c:topics[i].topic});
+                }
+                else
+                {
+                  const v = msg.payload[i];
+                  v.should.be.a.Object();
+                  switch( v.c )
+                  {
+                    case 'step':
+                      v.should.have.a.property('t').which.is.approximately(Date.now()-1250+time[cS],20);
+                      v.should.have.a.property('v',Number(numbers2[cS++]));
+                      break;
+                    case "direct":
+                      v.should.have.a.property('t').which.is.approximately(Date.now()-1250+cD*200,20);
+                      v.should.have.a.property('v',Number(numbers1[cD++]));
+                      break;
+                    default:
+                      done("wrong v.c");
+                  }
+                }
+              }
+              break;
+            default:
+              done("too much output messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('steps', false);
+        n1.should.have.a.property('topics', topics);
+        await delay(750);
+        c.should.match(1);
+        for( const i of numbers1 )
+        {
+          n1.receive({ topic:"step", payload: i });
+          n1.receive({ topic:"direct", payload: i });
+          await delay(200);
+        }
+        await delay(3750);
+        c.should.match(2);
+        should.exist( n1.context().get("last") );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should have preset topics', function (done) {
     this.timeout( 10000 );
     var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", topics: '["s1","s2"]', cyclic:"1", name: "test", wires: [["n2"]] },

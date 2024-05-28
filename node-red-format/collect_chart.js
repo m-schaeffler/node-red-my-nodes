@@ -32,11 +32,23 @@ module.exports = function(RED) {
 
         function getTopic(index)
         {
-            return node.topics[index];
+            const help = node.topics[index];
+            return help?.topic ?? help;
         };
         function isStep(topic)
         {
-            return node.steps || false;
+            if( node.steps )
+            {
+                return true;
+            }
+            for( const t of node.topics )
+            {
+                if( t?.topic === topic )
+                {
+                    return t?.step ?? false;
+                }
+            }
+            return false;
         };
 
         function createData()

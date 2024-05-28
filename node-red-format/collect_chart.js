@@ -28,6 +28,14 @@ module.exports = function(RED) {
         }
         this.onceTimeout = setTimeout( function() { node.emit("started"); }, 250 );
         this.interval_id = setInterval( function() { node.emit("cyclic"); }, this.cyclic*1000 + Math.random()*2*this.cycleJitter-this.cycleJitter );
+        this.topics.getTopic = function(index)
+        {
+            return node.topics[i];
+        };
+        this.topics.isStep = function(topic)
+        {
+            return false;
+        };
         node.status( "" );
 
         function createData()
@@ -35,9 +43,9 @@ module.exports = function(RED) {
             node.warn( "resetting chart!" );
             console.log( "createData" );
             let data = [];
-            for( const t of node.topics )
+            for( const i in node.topics )
             {
-                data.push( { c:t } );
+                data.push( { c:node.topics.getTopic( i ) } );
             }
             return data;
         }
@@ -109,7 +117,7 @@ module.exports = function(RED) {
                 if( ! isNaN( number ) )
                 {
                     const now = Date.now();
-                    if( node.steps )
+                    if( node.steps || node.topics.isStep( msg.topic ) )
                     {
                         let last = context.get( "last", node.contextStore ) ?? {};
                         const lv = last[msg.topic];
@@ -155,7 +163,7 @@ module.exports = function(RED) {
                         // overwrite topics, in case they were changed or added
                         for( const i in node.topics )
                         {
-                            node.data[i].c = node.topics[i];
+                            node.data[i].c = node.topics.getTopic( i );
                             if( node.data[i].t !== undefined )
                             {
                                 node.warn( "additional topic" );

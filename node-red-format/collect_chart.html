@@ -125,7 +125,7 @@
         <dt>Contextstore <span class="property-type">context store</span></dt>
         <dd> context store for storing the values; <code>none</code> is no storage.</dd>
         <dt>Topics <span class="property-type">JSON array</span></dt>
-        <dd> array of the serieses of the chart.</dd>
+        <dd> array of the serieses of the chart. They can be either a string with just the name or an object with values from the next chapter.</dd>
         <dt>Cyclic <span class="property-type">number</span></dt>
         <dd> cyclic time to send out the chart in seconds.</dd>
         <dt>Löschzyklen <span class="property-type">number</span></dt>
@@ -137,4 +137,14 @@
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>
+
+    <h4>Topics Object</h4>
+
+    <dl class="message-properties">
+        <dt>topics <span class="property-type">string</span></dt>
+        <dd> name of the series.</dd>
+        <dt>step <span class="property-type">boolean</span></dt>
+        <dd> make steps instead of linear chart.</dd>
+    </dl>
+
 </script>

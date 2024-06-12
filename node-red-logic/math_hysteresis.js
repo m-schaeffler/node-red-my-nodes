@@ -79,6 +79,7 @@ module.exports = function(RED) {
                             context.set( "data", data );
                             msg.payload = edge ? node.outputRise : node.outputFall;
                             msg.edge    = edge ? "rising" : 'falling';
+                            msg.init    = last === undefined;
                             send( msg );
                         }
 

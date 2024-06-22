@@ -25,7 +25,8 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('threshold_rise', NaN);
         n1.should.have.a.property('threshold_fall', NaN);
-        n1.should.have.a.property('consecutive', 1);
+        n1.should.have.a.property('consecutiveRise', 1);
+        n1.should.have.a.property('consecutiveFall', 1);
         n1.should.have.a.property('outputRise', true);
         n1.should.have.a.property('outputFall', false);
         n1.should.have.a.property('showState', false);
@@ -97,7 +98,7 @@ describe( 'math_hysteresis Node', function () {
 
   it('should respect consecutive parameter', function (done) {
     const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
-    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "42", outputRiseType:"num", outputFall: "-1", outputFallType:"num", name: "test", threshold_raise:"200", threshold_fall:"100", consecutive:"3", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "42", outputRiseType:"num", outputFall: "-1", outputFallType:"num", name: "test", threshold_raise:"200", threshold_fall:"100", consecutive:"3", consecutiveFall:"3", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
       var n2 = helper.getNode("n2");
@@ -135,7 +136,7 @@ describe( 'math_hysteresis Node', function () {
       try {
         n1.should.have.a.property('threshold_rise', 200);
         n1.should.have.a.property('threshold_fall', 100);
-        n1.should.have.a.property('consecutive', 3);
+        n1.should.have.a.property('consecutiveRise', 3);
         n1.should.have.a.property('outputRise', 42);
         n1.should.have.a.property('outputFall', -1);
       }

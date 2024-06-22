@@ -12,6 +12,7 @@
                 return v!=='' && !isNaN(v) && Number(v)<raise;}
             },
             consecutive:{value:"1",required:true},
+            consecutiveFall:{value:"1",required:true},
             outputRise:{value:true,required:true},
             outputRiseType:{value:"bool"},
             outputFall:{value:false,required:true},
@@ -69,8 +70,12 @@
         <input type="text" id="node-input-threshold_fall">
     </div>
     <div class="form-row">
-        <label for="node-input-consecutive"><i class="fa fa-line-chart"></i> Consecutive</label>
+        <label for="node-input-consecutive"><i class="fa fa-line-chart"></i> rise Consecutive</label>
         <input type="text" id="node-input-consecutive">
+    </div>
+    <div class="form-row">
+        <label for="node-input-consecutiveFall"><i class="fa fa-line-chart"></i> fall Consecutive</label>
+        <input type="text" id="node-input-consecutiveFall">
     </div>
     <div class="form-row">
         <label for="node-input-outputRise"><i class="fa fa-sign-out"></i> rise Output</label>
@@ -131,8 +136,10 @@
         <dd> threshold value for the rising edge detection.</dd>
         <dt>d(ow)n Threshold <span class="property-type">number</span></dt>
         <dd> threshold value for the falling edge detection.</dd>
-        <dt>Consecutive <span class="property-type">number</span></dt>
-        <dd> number of consecutive frames to generate an output.</dd>
+        <dt>rise Consecutive <span class="property-type">number</span></dt>
+        <dd> number of consecutive frames to generate a rising output.</dd>
+        <dt>fall Consecutive <span class="property-type">number</span></dt>
+        <dd> number of consecutive frames to generate a falling output.</dd>
         <dt>rise Output <span class="property-type">multi</span></dt>
         <dd> Value to be sent in case of a rising edge.</dd>
         <dt>fall Output <span class="property-type">multi</span></dt>

@@ -10,7 +10,8 @@ module.exports = function(RED) {
         this.propertyType   = config.propertyType ?? "msg";
         this.threshold_rise = Number( config.threshold_raise );
         this.threshold_fall = Number( config.threshold_fall );
-        this.consecutive    = Number( config.consecutive ?? 1 );
+        this.consecutiveRise= Number( config.consecutive ?? 1 );
+        this.consecutiveFall= Number( config.consecutiveFall ?? 1 );
         this.outputRise     = tools.convertTypedInput( config.outputRise ?? "true", config.outputRiseType ?? "bool" );
         this.outputFall     = tools.convertTypedInput( config.outputFall ?? "false",config.outputFallType ?? "bool" );
         this.showState      = Boolean( config.showState );
@@ -85,7 +86,7 @@ module.exports = function(RED) {
 
                         if( msg.value > node.threshold_rise && last !== true )
                         {
-                            if( ++node.cntRise >= node.consecutive )
+                            if( ++node.cntRise >= node.consecutiveRise )
                             {
                                 sendMsg( true );
                                 node.cntRise = 0;
@@ -98,7 +99,7 @@ module.exports = function(RED) {
                         }
                         else if( msg.value < node.threshold_fall && last !== false )
                         {
-                            if( ++node.cntFall >= node.consecutive )
+                            if( ++node.cntFall >= node.consecutiveFall )
                             {
                                 sendMsg( false );
                                 node.cntFall = 0;

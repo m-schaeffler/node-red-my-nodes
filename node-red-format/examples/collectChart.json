@@ -1,0 +1,153 @@
+[
+    {
+        "id": "d2c70f15483e6be5",
+        "type": "link in",
+        "z": "3cb244caffe73c40",
+        "name": "diagramm values",
+        "links": [
+            "a2493d53652e8e21",
+            "008f49b470e57e9f",
+            "a09a578d9bd516ed",
+            "5da5c693c6ce3eb8",
+            "19c274360f3e0ca3",
+            "5a1f4c21b912f4f5",
+            "14d1d3091db1351f",
+            "227f2873d7cda240"
+        ],
+        "x": 220,
+        "y": 1960,
+        "wires": [
+            [
+                "bbb8afe7ab471b47"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "aee7f8955e1da4ff",
+        "type": "ui-chart",
+        "z": "3cb244caffe73c40",
+        "group": "fdb68a8aaaba1b4c",
+        "name": "Diagramm",
+        "label": "",
+        "order": 1,
+        "chartType": "line",
+        "category": "c",
+        "categoryType": "property",
+        "xAxisLabel": "",
+        "xAxisProperty": "t",
+        "xAxisPropertyType": "msg",
+        "xAxisType": "time",
+        "yAxisLabel": "",
+        "yAxisProperty": "v",
+        "ymin": "",
+        "ymax": "",
+        "action": "replace",
+        "pointShape": "false",
+        "pointRadius": 4,
+        "showLegend": true,
+        "removeOlder": "24",
+        "removeOlderUnit": "3600",
+        "removeOlderPoints": "",
+        "colors": [
+            "#1f77b4",
+            "#ffff00",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "width": "8",
+        "height": "9",
+        "className": "",
+        "x": 630,
+        "y": 1960,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bbb8afe7ab471b47",
+        "type": "collectChart",
+        "z": "3cb244caffe73c40",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "contextStore": "storeInFileSlow",
+        "topics": "[\"Batteriespannung\",\"Netzteiltemperatur\",\"SOC\",\"Laden\",\"PvHeater\",\"Fenecon\"]",
+        "cyclic": "30",
+        "eraseCycles": "10",
+        "hours": "3",
+        "steps": false,
+        "showState": true,
+        "x": 430,
+        "y": 1960,
+        "wires": [
+            [
+                "aee7f8955e1da4ff"
+            ]
+        ]
+    },
+    {
+        "id": "fdb68a8aaaba1b4c",
+        "type": "ui-group",
+        "name": "Diagramm",
+        "page": "ca20ba318e11126a",
+        "width": "8",
+        "height": "1",
+        "order": 5,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "ca20ba318e11126a",
+        "type": "ui-page",
+        "name": "Speicher",
+        "ui": "fd06eabec55c4e5d",
+        "path": "/speicher",
+        "icon": "battery-outline",
+        "layout": "flex",
+        "theme": "a965ccfef139317a",
+        "order": 2,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "fd06eabec55c4e5d",
+        "type": "ui-base",
+        "name": "Dashboard 2.0",
+        "path": "/dashboard",
+        "includeClientData": true,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "navigationStyle": "default",
+        "titleBarStyle": "fixed"
+    },
+    {
+        "id": "a965ccfef139317a",
+        "type": "ui-theme",
+        "name": "Default",
+        "colors": {
+            "surface": "#6db046",
+            "primary": "#32cd32",
+            "bgPage": "#000000",
+            "groupBg": "#333333",
+            "groupOutline": "#616161"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px"
+        }
+    }
+]

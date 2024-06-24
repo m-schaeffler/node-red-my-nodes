@@ -1,8 +1,6 @@
 # @mschaeffler/node-red-format
 
-Nodes to format simnple data.
-
-![image of nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/format.png)
+Nodes to format data for dashboard 2.0.
 
 If the msg property `invalid` is present in the message, all nodes ignore the message.
 
@@ -15,6 +13,8 @@ $ npm install @mschaeffler/node-red-format
 ## formNumber
 
 Formats the payload as a number.
+
+![image of nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/format.png)
 
 ### Input
 
@@ -42,9 +42,49 @@ This value is then
 |Status|boolean|shows the actual value as a node status.|
 |Filter|boolean|block sending of unchanged `payload`.|
 
-## Example Flow
+### Example Flow
+
+Aggregates data series for a chart of dashboard 2.0.
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/format.json)
+
+## collectChart
+
+Formats the payload as a number.
+
+![image of nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/collectChart.png)
+
+### Input
+
+The message property to be used as payload can be defined with the `Property` property.
+
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|topic   | string | series of the input value.|
+|payload | string | input value.|
+
+### Output
+
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|payload | array | formated value for the dashboard 2.0 chart|
+
+### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
+|Contextstore|context store|context store for storing the values; `none` is no storage.|
+|Topics|JSON array|array of the serieses of the chart. They can be either a string with just the name or an object with values from the next chapter.|
+|Cyclic|number|cyclic time to send out the chart in seconds.|
+|Löschzyklen |number| every how many `cycles` old data is deleted from the chart.|
+|Hours|number|how many hours the chart should span over.|
+|Steps|boolean|make steps instead of linear chart.|
+|Status|boolean|shows the actual value as a node status.|
+
+### Example Flow
+
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/collectChart.json)
 
 ## Author
 

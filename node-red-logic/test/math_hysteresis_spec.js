@@ -137,6 +137,7 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('threshold_rise', 200);
         n1.should.have.a.property('threshold_fall', 100);
         n1.should.have.a.property('consecutiveRise', 3);
+        n1.should.have.a.property('consecutiveFall', 3);
         n1.should.have.a.property('outputRise', 42);
         n1.should.have.a.property('outputFall', -1);
       }
@@ -164,16 +165,21 @@ describe( 'math_hysteresis Node', function () {
           switch( c )
           {
              case 1:
+               msg.should.have.property('payload',-1);
+               msg.should.have.property('value',10);
+               msg.should.have.property('edge','falling');
+               break;
+             case 2:
                msg.should.have.property('payload',42);
                msg.should.have.property('value',252);
                msg.should.have.property('edge','rising');
                break;
-             case 2:
+             case 3:
                msg.should.have.property('payload',-1);
-               msg.should.have.property('value',2);
+               msg.should.have.property('value',0);
                msg.should.have.property('edge','falling');
                break;
-             case 3:
+             case 4:
                msg.should.have.property('payload',42);
                msg.should.have.property('value',302);
                msg.should.have.property('edge','rising');
@@ -205,7 +211,7 @@ describe( 'math_hysteresis Node', function () {
   });
 
   it('should respect consecutiveFall parameter', function (done) {
-    const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
+    const numbers = [150,10,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,300,301,302];
     var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "42", outputRiseType:"num", outputFall: "-1", outputFallType:"num", name: "test", threshold_raise:"200", threshold_fall:"100", consecutiveFall:"3", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
@@ -219,7 +225,7 @@ describe( 'math_hysteresis Node', function () {
           {
              case 1:
                msg.should.have.property('payload',42);
-               msg.should.have.property('value',252);
+               msg.should.have.property('value',250);
                msg.should.have.property('edge','rising');
                break;
              case 2:
@@ -229,7 +235,7 @@ describe( 'math_hysteresis Node', function () {
                break;
              case 3:
                msg.should.have.property('payload',42);
-               msg.should.have.property('value',302);
+               msg.should.have.property('value',300);
                msg.should.have.property('edge','rising');
                done();
                break;
@@ -244,7 +250,7 @@ describe( 'math_hysteresis Node', function () {
       try {
         n1.should.have.a.property('threshold_rise', 200);
         n1.should.have.a.property('threshold_fall', 100);
-        n1.should.have.a.property('consecutiveRise', 3);
+        n1.should.have.a.property('consecutiveFall', 3);
         n1.should.have.a.property('outputRise', 42);
         n1.should.have.a.property('outputFall', -1);
       }

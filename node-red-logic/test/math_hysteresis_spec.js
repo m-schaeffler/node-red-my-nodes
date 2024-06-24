@@ -150,6 +150,114 @@ describe( 'math_hysteresis Node', function () {
     });
   });
 
+  it('should respect consecutiveRise parameter', function (done) {
+    const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
+    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "42", outputRiseType:"num", outputFall: "-1", outputFallType:"num", name: "test", threshold_raise:"200", threshold_fall:"100", consecutive:"3", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          c++;
+          switch( c )
+          {
+             case 1:
+               msg.should.have.property('payload',42);
+               msg.should.have.property('value',252);
+               msg.should.have.property('edge','rising');
+               break;
+             case 2:
+               msg.should.have.property('payload',-1);
+               msg.should.have.property('value',2);
+               msg.should.have.property('edge','falling');
+               break;
+             case 3:
+               msg.should.have.property('payload',42);
+               msg.should.have.property('value',302);
+               msg.should.have.property('edge','rising');
+               done();
+               break;
+             default:
+               done("too much messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('threshold_rise', 200);
+        n1.should.have.a.property('threshold_fall', 100);
+        n1.should.have.a.property('consecutiveRise', 3);
+        n1.should.have.a.property('outputRise', 42);
+        n1.should.have.a.property('outputFall', -1);
+      }
+      catch(err) {
+        done(err);
+      }
+      for( const i of numbers )
+      {
+        n1.receive({ payload: i });
+      }
+    });
+  });
+
+  it('should respect consecutiveFall parameter', function (done) {
+    const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
+    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "42", outputRiseType:"num", outputFall: "-1", outputFallType:"num", name: "test", threshold_raise:"200", threshold_fall:"100", consecutiveFall:"3", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          c++;
+          switch( c )
+          {
+             case 1:
+               msg.should.have.property('payload',42);
+               msg.should.have.property('value',252);
+               msg.should.have.property('edge','rising');
+               break;
+             case 2:
+               msg.should.have.property('payload',-1);
+               msg.should.have.property('value',2);
+               msg.should.have.property('edge','falling');
+               break;
+             case 3:
+               msg.should.have.property('payload',42);
+               msg.should.have.property('value',302);
+               msg.should.have.property('edge','rising');
+               done();
+               break;
+             default:
+               done("too much messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('threshold_rise', 200);
+        n1.should.have.a.property('threshold_fall', 100);
+        n1.should.have.a.property('consecutiveRise', 3);
+        n1.should.have.a.property('outputRise', 42);
+        n1.should.have.a.property('outputFall', -1);
+      }
+      catch(err) {
+        done(err);
+      }
+      for( const i of numbers )
+      {
+        n1.receive({ payload: i });
+      }
+    });
+  });
+
   it('should not forward invalid data', function (done) {
     var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

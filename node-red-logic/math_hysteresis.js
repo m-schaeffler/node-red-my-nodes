@@ -75,7 +75,7 @@ module.exports = function(RED) {
 
                         function sendMsg(edge)
                         {
-                            status.fill = edge ? "green" : "gray";
+                            status.fill = edge ? "red" : "blue";
                             data[msg.topic] = { edge:edge, status:status.fill };
                             context.set( "data", data );
                             msg.payload = edge ? node.outputRise : node.outputFall;
@@ -93,7 +93,7 @@ module.exports = function(RED) {
                             }
                             else
                             {
-                                status.fill = "yellow";
+                                status.fill = "gray";
                             }
                             node.cntFall = 0;
                         }
@@ -106,7 +106,7 @@ module.exports = function(RED) {
                             }
                             else
                             {
-                                status.fill = "yellow";
+                                status.fill = "gray";
                             }
                             node.cntRise = 0;
                         }

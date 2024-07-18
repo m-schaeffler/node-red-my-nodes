@@ -111,7 +111,7 @@ module.exports = function(RED) {
                     {
                         if( err )
                         {
-                            done( RED._("debug.invalid-exp", {error: editExpression}) );
+                            done( err.message );
                         }
                         else
                         {

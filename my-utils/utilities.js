@@ -64,25 +64,33 @@ exports.number2color = function(number,low,high)
         return '';
 }
 
+exports.int2CC = function(i,space=false)
+{
+    return i < 10 ? ( space ? "\u2007" : "0" ) + i : i;
+}
+
+exports.int2CCC = function(i,space=false)
+{
+    return i < 100 ? ( space ? "\u2007" : "0" ) + exports.int2CC( i ) : i;
+}
+
+exports.date2dateStr = function(date)
+{
+    return `${exports.int2CC(date.getDate())}:${exports.int2CC(date.getMonth()+1)}:${date.getFullYear()}`;
+}
+
+exports.date2timeStr = function(date,space=true)
+{
+    return `${exports.int2CC(date.getHours(),space)}:${exports.int2CC(date.getMinutes())}`;
+}
+
 exports.formatTime = function(time)
 {
     if( time )
     {
         const d     = (time instanceof Date) ? time : new Date( time );
         const delta = Date.now() - d;
-        if( delta < 48*3600*1000 )
-        {
-            let min = d.getMinutes();
-            if( min < 10 )
-            {
-                min = "0"+min;
-            }
-            return `${d.getHours()}:${min}`;
-        }
-        else
-        {
-            return `${d.getDate()}.${d.getMonth()+1}.`;
-        }
+        return delta < 48*3600*1000 ? exports.date2timeStr(d) : `${d.getDate()}.${d.getMonth()+1}.`;
     }
     else
     {

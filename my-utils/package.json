@@ -1,6 +1,6 @@
 {
   "name": "myUtils",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "utility functions for node red.",
   "license": "LGPL-2.1",
   "private": true,

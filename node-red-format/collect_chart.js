@@ -188,7 +188,7 @@ module.exports = function(RED) {
                         // check for deleted topics
                         while( node.data[node.topics.length] && node.data[node.topics.length].t === undefined )
                         {
-                            node.warn( "susplus topic deleted" );
+                            node.warn( "surplus topic deleted" );
                             console.log( "topic deleted" );
                             node.data.splice( node.topics.length, 1 );
                         }

@@ -204,7 +204,7 @@ module.exports = function(RED) {
         node.on('cyclic', function() {
             node.cycleCounter++;
             //console.log( "collect chart cyclic "+node.cycleCounter+" "+node.newData );
-            const dateStart = Date.now() - node.hours * 3600*1000;
+            let dateStart = Date.now() - node.hours * 3600*1000;
             if( node.cycleCounter >= node.eraseCycles )
             {
                 node.cycleCounter = 0;
@@ -221,6 +221,7 @@ module.exports = function(RED) {
                     node.newData = true;
                 }
             }
+            dateStart -= node.eraseCycles * node.cyclic * 1000;
             if( node.newData )
             {
                 for( const i in node.topics )

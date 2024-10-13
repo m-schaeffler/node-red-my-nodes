@@ -326,14 +326,18 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         try {
           c++;
           c.should.match(1);
           msg.should.have.property('init',true);
           msg.should.have.property('payload').which.is.an.Array().of.length(2);
-          msg.payload[0].should.match({c:"s1"});
-          msg.payload[1].should.match({c:"s2"});
+          msg.payload[0].should.have.a.property('c',"s1");
+          msg.payload[0].should.have.a.property('t',null);
+          msg.payload[0].should.not.have.a.property('v');
+          msg.payload[1].should.have.a.property('c',"s2");
+          msg.payload[1].should.have.a.property('t',null);
+          msg.payload[1].should.not.have.a.property('v');
         }
         catch(err) {
           done(err);
@@ -824,7 +828,9 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length);
               for( const i in topics )
               {
-                msg.payload[i].should.match({c:topics[i]});
+                msg.payload[i].should.have.a.property('c',topics[i]);
+                msg.payload[i].should.have.a.property('t',null);
+                msg.payload[i].should.not.have.a.property('v');
               }
               break;
             case 2:
@@ -887,7 +893,9 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                msg.payload[i].should.match({c:topics[i]});
+                msg.payload[i].should.have.a.property('c',topics[i]);
+                msg.payload[i].should.have.a.property('t',null);
+                msg.payload[i].should.not.have.a.property('v');
               }
               break;
             case 2:
@@ -952,7 +960,9 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                msg.payload[i].should.match({c:topics[i]});
+                msg.payload[i].should.have.a.property('c',topics[i]);
+                msg.payload[i].should.have.a.property('t',null);
+                msg.payload[i].should.not.have.a.property('v');
               }
               break;
             case 2:
@@ -1017,7 +1027,9 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                msg.payload[i].should.match({c:topics[i]});
+                msg.payload[i].should.have.a.property('c',topics[i]);
+                msg.payload[i].should.have.a.property('t',null);
+                msg.payload[i].should.not.have.a.property('v');
               }
               break;
             case 2:

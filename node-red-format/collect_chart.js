@@ -223,6 +223,10 @@ module.exports = function(RED) {
             }
             if( node.newData )
             {
+                for( const i in node.topics )
+                {
+                    node.data[i].t = dateStart;
+                }
                 node.send( { payload:node.data } );
                 node.newData = false;
             }

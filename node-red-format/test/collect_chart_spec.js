@@ -860,7 +860,7 @@ describe( 'collect_chart Node', function () {
           const v = q[i];
           v.should.be.a.Object();
           v.should.have.a.property('c',topics[i]);
-          v.should.have.a.property('t',null);
+          v.should.have.a.property('t').which.is.approximately(Date.now()-24*3600*1000-2510,20);
           v.should.not.have.a.property('v');
         }
         done();
@@ -925,7 +925,7 @@ describe( 'collect_chart Node', function () {
           const v = q[i];
           v.should.be.a.Object();
           v.should.have.a.property('c',topics[i]);
-          v.should.have.a.property('t',null);
+          v.should.have.a.property('t').which.is.approximately(Date.now()-24*3600*1000-2510,20);
           v.should.not.have.a.property('v');
         }
         q[4].should.match({c:'old',t:0,v:0});
@@ -992,7 +992,7 @@ describe( 'collect_chart Node', function () {
           const v = q[i];
           v.should.be.a.Object();
           v.should.have.a.property('c',topics[i]);
-          v.should.have.a.property('t',null);
+          v.should.have.a.property('t').which.is.approximately(Date.now()-24*3600*1000-2510,20);
           v.should.not.have.a.property('v');
         }
         q[4].should.match({c:'old',t:0,v:0});
@@ -1059,7 +1059,7 @@ describe( 'collect_chart Node', function () {
           const v = q[i];
           v.should.be.a.Object();
           v.should.have.a.property('c',topics[i]);
-          v.should.have.a.property('t',null);
+          v.should.have.a.property('t').which.is.approximately(Date.now()-24*3600*1000-2510,20);
           v.should.not.have.a.property('v');
         }
         q[4].should.match({c:'old',t:0,v:0});

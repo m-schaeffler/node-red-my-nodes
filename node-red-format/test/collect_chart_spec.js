@@ -840,7 +840,7 @@ describe( 'collect_chart Node', function () {
       try {
         n1.should.have.a.property('topics', topics);
         n1.should.have.a.property('contextStore', 'memoryOnly');
-        n1.context().set("data", [{c:'old'},{c:'old2'}], "memoryOnly");
+        n1.context().set("data", [{c:'old',t:null},{c:'old2',t:null}], "memoryOnly");
         await delay(750);
         c.should.match(1);
         n1.receive({ topic:"end", payload: 255 });
@@ -854,7 +854,7 @@ describe( 'collect_chart Node', function () {
           const v = q[i];
           v.should.be.a.Object();
           v.should.have.a.property('c',topics[i]);
-          v.should.not.have.a.property('t');
+          v.should.have.a.property('t',null);
           v.should.not.have.a.property('v');
         }
         done();
@@ -903,7 +903,7 @@ describe( 'collect_chart Node', function () {
       try {
         n1.should.have.a.property('topics', topics);
         n1.should.have.a.property('contextStore', 'memoryOnly');
-        n1.context().set("data", [{c:'old'},{c:'old2'},{c:'old3'},{c:'old4'},{c:'old',t:0,v:0},{c:'old',t:100,v:100}], "memoryOnly");
+        n1.context().set("data", [{c:'old',t:null},{c:'old2',t:null},{c:'old3',t:null},{c:'old4',t:null},{c:'old',t:0,v:0},{c:'old',t:100,v:100}], "memoryOnly");
         await delay(750);
         c.should.match(1);
         n1.receive({ topic:"end", payload: 255 });
@@ -917,7 +917,7 @@ describe( 'collect_chart Node', function () {
           const v = q[i];
           v.should.be.a.Object();
           v.should.have.a.property('c',topics[i]);
-          v.should.not.have.a.property('t');
+          v.should.have.a.property('t',null);
           v.should.not.have.a.property('v');
         }
         q[4].should.match({c:'old',t:0,v:0});
@@ -968,7 +968,7 @@ describe( 'collect_chart Node', function () {
       try {
         n1.should.have.a.property('topics', topics);
         n1.should.have.a.property('contextStore', 'memoryOnly');
-        n1.context().set("data", [{c:'a'},{c:'b'},{c:'c'},{c:'toDelete',t:-1,v:-1},{c:'old',t:0,v:0},{c:'old',t:100,v:100}], "memoryOnly");
+        n1.context().set("data", [{c:'a',t:null},{c:'b',t:null},{c:'c',t:null},{c:'toDelete',t:-1,v:-1},{c:'old',t:0,v:0},{c:'old',t:100,v:100}], "memoryOnly");
         await delay(750);
         c.should.match(1);
         n1.receive({ topic:"end", payload: 255 });
@@ -982,7 +982,7 @@ describe( 'collect_chart Node', function () {
           const v = q[i];
           v.should.be.a.Object();
           v.should.have.a.property('c',topics[i]);
-          v.should.not.have.a.property('t');
+          v.should.have.a.property('t',null);
           v.should.not.have.a.property('v');
         }
         q[4].should.match({c:'old',t:0,v:0});
@@ -1033,7 +1033,7 @@ describe( 'collect_chart Node', function () {
       try {
         n1.should.have.a.property('topics', topics);
         n1.should.have.a.property('contextStore', 'memoryOnly');
-        n1.context().set("data", [{c:'a'},{c:'b'},{c:'c'},{c:'d'},{c:'e'},{c:'old',t:0,v:0},{c:'old',t:100,v:100}], "memoryOnly");
+        n1.context().set("data", [{c:'a',t:null},{c:'b',t:null},{c:'c',t:null},{c:'d',t:null},{c:'e',t:null},{c:'old',t:0,v:0},{c:'old',t:100,v:100}], "memoryOnly");
         await delay(750);
         c.should.match(1);
         n1.receive({ topic:"end", payload: 255 });
@@ -1047,7 +1047,7 @@ describe( 'collect_chart Node', function () {
           const v = q[i];
           v.should.be.a.Object();
           v.should.have.a.property('c',topics[i]);
-          v.should.not.have.a.property('t');
+          v.should.have.a.property('t',null);
           v.should.not.have.a.property('v');
         }
         q[4].should.match({c:'old',t:0,v:0});

@@ -58,7 +58,7 @@ module.exports = function(RED) {
             let data = [];
             for( const i in node.topics )
             {
-                data.push( { c:getTopic( i ) } );
+                data.push( { c:getTopic( i ), t:null } );
             }
             return data;
         }
@@ -177,16 +177,16 @@ module.exports = function(RED) {
                         for( const i in node.topics )
                         {
                             node.data[i].c = getTopic( i );
-                            if( node.data[i].t !== undefined )
+                            if( node.data[i].v !== undefined )
                             {
                                 node.warn( "additional topic" );
                                 console.log( "additional topic" );
-                                delete node.data[i].t;
+                                node.data[i].t = null;
                                 delete node.data[i].v;
                             }
                         }
                         // check for deleted topics
-                        while( node.data[node.topics.length] && node.data[node.topics.length].t === undefined )
+                        while( node.data[node.topics.length] && node.data[node.topics.length].v === undefined )
                         {
                             node.warn( "surplus topic deleted" );
                             console.log( "topic deleted" );
@@ -204,13 +204,13 @@ module.exports = function(RED) {
         node.on('cyclic', function() {
             node.cycleCounter++;
             //console.log( "collect chart cyclic "+node.cycleCounter+" "+node.newData );
+            const dateStart = Date.now() - node.hours * 3600*1000;
             if( node.cycleCounter >= node.eraseCycles )
             {
                 node.cycleCounter = 0;
-                const date  = Date.now() - node.hours * 3600*1000;
                 const start = node.topics.length;
                 let   end   = start;
-                while( node.data[end]?.t < date )
+                while( node.data[end]?.t < dateStart )
                 {
                     end++;
                 }

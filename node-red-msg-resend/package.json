@@ -1,0 +1,36 @@
+{
+    "name"         : "@mschaeffler/node-red-msg-resend",
+    "version"      : "2.0.0",
+    "description"  : "A Node Red node to resend flow messages",
+    "author": {
+        "name": "Mathias Schäffler",
+        "url": "https://github.com/m-schaeffler"
+    },
+    "contributors": [
+        {
+            "name": "Bart Butenaers"
+        }
+    ],
+    "license": "Apache-2.0",
+    "keywords": [ "node-red", "clone", "duplicate", "resend", "repeat" ],
+    "bugs": {
+        "url": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-msg-resend/issues"
+    },
+    "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-msg-resend",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/m-schaeffler/node-red-my-nodes.git"
+    },
+    "node-red": {
+        "version": ">=4.0.0",
+        "nodes": {
+            "msg-resend2": "msg_resend.js"
+        }
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "test": "mocha \"test/*_spec.js\""
+    }
+}

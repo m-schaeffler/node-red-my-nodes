@@ -1,0 +1,75 @@
+<script type="text/javascript">
+    RED.nodes.registerType('msg-resend2',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            interval: {value:5,required:true,validate:RED.validators.number()},
+            intervalUnit: {value:"secs"},
+            maximum: {value:5,validate:RED.validators.number()},
+            bytopic: {value:false},
+            clone: {value:false},
+            firstDelayed: {value:false},
+            addCounters: {value:false},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "resend.png",
+        label: function() {
+            return this.name||"msg-resend";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "msg-resend",
+        inputLabels: 'input',
+        outputLabels: 'message'
+    });
+</script>
+
+<script type="text/x-red" data-template-name="msg-resend">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-interval"><i class="fa fa-tasks"></i> Interval</label>
+        <input type="number" id="node-input-interval" style="width:180px;" placeholder="Interval">
+        <select id="node-input-intervalUnit" style="width:120px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-maximum"><i class="fa fa-hashtag"></i> Max. count</label>
+        <input type="number" id="node-input-maximum" placeholder="Max. count">
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-bytopic" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-bytopic" style="width:70%;">Topic dependent</label>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-clone" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-clone" style="width:70%;">Force cloning</label>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-firstDelayed" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-firstDelayed" style="width:70%;">Send first message after interval</label>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-addCounters" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-addCounters" style="width:70%;">Add counters to output message</label>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="msg-resend">
+    <p>A simple node to resend input messages.</p>
+    <p>When a new input message arrives, it will be (re)sent to the output port at specified time intervals.
+    This process will repeat until the next input message arrives, or until the maximum number of resends has been reached.</p>
+</script>

@@ -10,7 +10,7 @@ module.exports = function(RED) {
         this.firstDelayed = Boolean( config.firstDelayed );
         this.byTopic      = Boolean( config.bytopic );
         this.addCounters  = Boolean( config.addCounters );
-        this.timers       = {};
+        this.data         = {};
         switch( config.intervalUnit ?? "secs" )
         {
             case "secs":
@@ -45,19 +45,18 @@ module.exports = function(RED) {
 
         node.on('started', function() {
             console.log( "msg-resend started" );
+            context.set( "data", node.data );
         });
 
         node.on('input', function(msg,send,done) {
+            console.log( "msg-resend input" );
+            console.log( node.data );
             const topic     = node.byTopic ? msg.topic : "all_topics";
-            let   data      = context.get( "data" ) ?? {};
-            console.log("data");
-            console.log(data);
-            let   statistic = data[topic];
+            let   statistic = node.data[topic];
             if( statistic === undefined )
             {
                 statistic = { interval: node.interval, maxCount: node.maxCount };
-                data[topic] = statistic;
-                context.set( "data", data );
+                node.data[topic] = statistic;
             }
 
             /*
@@ -97,15 +96,15 @@ module.exports = function(RED) {
                 }
                 //statistic.previousTimestamp = msgTimestamp;
 
-                if( node.timers[topic] )
+                if( statistic.timer )
                 {
-                    console.log("msg-.resend clear timer "+topic);
-                    clearInterval( node.timers[topic] );
-                    //node.timers[topic] = null;
+                    console.log("msg-resend clear timer "+topic);
+                    clearInterval( statistic.timer );
+                    //statistic.timer = null;
                 }
-                node.timers[topic] = setInterval( function(stat) {
+                statistic.timer = setInterval( function(stat) {
                     console.log("timer")
-                    node.emit( "cyclic", topic );
+                    node.emit( "cyclic", stat );
                 /*
                     if (Date.now() - node.displayTimestamp > 500 ) {
                         node.status({});
@@ -165,22 +164,22 @@ module.exports = function(RED) {
             done();
         });
 
-        node.on( "cyclic", function(topic) {
-            console.log("msg-resend cyclic "+topic);
+        node.on( "cyclic", function(stat) {
+            console.log("msg-resend cyclic "+stat.message.topic);
             if( false )
             {}
             else
             {
-                clearInterval( node.timers[topic] );
-                node.timers[topic] = null;
+                clearInterval( stat.timer );
+                stat.timer = null;
             }
         } );
 
         node.on( "close", function() {
             console.log("msg-resend close");
-            for( const i in node.timers )
+            for( const i in node.data )
             {
-                clearInterval( node.timers[i] );
+                clearInterval( node.data[i].timer );
             }
         } );
     }

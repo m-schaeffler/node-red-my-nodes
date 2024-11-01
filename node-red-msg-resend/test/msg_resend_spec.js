@@ -85,17 +85,17 @@ describe( 'msg-resend Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
-        c++;
+        //console.log(msg);
         try {
-          msg.should.have.a.property('topic',c==1?'t':'u');
-          msg.should.have.a.property('payload',c);
+          msg.should.have.a.property('topic',c==0?'t':'u');
+          msg.should.have.a.property('payload',c+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
         catch(err) {
           done(err);
         }
+        c++;
       });
       try {
         n1.should.have.a.property('interval', 100);
@@ -111,6 +111,54 @@ describe( 'msg-resend Node', function () {
         await delay(500);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(4);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
+  it('should resend messages', function (done) {
+    this.timeout( 5000 );
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:3, wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          msg.should.have.a.property('topic',c<3?'t':'u');
+          msg.should.have.a.property('payload',Math.trunc(c/3)+1);
+          msg.should.not.have.a.property('counter');
+          msg.should.not.have.a.property('max');
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('interval', 100);
+        n1.should.have.a.property('maxCount', 3);
+        await delay(500);
+        should.exist( n1.context().get("data") );
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(500);
+        checkData( n1.context().get("data"), "all_topics" );
+        c.should.match(3);
+        n1.receive({ topic: "u", payload: 2 });
+        await delay(500);
+        checkData( n1.context().get("data"), "all_topics" );
+        c.should.match(6);
+        n1.receive({ topic: "u", payload: 3 });
+        await delay(500);
+        checkData( n1.context().get("data"), "all_topics" );
+        c.should.match(9);
         done();
       }
       catch(err) {

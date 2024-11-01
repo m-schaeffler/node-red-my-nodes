@@ -50,7 +50,7 @@ module.exports = function(RED) {
 
         node.on('input', function(msg,send,done) {
             console.log( "msg-resend input" );
-            console.log( node.data );
+            //console.log( node.data );
             const topic     = node.byTopic ? msg.topic : "all_topics";
             let   statistic = node.data[topic];
             if( statistic === undefined )
@@ -59,32 +59,14 @@ module.exports = function(RED) {
                 node.data[topic] = statistic;
             }
 
-            /*
-            // Programmatic control of resend interval using message parameter (which is stored per topic)
-            if (msg.hasOwnProperty("resend_interval")) {
-                if (!isNaN(msg.resend_interval) && isFinite(msg.resend_interval)) {
-                    // The timer should be restarted when a new resend interval is specified
-                    / *if (statistic.interval != msg.resend_interval * 1000) {
-                        restartTimer = true;
-                    } * /
-
-                    statistic.interval = msg.resend_interval * 1000; // In milliseconds
-                }
-                else {
-                    this.error("resend_interval is not a numeric value", msg);
-                }
+            if( msg.resend_interval !== undefined )
+            {
+                statistic.interval = Number( msg.resend_interval ) ?? node.interval;
             }
-
-            // Programmatic control of max.count using message parameter (which is stored per topic)
-            if (msg.hasOwnProperty("resend_max_count")) {
-                if (!isNaN(msg.resend_max_count) && isFinite(msg.resend_max_count)) {
-                    statistic.maximumCount = msg.resend_max_count;
-                }
-                else {
-                    this.error("resend_max_count is not a numeric value", msg);
-                }
+            if( msg.resend_max_count !== undefined )
+            {
+                statistic.maximumCount = Number( msg.resend_max_count ) ?? node.maxCount;
             }
-            */
 
             if( msg.payload !== undefined )
             {
@@ -94,7 +76,6 @@ module.exports = function(RED) {
                 {
                     sendMsg( statistic );
                 }
-                //statistic.previousTimestamp = msgTimestamp;
 
                 if( statistic.timer )
                 {
@@ -102,43 +83,7 @@ module.exports = function(RED) {
                     clearInterval( statistic.timer );
                     //statistic.timer = null;
                 }
-                statistic.timer = setInterval( function(stat) {
-                    console.log("timer")
-                    node.emit( "cyclic", stat );
-                /*
-                    if (Date.now() - node.displayTimestamp > 500 ) {
-                        node.status({});
-                    }
-
-                    if(statistic.maximumCount > 0 && statistic.counter >= statistic.maximumCount) {
-                        // The maximum number of messages has been send, so stop the timer (for the last received input message).
-                        clearInterval(statistic.timer);
-
-                        // Reset the calculated values of the statistic, since those are not needed anymore.
-                        // Keep the other values unchanged, because they might have been updated via input messages...
-                        statistic.counter = 0
-                        statistic.previousTimestamp = 0
-                        statistic.timer = 0;
-
-                        // Only update the node status if all messages (for all topics) have been resend
-                        var runningStatsCount = 0;
-                        for (var stat of node.statistics.values()) {
-                            if (stat.timer != 0) {
-                                runningStatsCount++;
-                            }
-                        }
-
-                        if (runningStatsCount === 0) {
-                            node.status({fill:"green",shape:"dot",text:"maximum reached"});
-                        }
-
-                        done();
-                    }
-                    else {
-                        sendMsg(msg, node, statistic, send, done);
-                    }
-                    */
-                }, statistic.interval, statistic );
+                statistic.timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, statistic.interval, statistic );
 /*
             // When being in pass-through mode, simply send the message to the output once (unless the msg has been forced to be resend already).
             // Don't send the message when it should be ignored.
@@ -166,8 +111,10 @@ module.exports = function(RED) {
 
         node.on( "cyclic", function(stat) {
             console.log("msg-resend cyclic "+stat.message.topic);
-            if( false )
-            {}
+            if( stat.counter < stat.maxCount )
+            {
+                sendMsg( stat );
+            }
             else
             {
                 clearInterval( stat.timer );

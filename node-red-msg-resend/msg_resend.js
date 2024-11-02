@@ -65,7 +65,7 @@ module.exports = function(RED) {
             }
             if( msg.resend_max_count !== undefined )
             {
-                statistic.maximumCount = Number( msg.resend_max_count ) ?? node.maxCount;
+                statistic.maxCount = Number( msg.resend_max_count ) ?? node.maxCount;
             }
 
             if( msg.payload !== undefined )

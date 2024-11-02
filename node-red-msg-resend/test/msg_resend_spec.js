@@ -136,7 +136,7 @@ describe( 'msg-resend Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.a.property('topic',c<3?'t':c<7?'u':'v');
           msg.should.have.a.property('payload',c<7?Math.trunc(c/3)+1:4);
@@ -299,8 +299,9 @@ describe( 'msg-resend Node', function () {
   });
 
   it('should change the interval', function (done) {
+    const expPayload = [1,1,2,3,4,4];
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:1, intervalUnit:"hours", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:1, intervalUnit:"hours", maximum:2, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -310,8 +311,8 @@ describe( 'msg-resend Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          msg.should.have.a.property('topic',c==0?'t':'u');
-          msg.should.have.a.property('payload',c+1);
+          msg.should.have.a.property('topic',c<2?'t':'u');
+          msg.should.have.a.property('payload',expPayload[c]);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -330,15 +331,15 @@ describe( 'msg-resend Node', function () {
         c.should.match(1);
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" ).should.have.a.property('interval', 100);
-        c.should.match(1);
+        c.should.match(2);
         n1.receive({ topic: "u", payload: 2 });
         n1.receive({ topic: "u", payload: 3 });
         n1.receive({ topic: "u", payload: 4 });
         await delay(25);
-        c.should.match(4);
+        c.should.match(5);
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
-        c.should.match(4);
+        c.should.match(6);
         done();
       }
       catch(err) {
@@ -394,6 +395,7 @@ describe( 'msg-resend Node', function () {
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(9);
+        n1.should.have.a.property('maxCount', 1);
         done();
       }
       catch(err) {

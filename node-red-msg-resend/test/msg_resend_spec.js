@@ -401,4 +401,92 @@ describe( 'msg-resend Node', function () {
     });
   });
 
+  it('should not clone messages', function (done) {
+    this.timeout( 5000 );
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:4, wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.a.property('topic','t');
+          msg.should.have.a.property('payload',c+1);
+          msg.should.not.have.a.property('counter');
+          msg.should.not.have.a.property('max');
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+        msg.payload++;
+      });
+      try {
+        n1.should.have.a.property('interval', 100);
+        n1.should.have.a.property('forceClone', false);
+        await delay(500);
+        should.exist( n1.context().get("data") );
+        c.should.match(0);
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(25);
+        c.should.match(1);
+        await delay(475);
+        checkData( n1.context().get("data"), "all_topics" );
+        c.should.match(4);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
+  it('should clone messages', function (done) {
+    this.timeout( 5000 );
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:4, clone:true, wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.a.property('topic','t');
+          msg.should.have.a.property('payload',1);
+          msg.should.not.have.a.property('counter');
+          msg.should.not.have.a.property('max');
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+        msg.payload++;
+      });
+      try {
+        n1.should.have.a.property('interval', 100);
+        n1.should.have.a.property('forceClone', true);
+        await delay(500);
+        should.exist( n1.context().get("data") );
+        c.should.match(0);
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(25);
+        c.should.match(1);
+        await delay(475);
+        checkData( n1.context().get("data"), "all_topics" );
+        c.should.match(4);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
 });

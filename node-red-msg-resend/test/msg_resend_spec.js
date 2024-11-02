@@ -136,10 +136,10 @@ describe( 'msg-resend Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         try {
-          msg.should.have.a.property('topic',c<3?'t':'u');
-          msg.should.have.a.property('payload',Math.trunc(c/3)+1);
+          msg.should.have.a.property('topic',c<3?'t':c<7?'u':'v');
+          msg.should.have.a.property('payload',c<7?Math.trunc(c/3)+1:4);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -167,11 +167,12 @@ describe( 'msg-resend Node', function () {
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(6);
         n1.receive({ topic: "u", payload: 3 });
+        n1.receive({ topic: "v", payload: 4 });
         await delay(25);
-        c.should.match(7);
+        c.should.match(8);
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
-        c.should.match(9);
+        c.should.match(10);
         done();
       }
       catch(err) {

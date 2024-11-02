@@ -1,7 +1,7 @@
 # @mschaeffler/node-red-msg-resend
 A Node Red node for resending flow messages.
 
-Thanks to Bartbutenaers for the basement I developed this node out of.
+Thanks to Bart Butenaers for the basement I developed this node out of.
 
 ## Install
 
@@ -20,6 +20,7 @@ $ npm install @mschaeffler/node-red-msg-resend
 ## Author
 
 [Mathias Schäffler](https://github.com/m-schaeffler)
+
 [Bart Butenaers](https://github.com/bartbutenaers)
 
 ## License

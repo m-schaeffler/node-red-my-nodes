@@ -359,7 +359,6 @@ describe( 'msg-resend Node, byTopic', function () {
     });
   });
 
-/*
   it('should not clone messages', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: "n1", type: "msg-resend2", name: "test", bytopic:true, interval:100, intervalUnit:"msecs", maximum:4, wires: [["n2"]] },
@@ -394,7 +393,7 @@ describe( 'msg-resend Node, byTopic', function () {
         await delay(25);
         c.should.match(1);
         await delay(475);
-        checkData( n1.context().get("data"), "all_topics" );
+        checkData( n1.context().get("data"), "t" );
         c.should.match(4);
         done();
       }
@@ -439,7 +438,7 @@ describe( 'msg-resend Node, byTopic', function () {
         await delay(25);
         c.should.match(1);
         await delay(475);
-        checkData( n1.context().get("data"), "all_topics" );
+        checkData( n1.context().get("data"), "t" );
         c.should.match(4);
         done();
       }
@@ -449,6 +448,5 @@ describe( 'msg-resend Node, byTopic', function () {
      });
     });
   });
-*/
 
 });

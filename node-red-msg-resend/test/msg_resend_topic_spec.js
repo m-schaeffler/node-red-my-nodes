@@ -167,7 +167,7 @@ describe( 'msg-resend Node, byTopic', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.a.property('topic',topics2[c%3]);
           msg.should.have.a.property('payload',c%3+1);
@@ -207,7 +207,6 @@ describe( 'msg-resend Node, byTopic', function () {
     });
   });
 
-/*
   it('should resend messages with first sending delayed', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: "n1", type: "msg-resend2", name: "test", bytopic:true, interval:100, intervalUnit:"msecs", maximum:1, firstDelayed:true, wires: [["n2"]] },
@@ -220,7 +219,7 @@ describe( 'msg-resend Node, byTopic', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          msg.should.have.a.property('topic',c==0?'t':'u');
+          msg.should.have.a.property('topic',topics2[c]);
           msg.should.have.a.property('payload',c+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
@@ -238,27 +237,17 @@ describe( 'msg-resend Node, byTopic', function () {
         await delay(500);
         should.exist( n1.context().get("data") );
         c.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
+        for(const i in topics2)
+        {
+          n1.receive({ topic: topics2[i], payload: Number(i)+1 });
+        }
         await delay(25);
         c.should.match(0);
         await delay(475);
-        checkData( n1.context().get("data"), "all_topics" );
-        c.should.match(1);
-        n1.receive({ topic: "u", payload: -2 });
-        n1.receive({ topic: "u", payload: 2 });
-        await delay(25);
-        c.should.match(1);
-        await delay(475);
-        checkData( n1.context().get("data"), "all_topics" );
-        c.should.match(2);
-        n1.receive({ topic: "u", payload: -3 });
-        n1.receive({ topic: "u", payload: -4 });
-        n1.receive({ topic: "u", payload: 3 });
-        await delay(25);
-        c.should.match(2);
-        await delay(475);
-        checkData( n1.context().get("data"), "all_topics" );
-        c.should.match(3);
+        checkData( n1.context().get("data"), "t" );
+        checkData( n1.context().get("data"), "u" );
+        checkData( n1.context().get("data"), "v" );
+        c.should.match(topics2.length);
         done();
       }
       catch(err) {
@@ -268,6 +257,7 @@ describe( 'msg-resend Node, byTopic', function () {
     });
   });
 
+/*
   it('should change the interval', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: "n1", type: "msg-resend2", name: "test", bytopic:true, interval:1, intervalUnit:"hours", wires: [["n2"]] },

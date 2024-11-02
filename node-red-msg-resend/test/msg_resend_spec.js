@@ -151,6 +151,7 @@ describe( 'msg-resend Node', function () {
       try {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('maxCount', 3);
+        n1.should.have.a.property('byTopic', false);
         await delay(500);
         should.exist( n1.context().get("data") );
         c.should.match(0);

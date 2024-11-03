@@ -30,7 +30,7 @@ module.exports = function(RED) {
 
         function defaultStat()
         {
-            return { interval: node.interval, maxCount: node.maxCount };
+            return { interval: node.interval, maxCount: node.maxCount, timer: null };
         }
 
         function sendMsg(statistic)
@@ -94,18 +94,20 @@ module.exports = function(RED) {
                 {
                     statistic.counter = 0;
                     statistic.message = msg;
-                    if( !node.firstDelayed )
-                    {
-                        sendMsg( statistic );
-                    }
-
                     if( statistic.timer )
                     {
                         console.log("msg-resend clear timer "+topic);
                         clearInterval( statistic.timer );
-                        //statistic.timer = null;
+                        statistic.timer = null;
                     }
-                    statistic.timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, statistic.interval, statistic );
+                    if( !node.firstDelayed )
+                    {
+                        sendMsg( statistic );
+                    }
+                    if( node.firstDelayed || statistic.maxCount != 1 )
+                    {
+                        statistic.timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, statistic.interval, statistic );
+                    }
                 }
             }
             done();
@@ -113,11 +115,8 @@ module.exports = function(RED) {
 
         node.on( "cyclic", function(stat) {
             console.log("msg-resend cyclic "+stat.message.topic);
-            if( stat.counter < stat.maxCount || stat.maxCount == 0 )
-            {
-                sendMsg( stat );
-            }
-            else
+            sendMsg( stat );
+            if( stat.maxCount > 0 && stat.counter >= stat.maxCount )
             {
                 clearInterval( stat.timer );
                 stat.timer = null;

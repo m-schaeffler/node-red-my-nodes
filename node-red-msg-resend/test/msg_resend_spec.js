@@ -493,4 +493,51 @@ describe( 'msg-resend Node', function () {
     });
   });
 
+  it('should resend messages forever', function (done) {
+    this.timeout( 5000 );
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, intervalUnit:"msecs", maximum:0, wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.a.property('topic','t');
+          msg.should.have.a.property('payload',1);
+          msg.should.not.have.a.property('counter');
+          msg.should.not.have.a.property('max');
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('interval', 50);
+        n1.should.have.a.property('maxCount', 0);
+        n1.should.have.a.property('byTopic', false);
+        await delay(500);
+        should.exist( n1.context().get("data") );
+        c.should.match(0);
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(25);
+        c.should.match(1);
+        await delay(1000);
+        c.should.match(21);
+        n1.receive({ topic: "t", resend_max_count: 23 });
+        await delay(175);
+        checkData( n1.context().get("data"), "all_topics" );
+        c.should.match(23);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
 });

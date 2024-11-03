@@ -28,6 +28,11 @@ module.exports = function(RED) {
         setTimeout( function() { node.emit("started"); }, 100 );
         node.status( "" );
 
+        function defaultStat()
+        {
+            return { interval: node.interval, maxCount: node.maxCount };
+        }
+
         function sendMsg(statistic)
         {
             let outputMsg = node.forceClone ? RED.util.cloneMessage( statistic.message ) : statistic.message;
@@ -55,42 +60,60 @@ module.exports = function(RED) {
             let   statistic = node.data[topic];
             if( statistic === undefined )
             {
-                statistic = { interval: node.interval, maxCount: node.maxCount };
+                statistic = defaultStat();
                 node.data[topic] = statistic;
             }
 
-            if( msg.resend_interval !== undefined )
+            if( msg.reset )
             {
-                statistic.interval = Number( msg.resend_interval ) ?? node.interval;
-            }
-            if( msg.resend_max_count !== undefined )
-            {
-                statistic.maxCount = Number( msg.resend_max_count ) ?? node.maxCount;
-            }
-
-            if( msg.payload !== undefined )
-            {
-                statistic.counter = 0;
-                statistic.message = msg;
-                if( !node.firstDelayed )
+                if( topic )
                 {
-                    sendMsg( statistic );
-                }
-
-                if( statistic.timer )
-                {
-                    console.log("msg-resend clear timer "+topic);
                     clearInterval( statistic.timer );
-                    //statistic.timer = null;
+                    node.data[topic] = defaultStat();
                 }
-                statistic.timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, statistic.interval, statistic );
+                else
+                {
+                    for( const i in node.data )
+                    {
+                        clearInterval( node.data[i].timer );
+                        node.data[i] = defaultStat();
+                    }
+                }
+            }
+            else
+            {
+                if( msg.resend_interval !== undefined )
+                {
+                    statistic.interval = Number( msg.resend_interval ) ?? node.interval;
+                }
+                if( msg.resend_max_count !== undefined )
+                {
+                    statistic.maxCount = Number( msg.resend_max_count ) ?? node.maxCount;
+                }
+                if( msg.payload !== undefined )
+                {
+                    statistic.counter = 0;
+                    statistic.message = msg;
+                    if( !node.firstDelayed )
+                    {
+                        sendMsg( statistic );
+                    }
+
+                    if( statistic.timer )
+                    {
+                        console.log("msg-resend clear timer "+topic);
+                        clearInterval( statistic.timer );
+                        //statistic.timer = null;
+                    }
+                    statistic.timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, statistic.interval, statistic );
+                }
             }
             done();
         });
 
         node.on( "cyclic", function(stat) {
             console.log("msg-resend cyclic "+stat.message.topic);
-            if( stat.counter < stat.maxCount )
+            if( stat.counter < stat.maxCount || stat.maxCount == 0 )
             {
                 sendMsg( stat );
             }

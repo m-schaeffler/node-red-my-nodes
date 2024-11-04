@@ -45,7 +45,7 @@ module.exports = function(RED) {
             }
 
             node.send( outputMsg );
-            node.status( {fill:"green", shape:"dot", text: node.byTopic ? `${outputMsg.topic}: ${statistic.counter}` : statistic.counter } );
+            node.status( {fill:statistic.counter!==statistic.maxCount?"green":"gray", shape:"dot", text: node.byTopic ? `${outputMsg.topic}: ${statistic.counter}` : statistic.counter } );
 	}
 
         node.on('started', function() {

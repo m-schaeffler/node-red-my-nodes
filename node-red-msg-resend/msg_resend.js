@@ -79,6 +79,7 @@ module.exports = function(RED) {
                         node.data[i] = defaultStat();
                     }
                 }
+                node.status( "" );
             }
             else
             {

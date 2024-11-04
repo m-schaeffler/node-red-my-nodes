@@ -1,6 +1,6 @@
 {
     "name"         : "@mschaeffler/node-red-msg-resend",
-    "version"      : "2.0.0",
+    "version"      : "2.0.1",
     "description"  : "A Node Red node to resend flow messages",
     "author": {
         "name": "Mathias Schäffler",
@@ -19,7 +19,7 @@
     "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-msg-resend",
     "repository": {
         "type": "git",
-        "url": "https://github.com/m-schaeffler/node-red-my-nodes.git"
+        "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
     },
     "node-red": {
         "version": ">=4.0.0",

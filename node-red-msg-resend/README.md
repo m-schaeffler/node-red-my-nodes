@@ -35,12 +35,12 @@ $ npm install @mschaeffler/node-red-msg-resend
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
-|interval | number | |
-|maximum  | number | |
-|byTopic  | boolean| |
-|firstDelayed | boolean| |
-|addCounters  | boolean| |
-|clone        | boolean| |
+|interval | number | the intervall between two resends |
+|maximum  | number | the maximum number of resends; 0 is infinite |
+|byTopic  | boolean| shall resending be done on a topic base |
+|firstDelayed | boolean| shall the foirst message be sent after a intervall, or instantly |
+|addCounters  | boolean| shall a counter be added to the sent mesages |
+|clone        | boolean| shall the messages be cloned |
 
 ## Example Flow
 

@@ -18,8 +18,8 @@ $ npm install @mschaeffler/node-red-msg-resend
 |topic   | string | topic for the output message|
 |payload |        | payload for the output message |
 |reset   |boolean | if true, resets the node; if combined with a `topic`, only this topic is reseted|
-|resend_interval| number ||
-|resend_max_count| number ||
+|resend_interval| number | changes the parameter `interval` for this topic|
+|resend_max_count| number | changes the parameter `maximum` for this topic|
 
 ## Output
 
@@ -38,7 +38,7 @@ $ npm install @mschaeffler/node-red-msg-resend
 |interval | number | the intervall between two resends |
 |maximum  | number | the maximum number of resends; 0 is infinite |
 |byTopic  | boolean| shall resending be done on a topic base |
-|firstDelayed | boolean| shall the foirst message be sent after a intervall, or instantly |
+|firstDelayed | boolean| shall the first message be sent after a intervall, or instantly |
 |addCounters  | boolean| shall a counter be added to the sent mesages |
 |clone        | boolean| shall the messages be cloned |
 

@@ -15,8 +15,8 @@ $ npm install @mschaeffler/node-red-msg-resend
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic   | string | topic for the outout message|
-|payload |        | payload for the outout message |
+|topic   | string | topic for the output message|
+|payload |        | payload for the output message |
 |reset   |boolean | if true, resets the node; if combined with a `topic`, only this topic is reseted|
 |resend_interval| number ||
 |resend_max_count| number ||
@@ -35,8 +35,12 @@ $ npm install @mschaeffler/node-red-msg-resend
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
-|| | |
-|| number ||
+|interval | number | |
+|maximum  | number | |
+|byTopic  | boolean| |
+|firstDelayed | boolean| |
+|addCounters  | boolean| |
+|clone        | boolean| |
 
 ## Example Flow
 

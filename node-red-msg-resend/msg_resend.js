@@ -49,12 +49,12 @@ module.exports = function(RED) {
 	}
 
         node.on('started', function() {
-            console.log( "msg-resend started" );
+            //console.log( "msg-resend started" );
             context.set( "data", node.data );
         });
 
         node.on('input', function(msg,send,done) {
-            console.log( "msg-resend input" );
+            //console.log( "msg-resend input" );
             //console.log( node.data );
             const topic     = node.byTopic ? msg.topic : "all_topics";
             let   statistic = node.data[topic];
@@ -97,7 +97,7 @@ module.exports = function(RED) {
                     statistic.message = msg;
                     if( statistic.timer )
                     {
-                        console.log("msg-resend clear timer "+topic);
+                        //console.log("msg-resend clear timer "+topic);
                         clearInterval( statistic.timer );
                         statistic.timer = null;
                     }
@@ -115,7 +115,7 @@ module.exports = function(RED) {
         });
 
         node.on( "cyclic", function(stat) {
-            console.log("msg-resend cyclic "+stat.message.topic);
+            //console.log("msg-resend cyclic "+stat.message.topic);
             sendMsg( stat );
             if( stat.maxCount > 0 && stat.counter >= stat.maxCount )
             {
@@ -125,7 +125,7 @@ module.exports = function(RED) {
         } );
 
         node.on( "close", function() {
-            console.log("msg-resend close");
+            //console.log("msg-resend close");
             for( const i in node.data )
             {
                 clearInterval( node.data[i].timer );

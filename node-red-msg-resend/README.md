@@ -4,6 +4,9 @@ A Node Red node for resending flow messages.
 
 ![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-resend.png)
 
+When a new input message arrives, it will be (re)sent to the output port at specified time intervals.
+This process will repeat until the next input message arrives, or until the maximum number of resends has been reached.
+
 Thanks to Bart Butenaers for the basement I developed this node out of.
 
 ## Install

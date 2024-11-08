@@ -1,0 +1,35 @@
+{
+    "name": "@mschaeffler/node-red-debounce",
+    "version": "1.0.0",
+    "description": "Node Red nodes to debounce a payload.",
+    "author": {
+        "name": "Mathias Schäffler",
+        "url": "https://github.com/m-schaeffler"
+    },
+    "license": "LGPL-2.1",
+    "keywords": [
+        "node-red",
+        "devounce"
+    ],
+    "bugs": {
+        "url": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-debounce/issues"
+    },
+    "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-debounce",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+    },
+    "node-red": {
+        "version": ">=4.0.0",
+        "nodes": {
+            "debounce": "debounce.js",
+            "debounceNumber": "debounceNumber.js"
+        }
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "test": "mocha \"test/*_spec.js\""
+    }
+}

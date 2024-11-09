@@ -67,14 +67,14 @@ module.exports = function(RED) {
             {
                 if( topic )
                 {
-                    clearInterval( statistic.timer );
+                    clearTimeout( statistic.timer );
                     node.data[topic] = defaultStat();
                 }
                 else
                 {
                     for( const i in node.data )
                     {
-                        clearInterval( node.data[i].timer );
+                        clearTimeout( node.data[i].timer );
                         node.data[i] = defaultStat();
                     }
                 }
@@ -138,7 +138,7 @@ module.exports = function(RED) {
             console.log("debounce close");
             for( const i in node.data )
             {
-                clearInterval( node.data[i].timer );
+                clearTimeout( node.data[i].timer );
             }
         } );
     }

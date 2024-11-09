@@ -73,10 +73,10 @@ describe( 'debounceNumber Node', function () {
       }
     });
   });
-/*
+
   it('should forward valid values', function (done) {
-    const numbers = [-1,0,0,0,0,0,0,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null,NaN,"FooBar"];
-    var flow = [{ id: "n1", type: "debounce", name: "test", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    const numbers = [-1,0,0,0,0,0,0,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -85,7 +85,7 @@ describe( 'debounceNumber Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('topic',topics[c%3]);
-          msg.should.have.property('payload',numbers[c]);
+          msg.should.have.property('payload',Number(numbers[c]));
         }
         catch(err) {
           done(err);
@@ -114,7 +114,7 @@ describe( 'debounceNumber Node', function () {
   });
 
   it('should not forward invalid values', function (done) {
-    var flow = [{ id: "n1", type: "debounce", name: "test", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -132,6 +132,8 @@ describe( 'debounceNumber Node', function () {
         n1.receive({ topic: "t" });
         await delay(50);
         n1.receive({ payload: undefined });
+        n1.receive({ payload: NaN });
+        n1.receive({ payload: "FooBar" });
         await delay(50);
         n1.receive({ invalid: true, payload: 255 });
         await delay(150);
@@ -144,11 +146,11 @@ describe( 'debounceNumber Node', function () {
       }
     });
   });
-
+/*
   it('should forward filtered values', function (done) {
     const numbersIn  = [-1,0,0,0,0,0,0,0,1];
     const numbersOut = [-1,0,1];
-    var flow = [{ id: "n1", type: "debounce", name: "test", filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -188,7 +190,7 @@ describe( 'debounceNumber Node', function () {
 
   it('should work with objects', function (done) {
     const numbers = [-1,0,255,65535];
-    var flow = [{ id: "n1", type: "debounce", name: "test", property:"payload.value", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", property:"payload.value", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -229,7 +231,7 @@ describe( 'debounceNumber Node', function () {
 
   it('should have Jsonata', function (done) {
     const numbers = [-1,0,255,65535];
-    var flow = [{ id: "n1", type: "debounce", name: "test", property:"payload+5", propertyType:"jsonata", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", property:"payload+5", propertyType:"jsonata", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -270,7 +272,7 @@ describe( 'debounceNumber Node', function () {
 
   it('should debounce values', function (done) {
     const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    var flow = [{ id: "n1", type: "debounce", name: "test", time:100, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", time:100, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");

@@ -145,8 +145,9 @@ describe( 'debounce Node', function () {
   });
 
   it('should forward filtered values', function (done) {
-    const numbersIn  = [-1,0,0,0,0,0,0,0,1];
-    const numbersOut = [-1,0,1];
+    const numbersIn  = [-1,0,0,0,0,0,0,0,1,1,1,1];
+    const numbersOut = [-1,0,1,1];
+    const topicsOut  = ["t","u","v","reset"];
     var flow = [{ id: "n1", type: "debounce", name: "test", filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -154,8 +155,9 @@ describe( 'debounce Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
+        //console.log(msg);
         try {
-          msg.should.have.a.property('topic',topics[c%3]);
+          msg.should.have.a.property('topic',topicsOut[c]);
           msg.should.have.property('payload',numbersOut[c]);
         }
         catch(err) {
@@ -174,6 +176,15 @@ describe( 'debounce Node', function () {
           n1.receive({ topic: topics[i%3], payload: numbersIn[i] });
           await delay(50);
         }
+        await delay(100);
+        c.should.match(numbersOut.length-1);
+        checkData( n1, "all_topics" );
+        n1.receive({ topic: "z", payload: numbersIn[numbersIn.length-1] });
+        await delay(100);
+        c.should.match(numbersOut.length-1);
+        checkData( n1, "all_topics" );
+        n1.receive({ reset: true });
+        n1.receive({ topic: "reset", payload: numbersIn[numbersIn.length-1] });
         await delay(100);
         c.should.match(numbersOut.length);
         checkData( n1, "all_topics" );
@@ -297,6 +308,11 @@ describe( 'debounce Node', function () {
           n1.receive({ topic: i, payload: numbers[i] });
           await delay(25);
         }
+        await delay(150);
+        c.should.match(Math.ceil(numbers.length/4));
+        checkData( n1, "all_topics" );
+        n1.receive({ topic: "reset", payload: 40 });
+        n1.receive({ reset: true });
         await delay(150);
         c.should.match(Math.ceil(numbers.length/4));
         checkData( n1, "all_topics" );

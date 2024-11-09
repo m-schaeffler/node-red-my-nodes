@@ -51,7 +51,7 @@ module.exports = function(RED) {
 
         node.on('input', function(msg,send,done) {
             console.log( "debounce input" );
-            console.log( node.data );
+            //console.log( node.data );
             const topic     = node.byTopic ? msg.topic : "all_topics";
             let   statistic = node.data[topic];
             if( statistic === undefined )
@@ -68,14 +68,14 @@ module.exports = function(RED) {
             {
                 if( topic )
                 {
-                    clearInterval( statistic.timer );
+                    clearTimeout( statistic.timer );
                     node.data[topic] = defaultStat();
                 }
                 else
                 {
                     for( const i in node.data )
                     {
-                        clearInterval( node.data[i].timer );
+                        clearTimeout( node.data[i].timer );
                         node.data[i] = defaultStat();
                     }
                 }
@@ -107,57 +107,38 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
-                    console.log("    "+value);
-                    msg.payload = node.gap==0 ? value : Number( value );
-                    let status = { fill:"gray", shape:"dot", text:msg.payload };
-                    if( msg.payload !== undefined )
+                    msg.payload = Number( value );
+                    if( ! isNaN( msg.payload ) )
                     {
-//                        if()
+                        statistic.message = msg;
+                        if( ! statistic.timer )
                         {
-                        status.fill = "green";
-                        send( msg );
+                            statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, node.time, statistic );
                         }
-                        statistic.last = msg.payload;
-                        /*
-                    statistic.counter = 0;
-                    statistic.message = msg;
-                    if( statistic.timer )
-                    {
-                        //console.log("msg-resend clear timer "+topic);
-                        clearInterval( statistic.timer );
-                        statistic.timer = null;
-                    }
-                    if( !node.firstDelayed )
-                    {
-                        sendMsg( statistic );
-                    }
-                    if( node.firstDelayed || statistic.maxCount != 1 )
-                    {
-                        statistic.timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, statistic.interval, statistic );
-                    }
-                */
+                        node.state.fill = "yellow";
                     }
                     node.status( status );
                     done();
                 } );
             }
         });
-/*
+
         node.on( "cyclic", function(stat) {
             console.log("debounce cyclic "+stat.message.topic);
-            sendMsg( stat );
-            if( stat.maxCount > 0 && stat.counter >= stat.maxCount )
-            {
-                clearInterval( stat.timer );
-                stat.timer = null;
-            }
+            stat.timer    = null;
+            stat.lastSent = stat.message.payload;
+            node.send( stat.message );
+            node.state.fill = "green";
+            node.state.text = stat.message.payload;
+            node.status( node.state );
+            node.state.fill = "gray";
         } );
-*/
+
         node.on( "close", function() {
             console.log("debounce close");
             for( const i in node.data )
             {
-                clearInterval( node.data[i].timer );
+                clearTimeout( node.data[i].timer );
             }
         } );
     }

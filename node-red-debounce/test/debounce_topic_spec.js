@@ -10,7 +10,7 @@ function delay(ms) {
   });
 }
 
-describe( 'msg-resend Node', function () {
+describe( 'debounce Node, byTopic', function () {
   "use strict";
 
   const topics = ['t','u','v'];

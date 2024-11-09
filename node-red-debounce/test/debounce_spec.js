@@ -192,4 +192,86 @@ describe( 'msg-resend Node', function () {
     });
   });
 
+  it('should work with objects', function (done) {
+    const numbers = [-1,0,255,65535];
+    var flow = [{ id: "n1", type: "debounce", name: "test", property:"payload.value", time:20, timeUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          msg.should.have.a.property('topic',"Object");
+          msg.should.have.a.property('payload',numbers[c]);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('time', 20);
+        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('property', "payload.value");
+        n1.should.have.a.property('propertyType', "msg");
+        await delay(500);
+        c.should.match(0);
+        for( const i in numbers )
+        {
+          n1.receive({ topic: "Object", payload: {a:1,value:numbers[i],b:88} });
+          await delay(50);
+        }
+        await delay(100);
+        c.should.match(numbers.length);
+        should.exist( n1.context().get("data") );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should have Jsonata', function (done) {
+    const numbers = [-1,0,255,65535];
+    var flow = [{ id: "n1", type: "debounce", name: "test", property:"payload+5", propertyType:"jsonata", time:20, timeUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          msg.should.have.a.property('topic',"JSONata");
+          msg.should.have.a.property('payload',numbers[c]+5);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('time', 20);
+        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('property', "payload+5");
+        n1.should.have.a.property('propertyType', "jsonata");
+        await delay(500);
+        c.should.match(0);
+        for( const i in numbers )
+        {
+          n1.receive({ topic: "JSONata", payload: numbers[i] });
+          await delay(50);
+        }
+        await delay(100);
+        c.should.match(numbers.length);
+        should.exist( n1.context().get("data") );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });

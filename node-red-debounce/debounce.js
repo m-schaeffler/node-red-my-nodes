@@ -25,6 +25,16 @@ module.exports = function(RED) {
             default:
                 // "msecs" so no conversion needed
         }
+        if( this.propertyType === "jsonata" )
+        {
+            try {
+                this.propertyPrepared = RED.util.prepareJSONataExpression( this.property, this );
+            }
+            catch (e) {
+                node.error(RED._("debug.invalid-exp", {error: this.property}));
+                return;
+            }
+        }
         setTimeout( function() { node.emit("started"); }, 100 );
         node.status( "" );
 

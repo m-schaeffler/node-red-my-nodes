@@ -11,6 +11,16 @@ module.exports = function(RED) {
         this.byTopic      = Boolean( config.bytopic );
         this.state        = { fill:"gray", shape:"dot", text:"-" };
         this.data         = {};
+        if( this.propertyType === "jsonata" )
+        {
+            try {
+                this.propertyPrepared = RED.util.prepareJSONataExpression( this.property, this );
+            }
+            catch (e) {
+                node.error(RED._("debug.invalid-exp", {error: this.property}));
+                return;
+            }
+        }
         switch( config.timeUnit ?? "secs" )
         {
             case "secs":
@@ -24,16 +34,6 @@ module.exports = function(RED) {
                 break;
             default:
                 // "msecs" so no conversion needed
-        }
-        if( this.propertyType === "jsonata" )
-        {
-            try {
-                this.propertyPrepared = RED.util.prepareJSONataExpression( this.property, this );
-            }
-            catch (e) {
-                node.error(RED._("debug.invalid-exp", {error: this.property}));
-                return;
-            }
         }
         setTimeout( function() { node.emit("started"); }, 100 );
         node.status( "" );
@@ -125,9 +125,9 @@ module.exports = function(RED) {
 
         node.on( "cyclic", function(stat) {
             console.log("debounce cyclic "+stat.message.topic);
-            node.send( stat.message );
             stat.timer    = null;
             stat.lastSent = stat.message.payload;
+            node.send( stat.message );
             node.state.fill = "green";
             node.state.text = stat.message.payload;
             node.status( node.state );

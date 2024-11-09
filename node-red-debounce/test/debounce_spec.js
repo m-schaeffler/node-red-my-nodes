@@ -45,16 +45,9 @@ describe( 'msg-resend Node', function () {
       });
   });
 
-  function checkData(data,topic) {
+  function checkData(n1,topic) {
+      const data = n1.context().get("data");
       data.should.have.a.property(topic).which.is.a.Object();
-      data[topic].should.have.a.property('counter',data[topic].maxCount);
-      data[topic].should.have.a.property('timer',null);
-      return data[topic];
-  }
-
-  function checkDataWithoutCounter(data,topic) {
-      data.should.have.a.property(topic).which.is.a.Object();
-      data[topic].should.not.have.a.property('counter');
       data[topic].should.have.a.property('timer',null);
       return data[topic];
   }
@@ -110,7 +103,7 @@ describe( 'msg-resend Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        should.exist( n1.context().get("data") );
+        checkData( n1, "all_topics" );
         done();
       }
       catch(err) {
@@ -142,7 +135,7 @@ describe( 'msg-resend Node', function () {
         n1.receive({ invalid: true, payload: 255 });
         await delay(150);
         c.should.match(0);
-        should.exist( n1.context().get("data") );
+        checkData( n1, "all_topics" );
         done();
       }
       catch(err) {
@@ -183,7 +176,7 @@ describe( 'msg-resend Node', function () {
         }
         await delay(100);
         c.should.match(numbersOut.length);
-        should.exist( n1.context().get("data") );
+        checkData( n1, "all_topics" );
         done();
       }
       catch(err) {
@@ -224,7 +217,7 @@ describe( 'msg-resend Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        should.exist( n1.context().get("data") );
+        checkData( n1, "all_topics" );
         done();
       }
       catch(err) {
@@ -265,7 +258,48 @@ describe( 'msg-resend Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        should.exist( n1.context().get("data") );
+        checkData( n1, "all_topics" );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should debounce values', function (done) {
+    const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+    var flow = [{ id: "n1", type: "debounce", name: "test", time:100, timeUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          const help = Math.min( (c+1)*4-1, numbers.length-1 );
+          msg.should.have.a.property('topic',help.toString());
+          msg.should.have.property('payload',numbers[help]);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('time', 100);
+        n1.should.have.a.property('byTopic', false);
+        await delay(500);
+        c.should.match(0);
+        for( const i in numbers )
+        {
+          n1.receive({ topic: i, payload: numbers[i] });
+          await delay(25);
+        }
+        await delay(150);
+        c.should.match(Math.ceil(numbers.length/4));
+        checkData( n1, "all_topics" );
         done();
       }
       catch(err) {

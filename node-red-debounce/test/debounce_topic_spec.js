@@ -130,8 +130,8 @@ describe( 'debounce Node, byTopic', function () {
 
   it('should forward filtered values', function (done) {
     const numbersIn  = [-1,0,0,0,0,0,0,0,1,2,3,1,2,3];
-    const numbersOut = [-1,0,0,0,1,2,3];
-    const topicsOut  = ["t","u","v","t","v","t","u"];
+    const numbersOut = [-1,0,0,0,1,2,3, 1,2,3, 2];
+    const topicsOut  = ["t","u","v","t","v","t","u", "v","t","u", "t"];
     var flow = [{ id: "n1", type: "debounce", name: "test", bytopic:true, filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -160,6 +160,32 @@ describe( 'debounce Node, byTopic', function () {
           n1.receive({ topic: topics[i%3], payload: numbersIn[i] });
           await delay(50);
         }
+        await delay(100);
+        c.should.match(numbersOut.length-4);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-3] });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-2] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1] });
+        await delay(100);
+        c.should.match(numbersOut.length-4);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ reset: true });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-3] });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-2] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1] });
+        await delay(100);
+        c.should.match(numbersOut.length-1);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic:"t", reset: true });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-3] });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-2] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1] });
         await delay(100);
         c.should.match(numbersOut.length);
         checkData( n1, "t" );
@@ -292,6 +318,25 @@ describe( 'debounce Node, byTopic', function () {
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );
+        n1.receive({ topic: "reset", payload: 40 });
+        n1.receive({ topic: "t", payload: 40 });
+        n1.receive({ topic: "u", payload: 40 });
+        n1.receive({ reset: true });
+        await delay(150);
+        c.should.match(3*Math.ceil(numbers.length/4));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        checkData( n1, "reset" );
+        n1.receive({ topic: "reset", payload: 40 });
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "reset", reset: true });
+        await delay(150);
+        c.should.match(3*Math.ceil(numbers.length/4)+1);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        checkData( n1, "reset" );
         done();
       }
       catch(err) {

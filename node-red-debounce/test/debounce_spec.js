@@ -67,7 +67,7 @@ describe( 'msg-resend Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
-        n1.should.have.a.property('time', 0);
+        n1.should.have.a.property('time', 1000);
         n1.should.have.a.property('filter', false);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
@@ -82,7 +82,7 @@ describe( 'msg-resend Node', function () {
 
   it('should forward valid values', function (done) {
     const numbers = [-1,0,0,0,0,0,0,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null,NaN,"FooBar"];
-    var flow = [{ id: "n1", type: "debounce", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -99,14 +99,16 @@ describe( 'msg-resend Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
         c.should.match(0);
         for( const i in numbers )
         {
           n1.receive({ topic: topics[i%3], payload: numbers[i] });
+          await delay(50);
         }
-        await delay(500);
+        await delay(100);
         c.should.match(numbers.length);
         should.exist( n1.context().get("data") );
         done();
@@ -118,7 +120,7 @@ describe( 'msg-resend Node', function () {
   });
 
   it('should not forward invalid values', function (done) {
-    var flow = [{ id: "n1", type: "debounce", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -129,13 +131,16 @@ describe( 'msg-resend Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
         c.should.match(0);
         n1.receive({ topic: "t" });
+        await delay(50);
         n1.receive({ payload: undefined });
+        await delay(50);
         n1.receive({ invalid: true, payload: 255 });
-        await delay(500);
+        await delay(150);
         c.should.match(0);
         should.exist( n1.context().get("data") );
         done();
@@ -146,10 +151,10 @@ describe( 'msg-resend Node', function () {
     });
   });
 
-  it('should forward filter values', function (done) {
+  it('should forward filtered values', function (done) {
     const numbersIn  = [-1,0,0,0,0,0,0,0,1];
     const numbersOut = [-1,0,1];
-    var flow = [{ id: "n1", type: "debounce", name: "test", filter: true, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -166,6 +171,7 @@ describe( 'msg-resend Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
         n1.should.have.a.property('filter', true);
         await delay(500);
@@ -173,8 +179,9 @@ describe( 'msg-resend Node', function () {
         for( const i in numbersIn )
         {
           n1.receive({ topic: topics[i%3], payload: numbersIn[i] });
+          await delay(50);
         }
-        await delay(500);
+        await delay(100);
         c.should.match(numbersOut.length);
         should.exist( n1.context().get("data") );
         done();

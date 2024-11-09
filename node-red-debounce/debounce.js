@@ -6,9 +6,10 @@ module.exports = function(RED) {
         var context = this.context();
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.time         = Number( config.time ?? 0 );
+        this.time         = Number( config.time ?? 1 );
         this.filter       = Boolean( config.filter );
         this.byTopic      = Boolean( config.bytopic );
+        this.state        = { fill:"gray", shape:"dot", text:"-" };
         this.data         = {};
         switch( config.timeUnit ?? "secs" )
         {
@@ -39,7 +40,7 @@ module.exports = function(RED) {
 
         node.on('input', function(msg,send,done) {
             console.log( "debounce input" );
-            console.log( node.data );
+            //console.log( node.data );
             const topic     = node.byTopic ? msg.topic : "all_topics";
             let   statistic = node.data[topic];
             if( statistic === undefined )
@@ -95,50 +96,34 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
-                    console.log("    "+value);
                     msg.payload = value;
-                    let status = { fill:"gray", shape:"dot", text:msg.payload };
                     if( msg.payload !== undefined &&
-                        ( ! node.filter || msg.payload !== statistic.last )  )
+                        ( ! node.filter || msg.payload !== statistic.lastSent )  )
                     {
-                        status.fill = "green";
-                        send( msg );
-                        statistic.last = msg.payload;
-                        /*
-                    statistic.counter = 0;
-                    statistic.message = msg;
-                    if( statistic.timer )
-                    {
-                        //console.log("msg-resend clear timer "+topic);
-                        clearInterval( statistic.timer );
-                        statistic.timer = null;
+                        statistic.message = msg;
+                        if( ! statistic.timer )
+                        {
+                            statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, node.time, statistic );
+                        }
+                        node.state.fill = "yellow";
                     }
-                    if( !node.firstDelayed )
-                    {
-                        sendMsg( statistic );
-                    }
-                    if( node.firstDelayed || statistic.maxCount != 1 )
-                    {
-                        statistic.timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, statistic.interval, statistic );
-                    }
-                */
-                    }
-                    node.status( status );
+                    node.status( node.state );
                     done();
                 } );
             }
         });
-/*
+
         node.on( "cyclic", function(stat) {
             console.log("debounce cyclic "+stat.message.topic);
-            sendMsg( stat );
-            if( stat.maxCount > 0 && stat.counter >= stat.maxCount )
-            {
-                clearInterval( stat.timer );
-                stat.timer = null;
-            }
+            node.send( stat.message );
+            stat.timer    = null;
+            stat.lastSent = stat.message.payload;
+            node.state.fill = "green";
+            node.state.text = stat.message.payload;
+            node.status( node.state );
+            node.state.fill = "gray";
         } );
-*/
+
         node.on( "close", function() {
             console.log("debounce close");
             for( const i in node.data )

@@ -6,14 +6,14 @@
             name:{value:""},
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
-            time: {value:5,required:true,validate:RED.validators.number()},
-            timeUnit: {value:"secs"},
+            time:{value:5,required:true,validate:RED.validators.regex(/^[1-9]\d*$/)},
+            timeUnit:{value:"secs"},
             filter:{value:false},
-            bytopic: {value:false}
+            bytopic:{value:false}
         },
         inputs:1,
         outputs:1,
-        icon: "font-awesome/fa-spinner",
+        icon: "font-awesome/fa-list-ul",
         label: function() {
             return this.name||"debounce";
         },

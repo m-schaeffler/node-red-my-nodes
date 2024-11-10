@@ -22,7 +22,7 @@ $ npm install @mschaeffler/node-red-msg-resend
 |topic   | string | topic for the output message|
 |payload |        | payload for the output message |
 |reset   |boolean | if true, resets the node; if combined with a `topic`, only this topic is reseted|
-|resend_interval| number | changes the parameter `interval` for this topic|
+|resend_interval| number | changes the parameter `interval` for this topic; value is in msec|
 |resend_max_count| number | changes the parameter `maximum` for this topic|
 
 ## Output

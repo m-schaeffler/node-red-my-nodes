@@ -44,12 +44,12 @@ module.exports = function(RED) {
         }
 
         node.on('started', function() {
-            console.log( "debounce started" );
+            //console.log( "debounce started" );
             context.set( "data", node.data );
         });
 
         node.on('input', function(msg,send,done) {
-            console.log( "debounce input" );
+            //console.log( "debounce input" );
             //console.log( node.data );
             const topic     = node.byTopic ? msg.topic : "all_topics";
             let   statistic = node.data[topic];
@@ -107,8 +107,7 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.payload = value;
-                    if( msg.payload !== undefined &&
-                        ( ! node.filter || msg.payload !== statistic.lastSent )  )
+                    if( msg.payload !== undefined && ( ! node.filter || msg.payload !== statistic.lastSent )  )
                     {
                         statistic.message = msg;
                         if( ! statistic.timer )
@@ -124,7 +123,7 @@ module.exports = function(RED) {
         });
 
         node.on( "cyclic", function(stat) {
-            console.log("debounce cyclic "+stat.message.topic);
+            //console.log("debounce cyclic "+stat.message.topic);
             stat.timer    = null;
             stat.lastSent = stat.message.payload;
             node.send( stat.message );
@@ -135,7 +134,7 @@ module.exports = function(RED) {
         } );
 
         node.on( "close", function() {
-            console.log("debounce close");
+            //console.log("debounce close");
             for( const i in node.data )
             {
                 clearTimeout( node.data[i].timer );

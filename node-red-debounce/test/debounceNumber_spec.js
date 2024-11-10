@@ -146,19 +146,21 @@ describe( 'debounceNumber Node', function () {
       }
     });
   });
-/*
-  it('should forward filtered values', function (done) {
-    const numbersIn  = [-1,0,0,0,0,0,0,0,1];
-    const numbersOut = [-1,0,1];
-    var flow = [{ id: "n1", type: "debounceNumber", name: "test", filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
+
+  it('should forward filtered values, delta filter', function (done) {
+    this.timeout( 3000 );
+    const numbersIn  = [-100,0,0,0,0,1,2,3,4,5,6,7,8,9,9,9,9,9.99,10,10.01,15,19,20,19,11,10,100];
+    const numbersOut = [-100,0,                                   10,            20,      10,100];
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", gap:"10", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
+        //console.log(msg);
         try {
-          msg.should.have.a.property('topic',topics[c%3]);
+          msg.should.have.a.property('topic',"filter");
           msg.should.have.property('payload',numbersOut[c]);
         }
         catch(err) {
@@ -169,12 +171,57 @@ describe( 'debounceNumber Node', function () {
       try {
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
-        n1.should.have.a.property('filter', true);
+        n1.should.have.a.property('gapPercent', false);
+        n1.should.have.a.property('gap', 10);
         await delay(500);
         c.should.match(0);
         for( const i in numbersIn )
         {
-          n1.receive({ topic: topics[i%3], payload: numbersIn[i] });
+          n1.receive({ topic: "filter", payload: numbersIn[i] });
+          await delay(50);
+        }
+        await delay(100);
+        c.should.match(numbersOut.length);
+        checkData( n1, "all_topics" );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should forward filtered values, percent filter', function (done) {
+    //this.timeout( 3000 );
+    const numbersIn  = [-100,0,0,0,0,0.01,0.1,10,10.01,10.9,10.99,11,11.01,10,9.99,9.9,100,-100,100];
+    const numbersOut = [-100,0,      0.01,0.1,10,                    11.01,        9.9,100,-100,100];
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", gap:"10%", time:20, timeUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.a.property('topic',"filter");
+          msg.should.have.property('payload',numbersOut[c]);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('time', 20);
+        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('gapPercent', true);
+        n1.should.have.a.property('gap', 0.1);
+        await delay(500);
+        c.should.match(0);
+        for( const i in numbersIn )
+        {
+          n1.receive({ topic: "filter", payload: numbersIn[i] });
           await delay(50);
         }
         await delay(100);
@@ -269,7 +316,7 @@ describe( 'debounceNumber Node', function () {
       }
     });
   });
-
+/*
   it('should debounce values', function (done) {
     const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
     var flow = [{ id: "n1", type: "debounceNumber", name: "test", time:100, timeUnit:"msecs", wires: [["n2"]] },

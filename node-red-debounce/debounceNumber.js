@@ -7,7 +7,7 @@ module.exports = function(RED) {
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.time         = Number( config.time ?? 1 );
-        this.gapPercent   = config.gap?.endswith( "%" ) ?? false;
+        this.gapPercent   = config.gap?.endsWith( "%" ) ?? false;
         this.gap          = parseFloat( config.gap ?? 0 );
         this.byTopic      = Boolean( config.bytopic );
         this.state        = { fill:"gray", shape:"dot", text:"-" };
@@ -36,6 +36,10 @@ module.exports = function(RED) {
             default:
                 // "msecs" so no conversion needed
         }
+        if( this.gapPercent )
+        {
+            this.gap /= 100;
+        }
         setTimeout( function() { node.emit("started"); }, 100 );
         node.status( "" );
 
@@ -44,8 +48,27 @@ module.exports = function(RED) {
             return { timer: null };
         }
 
+        function testGap(value,last)
+        {
+            if( node.gap == 0 || last === undefined )
+            {
+                return true;
+            }
+            else
+            {
+                if( node.gapPercent )
+                {
+                    return Math.abs( value - last ) > Math.abs( last * node.gap );
+                }
+                else
+                {
+                    return Math.abs( value - last ) >= node.gap;
+                }
+            }
+        }
+
         node.on('started', function() {
-            console.log( "debounce started" );
+            //console.log( "debounce started" );
             context.set( "data", node.data );
         });
 
@@ -108,7 +131,7 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.payload = Number( value );
-                    if( ! isNaN( msg.payload ) )
+                    if( ! isNaN( msg.payload ) && testGap( msg.payload, statistic.lastSent ) )
                     {
                         statistic.message = msg;
                         if( ! statistic.timer )
@@ -135,7 +158,7 @@ module.exports = function(RED) {
         } );
 
         node.on( "close", function() {
-            console.log("debounce close");
+            //console.log("debounce close");
             for( const i in node.data )
             {
                 clearTimeout( node.data[i].timer );

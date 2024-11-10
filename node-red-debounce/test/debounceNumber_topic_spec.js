@@ -205,7 +205,7 @@ describe( 'debounceNumber Node, byTopic', function () {
   });
 
   it('should forward filtered values, percent filter', function (done) {
-    //this.timeout( 3000 );
+    this.timeout( 3000 );
     const numbersIn  = [-100,0,0,0,0,0.01,0.1,10,10.01,10.9,10.99,11,11.01,10,9.99,9.9,100,-100,100];
     const numbersOut = [-100,0,      0.01,0.1,10,                    11.01,        9.9,100,-100,100,100,100];
     var flow = [{ id: "n1", type: "debounceNumber", name: "test", bytopic:true, gap:"10%", time:20, timeUnit:"msecs", wires: [["n2"]] },
@@ -371,9 +371,9 @@ describe( 'debounceNumber Node, byTopic', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          const help = Math.min( (c+1)*4-1, numbers.length-1 );
-          msg.should.have.a.property('topic',help.toString());
-          msg.should.have.property('payload',numbers[help]);
+          const help = Math.min( (Math.floor(c/3)+1)*4-1, numbers.length-1 );
+          msg.should.have.a.property('topic',topics[c%3]);
+          msg.should.have.property('payload',numbers[help]*(c%3+1));
         }
         catch(err) {
           done(err);
@@ -387,17 +387,35 @@ describe( 'debounceNumber Node, byTopic', function () {
         c.should.match(0);
         for( const i in numbers )
         {
-          n1.receive({ topic: i, payload: numbers[i] });
+          n1.receive({ topic: "t", payload: numbers[i] });
+          n1.receive({ topic: "u", payload: numbers[i]*2 });
+          n1.receive({ topic: "v", payload: numbers[i]*3 });
           await delay(25);
         }
         await delay(150);
-        c.should.match(Math.ceil(numbers.length/4));
-        checkData( n1, "all_topics" );
-        n1.receive({ topic: "reset", payload: 40 });
+        c.should.match(3*Math.ceil(numbers.length/4));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: numbers[numbers.length-1] });
+        n1.receive({ topic: "u", payload: numbers[numbers.length-1]*2 });
+        n1.receive({ topic: "v", payload: numbers[numbers.length-1]*3 });
         n1.receive({ reset: true });
         await delay(150);
-        c.should.match(Math.ceil(numbers.length/4));
-        checkData( n1, "all_topics" );
+        c.should.match(3*Math.ceil(numbers.length/4));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: numbers[numbers.length-1] });
+        n1.receive({ topic: "u", payload: numbers[numbers.length-1]*2 });
+        n1.receive({ topic: "v", payload: numbers[numbers.length-1]*3 });
+        n1.receive({ topic: "reset", payload: 255 });
+        n1.receive({ topic: "reset", reset: true });
+        await delay(150);
+        c.should.match(3*Math.ceil(numbers.length/4)+3);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         done();
       }
       catch(err) {

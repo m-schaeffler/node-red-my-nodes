@@ -73,7 +73,7 @@ module.exports = function(RED) {
         });
 
         node.on('input', function(msg,send,done) {
-            console.log( "debounce input" );
+            //console.log( "debounce input" );
             //console.log( node.data );
             const topic     = node.byTopic ? msg.topic : "all_topics";
             let   statistic = node.data[topic];
@@ -147,7 +147,7 @@ module.exports = function(RED) {
         });
 
         node.on( "cyclic", function(stat) {
-            console.log("debounce cyclic "+stat.message.topic);
+            //console.log("debounce cyclic "+stat.message.topic);
             stat.timer    = null;
             stat.lastSent = stat.message.payload;
             node.send( stat.message );

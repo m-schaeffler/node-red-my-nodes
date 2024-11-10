@@ -150,7 +150,7 @@ describe( 'debounceNumber Node', function () {
   it('should forward filtered values, delta filter', function (done) {
     this.timeout( 3000 );
     const numbersIn  = [-100,0,0,0,0,1,2,3,4,5,6,7,8,9,9,9,9,9.99,10,10.01,15,19,20,19,11,10,100];
-    const numbersOut = [-100,0,                                   10,            20,      10,100];
+    const numbersOut = [-100,0,                                   10,            20,      10,100,100];
     var flow = [{ id: "n1", type: "debounceNumber", name: "test", gap:"10", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -160,7 +160,7 @@ describe( 'debounceNumber Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          msg.should.have.a.property('topic',"filter");
+          msg.should.have.a.property('topic',c<numbersOut.length-1?"filter":"reset");
           msg.should.have.property('payload',numbersOut[c]);
         }
         catch(err) {
@@ -181,6 +181,15 @@ describe( 'debounceNumber Node', function () {
           await delay(50);
         }
         await delay(100);
+        c.should.match(numbersOut.length-1);
+        checkData( n1, "all_topics" );
+        n1.receive({ topic: "z", payload: numbersIn[numbersIn.length-1] });
+        await delay(100);
+        c.should.match(numbersOut.length-1);
+        checkData( n1, "all_topics" );
+        n1.receive({ reset: true });
+        n1.receive({ topic: "reset", payload: numbersIn[numbersIn.length-1] });
+        await delay(100);
         c.should.match(numbersOut.length);
         checkData( n1, "all_topics" );
         done();
@@ -194,7 +203,7 @@ describe( 'debounceNumber Node', function () {
   it('should forward filtered values, percent filter', function (done) {
     //this.timeout( 3000 );
     const numbersIn  = [-100,0,0,0,0,0.01,0.1,10,10.01,10.9,10.99,11,11.01,10,9.99,9.9,100,-100,100];
-    const numbersOut = [-100,0,      0.01,0.1,10,                    11.01,        9.9,100,-100,100];
+    const numbersOut = [-100,0,      0.01,0.1,10,                    11.01,        9.9,100,-100,100,100];
     var flow = [{ id: "n1", type: "debounceNumber", name: "test", gap:"10%", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -204,7 +213,7 @@ describe( 'debounceNumber Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          msg.should.have.a.property('topic',"filter");
+          msg.should.have.a.property('topic',c<numbersOut.length-1?"filter":"reset");
           msg.should.have.property('payload',numbersOut[c]);
         }
         catch(err) {
@@ -224,6 +233,15 @@ describe( 'debounceNumber Node', function () {
           n1.receive({ topic: "filter", payload: numbersIn[i] });
           await delay(50);
         }
+        await delay(100);
+        c.should.match(numbersOut.length-1);
+        checkData( n1, "all_topics" );
+        n1.receive({ topic: "z", payload: numbersIn[numbersIn.length-1] });
+        await delay(100);
+        c.should.match(numbersOut.length-1);
+        checkData( n1, "all_topics" );
+        n1.receive({ reset: true });
+        n1.receive({ topic: "reset", payload: numbersIn[numbersIn.length-1] });
         await delay(100);
         c.should.match(numbersOut.length);
         checkData( n1, "all_topics" );
@@ -347,6 +365,11 @@ describe( 'debounceNumber Node', function () {
           n1.receive({ topic: i, payload: numbers[i] });
           await delay(25);
         }
+        await delay(150);
+        c.should.match(Math.ceil(numbers.length/4));
+        checkData( n1, "all_topics" );
+        n1.receive({ topic: "reset", payload: 40 });
+        n1.receive({ reset: true });
         await delay(150);
         c.should.match(Math.ceil(numbers.length/4));
         checkData( n1, "all_topics" );

@@ -133,7 +133,7 @@ describe( 'debounceNumber Node, byTopic', function () {
   it('should forward filtered values, delta filter', function (done) {
     this.timeout( 3000 );
     const numbersIn  = [-100,0,0,0,0,1,2,3,4,5,6,7,8,9,9,9,9,9.99,10,10.01,15,19,20,19,11,10,100];
-    const numbersOut = [-100,0,                                   10,            20,      10,100,100];
+    const numbersOut = [-100,0,                                   10,            20,      10,100,100,100];
     var flow = [{ id: "n1", type: "debounceNumber", name: "test", bytopic:true, gap:"10", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -166,21 +166,36 @@ describe( 'debounceNumber Node, byTopic', function () {
           await delay(50);
         }
         await delay(100);
+        c.should.match(3*(numbersOut.length-2));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+2 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+4 });
+        await delay(100);
+        c.should.match(3*(numbersOut.length-2));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ reset: true });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+2 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+4 });
+        await delay(100);
         c.should.match(3*(numbersOut.length-1));
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );
-        /*
-        n1.receive({ topic: "z", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "t", reset: true });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+2 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+4 });
         await delay(100);
-        c.should.match(numbersOut.length-1);
-        checkData( n1, "all_topics" );
-        n1.receive({ reset: true });
-        n1.receive({ topic: "reset", payload: numbersIn[numbersIn.length-1] });
-        await delay(100);
-        c.should.match(numbersOut.length);
-        checkData( n1, "all_topics" );
-        */
+        c.should.match(3*numbersOut.length-2);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         done();
       }
       catch(err) {
@@ -192,7 +207,7 @@ describe( 'debounceNumber Node, byTopic', function () {
   it('should forward filtered values, percent filter', function (done) {
     //this.timeout( 3000 );
     const numbersIn  = [-100,0,0,0,0,0.01,0.1,10,10.01,10.9,10.99,11,11.01,10,9.99,9.9,100,-100,100];
-    const numbersOut = [-100,0,      0.01,0.1,10,                    11.01,        9.9,100,-100,100,100];
+    const numbersOut = [-100,0,      0.01,0.1,10,                    11.01,        9.9,100,-100,100,100,100];
     var flow = [{ id: "n1", type: "debounceNumber", name: "test", bytopic:true, gap:"10%", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -202,8 +217,8 @@ describe( 'debounceNumber Node, byTopic', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          msg.should.have.a.property('topic',c<numbersOut.length-1?"filter":"reset");
-          msg.should.have.property('payload',numbersOut[c]);
+          msg.should.have.a.property('topic',topics[c%3]);
+          msg.should.have.property('payload',numbersOut[Math.floor(c/3)]*(c%3+1));
         }
         catch(err) {
           done(err);
@@ -219,21 +234,42 @@ describe( 'debounceNumber Node, byTopic', function () {
         c.should.match(0);
         for( const i in numbersIn )
         {
-          n1.receive({ topic: "filter", payload: numbersIn[i] });
+          n1.receive({ topic: "t", payload: numbersIn[i] });
+          n1.receive({ topic: "u", payload: numbersIn[i]*2 });
+          n1.receive({ topic: "v", payload: numbersIn[i]*3 });
           await delay(50);
         }
         await delay(100);
-        c.should.match(numbersOut.length-1);
-        checkData( n1, "all_topics" );
-        n1.receive({ topic: "z", payload: numbersIn[numbersIn.length-1] });
+        c.should.match(3*(numbersOut.length-2));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]*2 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]*3 });
         await delay(100);
-        c.should.match(numbersOut.length-1);
-        checkData( n1, "all_topics" );
+        c.should.match(3*(numbersOut.length-2));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         n1.receive({ reset: true });
-        n1.receive({ topic: "reset", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]*2 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]*3 });
         await delay(100);
-        c.should.match(numbersOut.length);
-        checkData( n1, "all_topics" );
+        c.should.match(3*(numbersOut.length-1));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", reset: true });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]*2 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]*3 });
+        await delay(100);
+        c.should.match(3*numbersOut.length-2);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         done();
       }
       catch(err) {

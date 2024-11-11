@@ -51,6 +51,7 @@ describe( 'msg-resend Node, byTopic', function () {
       data.should.have.a.property(topic).which.is.a.Object();
       data[topic].should.have.a.property('counter',data[topic].maxCount);
       data[topic].should.have.a.property('timer',null);
+      data[topic].should.have.a.property('message',null);
       return data[topic];
   }
 
@@ -58,6 +59,7 @@ describe( 'msg-resend Node, byTopic', function () {
       data.should.have.a.property(topic).which.is.a.Object();
       data[topic].should.not.have.a.property('counter');
       data[topic].should.have.a.property('timer',null);
+      data[topic].should.have.a.property('message',null);
       return data[topic];
   }
 
@@ -278,6 +280,7 @@ describe( 'msg-resend Node, byTopic', function () {
           msg.should.have.a.property('payload',expPayloads[c]);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
+          msg.should.not.have.a.property('resend_interval');
         }
         catch(err) {
           done(err);
@@ -328,6 +331,7 @@ describe( 'msg-resend Node, byTopic', function () {
           msg.should.have.a.property('payload',expPayloads[c]);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
+          msg.should.not.have.a.property('resend_max_count');
         }
         catch(err) {
           done(err);

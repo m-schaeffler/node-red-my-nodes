@@ -45,7 +45,7 @@ module.exports = function(RED) {
 
         function defaultStat()
         {
-            return { timer: null };
+            return { timer: null, message: null };
         }
 
         function testGap(value,last)
@@ -155,6 +155,7 @@ module.exports = function(RED) {
             node.state.text = stat.message.payload;
             node.status( node.state );
             node.state.fill = "gray";
+            stat.message = null;
         } );
 
         node.on( "close", function() {

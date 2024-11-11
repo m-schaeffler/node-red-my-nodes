@@ -40,7 +40,7 @@ module.exports = function(RED) {
 
         function defaultStat()
         {
-            return { timer: null };
+            return { timer: null, message: null };
         }
 
         node.on('started', function() {
@@ -131,6 +131,7 @@ module.exports = function(RED) {
             node.state.text = stat.message.payload;
             node.status( node.state );
             node.state.fill = "gray";
+            stat.message = null;
         } );
 
         node.on( "close", function() {

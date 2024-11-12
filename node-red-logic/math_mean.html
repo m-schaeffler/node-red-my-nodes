@@ -12,9 +12,9 @@
             minData:{value:"1", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
-            filter:{value:"0", validate:RED.validators.number()},
-            filterVal:{value:"0", validate:RED.validators.number()},
-            filterMul:{value:"10", validate:RED.validators.number()},
+            filter:{value:0, validate:RED.validators.number()},
+            filterVal:{value:0, validate:RED.validators.number()},
+            filterMul:{value:10, validate:RED.validators.number()},
             zeroIsZero:{value:false},
             showState:{value:false}
         },
@@ -59,15 +59,15 @@
     </div>
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter "></i> Filterzeit</label>
-        <input type="text" id="node-input-filter">
+        <input type="number" id="node-input-filter">
     </div>
     <div class="form-row">
         <label for="node-input-filterVal"><i class="fa fa-filter "></i> Filter Wert</label>
-        <input type="text" id="node-input-filterVal">
+        <input type="number" id="node-input-filterVal">
     </div>
     <div class="form-row">
         <label for="node-input-filterMul"><i class="fa fa-filter "></i> Filter Wiederholungsfaktor</label>
-        <input type="text" id="node-input-filterMul">
+        <input type="number" id="node-input-filterMul">
     </div>
     <div class="form-row">
         <label for="node-input-zeroIsZero"><i class="fa fa-exclamation-circle"></i> Null ist Null</label>

@@ -11,8 +11,8 @@
                 const raise = $("#node-input-threshold_raise").length ? $("#node-input-threshold_raise").val() : this.threshold_raise;
                 return v!=='' && !isNaN(v) && Number(v)<raise;}
             },
-            consecutive:{value:"1",required:true},
-            consecutiveFall:{value:"1",required:true},
+            consecutive:{value:1,required:true,validate:RED.validators.number()},
+            consecutiveFall:{value:1,required:true,validate:RED.validators.number()},
             outputRise:{value:true,required:true},
             outputRiseType:{value:"bool"},
             outputFall:{value:false,required:true},
@@ -71,11 +71,11 @@
     </div>
     <div class="form-row">
         <label for="node-input-consecutive"><i class="fa fa-line-chart"></i> rise Consecutive</label>
-        <input type="text" id="node-input-consecutive">
+        <input type="number" id="node-input-consecutive">
     </div>
     <div class="form-row">
         <label for="node-input-consecutiveFall"><i class="fa fa-line-chart"></i> fall Consecutive</label>
-        <input type="text" id="node-input-consecutiveFall">
+        <input type="number" id="node-input-consecutiveFall">
     </div>
     <div class="form-row">
         <label for="node-input-outputRise"><i class="fa fa-sign-out"></i> rise Output</label>

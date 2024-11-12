@@ -7,7 +7,7 @@
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
             threshold:{value:"",required:true,validate:RED.validators.number()},
-            consecutive:{value:"1",required:true},
+            consecutive:{value:1,required:true,validate:RED.validators.number()},
             output:{value:true,required:true},
             outputType:{value:"bool"},
             showState:{value:false}
@@ -55,7 +55,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-consecutive"><i class="fa fa-line-chart"></i> Consecutive</label>
-        <input type="text" id="node-input-consecutive">
+        <input type="number" id="node-input-consecutive">
     </div>
     <div class="form-row">
         <label for="node-input-output"><i class="fa fa-sign-out"></i> Output</label>

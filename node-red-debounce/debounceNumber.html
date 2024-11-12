@@ -8,7 +8,8 @@
             propertyType:{value:"msg"},
             time:{value:5,required:true,validate:RED.validators.regex(/^[1-9]\d*$/)},
             timeUnit:{value:"secs"},
-            gap:{value:"0",validate:RED.validators.regex(/^\d*[.]*\d*%?$/)},
+            gap:{value:"0",required:true,validate:RED.validators.regex(/^\d+\.?\d*%?$/)},
+            restart:{value:false},
             bytopic:{value:false}
         },
         inputs:1,
@@ -56,7 +57,11 @@
     </div>
     <div class="form-row">
         <label for="node-input-gap"><i class="fa fa-filter"></i> Filter</label>
-        <input type="number" id="node-input-gap" placeholder="">
+        <input type="text" id="node-input-gap" placeholder="">
+    </div>
+    <div class="form-row">
+        <label for="node-input-restart"><i class="fa fa-refresh"></i> Restart</label>
+        <input type="checkbox" id="node-input-restart" style="display: inline-block; width: 20px; vertical-align: baseline;">
     </div>
     <div class="form-row">
         <label for="node-input-bytopic"><i class="fa fa-envelope"></i> Topic dependent</label>

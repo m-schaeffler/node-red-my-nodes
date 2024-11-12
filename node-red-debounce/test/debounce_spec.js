@@ -63,6 +63,7 @@ describe( 'debounce Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('time', 1000);
         n1.should.have.a.property('filter', false);
+        n1.should.have.a.property('restart', false);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
         should.exist( n1.context().get("data") );

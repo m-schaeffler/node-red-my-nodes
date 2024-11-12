@@ -9,6 +9,7 @@ module.exports = function(RED) {
         this.time         = Number( config.time ?? 1 );
         this.gapPercent   = config.gap?.endsWith( "%" ) ?? false;
         this.gap          = parseFloat( config.gap ?? 0 );
+        this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
         this.state        = { fill:"gray", shape:"dot", text:"-" };
         this.data         = {};
@@ -131,16 +132,21 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.payload = Number( value );
-                    if( ! isNaN( msg.payload ) && testGap( msg.payload, statistic.lastSent ) )
+                    if( ! isNaN( msg.payload ) && testGap( msg.payload, statistic.last ) )
                     {
                         statistic.message = msg;
+                        statistic.last    = msg.payload;
                         if( ! statistic.timer )
                         {
                             statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, node.time, statistic );
                         }
+                        else if( node.restart )
+                        {
+                            statistic.timer.refresh();
+                        }
                         node.state.fill = "yellow";
                     }
-                    node.status( status );
+                    node.status( node.state );
                     done();
                 } );
             }
@@ -149,7 +155,7 @@ module.exports = function(RED) {
         node.on( "cyclic", function(stat) {
             //console.log("debounce cyclic "+stat.message.topic);
             stat.timer    = null;
-            stat.lastSent = stat.message.payload;
+            //stat.lastSent = stat.message.payload;
             node.send( stat.message );
             node.state.fill = "green";
             node.state.text = stat.message.payload;

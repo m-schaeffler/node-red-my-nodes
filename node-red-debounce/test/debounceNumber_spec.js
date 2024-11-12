@@ -64,6 +64,7 @@ describe( 'debounceNumber Node', function () {
         n1.should.have.a.property('time', 1000);
         n1.should.have.a.property('gapPercent', false);
         n1.should.have.a.property('gap', 0);
+        n1.should.have.a.property('restart', false);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
         should.exist( n1.context().get("data") );

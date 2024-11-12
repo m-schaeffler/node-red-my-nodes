@@ -8,6 +8,7 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.time         = Number( config.time ?? 1 );
         this.filter       = Boolean( config.filter );
+        this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
         this.state        = { fill:"gray", shape:"dot", text:"-" };
         this.data         = {};
@@ -107,12 +108,17 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.payload = value;
-                    if( msg.payload !== undefined && ( ! node.filter || msg.payload !== statistic.lastSent )  )
+                    if( msg.payload !== undefined && ( ! node.filter || msg.payload !== statistic.last )  )
                     {
                         statistic.message = msg;
+                        statistic.last    = msg.payload;
                         if( ! statistic.timer )
                         {
                             statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, node.time, statistic );
+                        }
+                        else if( node.restart )
+                        {
+                            statistic.timer.refresh();
                         }
                         node.state.fill = "yellow";
                     }
@@ -125,7 +131,7 @@ module.exports = function(RED) {
         node.on( "cyclic", function(stat) {
             //console.log("debounce cyclic "+stat.message.topic);
             stat.timer    = null;
-            stat.lastSent = stat.message.payload;
+            //stat.lastSent = stat.message.payload;
             node.send( stat.message );
             node.state.fill = "green";
             node.state.text = stat.message.payload;

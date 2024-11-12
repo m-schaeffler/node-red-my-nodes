@@ -9,6 +9,7 @@
             time:{value:5,required:true,validate:RED.validators.regex(/^[1-9]\d*$/)},
             timeUnit:{value:"secs"},
             filter:{value:false},
+            restart:{value:false},
             bytopic:{value:false}
         },
         inputs:1,
@@ -57,6 +58,10 @@
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter"></i> Filter</label>
         <input type="checkbox" id="node-input-filter" style="display: inline-block; width: 20px; vertical-align: baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-restart"><i class="fa fa-refresh"></i> Restart</label>
+        <input type="checkbox" id="node-input-restart" style="display: inline-block; width: 20px; vertical-align: baseline;">
     </div>
     <div class="form-row">
         <label for="node-input-bytopic"><i class="fa fa-envelope"></i> by Topic</label>

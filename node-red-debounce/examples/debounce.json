@@ -1,0 +1,203 @@
+[
+    {
+        "id": "81d4d45ec06e8618",
+        "type": "debounce",
+        "z": "cee84b4b.ab3628",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "time": "2",
+        "timeUnit": "secs",
+        "filter": true,
+        "restart": false,
+        "bytopic": false,
+        "x": 980,
+        "y": 680,
+        "wires": [
+            [
+                "a12e570027f0955b"
+            ]
+        ]
+    },
+    {
+        "id": "ac51fa95f12b412d",
+        "type": "inject",
+        "z": "cee84b4b.ab3628",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 810,
+        "y": 660,
+        "wires": [
+            [
+                "81d4d45ec06e8618"
+            ]
+        ]
+    },
+    {
+        "id": "1ef69016e5bca639",
+        "type": "inject",
+        "z": "cee84b4b.ab3628",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 810,
+        "y": 700,
+        "wires": [
+            [
+                "81d4d45ec06e8618"
+            ]
+        ]
+    },
+    {
+        "id": "a12e570027f0955b",
+        "type": "debug",
+        "z": "cee84b4b.ab3628",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1140,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "df375fd554cdf9eb",
+        "type": "debounceNumber",
+        "z": "cee84b4b.ab3628",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "time": "3",
+        "timeUnit": "secs",
+        "gap": "0",
+        "restart": true,
+        "bytopic": false,
+        "x": 970,
+        "y": 800,
+        "wires": [
+            [
+                "a12e570027f0955b"
+            ]
+        ]
+    },
+    {
+        "id": "98b045e0bc5f2014",
+        "type": "inject",
+        "z": "cee84b4b.ab3628",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "15",
+        "payloadType": "num",
+        "x": 810,
+        "y": 760,
+        "wires": [
+            [
+                "df375fd554cdf9eb"
+            ]
+        ]
+    },
+    {
+        "id": "5ef0fc5470e47058",
+        "type": "inject",
+        "z": "cee84b4b.ab3628",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "-10",
+        "payloadType": "num",
+        "x": 810,
+        "y": 840,
+        "wires": [
+            [
+                "df375fd554cdf9eb"
+            ]
+        ]
+    },
+    {
+        "id": "a5013d99c563c4a0",
+        "type": "inject",
+        "z": "cee84b4b.ab3628",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "0",
+        "payloadType": "num",
+        "x": 810,
+        "y": 800,
+        "wires": [
+            [
+                "df375fd554cdf9eb"
+            ]
+        ]
+    }
+]

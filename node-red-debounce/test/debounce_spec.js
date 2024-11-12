@@ -280,7 +280,7 @@ describe( 'debounce Node', function () {
     });
   });
 
-  it('should debounce values', function (done) {
+  it('should debounce values, no restart', function (done) {
     const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
     var flow = [{ id: "n1", type: "debounce", name: "test", time:100, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -317,6 +317,53 @@ describe( 'debounce Node', function () {
         n1.receive({ reset: true });
         await delay(150);
         c.should.match(Math.ceil(numbers.length/4));
+        checkData( n1, "all_topics" );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should debounce values, restart active', function (done) {
+    const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
+    var flow = [{ id: "n1", type: "debounce", name: "test", restart:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          const help = numbers.length-1;
+          msg.should.have.a.property('topic',help.toString());
+          msg.should.have.property('payload',numbers[help]);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('time', 100);
+        n1.should.have.a.property('restart', true);
+        n1.should.have.a.property('byTopic', false);
+        await delay(500);
+        c.should.match(0);
+        for( const i in numbers )
+        {
+          n1.receive({ topic: i, payload: numbers[i] });
+          await delay(25);
+        }
+        await delay(150);
+        c.should.match(1);
+        checkData( n1, "all_topics" );
+        n1.receive({ topic: "reset", payload: 40 });
+        n1.receive({ reset: true });
+        await delay(150);
+        c.should.match(1);
         checkData( n1, "all_topics" );
         done();
       }

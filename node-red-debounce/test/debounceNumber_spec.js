@@ -87,7 +87,7 @@ describe( 'debounceNumber Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('topic',topics[c%3]);
-          msg.should.have.property('payload',Number(numbers[c]));
+          msg.should.have.a.property('payload',Number(numbers[c]));
         }
         catch(err) {
           done(err);
@@ -163,7 +163,7 @@ describe( 'debounceNumber Node', function () {
         //console.log(msg);
         try {
           msg.should.have.a.property('topic',c<numbersOut.length-1?"filter":"reset");
-          msg.should.have.property('payload',numbersOut[c]);
+          msg.should.have.a.property('payload',numbersOut[c]);
         }
         catch(err) {
           done(err);
@@ -216,7 +216,7 @@ describe( 'debounceNumber Node', function () {
         //console.log(msg);
         try {
           msg.should.have.a.property('topic',c<numbersOut.length-1?"filter":"reset");
-          msg.should.have.property('payload',numbersOut[c]);
+          msg.should.have.a.property('payload',numbersOut[c]);
         }
         catch(err) {
           done(err);
@@ -350,7 +350,7 @@ describe( 'debounceNumber Node', function () {
         try {
           const help = Math.min( (c+1)*4-1, numbers.length-1 );
           msg.should.have.a.property('topic',help.toString());
-          msg.should.have.property('payload',numbers[help]);
+          msg.should.have.a.property('payload',numbers[help]);
         }
         catch(err) {
           done(err);
@@ -396,7 +396,7 @@ describe( 'debounceNumber Node', function () {
         try {
           const help = numbers.length-1;
           msg.should.have.a.property('topic',help.toString());
-          msg.should.have.property('payload',numbers[help]);
+          msg.should.have.a.property('payload',numbers[help]);
         }
         catch(err) {
           done(err);
@@ -421,6 +421,52 @@ describe( 'debounceNumber Node', function () {
         n1.receive({ reset: true });
         await delay(150);
         c.should.match(1);
+        checkData( n1, "all_topics" );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should debounce filtered values', function (done) {
+    var flow = [{ id: "n1", type: "debounceNumber", name: "test", gap:"0.5", time:100, timeUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.a.property('topic',"t");
+          msg.should.have.a.property('payload',1);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('time', 100);
+        n1.should.have.a.property('gap', 0.5);
+        n1.should.have.a.property('byTopic', false);
+        await delay(500);
+        c.should.match(0);
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(150);
+        c.should.match(1);
+        checkData( n1, "all_topics" );
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(150);
+        c.should.match(1);
+        checkData( n1, "all_topics" );
+        n1.receive({ topic: "o", payload: 0 });
+        await delay(25);
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(150);
+        c.should.match(2);
         checkData( n1, "all_topics" );
         done();
       }

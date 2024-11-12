@@ -65,7 +65,7 @@ describe( 'debounceNumber Node, byTopic', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('topic',topics[c%3]);
-          msg.should.have.property('payload',Number(numbers[c]));
+          msg.should.have.a.property('payload',Number(numbers[c]));
         }
         catch(err) {
           done(err);
@@ -145,7 +145,7 @@ describe( 'debounceNumber Node, byTopic', function () {
         //console.log(msg);
         try {
           msg.should.have.a.property('topic',topics[c%3]);
-          msg.should.have.property('payload',numbersOut[Math.floor(c/3)]+(c%3)*2);
+          msg.should.have.a.property('payload',numbersOut[Math.floor(c/3)]+(c%3)*2);
         }
         catch(err) {
           done(err);
@@ -219,7 +219,7 @@ describe( 'debounceNumber Node, byTopic', function () {
         //console.log(msg);
         try {
           msg.should.have.a.property('topic',topics[c%3]);
-          msg.should.have.property('payload',numbersOut[Math.floor(c/3)]*(c%3+1));
+          msg.should.have.a.property('payload',numbersOut[Math.floor(c/3)]*(c%3+1));
         }
         catch(err) {
           done(err);
@@ -374,7 +374,7 @@ describe( 'debounceNumber Node, byTopic', function () {
         try {
           const help = Math.min( (Math.floor(c/3)+1)*4-1, numbers.length-1 );
           msg.should.have.a.property('topic',topics[c%3]);
-          msg.should.have.property('payload',numbers[help]*(c%3+1));
+          msg.should.have.a.property('payload',numbers[help]*(c%3+1));
         }
         catch(err) {
           done(err);
@@ -438,7 +438,7 @@ describe( 'debounceNumber Node, byTopic', function () {
         try {
           const help = numbers.length-1;
           msg.should.have.a.property('topic',topics[c%3]);
-          msg.should.have.property('payload',numbers[help]*(c%3+1));
+          msg.should.have.a.property('payload',numbers[help]*(c%3+1));
         }
         catch(err) {
           done(err);

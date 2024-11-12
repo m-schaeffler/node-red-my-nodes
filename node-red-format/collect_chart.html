@@ -8,9 +8,9 @@
             propertyType:{value:"msg"},
             contextStore:{value:"",required:true},
             topics:{value:"[]",required:true},
-            cyclic:{value:"60",validate:RED.validators.number(),required:true},
-            eraseCycles:{value:"10",validate:RED.validators.number(),required:true},
-            hours:{value:"24",validate:RED.validators.number(),required:true},
+            cyclic:{value:60,validate:RED.validators.number(),required:true},
+            eraseCycles:{value:10,validate:RED.validators.number(),required:true},
+            hours:{value:24,validate:RED.validators.number(),required:true},
             steps:{value:false},
             showState:{value:false}
         },
@@ -75,15 +75,15 @@
     </div>
     <div class="form-row">
         <label for="node-input-cyclic"><i class="fa fa-refresh"></i> Zykluszeit</label>
-        <input type="text" id="node-input-cyclic">
+        <input type="number" id="node-input-cyclic">
     </div>
     <div class="form-row">
         <label for="node-input-eraseCycles"><i class="fa fa-trash"></i> Löschzyklen</label>
-        <input type="text" id="node-input-eraseCycles">
+        <input type="number" id="node-input-eraseCycles">
     </div>
     <div class="form-row">
         <label for="node-input-hours"><i class="fa fa-hourglass-end"></i> Stunden</label>
-        <input type="text" id="node-input-hours">
+        <input type="number" id="node-input-hours">
     </div>
     <div class="form-row">
         <label for="node-input-steps"><i class="fa fa-angle-up"></i> Steps</label>

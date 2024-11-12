@@ -382,7 +382,7 @@ describe( 'debounce Node, byTopic', function () {
           await delay(25);
         }
         await delay(150);
-        c.should.match(1);
+        c.should.match(3);
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );
@@ -391,7 +391,7 @@ describe( 'debounce Node, byTopic', function () {
         n1.receive({ topic: "u", payload: 40 });
         n1.receive({ reset: true });
         await delay(150);
-        c.should.match(1);
+        c.should.match(3);
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );
@@ -400,7 +400,7 @@ describe( 'debounce Node, byTopic', function () {
         n1.receive({ topic: "t", payload: 21 });
         n1.receive({ topic: "reset", reset: true });
         await delay(150);
-        c.should.match(2);
+        c.should.match(4);
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );

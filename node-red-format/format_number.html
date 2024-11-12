@@ -9,7 +9,7 @@
             unit:{value:""},
             grouping:{value:"'"},
             decimal:{value:",",required:true},
-            digits:{value:"0",validate:RED.validators.number(),required:true},
+            digits:{value:0,validate:RED.validators.number(),required:true},
             showState:{value:false},
             filter:{value:false}
         },
@@ -59,7 +59,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-digits"><i class="fa fa-angle-right"></i> Stellen</label>
-        <input type="text" id="node-input-digits">
+        <input type="number" id="node-input-digits">
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>

@@ -8,19 +8,19 @@
             propertyType:{value:"msg"},
             time:{value:5,required:true,validate:RED.validators.regex(/^[1-9]\d*$/)},
             timeUnit:{value:"secs"},
-            gap:{value:"",validate:RED.validators.regex(/^(\d*[.]*\d*|)(%|)$/)},
+            gap:{value:"0",validate:RED.validators.regex(/^\d*[.]*\d*%?$/)},
             bytopic:{value:false}
         },
         inputs:1,
         outputs:1,
-        icon: "font-awesome/fa-list-ol",
+        icon: "font-awesome/fa-flag-o",
         label: function() {
-            return this.name||"debounce number";
+            return this.name||"debounce N";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "debounce number",
+        paletteLabel: "debounce N",
         inputLabels: 'input',
         outputLabels: 'debounced payload',
         oneditprepare: function() {
@@ -59,9 +59,8 @@
         <input type="number" id="node-input-gap" placeholder="">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-envelope"></i></label>
+        <label for="node-input-bytopic"><i class="fa fa-envelope"></i> Topic dependent</label>
         <input type="checkbox" id="node-input-bytopic" style="display: inline-block; width: 20px; vertical-align: baseline;">
-        <label for="node-input-bytopic" style="width:70%;">Topic dependent</label>
     </div>
 </script>
 

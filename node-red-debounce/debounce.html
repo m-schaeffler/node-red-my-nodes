@@ -13,7 +13,7 @@
         },
         inputs:1,
         outputs:1,
-        icon: "font-awesome/fa-list-ul",
+        icon: "font-awesome/fa-flag",
         label: function() {
             return this.name||"debounce";
         },
@@ -55,13 +55,12 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-gap"><i class="fa fa-filter"></i> Filter</label>
-        <input type="number" id="node-input-gap" placeholder="">
+        <label for="node-input-filter"><i class="fa fa-filter"></i> Filter</label>
+        <input type="checkbox" id="node-input-filter" style="display: inline-block; width: 20px; vertical-align: baseline;">
     </div>
     <div class="form-row">
-        <label><i class="fa fa-envelope"></i></label>
+        <label for="node-input-bytopic"><i class="fa fa-envelope"></i> by Topic</label>
         <input type="checkbox" id="node-input-bytopic" style="display: inline-block; width: 20px; vertical-align: baseline;">
-        <label for="node-input-bytopic" style="width:70%;">Topic dependent</label>
     </div>
 </script>
 

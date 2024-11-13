@@ -12,6 +12,12 @@ $ npm install @mschaeffler/node-red-debounce
 
 ## debounce
 
+The `debounce` node is for a general purpose debouncing of any data (`string`, `boolean`, `number` ...):
+
+- What data is debounced can be selected with the `property` property.
+- `filter`: The data can be checked for a change before the debounce.
+- Debouncing means here that the node waits `time` time before sending out the message.
+
 ### Input
 
 |msg.    | type   | description                       |
@@ -39,6 +45,14 @@ $ npm install @mschaeffler/node-red-debounce
 |byTopic |boolean | shall resending be done on a topic base.|
 
 ## debounce N
+
+The `debounce N` node is for debouncing of numerical values:
+
+- What data is debounced can be selected with the `property` property.
+- `filter`: The value can be checked for a change greater then before the debounce.
+- This threshold can be an absolute or a relative value.
+- Debouncing means here that the node waits `time` time before sending out the message.
+
 
 ### Input
 

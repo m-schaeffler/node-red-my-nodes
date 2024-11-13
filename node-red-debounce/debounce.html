@@ -71,10 +71,14 @@
 
 <script type="text/x-red" data-help-name="debounce">
 
-    <p>A Node Red node for resending flow messages.</p>
+    <p>A Node Red node for debouncing data.</p>
     
-    <p>When a new input message arrives, it will be (re)sent to the output port at specified time intervals.
-    This process will repeat until the next input message arrives, or until the maximum number of resends has been reached.</p>
+    <p>The <code>debounce</code> node is for a general purpose debouncing of any data (string, boolean, number &hellip;):</p>
+    <ul>
+    <li>What data is debounced can be selected with the <code>property</code> property.</li>
+    <li><code>filter</code>: The data can be checked for a change before the debounce.</li>
+    <li> Debouncing means here that the node waits <code>time</code> time before sending out the message.</li>
+    </uL>
     
     <h3>Input</h3>
     <dl class="message-properties">

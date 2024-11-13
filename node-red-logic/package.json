@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-logic",
-  "version": "3.1.5",
+  "version": "3.1.6",
   "description": "nodes for simple operations.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-logic",

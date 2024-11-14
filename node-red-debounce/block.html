@@ -1,0 +1,124 @@
+<script type="text/javascript">
+    RED.nodes.registerType('block',{
+        category: 'function',
+        color: '#FFAAAA',
+        defaults: {
+            name:{value:""},
+            property:{value:"payload",required:true},
+            propertyType:{value:"msg"},
+            time:{value:5,required:true,validate:RED.validators.regex(/^[1-9]\d*$/)},
+            timeUnit:{value:"secs"},
+            filter:{value:false},
+            restart:{value:false},
+            bytopic:{value:false},
+            showState:{value:false}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-flag-checkered",
+        label: function() {
+            return this.name||"block";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "block",
+        inputLabels: 'input',
+        outputLabels: 'debounced payload',
+        oneditprepare: function() {
+            const node = this
+            $("#node-input-property").typedInput({
+                type:"msg",
+                types:["msg","jsonata"],
+                typeField: "#node-input-propertyType"
+            });
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="block">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
+        <input type="text" id="node-input-property">
+        <input type="hidden" id="node-input-propertyType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-time"><i class="fa fa-hourglass-o"></i> Time</label>
+        <input type="number" id="node-input-time" style="width:70px;" placeholder="Time">
+        <select id="node-input-timeUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-filter"><i class="fa fa-filter"></i> Filter</label>
+        <input type="checkbox" id="node-input-filter" style="display: inline-block; width: 20px; vertical-align: baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-restart"><i class="fa fa-refresh"></i> Restart</label>
+        <input type="checkbox" id="node-input-restart" style="display: inline-block; width: 20px; vertical-align: baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bytopic"><i class="fa fa-envelope"></i> by Topic</label>
+        <input type="checkbox" id="node-input-bytopic" style="display: inline-block; width: 20px; vertical-align: baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="block">
+
+    <p>A Node Red node for debouncing data.</p>
+    
+    <p>The <code>debounce</code> node is for a general purpose debouncing of any data (string, boolean, number &hellip;):</p>
+    <ul>
+    <li>What data is debounced can be selected with the <code>property</code> property.</li>
+    <li><code>filter</code>: The data can be checked for a change before the debounce.</li>
+    <li> Debouncing means here that the node waits <code>time</code> time before sending out the message.</li>
+    </uL>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> name of the input channel.</dd>
+        <dt>payload <span class="property-type"></span></dt>
+        <dd> input value for topic.</dd>
+        <dt>invalid <span class="property-type">boolean</span></dt>
+        <dd> if true, this message is ignored.</dd>
+        <dt>reset <span class="property-type">boolean</span></dt>
+        <dd> if true, resets the node; if combined with a <code>topic</code>, only this topic is reseted</dd>
+    </dl>
+    
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> same is in corresponding input message.</dd>
+        <dt>payload <span class="property-type"></span></dt>
+        <dd> data evaluated out of the input message.</dd>
+    </dl>
+    
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>Property <span class="property-type">string</span></dt>
+        <dd> defines the message property to be used as payload.</dd>
+        <dt>time <span class="property-type">number</span></dt>
+        <dd> debouncing time.</dd>
+        <dt>filter <span class="property-type">boolean</span></dt>
+        <dd> shall messages received with unchanged data be ignored.</dd>
+        <dt>restart <span class="property-type">boolean</span></dt>
+        <dd> shall the debouncing time be restarted with every received message.</dd>
+        <dt>byTopic <span class="property-type">boolean</span></dt>
+        <dd> shall resending be done on a topic base.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
+    </dl>
+    
+</script>

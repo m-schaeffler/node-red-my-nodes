@@ -2,6 +2,7 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../block.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
+require("./block_spec.js");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -9,7 +10,7 @@ function delay(ms) {
   });
 }
 
-describe( 'block Node', function () {
+describe( 'block Node, byTopic', function () {
   "use strict";
 
   const topics = ['t','u','v'];
@@ -52,31 +53,9 @@ describe( 'block Node', function () {
       return data[topic];
   }
 
-  it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "block", name: "test" }];
-    helper.load(node, flow, async function () {
-      var n1 = helper.getNode("n1");
-      try {
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('property', 'payload');
-        n1.should.have.a.property('propertyType', 'msg');
-        n1.should.have.a.property('time', 1000);
-        n1.should.have.a.property('filter', false);
-        n1.should.have.a.property('restart', false);
-        n1.should.have.a.property('byTopic', false);
-        await delay(500);
-        should.exist( n1.context().get("data") );
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
   it('should forward valid values', function (done) {
     const numbers = [-1,0,0,0,0,0,0,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null,NaN,"FooBar"];
-    var flow = [{ id: "n1", type: "block", name: "test", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -94,7 +73,7 @@ describe( 'block Node', function () {
       });
       try {
         n1.should.have.a.property('time', 20);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         c.should.match(0);
         for( const i in numbers )
@@ -104,7 +83,9 @@ describe( 'block Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "all_topics" );
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         done();
       }
       catch(err) {
@@ -114,7 +95,7 @@ describe( 'block Node', function () {
   });
 
   it('should not forward invalid values', function (done) {
-    var flow = [{ id: "n1", type: "block", name: "test", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -126,17 +107,19 @@ describe( 'block Node', function () {
       });
       try {
         n1.should.have.a.property('time', 20);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         c.should.match(0);
         n1.receive({ topic: "t" });
         await delay(50);
-        n1.receive({ payload: undefined });
+        n1.receive({ topic:"u", payload: undefined });
         await delay(50);
-        n1.receive({ invalid: true, payload: 255 });
+        n1.receive({ topic:"i", invalid: true, payload: 255 });
         await delay(150);
         c.should.match(0);
-        checkData( n1, "all_topics" );
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "i" );
         done();
       }
       catch(err) {
@@ -146,10 +129,10 @@ describe( 'block Node', function () {
   });
 
   it('should forward filtered values', function (done) {
-    const numbersIn  = [-1,0,0,0,0,0,0,0,1,1,1,1];
-    const numbersOut = [-1,0,1,1];
-    const topicsOut  = ["t","u","v","reset"];
-    var flow = [{ id: "n1", type: "block", name: "test", filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
+    const numbersIn  = [-1,0,0,0,0,0,0,0,1,1,2,3,3,3];
+    const numbersOut = [-1,0,            1,  2,3,   3,3];
+    const topicsOut  = ["t","u","v","t","v","t","u", "v","t","u", "t"];
+    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -158,8 +141,8 @@ describe( 'block Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          msg.should.have.a.property('topic',topicsOut[c]);
-          msg.should.have.a.property('payload',numbersOut[c]);
+          msg.should.have.a.property('topic',topics[c%3]);
+          msg.should.have.a.property('payload',numbersOut[Math.floor(c/3)]+(c%3));
         }
         catch(err) {
           done(err);
@@ -168,27 +151,48 @@ describe( 'block Node', function () {
       });
       try {
         n1.should.have.a.property('time', 20);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         n1.should.have.a.property('filter', true);
         await delay(500);
         c.should.match(0);
         for( const i in numbersIn )
         {
-          n1.receive({ topic: topics[i%3], payload: numbersIn[i] });
+          n1.receive({ topic: "t", payload: numbersIn[i] });
+          n1.receive({ topic: "u", payload: numbersIn[i]+1 });
+          n1.receive({ topic: "v", payload: numbersIn[i]+2 });
           await delay(50);
         }
         await delay(100);
-        c.should.match(numbersOut.length-1);
-        checkData( n1, "all_topics" );
-        n1.receive({ topic: "z", payload: numbersIn[numbersIn.length-1] });
+        c.should.match(3*(numbersOut.length-2));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+1 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+2 });
         await delay(100);
-        c.should.match(numbersOut.length-1);
-        checkData( n1, "all_topics" );
+        c.should.match(3*(numbersOut.length-2));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         n1.receive({ reset: true });
-        n1.receive({ topic: "reset", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+1 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+2 });
         await delay(100);
-        c.should.match(numbersOut.length);
-        checkData( n1, "all_topics" );
+        c.should.match(3*(numbersOut.length-1));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic:"t", reset: true });
+        n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
+        n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+1 });
+        n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+2 });
+        await delay(100);
+        c.should.match(3*numbersOut.length-2);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         done();
       }
       catch(err) {
@@ -199,7 +203,7 @@ describe( 'block Node', function () {
 
   it('should work with objects', function (done) {
     const numbers = [-1,0,255,65535];
-    var flow = [{ id: "n1", type: "block", name: "test", property:"payload.value", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, property:"payload.value", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -217,7 +221,7 @@ describe( 'block Node', function () {
       });
       try {
         n1.should.have.a.property('time', 20);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         n1.should.have.a.property('property', "payload.value");
         n1.should.have.a.property('propertyType', "msg");
         await delay(500);
@@ -229,7 +233,7 @@ describe( 'block Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "all_topics" );
+        checkData( n1, "Object" );
         done();
       }
       catch(err) {
@@ -240,7 +244,7 @@ describe( 'block Node', function () {
 
   it('should have Jsonata', function (done) {
     const numbers = [-1,0,255,65535];
-    var flow = [{ id: "n1", type: "block", name: "test", property:"payload+5", propertyType:"jsonata", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, property:"payload+5", propertyType:"jsonata", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -258,7 +262,7 @@ describe( 'block Node', function () {
       });
       try {
         n1.should.have.a.property('time', 20);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         n1.should.have.a.property('property', "payload+5");
         n1.should.have.a.property('propertyType', "jsonata");
         await delay(500);
@@ -270,7 +274,7 @@ describe( 'block Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "all_topics" );
+        checkData( n1, "JSONata" );
         done();
       }
       catch(err) {
@@ -281,7 +285,7 @@ describe( 'block Node', function () {
 
   it('should debounce values, no restart', function (done) {
     const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    var flow = [{ id: "n1", type: "block", name: "test", time:100, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -290,9 +294,9 @@ describe( 'block Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          const help = Math.min( c*4, numbers.length-1 );
-          msg.should.have.a.property('topic',help.toString());
-          msg.should.have.a.property('payload',numbers[help]);
+          const help = Math.min( Math.floor(c/3)*4, numbers.length-1 );
+          msg.should.have.a.property('topic',topics[c%3]);
+          msg.should.have.a.property('payload',numbers[help]*(c%3+1));
         }
         catch(err) {
           done(err);
@@ -301,23 +305,45 @@ describe( 'block Node', function () {
       });
       try {
         n1.should.have.a.property('time', 100);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         c.should.match(0);
         for( const i in numbers )
         {
-          n1.receive({ topic: i, payload: numbers[i] });
+          n1.receive({ topic: "t", payload: numbers[i] });
+          n1.receive({ topic: "u", payload: numbers[i]*2 });
+          n1.receive({ topic: "v", payload: numbers[i]*3 });
           await delay(25);
         }
         await delay(150);
-        c.should.match(Math.ceil(numbers.length/4));
-        checkData( n1, "all_topics" );
-        n1.receive({ topic: '20', payload: 21 });
+        c.should.match(3*Math.ceil(numbers.length/4));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "u", payload: 21*2 });
+        n1.receive({ topic: "v", payload: 21*3 });
         n1.receive({ reset: true });
-        n1.receive({ topic: '20', payload: 21 });
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "u", payload: 21*2 });
+        n1.receive({ topic: "v", payload: 21*3 });
         await delay(150);
-        c.should.match(Math.ceil(numbers.length/4)+2);
-        checkData( n1, "all_topics" );
+        c.should.match(3*Math.ceil(numbers.length/4+2));
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "u", payload: 21*2 });
+        n1.receive({ topic: "v", payload: 21*3 });
+        n1.receive({ topic: "t", reset: true });
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "u", payload: 21*2 });
+        n1.receive({ topic: "v", payload: 21*3 });
+        await delay(150);
+        c.should.match(3*Math.ceil(numbers.length/4+3)+1);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         done();
       }
       catch(err) {
@@ -326,9 +352,9 @@ describe( 'block Node', function () {
     });
   });
 
-  it('should debounce values, restart active', function (done) {
+  it('should debounce values, active', function (done) {
     const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    var flow = [{ id: "n1", type: "block", name: "test", restart:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "block", name: "test", restart:true, bytopic:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -337,9 +363,9 @@ describe( 'block Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          const help = c==0 ? 0 : numbers.length-1;
-          msg.should.have.a.property('topic',help.toString());
-          msg.should.have.a.property('payload',numbers[help]);
+          const help = c<3 ? 0 : numbers.length-1;
+          msg.should.have.a.property('topic',topics[c%3]);
+          msg.should.have.a.property('payload',numbers[help]*(c%3+1));
         }
         catch(err) {
           done(err);
@@ -349,69 +375,45 @@ describe( 'block Node', function () {
       try {
         n1.should.have.a.property('time', 100);
         n1.should.have.a.property('restart', true);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         c.should.match(0);
         for( const i in numbers )
         {
-          n1.receive({ topic: i, payload: numbers[i] });
+          n1.receive({ topic: "t", payload: numbers[i] });
+          n1.receive({ topic: "u", payload: numbers[i]*2 });
+          n1.receive({ topic: "v", payload: numbers[i]*3 });
           await delay(25);
         }
         await delay(150);
-        c.should.match(1);
-        checkData( n1, "all_topics" );
-        n1.receive({ topic: "20", payload: 21 });
+        c.should.match(3);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "u", payload: 21*2 });
+        n1.receive({ topic: "v", payload: 21*3 });
         n1.receive({ reset: true });
-        n1.receive({ topic: "20", payload: 21 });
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "u", payload: 21*2 });
+        n1.receive({ topic: "v", payload: 21*3 });
         await delay(150);
-        c.should.match(3);
-        checkData( n1, "all_topics" );
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should debounce filtered values', function (done) {
-    var flow = [{ id: "n1", type: "block", name: "test", filter:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg);
-        try {
-          msg.should.have.a.property('topic',c==1?"o":"t");
-          msg.should.have.a.property('payload',c==1?0.5:1);
-        }
-        catch(err) {
-          done(err);
-        }
-        c++;
-      });
-      try {
-        n1.should.have.a.property('time', 100);
-        n1.should.have.a.property('filter', true);
-        n1.should.have.a.property('byTopic', false);
-        await delay(500);
-        c.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
+        c.should.match(3+6);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "u", payload: 21*2 });
+        n1.receive({ topic: "v", payload: 21*3 });
+        n1.receive({ topic: "t", reset: true });
+        n1.receive({ topic: "t", payload: 21 });
+        n1.receive({ topic: "u", payload: 21*2 });
+        n1.receive({ topic: "v", payload: 21*3 });
         await delay(150);
-        c.should.match(1);
-        checkData( n1, "all_topics" );
-        n1.receive({ topic: "t", payload: 1 });
-        await delay(25);
-        n1.receive({ topic: "o", payload: 0.5 });
-        await delay(150);
-        c.should.match(2);
-        checkData( n1, "all_topics" );
-        n1.receive({ topic: "t", payload: 1 });
-        await delay(150);
-        c.should.match(3);
-        checkData( n1, "all_topics" );
+        c.should.match(3+6+4);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         done();
       }
       catch(err) {

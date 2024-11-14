@@ -23,7 +23,8 @@
         "version": ">=4.0.0",
         "nodes": {
             "debounce": "debounce.js",
-            "debounceNumber": "debounceNumber.js"
+            "debounceNumber": "debounceNumber.js",
+            "block": "block.js"
         }
     },
     "engines": {

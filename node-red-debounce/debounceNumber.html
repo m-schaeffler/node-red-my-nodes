@@ -89,45 +89,37 @@
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
-        <dd> topic for the output message</dd>
+        <dd> name of the input channel.</dd>
         <dt>payload <span class="property-type"></span></dt>
-        <dd> payload for the output message</dd>
+        <dd> input value for topic.</dd>
+        <dt>invalid <span class="property-type">boolean</span></dt>
+        <dd> if true, this message is ignored.</dd>
         <dt>reset <span class="property-type">boolean</span></dt>
         <dd> if true, resets the node; if combined with a <code>topic</code>, only this topic is reseted</dd>
-        <dt>resend_interval <span class="property-type">number</span></dt>
-        <dd> changes the parameter <code>interval</code> for this topic</dd>
-        <dt>resend_max_count <span class="property-type">number</span></dt>
-        <dd> changes the parameter <code>maximum</code> for this topic</dd>
     </dl>
     
     <h3>Outputs</h3>
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
-        <dd> same is in corresponding input message</dd>
-        <dt>payload <span class="property-type"></span></dt>
-        <dd> same is in corresponding input message</dd>
-        <dt>counter <span class="property-type">number</span></dt>
-        <dd> resending counter, if parameter <code>addCounters</code> is set</dd>
-        <dt>max <span class="property-type">number</span></dt>
-        <dd> resending maximum, if parameter <code>addCounters</code> is set</dd>
-        <dt>&hellip; <span class="property-type"></span></dt>
-        <dd> same is in corresponding input message</dd>
+        <dd> same is in corresponding input message.</dd>
+        <dt>payload <span class="property-type">number</span></dt>
+        <dd> data evaluated out of the input message.</dd>
     </dl>
     
     <h3>Parameters</h3>
     <dl class="message-properties">
-        <dt>interval <span class="property-type">number</span></dt>
-        <dd> the intervall between two resends</dd>
-        <dt>maximum <span class="property-type">number</span></dt>
-        <dd> the maximum number of resends; 0 is infinite</dd>
+        <dt>Property <span class="property-type">string</span></dt>
+        <dd> defines the message property to be used as payload.</dd>
+        <dt>time <span class="property-type">number</span></dt>
+        <dd> debouncing time.</dd>
+        <dt>filter <span class="property-type">number</span></dt>
+        <dd> data must differ at least by this value; it can be an absolute number or a percentage.</dd>
+        <dt>restart <span class="property-type">boolean</span></dt>
+        <dd> shall the debouncing time be restarted with every received message.</dd>
         <dt>byTopic <span class="property-type">boolean</span></dt>
-        <dd> shall resending be done on a topic base</dd>
-        <dt>firstDelayed <span class="property-type">boolean</span></dt>
-        <dd> shall the first message be sent after a intervall, or instantly</dd>
-        <dt>addCounters <span class="property-type">boolean</span></dt>
-        <dd> shall a counter be added to the sent mesages</dd>
-        <dt>clone <span class="property-type">boolean</span></dt>
-        <dd> shall the messages be cloned</dd>
+        <dd> shall resending be done on a topic base.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
     </dl>
     
 </script>

@@ -144,19 +144,9 @@ module.exports = function(RED) {
                         {
                             statistic.timer.refresh();
                         }
-                        if( node.state );
-                        {
-                            node.state.fill = "yellow";
-                            node.status( node.state );
-                        }
+                        node.state && ( node.state.fill = "yellow" );
                     }
-                    else
-                    {
-                        if( node.state );
-                        {
-                            node.status( node.state );
-                        }
-                    }
+                    node.state && node.status( node.state );
                     done();
                 } );
             }

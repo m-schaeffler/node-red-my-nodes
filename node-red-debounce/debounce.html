@@ -10,7 +10,8 @@
             timeUnit:{value:"secs"},
             filter:{value:false},
             restart:{value:false},
-            bytopic:{value:false}
+            bytopic:{value:false},
+            showState:{value:false}
         },
         inputs:1,
         outputs:1,
@@ -66,6 +67,10 @@
     <div class="form-row">
         <label for="node-input-bytopic"><i class="fa fa-envelope"></i> by Topic</label>
         <input type="checkbox" id="node-input-bytopic" style="display: inline-block; width: 20px; vertical-align: baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
 </script>
 

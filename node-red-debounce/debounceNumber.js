@@ -11,7 +11,7 @@ module.exports = function(RED) {
         this.gap          = parseFloat( config.gap ?? 0 );
         this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
-        this.state        = { fill:"gray", shape:"dot", text:"-" };
+        this.state        = config.showState ? { fill:"gray", shape:"dot", text:"-" } : null;
         this.data         = {};
         if( this.propertyType === "jsonata" )
         {
@@ -144,9 +144,19 @@ module.exports = function(RED) {
                         {
                             statistic.timer.refresh();
                         }
-                        node.state.fill = "yellow";
+                        if( node.state );
+                        {
+                            node.state.fill = "yellow";
+                            node.status( node.state );
+                        }
                     }
-                    node.status( node.state );
+                    else
+                    {
+                        if( node.state );
+                        {
+                            node.status( node.state );
+                        }
+                    }
                     done();
                 } );
             }
@@ -157,10 +167,13 @@ module.exports = function(RED) {
             stat.timer    = null;
             //stat.lastSent = stat.message.payload;
             node.send( stat.message );
-            node.state.fill = "green";
-            node.state.text = stat.message.payload;
-            node.status( node.state );
-            node.state.fill = "gray";
+            if( node.state )
+            {
+                node.state.fill = "green";
+                node.state.text = stat.message.payload;
+                node.status( node.state );
+                node.state.fill = "gray";
+            }
             stat.message = null;
         } );
 

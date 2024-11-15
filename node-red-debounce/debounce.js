@@ -7,6 +7,7 @@ module.exports = function(RED) {
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.time         = Number( config.time ?? 1 );
+        this.block        = Boolean( config.block );
         this.filter       = Boolean( config.filter );
         this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
@@ -38,10 +39,30 @@ module.exports = function(RED) {
         }
         setTimeout( function() { node.emit("started"); }, 100 );
         node.status( "" );
-
+7
         function defaultStat()
         {
             return { timer: null, message: null };
+        }
+
+        function sendMsg(msg)
+        {
+            node.send( msg );
+            if( node.state )
+            {
+                node.state.fill = "green";
+                node.state.text = msg.payload;
+                node.status( node.state )
+            }
+        }
+
+        function statusColor(color)
+        {
+            if( node.state )
+            {
+                node.state.fill = color;
+                node.status( node.state );
+            }
         }
 
         node.on('started', function() {
@@ -110,19 +131,36 @@ module.exports = function(RED) {
                     msg.payload = value;
                     if( msg.payload !== undefined && ( ! node.filter || msg.payload !== statistic.last )  )
                     {
-                        statistic.message = msg;
-                        statistic.last    = msg.payload;
+                        statistic.last = msg.payload;
+                        if( ! node.block )
+                        {
+                            statistic.message = msg;
+                        }
                         if( ! statistic.timer )
                         {
+                            if( node.block )
+                            {
+                                sendMsg( msg );
+                            }
+                            else
+                            {
+                                statusColor( "yellow" );
+                            }
                             statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, node.time, statistic );
                         }
                         else if( node.restart )
                         {
                             statistic.timer.refresh();
+                            if( node.block )
+                            {
+                                statusColor( "red" );
+                            }
                         }
-                        node.state && ( node.state.fill = "yellow" );
                     }
-                    node.state && node.status( node.state );
+                    else
+                    {
+                        statusColor( "gray" );
+                    }
                     done();
                 } );
             }
@@ -130,17 +168,12 @@ module.exports = function(RED) {
 
         node.on( "cyclic", function(stat) {
             //console.log("debounce cyclic "+stat.message.topic);
-            stat.timer    = null;
-            //stat.lastSent = stat.message.payload;
-            node.send( stat.message );
-            if( node.state )
+            stat.timer = null;
+            if( stat.message )
             {
-                node.state.fill = "green";
-                node.state.text = stat.message.payload;
-                node.status( node.state );
-                node.state.fill = "gray";
+                sendMsg( stat.message );
+                stat.message = null;
             }
-            stat.message = null;
         } );
 
         node.on( "close", function() {

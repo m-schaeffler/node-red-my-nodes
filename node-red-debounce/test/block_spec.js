@@ -50,6 +50,7 @@ describe( 'block Node', function () {
       const data = n1.context().get("data");
       data.should.have.a.property(topic).which.is.a.Object();
       data[topic].should.have.a.property('timer',null);
+      data[topic].should.have.a.property('message',null);
       return data[topic];
   }
 
@@ -394,7 +395,7 @@ describe( 'block Node', function () {
         //console.log(msg);
         try {
           msg.should.have.a.property('topic',c==1?"o":"t");
-          msg.should.have.a.property('payload',c==1?0.5:1);
+          msg.should.have.a.property('payload',c==1?0:1);
         }
         catch(err) {
           done(err);
@@ -420,7 +421,7 @@ describe( 'block Node', function () {
         checkData( n1, "all_topics" );
         n1.receive({ topic: "t", payload: 1 });
         await delay(150);
-        c.should.match(3);
+        c.should.match(2);
         checkData( n1, "all_topics" );
         done();
       }

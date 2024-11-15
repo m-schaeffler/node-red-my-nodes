@@ -78,11 +78,11 @@
 
     <p>A Node Red node for debouncing data.</p>
     
-    <p>The <code>debounce</code> node is for a general purpose debouncing of any data (string, boolean, number &hellip;):</p>
+    <p>The <code>block</code> node is for block following messages for some time adter a message has arrived:</p>
     <ul>
-    <li>What data is debounced can be selected with the <code>property</code> property.</li>
-    <li><code>filter</code>: The data can be checked for a change before the debounce.</li>
-    <li> Debouncing means here that the node waits <code>time</code> time before sending out the message.</li>
+    <li>What data is blocked can be selected with the <code>property</code> property.</li>
+    <li><code>filter</code>: The data can be checked for a change before the blocking.</li>
+    <li> Blocking means here that the node sends out a message and afterwards waits <code>time</code> time beeing able to send the next message.</li>
     </uL>
     
     <h3>Input</h3>

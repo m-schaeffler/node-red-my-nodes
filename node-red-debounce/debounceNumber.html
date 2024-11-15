@@ -83,7 +83,7 @@
     <li>What data is debounced can be selected with the <code>property</code> property.</li>
     <li><code>filter</code>: The value can be checked for a change greater then before the debounce.</li>
     <li>This threshold can be an absolute or a relative value.</li>
-    <li>Debouncing means here that the node waits <code>time</code> time before sending out the message.</li>
+    <li>Debouncing means here that the node waits <code>time</code> time before sending out the last received message.</li>
     </ul>
     
     <h3>Input</h3>
@@ -110,11 +110,11 @@
     <dl class="message-properties">
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
-        <dt>time <span class="property-type">number</span></dt>
+        <dt>Time <span class="property-type">number</span></dt>
         <dd> debouncing time.</dd>
-        <dt>filter <span class="property-type">number</span></dt>
+        <dt>Filter <span class="property-type">number</span></dt>
         <dd> data must differ at least by this value; it can be an absolute number or a percentage.</dd>
-        <dt>restart <span class="property-type">boolean</span></dt>
+        <dt>Restart <span class="property-type">boolean</span></dt>
         <dd> shall the debouncing time be restarted with every received message.</dd>
         <dt>byTopic <span class="property-type">boolean</span></dt>
         <dd> shall resending be done on a topic base.</dd>

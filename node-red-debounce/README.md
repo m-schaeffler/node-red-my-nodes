@@ -16,7 +16,7 @@ The `debounce` node is for a general purpose debouncing of any data (`string`, `
 
 - What data is debounced can be selected with the `property` property.
 - `filter`: The data can be checked for a change before the debounce.
-- Debouncing means here that the node waits `time` time before sending out the message.
+- Debouncing means here that the node waits `time` time before sending out the last received message.
 
 ### Input
 
@@ -39,10 +39,11 @@ The `debounce` node is for a general purpose debouncing of any data (`string`, `
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
-|time    | number | debouncing time.|
-|filter  |boolean | shall messages received with unchanged data be ignored.|
-|restart |boolean | shall the debouncing time be restarted with every received message.|
+|Time    | number | debouncing time.|
+|Filter  |boolean | shall messages received with unchanged data be ignored.|
+|Restart |boolean | shall the debouncing time be restarted with every received message.|
 |byTopic |boolean | shall resending be done on a topic base.|
+|Status  |boolean |shows the actual value as a node status.|
 
 ## debounce N
 
@@ -51,8 +52,7 @@ The `debounce N` node is for debouncing of numerical values:
 - What data is debounced can be selected with the `property` property.
 - `filter`: The value can be checked for a change greater then before the debounce.
 - This threshold can be an absolute or a relative value.
-- Debouncing means here that the node waits `time` time before sending out the message.
-
+- Debouncing means here that the node waits `time` time before sending out the last received message.
 
 ### Input
 
@@ -75,10 +75,13 @@ The `debounce N` node is for debouncing of numerical values:
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
-|time    | number | debouncing time.|
-|filter  | number | data must differ at least by this value; it can be an absolute number or a percentage.|
-|restart |boolean | shall the debouncing time be restarted with every received message.|
+|Time    | number | debouncing time.|
+|Filter  | number | data must differ at least by this value; it can be an absolute number or a percentage.|
+|Restart |boolean | shall the debouncing time be restarted with every received message.|
 |byTopic |boolean | shall resending be done on a topic base.|
+|Status  |boolean | shows the actual value as a node status.|
+
+## block
 
 ## Example Flow
 

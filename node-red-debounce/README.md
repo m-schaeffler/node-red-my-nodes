@@ -40,6 +40,7 @@ The `debounce` node is for a general purpose debouncing of any data (`string`, `
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
 |Time    | number | debouncing time.|
+|Block   |boolean | block instead of decounce. this means that an incoming message is sent out immediately and afterwards for <code>time</code> all following messages are blocked|
 |Filter  |boolean | shall messages received with unchanged data be ignored.|
 |Restart |boolean | shall the debouncing time be restarted with every received message.|
 |byTopic |boolean | shall resending be done on a topic base.|
@@ -80,8 +81,6 @@ The `debounce N` node is for debouncing of numerical values:
 |Restart |boolean | shall the debouncing time be restarted with every received message.|
 |byTopic |boolean | shall resending be done on a topic base.|
 |Status  |boolean | shows the actual value as a node status.|
-
-## block
 
 ## Example Flow
 

@@ -62,6 +62,7 @@ describe( 'debounce Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('time', 1000);
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('filter', false);
         n1.should.have.a.property('restart', false);
         n1.should.have.a.property('byTopic', false);
@@ -94,6 +95,7 @@ describe( 'debounce Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
@@ -126,6 +128,7 @@ describe( 'debounce Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
@@ -168,6 +171,7 @@ describe( 'debounce Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
         n1.should.have.a.property('filter', true);
@@ -217,6 +221,7 @@ describe( 'debounce Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
         n1.should.have.a.property('property', "payload.value");
@@ -258,6 +263,7 @@ describe( 'debounce Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', false);
         n1.should.have.a.property('property', "payload+5");
@@ -301,6 +307,7 @@ describe( 'debounce Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 100);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
@@ -347,6 +354,7 @@ describe( 'debounce Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 100);
         n1.should.have.a.property('restart', true);
         n1.should.have.a.property('byTopic', false);
@@ -392,6 +400,7 @@ describe( 'debounce Node', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 100);
         n1.should.have.a.property('filter', true);
         n1.should.have.a.property('byTopic', false);

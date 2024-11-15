@@ -1,13 +1,16 @@
 <script type="text/javascript">
     RED.nodes.registerType('debounce',{
         category: 'function',
-        color: '#E6E0F8',
+        color: function() {
+            return this.block ? '#FFAAAA' : '#E6E0F8';
+        },
         defaults: {
             name:{value:""},
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
             time:{value:5,required:true,validate:RED.validators.regex(/^[1-9]\d*$/)},
             timeUnit:{value:"secs"},
+            block:{value:false},
             filter:{value:false},
             restart:{value:false},
             bytopic:{value:false},
@@ -15,14 +18,18 @@
         },
         inputs:1,
         outputs:1,
-        icon: "font-awesome/fa-flag",
+        icon: function() {
+            return this.block ? "font-awesome/fa-flag-checkered" : "font-awesome/fa-flag";
+        },
         label: function() {
-            return this.name||"debounce";
+            return this.name||this.block?"block":"debounce";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "debounce",
+        paletteLabel: function() {
+            return this.block ? "block" : "debounce";
+        },
         inputLabels: 'input',
         outputLabels: 'debounced payload',
         oneditprepare: function() {
@@ -55,6 +62,10 @@
             <option value="mins">Minutes</option>
             <option value="hours">Hours</option>
         </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-block"><i class="fa fa-ban"></i> Block</label>
+        <input type="checkbox" id="node-input-block" style="display: inline-block; width: 20px; vertical-align: baseline;">
     </div>
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter"></i> Filter</label>
@@ -111,6 +122,8 @@
         <dd> defines the message property to be used as payload.</dd>
         <dt>Time <span class="property-type">number</span></dt>
         <dd> debouncing time.</dd>
+        <dt>Block <span class="property-type">boolean</span></dt>
+        <dd> block instead of decounce. this means taht an incoming message is sent out immediately and afterwards for <code>time</code> all following messages are blocked.</dd>
         <dt>Filter <span class="property-type">boolean</span></dt>
         <dd> shall messages received with unchanged data be ignored.</dd>
         <dt>Restart <span class="property-type">boolean</span></dt>

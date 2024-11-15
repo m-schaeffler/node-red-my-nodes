@@ -1,8 +1,9 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
-var node   = require("../block.js");
+var node   = require("../debounce.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 require("./block_spec.js");
+require("./debounce_topic_spec.js");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -55,7 +56,7 @@ describe( 'block Node, byTopic', function () {
 
   it('should forward valid values', function (done) {
     const numbers = [-1,0,0,0,0,0,0,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null,NaN,"FooBar"];
-    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", block: true, bytopic:true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -72,6 +73,7 @@ describe( 'block Node, byTopic', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', true);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', true);
         await delay(500);
@@ -95,7 +97,7 @@ describe( 'block Node, byTopic', function () {
   });
 
   it('should not forward invalid values', function (done) {
-    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", block: true, bytopic:true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -106,6 +108,7 @@ describe( 'block Node, byTopic', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', true);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', true);
         await delay(500);
@@ -132,7 +135,7 @@ describe( 'block Node, byTopic', function () {
     const numbersIn  = [-1,0,0,0,0,0,0,0,1,1,2,3,3,3];
     const numbersOut = [-1,0,            1,  2,3,   3,3];
     const topicsOut  = ["t","u","v","t","v","t","u", "v","t","u", "t"];
-    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", block: true, bytopic:true, filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -150,6 +153,7 @@ describe( 'block Node, byTopic', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', true);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', true);
         n1.should.have.a.property('filter', true);
@@ -203,7 +207,7 @@ describe( 'block Node, byTopic', function () {
 
   it('should work with objects', function (done) {
     const numbers = [-1,0,255,65535];
-    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, property:"payload.value", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", block: true, bytopic:true, property:"payload.value", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -220,6 +224,7 @@ describe( 'block Node, byTopic', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', true);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', true);
         n1.should.have.a.property('property', "payload.value");
@@ -244,7 +249,7 @@ describe( 'block Node, byTopic', function () {
 
   it('should have Jsonata', function (done) {
     const numbers = [-1,0,255,65535];
-    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, property:"payload+5", propertyType:"jsonata", time:20, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", block: true, bytopic:true, property:"payload+5", propertyType:"jsonata", time:20, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -261,6 +266,7 @@ describe( 'block Node, byTopic', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', true);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', true);
         n1.should.have.a.property('property', "payload+5");
@@ -285,7 +291,7 @@ describe( 'block Node, byTopic', function () {
 
   it('should debounce values, no restart', function (done) {
     const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    var flow = [{ id: "n1", type: "block", name: "test", bytopic:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", block: true, bytopic:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -304,6 +310,7 @@ describe( 'block Node, byTopic', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', true);
         n1.should.have.a.property('time', 100);
         n1.should.have.a.property('byTopic', true);
         await delay(500);
@@ -354,7 +361,7 @@ describe( 'block Node, byTopic', function () {
 
   it('should debounce values, active', function (done) {
     const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    var flow = [{ id: "n1", type: "block", name: "test", restart:true, bytopic:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounce", name: "test", block: true, restart:true, bytopic:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -373,6 +380,7 @@ describe( 'block Node, byTopic', function () {
         c++;
       });
       try {
+        n1.should.have.a.property('block', true);
         n1.should.have.a.property('time', 100);
         n1.should.have.a.property('restart', true);
         n1.should.have.a.property('byTopic', true);

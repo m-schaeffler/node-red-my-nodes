@@ -11,7 +11,7 @@ module.exports = function(RED) {
         this.filter       = Boolean( config.filter );
         this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
-        this.state        = config.showState ? { fill:"gray", shape:"dot", text:"-" } : null;
+        this.state        = config.showState ? { fill:"gray", shape:"ring", text:"-" } : null;
         this.data         = {};
         if( this.propertyType === "jsonata" )
         {
@@ -39,19 +39,20 @@ module.exports = function(RED) {
         }
         setTimeout( function() { node.emit("started"); }, 100 );
         node.status( "" );
-7
+
         function defaultStat()
         {
             return { timer: null, message: null };
         }
 
-        function sendMsg(msg)
+        function sendMsg(msg,shape)
         {
             node.send( msg );
             if( node.state )
             {
-                node.state.fill = "green";
-                node.state.text = msg.payload;
+                node.state.fill  = "green";
+                node.state.shape = shape;
+                node.state.text  = msg.payload;
                 node.status( node.state )
             }
         }
@@ -60,7 +61,17 @@ module.exports = function(RED) {
         {
             if( node.state )
             {
-                node.state.fill = color;
+                node.state.fill  = color;
+                node.state.shape = "dot";
+                node.status( node.state );
+            }
+        }
+
+        function statusRing()
+        {
+            if( node.state )
+            {
+                node.state.shape = "ring";
                 node.status( node.state );
             }
         }
@@ -140,7 +151,7 @@ module.exports = function(RED) {
                         {
                             if( node.block )
                             {
-                                sendMsg( msg );
+                                sendMsg( msg, "dot" );
                             }
                             else
                             {
@@ -148,9 +159,12 @@ module.exports = function(RED) {
                             }
                             statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, node.time, statistic );
                         }
-                        else if( node.restart )
+                        else
                         {
-                            statistic.timer.refresh();
+                            if( node.restart )
+                            {
+                                statistic.timer.refresh();
+                            }
                             if( node.block )
                             {
                                 statusColor( "red" );
@@ -171,8 +185,12 @@ module.exports = function(RED) {
             stat.timer = null;
             if( stat.message )
             {
-                sendMsg( stat.message );
+                sendMsg( stat.message, "ring" );
                 stat.message = null;
+            }
+            else
+            {
+                statusRing();
             }
         } );
 

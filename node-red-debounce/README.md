@@ -17,6 +17,7 @@ The `debounce` node is for a general purpose debouncing of any data (`string`, `
 - What data is debounced can be selected with the `property` property.
 - `filter`: The data can be checked for a change before the debounce.
 - Debouncing means here that the node waits `time` time before sending out the last received message.
+- It can be changed from debouncing to blocking mode.
 
 ### Input
 

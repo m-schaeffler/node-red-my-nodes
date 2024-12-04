@@ -120,3 +120,17 @@ exports.time2color = function(time,ok=3,nok=24)
     const delta = Date.now() - d;
     return intTime2color( delta, ok, nok );
 }
+
+// Date/Time
+
+function donnerstag(datum)
+{
+    return new Date( datum.getTime() + ( 3 - ( ( datum.getDay() + 6 ) % 7 ) ) * 86400000 );
+}
+
+exports.getWeek = function(date)
+{
+    const DoDat = donnerstag( date );
+    const DoKW1 = donnerstag( new Date( DoDat.getFullYear(), 0, 4 ) );
+    return Math.floor( 1.5 + ( DoDat.getTime() - DoKW1.getTime()) / 86400000 / 7 );
+}

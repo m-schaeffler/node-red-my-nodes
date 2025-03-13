@@ -132,11 +132,15 @@ exports.date2Format = function(date,format)
 
 exports.date2FormatUTC = function(date,format)
 {
-    let out = "";
+    let out  = "";
+    let mask = false;
     for( const c of format )
     {
-        switch( c )
+        switch( mask ? " " : c )
         {
+            case "\":
+                mask = true;
+                break;
             case "Y":
                 out += date.getUTCFullYear();
                 break;
@@ -173,6 +177,7 @@ exports.date2FormatUTC = function(date,format)
             default:
                 out += c;
         }
+        mask = false;
     }
     return out;
 }

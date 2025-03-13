@@ -80,57 +80,64 @@ exports.date2Format = function(date,format)
     let mask = false;
     for( const c of format )
     {
-        switch( mask ? " " : c  )
+        if( mask )
         {
-            case "\\":
-                mask = true;
-                break;
-            case "Y":
-                out += date.getFullYear();
-                break;
-            case "m":
-                out += date.getMonth() + 1;
-                break;
-            case "M":
-                out += exports.int2CC( date.getMonth() + 1 );
-                break;
-            case "µ":
-                out += exports.monthName( date );
-                break;
-            case "d":
-                out += date.getDate();
-                break;
-            case "D":
-                out += exports.int2CC( date.getDate() );
-                break;
-            case "h":
-                out += date.getHours();
-                break;
-            case "H":
-                out += exports.int2CC( date.getHours() );
-                break;
-            case "n":
-                out += date.getMinutes();
-                break;
-            case "N":
-                out += exports.int2CC( date.getMinutes() );
-                break;
-            case "s":
-                out += date.getSeconds();
-                break;
-            case "S":
-                out += exports.int2CC( date.getSeconds() );
-                break;
-            case "w":
-                out += exports.dayName( date );
-                break;
-            case "W":
-                out += exports.getWeek( date );
-                break;
-            default:
-                out += c;
+            out += c;
+            mask = false;
         }
-        mask = false;
+        else
+        {
+            switch( c )
+            {
+                case "\\":
+                    mask = true;
+                    break;
+                case "Y":
+                    out += date.getFullYear();
+                    break;
+                case "m":
+                    out += date.getMonth() + 1;
+                    break;
+                case "M":
+                    out += exports.int2CC( date.getMonth() + 1 );
+                    break;
+                case "µ":
+                    out += exports.monthName( date );
+                    break;
+                case "d":
+                    out += date.getDate();
+                    break;
+                case "D":
+                    out += exports.int2CC( date.getDate() );
+                    break;
+                case "h":
+                    out += date.getHours();
+                    break;
+                case "H":
+                    out += exports.int2CC( date.getHours() );
+                    break;
+                case "n":
+                    out += date.getMinutes();
+                    break;
+                case "N":
+                    out += exports.int2CC( date.getMinutes() );
+                    break;
+                case "s":
+                    out += date.getSeconds();
+                    break;
+                case "S":
+                    out += exports.int2CC( date.getSeconds() );
+                    break;
+                case "w":
+                    out += exports.dayName( date );
+                    break;
+                case "W":
+                    out += exports.getWeek( date );
+                    break;
+                default:
+                    out += c;
+            }
+        }
     }
     return out;
 }
@@ -141,48 +148,55 @@ exports.date2FormatUTC = function(date,format)
     let mask = false;
     for( const c of format )
     {
-        switch( mask ? " " : c )
+        if( mask )
         {
-            case "\\":
-                mask = true;
-                break;
-            case "Y":
-                out += date.getUTCFullYear();
-                break;
-            case "m":
-                out += date.getUTCMonth() + 1;
-                break;
-            case "M":
-                out += exports.int2CC( date.getUTCMonth() + 1 );
-                break;
-            case "d":
-                out += date.getUTCDate();
-                break;
-            case "D":
-                out += exports.int2CC( date.getUTCDate() );
-                break;
-            case "h":
-                out += date.getUTCHours();
-                break;
-            case "H":
-                out += exports.int2CC( date.getUTCHours() );
-                break;
-            case "n":
-                out += date.getUTCMinutes();
-                break;
-            case "N":
-                out += exports.int2CC( date.getUTCMinutes() );
-                break;
-            case "s":
-                out += date.getUTCSeconds();
-                break;
-            case "S":
-                out += exports.int2CC( date.getUTCSeconds() );
-                break;
-            default:
-                out += c;
+            out += c;
+            mask = false;
         }
-        mask = false;
+        else
+        {
+            switch( c )
+            {
+                case "\\":
+                    mask = true;
+                    break;
+                case "Y":
+                    out += date.getUTCFullYear();
+                    break;
+                case "m":
+                    out += date.getUTCMonth() + 1;
+                    break;
+                case "M":
+                    out += exports.int2CC( date.getUTCMonth() + 1 );
+                    break;
+                case "d":
+                    out += date.getUTCDate();
+                    break;
+                case "D":
+                    out += exports.int2CC( date.getUTCDate() );
+                    break;
+                case "h":
+                    out += date.getUTCHours();
+                    break;
+                case "H":
+                    out += exports.int2CC( date.getUTCHours() );
+                    break;
+                case "n":
+                    out += date.getUTCMinutes();
+                    break;
+                case "N":
+                    out += exports.int2CC( date.getUTCMinutes() );
+                    break;
+                case "s":
+                    out += date.getUTCSeconds();
+                    break;
+                case "S":
+                    out += exports.int2CC( date.getUTCSeconds() );
+                    break;
+                default:
+                    out += c;
+            }
+        }
     }
     return out;
 }

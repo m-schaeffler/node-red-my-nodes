@@ -138,7 +138,7 @@ exports.date2FormatUTC = function(date,format)
     {
         switch( mask ? " " : c )
         {
-            case "\":
+            case '\\':
                 mask = true;
                 break;
             case "Y":

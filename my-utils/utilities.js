@@ -76,11 +76,15 @@ exports.int2CCC = function(i,space=false)
 
 exports.date2Format = function(date,format)
 {
-    let out = "";
+    let out  = "";
+    let mask = false;
     for( const c of format )
     {
-        switch( c )
+        switch( mask ? " " : c  )
         {
+            case "\\":
+                mask = true;
+                break;
             case "Y":
                 out += date.getFullYear();
                 break;
@@ -126,6 +130,7 @@ exports.date2Format = function(date,format)
             default:
                 out += c;
         }
+        mask = false;
     }
     return out;
 }
@@ -138,7 +143,7 @@ exports.date2FormatUTC = function(date,format)
     {
         switch( mask ? " " : c )
         {
-            case '\\':
+            case "\\":
                 mask = true;
                 break;
             case "Y":

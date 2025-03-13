@@ -88,7 +88,10 @@ exports.date2Format = function(date,format)
                 out += date.getMonth() + 1;
                 break;
             case "M":
-                out += exports.int2CC( date.getUTCMonth() + 1 );
+                out += exports.int2CC( date.getMonth() + 1 );
+                break;
+            case "µ":
+                out += exports.monthName( date );
                 break;
             case "d":
                 out += date.getDate();
@@ -113,6 +116,12 @@ exports.date2Format = function(date,format)
                 break;
             case "S":
                 out += exports.int2CC( date.getSeconds() );
+                break;
+            case "w":
+                out += exports.dayName( date );
+                break;
+            case "W":
+                out += exports.getWeek( date );
                 break;
             default:
                 out += c;
@@ -216,6 +225,18 @@ exports.time2color = function(time,ok=3,nok=24)
 }
 
 // Date/Time
+
+exports.dayName = function(date)
+{
+    const weekday = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+    return weekday[date.getDay()];
+}
+
+exports.monthName = function(date)
+{
+    const months = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+    return months[date.getMonth()];
+}
 
 function donnerstag(datum)
 {

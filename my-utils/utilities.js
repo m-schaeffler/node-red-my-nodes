@@ -74,14 +74,108 @@ exports.int2CCC = function(i,space=false)
     return i < 100 ? ( space ? "\u2007" : "0" ) + exports.int2CC( i ) : i;
 }
 
+exports.date2Format = function(date,format)
+{
+    let out = "";
+    for( const c of format )
+    {
+        switch( c )
+        {
+            case "Y":
+                out += date.getFullYear();
+                break;
+            case "m":
+                out += date.getMonth() + 1;
+                break;
+            case "M":
+                out += exports.int2CC( date.getUTCMonth() + 1 );
+                break;
+            case "d":
+                out += date.getDate();
+                break;
+            case "D":
+                out += exports.int2CC( date.getDate() );
+                break;
+            case "h":
+                out += date.getHours();
+                break;
+            case "H":
+                out += exports.int2CC( date.getHours() );
+                break;
+            case "n":
+                out += date.getMinutes();
+                break;
+            case "N":
+                out += exports.int2CC( date.getMinutes() );
+                break;
+            case "s":
+                out += date.getSeconds();
+                break;
+            case "S":
+                out += exports.int2CC( date.getSeconds() );
+                break;
+            default:
+                out += c;
+        }
+    }
+    return out;
+}
+
+exports.date2FormatUTC = function(date,format)
+{
+    let out = "";
+    for( const c of format )
+    {
+        switch( c )
+        {
+            case "Y":
+                out += date.getUTCFullYear();
+                break;
+            case "m":
+                out += date.getUTCMonth() + 1;
+                break;
+            case "M":
+                out += exports.int2CC( date.getUTCMonth() + 1 );
+                break;
+            case "d":
+                out += date.getUTCDate();
+                break;
+            case "D":
+                out += exports.int2CC( date.getUTCDate() );
+                break;
+            case "h":
+                out += date.getUTCHours();
+                break;
+            case "H":
+                out += exports.int2CC( date.getUTCHours() );
+                break;
+            case "n":
+                out += date.getUTCMinutes();
+                break;
+            case "N":
+                out += exports.int2CC( date.getUTCMinutes() );
+                break;
+            case "s":
+                out += date.getUTCSeconds();
+                break;
+            case "S":
+                out += exports.int2CC( date.getUTCSeconds() );
+                break;
+            default:
+                out += c;
+        }
+    }
+    return out;
+}
+
 exports.date2dateStr = function(date)
 {
-    return `${exports.int2CC(date.getDate())}:${exports.int2CC(date.getMonth()+1)}:${date.getFullYear()}`;
+    return exports.date2Format( date, "D:M:Y" ); //`${exports.int2CC(date.getDate())}:${exports.int2CC(date.getMonth()+1)}:${date.getFullYear()}`;
 }
 
 exports.date2timeStr = function(date,space=true)
 {
-    return `${exports.int2CC(date.getHours(),space)}:${exports.int2CC(date.getMinutes())}`;
+    return exports.date2Format( date, space ? "h:N" : "H:N" ); //`${exports.int2CC(date.getHours(),space)}:${exports.int2CC(date.getMinutes())}`;
 }
 
 exports.formatTime = function(time)
@@ -90,7 +184,7 @@ exports.formatTime = function(time)
     {
         const d     = (time instanceof Date) ? time : new Date( time );
         const delta = Date.now() - d;
-        return delta < 48*3600*1000 ? exports.date2timeStr(d) : `${d.getDate()}.${d.getMonth()+1}.`;
+        return exports.date2Format( date, delta < 48*3600*1000 ? "h:N" : "d.M." ); //`${d.getDate()}.${d.getMonth()+1}.`;
     }
     else
     {

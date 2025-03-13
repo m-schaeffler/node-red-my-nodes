@@ -184,7 +184,7 @@ exports.formatTime = function(time)
     {
         const d     = (time instanceof Date) ? time : new Date( time );
         const delta = Date.now() - d;
-        return exports.date2Format( date, delta < 48*3600*1000 ? "h:N" : "d.M." ); //`${d.getDate()}.${d.getMonth()+1}.`;
+        return exports.date2Format( d, delta < 48*3600*1000 ? "h:N" : "d.M." ); //`${d.getDate()}.${d.getMonth()+1}.`;
     }
     else
     {

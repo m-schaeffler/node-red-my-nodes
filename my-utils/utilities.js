@@ -128,6 +128,9 @@ exports.date2Format = function(date,format)
                 case "S":
                     out += exports.int2CC( date.getSeconds() );
                     break;
+                case "F":
+                    out += exports.int2CCC( date.getMilliseconds() );
+                    break;
                 case "w":
                     out += exports.dayName( date );
                     break;

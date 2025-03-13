@@ -66,12 +66,12 @@ exports.number2color = function(number,low,high)
 
 exports.int2CC = function(i,space=false)
 {
-    return i < 10 ? ( space ? "\u2007" : "0" ) + i : i;
+    return i.toString().padStart( 2, space ? "\u2007" : "0" );
 }
 
 exports.int2CCC = function(i,space=false)
 {
-    return i < 100 ? ( space ? "\u2007" : "0" ) + exports.int2CC( i ) : i;
+    return i.toString().padStart( 3, space ? "\u2007" : "0" );
 }
 
 exports.date2Format = function(date,format)

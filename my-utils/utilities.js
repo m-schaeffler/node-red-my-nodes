@@ -226,16 +226,16 @@ exports.time2color = function(time,ok=3,nok=24)
 
 // Date/Time
 
+exports.weekdays = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 exports.dayName = function(date)
 {
-    const weekday = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
-    return weekday[date.getDay()];
+    return exports.weekdays[date.getDay()];
 }
 
+exports.months = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
 exports.monthName = function(date)
 {
-    const months = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
-    return months[date.getMonth()];
+    return exports.months[date.getMonth()];
 }
 
 function donnerstag(datum)

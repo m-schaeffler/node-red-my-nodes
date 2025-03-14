@@ -101,8 +101,11 @@ exports.date2Format = function(date,format)
                 case "M":
                     out += exports.int2CC( date.getMonth() + 1 );
                     break;
-                case "µ":
+                case "b":
                     out += exports.monthName( date );
+                    break;
+                case "B":
+                    out += exports.monthName( date, true );
                     break;
                 case "d":
                     out += date.getDate();
@@ -132,10 +135,19 @@ exports.date2Format = function(date,format)
                     out += exports.int2CCC( date.getMilliseconds() );
                     break;
                 case "w":
+                    out += date.getDay();
+                    break;
+                case "a":
                     out += exports.dayName( date );
+                    break;
+                case "A":
+                    out += exports.dayName( date, true );
                     break;
                 case "W":
                     out += exports.getWeek( date );
+                    break;
+                case "z":
+                    out += date.getTimezoneOffset() / 60;
                     break;
                 default:
                     out += c;
@@ -196,6 +208,9 @@ exports.date2FormatUTC = function(date,format)
                 case "S":
                     out += exports.int2CC( date.getUTCSeconds() );
                     break;
+                case "F":
+                    out += exports.int2CCC( date.getUTCMilliseconds() );
+                    break;
                 default:
                     out += c;
             }
@@ -254,15 +269,17 @@ exports.time2color = function(time,ok=3,nok=24)
 // Date/Time
 
 exports.weekdays = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
-exports.dayName = function(date)
+exports.weekdaysLong = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+exports.dayName = function(date,long=false)
 {
-    return exports.weekdays[date.getDay()];
+    return long ? exports.weekdaysLong[date.getDay()] : exports.weekdays[date.getDay()];
 }
 
 exports.months = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
-exports.monthName = function(date)
+exports.monthsLong = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+exports.monthName = function(date,long)
 {
-    return exports.months[date.getMonth()];
+    return long ? exports.monthsLong[date.getMonth()] : exports.months[date.getMonth()];
 }
 
 function donnerstag(datum)

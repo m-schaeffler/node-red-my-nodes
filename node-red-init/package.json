@@ -1,0 +1,30 @@
+{
+  "name": "@mschaeffler/node-red-init",
+  "version": "0.0.1",
+  "description": "nodes for initialisation of context storages.",
+  "license": "LGPL-2.1",
+  "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-init",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "node-red"
+  ],
+  "node-red": {
+    "version": ">=3.1.0",
+    "nodes": {
+      "initFlow": "init_flow.js"
+    }
+  },
+  "author": {
+    "name": "Mathias Schäffler",
+    "url": "https://github.com/m-schaeffler"
+  },
+  "scripts": {
+    "test": "mocha \"test/*_spec.js\""
+  }
+}

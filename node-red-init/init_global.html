@@ -41,14 +41,21 @@
 </script>
 
 <script type="text/html" data-help-name="initGlobal">
-    <p>.</p>
+    <p>A node for initialisation of global context storages.</p>
+    <p>At the start a global contaxt variable can be initalized with a defined value, if is not already defined.
+    With messages it can also be set or reseted to the initalisation value.</p>
 
     <h3>Input</h3>
+
+    <p>If <code>msg.reset</code> is set or <code>msg.topic==="init"</code>, the variable is set to the initialisation value.
+    Otherwise the variable is set to <code>msg.payload</code>.</p>
     
     <h3>Parameter</h3>
 
     <dl class="message-properties">
-        <dt>Property <span class="property-type">string</span></dt>
-        <dd> defines the message property to be used as payload.</dd>
+        <dt>Name <span class="property-type">string</span></dt>
+        <dd> name of the variable</dd>
+        <dt>Value <span class="property-type">str,num,bool,json</span></dt>
+        <dd> initialisation value</dd>
     </dl>
 </script>

@@ -6,6 +6,7 @@ module.exports = function(RED) {
         var node = this;
         this.name         = config.name ?? "name";
         this.value        = config.value ?? "value";
+        this.valueStr     = this.value;
         this.valueType    = config.valueType ?? "str";
         this.flowContext  = this.context().flow;
         node.status( "" );
@@ -42,13 +43,28 @@ module.exports = function(RED) {
                         else
                         {
                             node.log( "init "+node.name+" flow.set sucessfull" );
+                            node.status( node.valueStr );
                         }
                     } );
+                }
+                else
+                {
+                    node.status( value );
                 }
             }
         } );
 
         node.on('input', function(msg,send,done) {
+            if( msg.reset || msg.topic==="init" )
+            {
+                node.flowContext.set( node.name, node.value );
+                node.status( node.valueStr );
+            }
+            else
+            {
+                node.flowContext.set( node.name, msg.payload );
+                node.status( msg.payload );
+            }
             done();
         });
     }

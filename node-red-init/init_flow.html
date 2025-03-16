@@ -3,13 +3,13 @@
         category: "common",
         color: "#C0C0C0",
         defaults: {
-            name:{value:""},
-            value:{value:""},
+            name:{value:"",required:true},
+            value:{value:"",required:true},
             valueType:{value:"str"},
         },
         inputs:1,
         outputs:0,
-        icon: "font-awesome/fa-quote-right",
+        icon: "font-awesome/fa-play",
         label: function() {
             return this.name||"initFlow";
         },
@@ -19,10 +19,10 @@
         paletteLabel: "initFlow",
         inputLabels: 'input',
         oneditprepare: function() {
-            $("#node-input-property").typedInput({
+            $("#node-input-value").typedInput({
                 type:"str",
                 types:["str","num","bool","json"],
-                typeField: "#node-input-propertyType"
+                typeField: "#node-input-valueType"
             })
         }
     });
@@ -34,9 +34,9 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
-        <input type="text" id="node-input-property">
-        <input type="hidden" id="node-input-propertyType">
+        <label for="node-input-input"><i class="fa fa-star-o"></i> Wert</label>
+        <input type="text" id="node-input-value">
+        <input type="hidden" id="node-input-valueType">
     </div>
 </script>
 

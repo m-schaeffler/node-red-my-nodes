@@ -1,7 +1,7 @@
 <script type="text/javascript">
-    RED.nodes.registerType('initFlow',{
+    RED.nodes.registerType('initGlobal',{
         category: "common",
-        color: "#D7D7D7",
+        color: "#C0C0C0",
         defaults: {
             name:{value:"",required:true},
             value:{value:"",required:true},
@@ -9,14 +9,14 @@
         },
         inputs:1,
         outputs:0,
-        icon: "font-awesome/fa-play",
+        icon: "font-awesome/fa-forward",
         label: function() {
-            return this.name||"initFlow";
+            return this.name||"initGlobal";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "initFlow",
+        paletteLabel: "initGlobal",
         inputLabels: 'input',
         oneditprepare: function() {
             $("#node-input-value").typedInput({
@@ -28,7 +28,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="initFlow">
+<script type="text/html" data-template-name="initGlobal">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -40,7 +40,7 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="initFlow">
+<script type="text/html" data-help-name="initGlobal">
     <p>.</p>
 
     <h3>Input</h3>

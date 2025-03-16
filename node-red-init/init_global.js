@@ -1,6 +1,6 @@
 module.exports = function(RED) {
 
-    function InitFlow(config) {
+    function InitGlobal(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
@@ -8,7 +8,7 @@ module.exports = function(RED) {
         this.value        = config.value ?? "value";
         this.valueStr     = this.value;
         this.valueType    = config.valueType ?? "str";
-        this.flowContext  = this.context().flow;
+        this.globalContext = this.context().global;
         node.status( "" );
         switch( node.valueType )
         {
@@ -23,7 +23,7 @@ module.exports = function(RED) {
                 break;
         }
         node.log( "init "+node.name+" constructed ("+node.value+":"+node.valueType+")" );
-        node.flowContext.get( node.name, function(err,value)
+        node.globalContext.get( node.name, function(err,value)
         {
             if( err )
             {
@@ -31,10 +31,10 @@ module.exports = function(RED) {
             }
             else
             {
-                node.log( "init "+node.name+" flow.get="+value );
+                node.log( "init "+node.name+" global.get="+value );
                 if( value === undefined )
                 {
-                    node.flowContext.set( node.name, node.value, function(err)
+                    node.globalContext.set( node.name, node.value, function(err)
                     {
                         if( err )
                         {
@@ -42,7 +42,7 @@ module.exports = function(RED) {
                         }
                         else
                         {
-                            node.log( "init "+node.name+" flow.set sucessfull" );
+                            node.log( "init "+node.name+" global.set sucessfull" );
                             node.status( node.valueStr );
                         }
                     } );
@@ -57,17 +57,17 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             if( msg.reset || msg.topic==="init" )
             {
-                node.flowContext.set( node.name, node.value );
+                node.globalContext.set( node.name, node.value );
                 node.status( node.valueStr );
             }
             else
             {
-                node.flowContext.set( node.name, msg.payload );
+                node.globalContext.set( node.name, msg.payload );
                 node.status( msg.payload );
             }
             done();
         });
     }
 
-    RED.nodes.registerType("initFlow",InitFlow);
+    RED.nodes.registerType("initGlobal",InitGlobal);
 }

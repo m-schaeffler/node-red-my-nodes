@@ -160,25 +160,37 @@ describe( 'init-flow Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'contextVar');
-        n1.should.have.a.property('value', 'Qwertzu');
+        n1.should.have.a.property('value').which.is.an.Object();
         n1.should.have.a.property('valueType', 'json');
         await delay(100);
         should.exist( n1.context().get("contextVar") );
-        n1.context().get("contextVar").should.be.equal( "Qwertzu" );
+        let cv = n1.context().get("contextVar");
+        cv.should.be.an.Object();
+        cv.should.have.a.property('foo', 21);
+        cv.should.have.a.property('bar', 25);
         n1.receive({ invalid: true, payload: "ungültiger Wert" });
         await delay(100);
-        n1.context().get("contextVar").should.be.equal( "Qwertzu" );
+        cv = n1.context().get("contextVar");
+        cv.should.be.an.Object();
+        cv.should.have.a.property('foo', 21);
+        cv.should.have.a.property('bar', 25);
         n1.receive({ payload: "anderer Wert" });
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "anderer Wert" );
         n1.receive({ reset: true });
         await delay(100);
-        n1.context().get("contextVar").should.be.equal( "Qwertzu" );
+        cv = n1.context().get("contextVar");
+        cv.should.be.an.Object();
+        cv.should.have.a.property('foo', 21);
+        cv.should.have.a.property('bar', 25);
         n1.receive({ payload: "dritter Wert" });
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "dritter Wert" );
         n1.receive({ topic: "init" });
-        n1.context().get("contextVar").should.be.equal( "Qwertzu" );
+        cv = n1.context().get("contextVar");
+        cv.should.be.an.Object();
+        cv.should.have.a.property('foo', 21);
+        cv.should.have.a.property('bar', 25);
         done();
       }
       catch(err) {
@@ -197,21 +209,29 @@ describe( 'init-flow Node', function () {
         n1.should.have.a.property('valueType', 'json');
         await delay(100);
         should.exist( n1.context().get("contextVar") );
-        n1.context().get("contextVar").should.be.equal( {} );
+        let cv = n1.context().get("contextVar");
+        cv.should.be.an.Object();
+        cv.should.be.empty();
         n1.receive({ invalid: true, payload: "ungültiger Wert" });
         await delay(100);
-        n1.context().get("contextVar").should.be.equal( "Qwertzu" );
+        cv = n1.context().get("contextVar");
+        cv.should.be.an.Object();
+        cv.should.be.empty();
         n1.receive({ payload: "anderer Wert" });
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "anderer Wert" );
         n1.receive({ reset: true });
         await delay(100);
-        n1.context().get("contextVar").should.be.equal( "Qwertzu" );
+        cv = n1.context().get("contextVar");
+        cv.should.be.an.Object();
+        cv.should.be.empty();
         n1.receive({ payload: "dritter Wert" });
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "dritter Wert" );
         n1.receive({ topic: "init" });
-        n1.context().get("contextVar").should.be.equal( "Qwertzu" );
+        cv = n1.context().get("contextVar");
+        cv.should.be.an.Object();
+        cv.should.be.empty();
         done();
       }
       catch(err) {

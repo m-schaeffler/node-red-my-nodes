@@ -57,7 +57,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
             {
-                console.log("invalid message")
+                node.log("invalid message")
             }
             else if( msg.reset || msg.topic==="init" )
             {

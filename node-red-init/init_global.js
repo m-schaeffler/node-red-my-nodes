@@ -4,11 +4,11 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
-        this.name         = config.name ?? "name";
-        this.value        = config.value ?? "value";
-        this.valueStr     = this.value;
-        this.valueType    = config.valueType ?? "str";
-        this.globalContext = this.context().global;
+        this.name          = config.name ?? "name";
+        this.value         = config.value ?? "value";
+        this.valueStr      = this.value;
+        this.valueType     = config.valueType ?? "str";
+        this.globalContext = this.context().global ?? this.context(); // Unit-Tests!
         node.status( "" );
         switch( node.valueType )
         {
@@ -55,7 +55,11 @@ module.exports = function(RED) {
         } );
 
         node.on('input', function(msg,send,done) {
-            if( msg.reset || msg.topic==="init" )
+            if( msg.invalid )
+            {
+                console.log("invalid message")
+            }
+            else if( msg.reset || msg.topic==="init" )
             {
                 node.globalContext.set( node.name, node.value );
                 node.status( node.valueStr );
@@ -69,5 +73,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("initGlobal",InitGlobal);
+    RED.nodes.registerType("init-global",InitGlobal);
 }

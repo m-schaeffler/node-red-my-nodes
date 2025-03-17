@@ -1,14 +1,14 @@
 module.exports = function(RED) {
 
-    function InitFlow(config) {
+    function InitFlowNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
-        this.name         = config.name ?? "name";
-        this.value        = config.value ?? "value";
-        this.valueStr     = this.value;
-        this.valueType    = config.valueType ?? "str";
-        this.flowContext  = this.context().flow;
+        this.name        = config.name ?? "name";
+        this.value       = config.value ?? "value";
+        this.valueStr    = this.value;
+        this.valueType   = config.valueType ?? "str";
+        this.flowContext = this.context().flow ?? this.context(); // for Unit-Tests!
         node.status( "" );
         switch( node.valueType )
         {
@@ -55,7 +55,11 @@ module.exports = function(RED) {
         } );
 
         node.on('input', function(msg,send,done) {
-            if( msg.reset || msg.topic==="init" )
+            if( msg.invalid )
+            {
+                console.log("invalid message")
+            }
+            else if( msg.reset || msg.topic==="init" )
             {
                 node.flowContext.set( node.name, node.value );
                 node.status( node.valueStr );
@@ -69,5 +73,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("initFlow",InitFlow);
+    RED.nodes.registerType("init-flow",InitFlowNode);
 }

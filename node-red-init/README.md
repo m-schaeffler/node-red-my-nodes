@@ -1,6 +1,6 @@
 # @mschaeffler/node-red-format
 
-Nodes for initialisation of context storages.
+Node for initialisation of context storages.
 
 The reason behind this node is: If you initialize a flow or global context variable in the startup code of a function node, 
 it is possible, that other nodes already access the variable before the startup code is executed!
@@ -19,7 +19,7 @@ $ npm install @mschaeffler/node-red-init
 
 ## init
 
-initialises a flow context variable.
+initialises a flow or global context variable.
 
 ### Input
 

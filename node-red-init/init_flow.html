@@ -11,7 +11,7 @@
         inputs:1,
         outputs:0,
         icon: function() {
-            return this.global ? "font-awesome/fa-globe" : "font-awesome/fa-file-text-o";
+            return this.global ? "font-awesome/fa-globe" : "font-awesome/fa-play";
         },
         label: function() {
             return this.name || (this.global?"init global":"init flow");
@@ -48,8 +48,9 @@
 </script>
 
 <script type="text/html" data-help-name="init-flow">
-    <p>A node for initialisation of flow context storages.</p>
-    <p>At the start a flow contaxt variable can be initalized with a defined value, if is not already defined.
+    <p>A node for initialisation of flow or global context storages.</p>
+    
+    <p>At the start a flow or global contaxt variable can be initalized with a defined value, if is not already defined.
     With messages it can also be set or reseted to the initalisation value.</p>
 
     <h3>Input</h3>

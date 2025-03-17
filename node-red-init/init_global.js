@@ -1,6 +1,6 @@
 module.exports = function(RED) {
 
-    function InitGlobal(config) {
+    function InitGlobalNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
@@ -73,5 +73,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("init-global",InitGlobal);
+    RED.nodes.registerType("init-global",InitGlobalNode);
 }

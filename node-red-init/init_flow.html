@@ -6,17 +6,20 @@
             name:{value:"",required:true},
             value:{value:"",required:true},
             valueType:{value:"str"},
+            global:{value:false}
         },
         inputs:1,
         outputs:0,
-        icon: "font-awesome/fa-play",
+        icon: function() {
+            return this.global ? "font-awesome/fa-globe" : "font-awesome/fa-file-text-o";
+        },
         label: function() {
-            return this.name||"init flow";
+            return this.name || (this.global?"init global":"init flow");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "init flow",
+        paletteLabel: "init",
         inputLabels: 'input',
         oneditprepare: function() {
             $("#node-input-value").typedInput({
@@ -38,6 +41,10 @@
         <input type="text" id="node-input-value">
         <input type="hidden" id="node-input-valueType">
     </div>
+    <div class="form-row">
+        <label for="node-input-global"><i class="fa fa-globe"></i> global</label>
+        <input type="checkbox" id="node-input-global" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
 </script>
 
 <script type="text/html" data-help-name="init-flow">
@@ -57,5 +64,7 @@
         <dd> name of the variable</dd>
         <dt>Value <span class="property-type">str,num,bool,json</span></dt>
         <dd> initialisation value</dd>
+        <dt>global <span class="property-type">boolean</span></dt>
+        <dd> set in global context</dd>
     </dl>
 </script>

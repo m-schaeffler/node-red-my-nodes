@@ -7,7 +7,7 @@ module.exports = function(RED) {
         this.name        = config.name ?? "name";
         this.value       = config.value ?? "value";
         this.valueType   = config.valueType ?? "str";
-        this.flowContext = this.context().flow;
+        this.datacontext = config.global ? this.context().global : this.context().flow;
         node.status( "" );
         switch( node.valueType )
         {
@@ -29,7 +29,8 @@ module.exports = function(RED) {
 
         function setStatus(value)
         {
-            let status = typeof value == "object" ? JSON.stringify(value) : value.toString();
+            //let status = typeof value == "object" ? JSON.stringify(value) : value.toString();
+            let status = JSON.stringify( value );
             if( status.length >= 17 )
             {
                 status = status.slice( 0, 15 ) + "...";
@@ -37,8 +38,8 @@ module.exports = function(RED) {
             node.status( status );
         }
 
-        writeLog( "constructed", `(${node.value}:${node.valueType})` );
-        node.flowContext.get( node.name, function(err,value)
+        writeLog( "constructed", `(${JSON.stringify(node.value)}:${node.valueType})` );
+        node.datacontext.get( node.name, function(err,value)
         {
             if( err )
             {
@@ -49,7 +50,7 @@ module.exports = function(RED) {
                 writeLog( "flow.get", value );
                 if( value === undefined )
                 {
-                    node.flowContext.set( node.name, node.value, function(err)
+                    node.datacontext.set( node.name, node.value, function(err)
                     {
                         if( err )
                         {
@@ -76,17 +77,17 @@ module.exports = function(RED) {
             }
             else if( msg.reset || msg.topic==="init" )
             {
-                node.flowContext.set( node.name, node.value );
+                node.datacontext.set( node.name, node.value );
                 setStatus( node.value );
             }
             else
             {
-                node.flowContext.set( node.name, msg.payload );
+                node.datacontext.set( node.name, msg.payload );
                 setStatus( msg.payload );
             }
             done();
         });
     }
 
-    RED.nodes.registerType("init-flow",InitFlowNode);
+    RED.nodes.registerType( "init-flow", InitFlowNode );
 }

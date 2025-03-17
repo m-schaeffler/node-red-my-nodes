@@ -17,7 +17,7 @@ With input messages it can also be set or reseted to the initalisation value.
 $ npm install @mschaeffler/node-red-init
 ```
 
-## init flow
+## init
 
 initialises a flow context variable.
 
@@ -31,25 +31,9 @@ Otherwise the variable is set to `msg.payload`.
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
-|Name  | string | name of the variable|
-|Value | str,num,bool,json | initialisation value |
-
-## init global
-
-initialises a global context variable.
-
-### Input
-
-If `msg.reset` is set or `msg.topic==="init"`, the variable is set to the initialisation value.
-
-Otherwise the variable is set to `msg.payload`.
-
-### Parameters
-
-|config| type   | description                       |
-|:-----|:-------|:----------------------------------|
-|Name  | string | name of the variable|
-|Value | str,num,bool,json | initialisation value |
+|Name  | string | name of the variable              |
+|Value | str,num,bool,json | initialisation value   |
+|global|boolean | set in global context             |
 
 ## Example Flow
 

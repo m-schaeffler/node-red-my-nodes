@@ -1,7 +1,7 @@
 var should = require("should");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
-var node   = require("../init_global.js");
+var node   = require("../init_flow.js");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -40,7 +40,7 @@ describe( 'init-global Node', function () {
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "init-global" }];
+    var flow = [{ id: "n1", type: "init-flow", global:"true" }];
     helper.load(node, flow, function () {
       var n1 = helper.getNode("n1");
       try {
@@ -56,7 +56,7 @@ describe( 'init-global Node', function () {
   });
 
   it('should set contest variable to a string', function (done) {
-    var flow = [{ id: "n1", type: "init-global", name: "contextVar", value:"Qwertzu", valueType:"str" }];
+    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:"Qwertzu", valueType:"str", global:"true" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
@@ -90,7 +90,7 @@ describe( 'init-global Node', function () {
   });
 
   it('should set contest variable to a number', function (done) {
-    var flow = [{ id: "n1", type: "init-global", name: "contextVar", value:3.141592, valueType:"num" }];
+    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:3.141592, valueType:"num", global:"true" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
@@ -124,7 +124,7 @@ describe( 'init-global Node', function () {
   });
 
   it('should set contest variable to a boolean', function (done) {
-    var flow = [{ id: "n1", type: "init-global", name: "contextVar", value:true, valueType:"bool" }];
+    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:true, valueType:"bool", global:"true" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
@@ -158,7 +158,7 @@ describe( 'init-global Node', function () {
   });
 
   it('should set contest variable to a JSON', function (done) {
-    var flow = [{ id: "n1", type: "init-global", name: "contextVar", value:'{"foo":21,"bar":25}', valueType:"json" }];
+    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:'{"foo":21,"bar":25}', valueType:"json", global:"true" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
@@ -204,7 +204,7 @@ describe( 'init-global Node', function () {
   });
 
   it('should set contest variable to a empty object', function (done) {
-    var flow = [{ id: "n1", type: "init-global", name: "contextVar", value:"{}", valueType:"json" }];
+    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:"{}", valueType:"json", global:"true" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {

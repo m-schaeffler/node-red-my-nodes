@@ -79,6 +79,7 @@ describe( 'init-flow Node', function () {
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "dritter Wert" );
         n1.receive({ topic: "init" });
+        await delay(100);
         n1.context().get("contextVar").should.be.equal( "Qwertzu" );
         done();
       }
@@ -112,6 +113,7 @@ describe( 'init-flow Node', function () {
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "dritter Wert" );
         n1.receive({ topic: "init" });
+        await delay(100);
         n1.context().get("contextVar").should.be.equal( 3.141592 );
         done();
       }
@@ -145,6 +147,7 @@ describe( 'init-flow Node', function () {
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "dritter Wert" );
         n1.receive({ topic: "init" });
+        await delay(100);
         n1.context().get("contextVar").should.be.equal( true );
         done();
       }
@@ -187,6 +190,7 @@ describe( 'init-flow Node', function () {
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "dritter Wert" );
         n1.receive({ topic: "init" });
+        await delay(100);
         cv = n1.context().get("contextVar");
         cv.should.be.an.Object();
         cv.should.have.a.property('foo', 21);
@@ -229,6 +233,7 @@ describe( 'init-flow Node', function () {
         await delay(100);
         n1.context().get("contextVar").should.be.equal( "dritter Wert" );
         n1.receive({ topic: "init" });
+        await delay(100);
         cv = n1.context().get("contextVar");
         cv.should.be.an.Object();
         cv.should.be.empty();

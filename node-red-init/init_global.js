@@ -8,7 +8,7 @@ module.exports = function(RED) {
         this.value         = config.value ?? "value";
         this.valueStr      = this.value;
         this.valueType     = config.valueType ?? "str";
-        this.globalContext = this.context().global ?? this.context(); // Unit-Tests!
+        this.globalContext = this.context().global;
         node.status( "" );
         switch( node.valueType )
         {

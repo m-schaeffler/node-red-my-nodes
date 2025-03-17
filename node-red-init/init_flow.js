@@ -6,7 +6,6 @@ module.exports = function(RED) {
         var node = this;
         this.name        = config.name ?? "name";
         this.value       = config.value ?? "value";
-        this.valueStr    = this.value;
         this.valueType   = config.valueType ?? "str";
         this.flowContext = this.context().flow;
         node.status( "" );
@@ -22,7 +21,23 @@ module.exports = function(RED) {
                 node.value = JSON.parse( node.value );
                 break;
         }
-        node.log( "init "+node.name+" constructed ("+node.value+":"+node.valueType+")" );
+
+        function writeLog(a,b="")
+        {
+            node.log( `init ${node.name} ${a} ${b}` );
+        }
+
+        function setStatus(value)
+        {
+            let status = typeof value == "object" ? JSON.stringify(value) : value.toString();
+            if( status.length >= 17 )
+            {
+                status = status.slice( 0, 15 ) + "...";
+            }
+            node.status( status );
+        }
+
+        writeLog( "constructed", `(${node.value}:${node.valueType})` );
         node.flowContext.get( node.name, function(err,value)
         {
             if( err )
@@ -31,7 +46,7 @@ module.exports = function(RED) {
             }
             else
             {
-                node.log( "init "+node.name+" flow.get="+value );
+                writeLog( "flow.get", value );
                 if( value === undefined )
                 {
                     node.flowContext.set( node.name, node.value, function(err)
@@ -42,14 +57,14 @@ module.exports = function(RED) {
                         }
                         else
                         {
-                            node.log( "init "+node.name+" flow.set sucessfull" );
-                            node.status( node.valueStr );
+                            writeLog( "flow.set sucessfull" );
+                            setStatus( node.value );
                         }
                     } );
                 }
                 else
                 {
-                    node.status( value );
+                    setStatus( value );
                 }
             }
         } );
@@ -57,17 +72,17 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
             {
-                node.log("invalid message")
+                writeLog( "invalid message" );
             }
             else if( msg.reset || msg.topic==="init" )
             {
                 node.flowContext.set( node.name, node.value );
-                node.status( node.valueStr );
+                setStatus( node.value );
             }
             else
             {
                 node.flowContext.set( node.name, msg.payload );
-                node.status( msg.payload );
+                setStatus( msg.payload );
             }
             done();
         });

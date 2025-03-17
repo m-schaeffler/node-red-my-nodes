@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('initGlobal',{
+    RED.nodes.registerType('init-global',{
         category: "common",
         color: "#C7E9C0",
         defaults: {
@@ -28,7 +28,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="initGlobal">
+<script type="text/html" data-template-name="init-global">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -40,7 +40,7 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="initGlobal">
+<script type="text/html" data-help-name="init-global">
     <p>A node for initialisation of global context storages.</p>
     <p>At the start a global contaxt variable can be initalized with a defined value, if is not already defined.
     With messages it can also be set or reseted to the initalisation value.</p>

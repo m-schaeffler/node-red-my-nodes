@@ -8,7 +8,7 @@ module.exports = function(RED) {
         this.value       = config.value ?? "value";
         this.valueStr    = this.value;
         this.valueType   = config.valueType ?? "str";
-        this.flowContext = this.context().flow ?? this.context(); // for Unit-Tests!
+        this.flowContext = this.context().flow;
         node.status( "" );
         switch( node.valueType )
         {

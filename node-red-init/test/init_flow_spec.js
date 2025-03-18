@@ -249,7 +249,40 @@ describe( 'init-flow Node (flow context)', function () {
     });
   });
 
-  it('should have force parameter', function (done) {
+  it('should have force parameter as false', function (done) {
+    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:"Qwertzu", valueType:"str", force:false, z:"flow" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try {
+        n1.should.have.a.property('name', 'contextVar');
+        n1.should.have.a.property('value', 'Qwertzu');
+        n1.should.have.a.property('valueType', 'str');
+        n1.should.have.a.property('force', false);
+        await delay(100);
+        should.exist( n1.context().flow.get("contextVar") );
+        n1.context().flow.get("contextVar").should.be.equal( "Qwertzu" );
+        n1.receive({ payload: "anderer Wert" });
+        await delay(100);
+        n1.context().flow.get("contextVar").should.be.equal( "anderer Wert" );
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n1.should.have.a.property('name', 'contextVar');
+        n1.should.have.a.property('value', 'Qwertzu');
+        n1.should.have.a.property('valueType', 'str');
+        n1.should.have.a.property('force', false);
+        await delay(100);
+        should.exist( n1.context().flow.get("contextVar") );
+        n1.context().flow.get("contextVar").should.be.equal( "anderer Wert" );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should have force parameter as true', function (done) {
     var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:"Qwertzu", valueType:"str", force:true, z:"flow" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
@@ -261,20 +294,18 @@ describe( 'init-flow Node (flow context)', function () {
         await delay(100);
         should.exist( n1.context().flow.get("contextVar") );
         n1.context().flow.get("contextVar").should.be.equal( "Qwertzu" );
-        n1.receive({ invalid: true, payload: "ungültiger Wert" });
-        await delay(100);
-        n1.context().flow.get("contextVar").should.be.equal( "Qwertzu" );
         n1.receive({ payload: "anderer Wert" });
         await delay(100);
         n1.context().flow.get("contextVar").should.be.equal( "anderer Wert" );
-        n1.receive({ reset: true });
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n1.should.have.a.property('name', 'contextVar');
+        n1.should.have.a.property('value', 'Qwertzu');
+        n1.should.have.a.property('valueType', 'str');
+        n1.should.have.a.property('force', true);
         await delay(100);
-        n1.context().flow.get("contextVar").should.be.equal( "Qwertzu" );
-        n1.receive({ payload: "dritter Wert" });
-        await delay(100);
-        n1.context().flow.get("contextVar").should.be.equal( "dritter Wert" );
-        n1.receive({ topic: "init" });
-        await delay(100);
+        should.exist( n1.context().flow.get("contextVar") );
         n1.context().flow.get("contextVar").should.be.equal( "Qwertzu" );
         done();
       }

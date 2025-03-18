@@ -263,7 +263,7 @@ describe( 'init-flow Node (global context)', function () {
         n1.context().global.get("contextVar").should.be.equal( "Qwertzu" );
         n1.receive({ payload: "anderer Wert" });
         await delay(100);
-        n1.context().flow.get("contextVar").should.be.equal( "anderer Wert" );
+        n1.context().global.get("contextVar").should.be.equal( "anderer Wert" );
         await helper._redNodes.stopFlows();
         await helper._redNodes.startFlows();
         n1 = helper.getNode("n1");
@@ -272,7 +272,7 @@ describe( 'init-flow Node (global context)', function () {
         n1.should.have.a.property('valueType', 'str');
         n1.should.have.a.property('force', false);
         await delay(100);
-        should.exist( n1.context().flow.get("contextVar") );
+        should.exist( n1.context().global.get("contextVar") );
         n1.context().global.get("contextVar").should.be.equal( "anderer Wert" );
         done();
       }
@@ -295,7 +295,7 @@ describe( 'init-flow Node (global context)', function () {
         n1.context().global.get("contextVar").should.be.equal( "Qwertzu" );
         n1.receive({ payload: "anderer Wert" });
         await delay(100);
-        n1.context().flow.get("contextVar").should.be.equal( "anderer Wert" );
+        n1.context().global.get("contextVar").should.be.equal( "anderer Wert" );
         await helper._redNodes.stopFlows();
         await helper._redNodes.startFlows();
         n1 = helper.getNode("n1");
@@ -304,7 +304,7 @@ describe( 'init-flow Node (global context)', function () {
         n1.should.have.a.property('valueType', 'str');
         n1.should.have.a.property('force', true);
         await delay(100);
-        should.exist( n1.context().flow.get("contextVar") );
+        should.exist( n1.context().global.get("contextVar") );
         n1.context().global.get("contextVar").should.be.equal( "Qwertzu" );
         done();
       }

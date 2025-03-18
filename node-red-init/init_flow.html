@@ -6,7 +6,8 @@
             name:{value:"",required:true},
             value:{value:"",required:true},
             valueType:{value:"str"},
-            global:{value:false}
+            global:{value:false},
+            force:{value:false}
         },
         inputs:1,
         outputs:0,
@@ -45,6 +46,10 @@
         <label for="node-input-global"><i class="fa fa-globe"></i> global</label>
         <input type="checkbox" id="node-input-global" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
+    <div class="form-row">
+        <label for="node-input-force"><i class="fa fa-repeat"></i> force</label>
+        <input type="checkbox" id="node-input-force" style="display:inline-block; width:20px; vertical-align:basel>
+    </div>
 </script>
 
 <script type="text/html" data-help-name="init-flow">
@@ -55,6 +60,7 @@
 
     <h3>Input</h3>
 
+    <p>If the msg property <code>invalid</code> is present in the message, the message is ignored.</p>
     <p>If <code>msg.reset</code> is set or <code>msg.topic==="init"</code>, the variable is set to the initialisation value.
     Otherwise the variable is set to <code>msg.payload</code>.</p>
     
@@ -67,5 +73,7 @@
         <dd> initialisation value</dd>
         <dt>global <span class="property-type">boolean</span></dt>
         <dd> set in global context</dd>
+        <dt>force <span class="property-type">boolean</span></dt>
+        <dd> set at every startup, even if variable is already set.</dd>
     </dl>
 </script>

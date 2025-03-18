@@ -23,6 +23,8 @@ initialises a flow or global context variable.
 
 ### Input
 
+If the msg property `invalid` is present in the message, the message is ignored.
+
 If `msg.reset` is set or `msg.topic==="init"`, the variable is set to the initialisation value.
 
 Otherwise the variable is set to `msg.payload`.
@@ -34,6 +36,7 @@ Otherwise the variable is set to `msg.payload`.
 |Name  | string | name of the variable              |
 |Value | str,num,bool,json | initialisation value   |
 |global|boolean | set in global context             |
+|force |boolean | set at every startup, even if variable is already set|
 
 ## Example Flow
 

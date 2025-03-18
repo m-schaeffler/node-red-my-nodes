@@ -8,6 +8,7 @@ module.exports = function(RED) {
         this.value       = config.value ?? "value";
         this.valueType   = config.valueType ?? "str";
         this.datacontext = config.global ? this.context().global : this.context().flow;
+        this.force       = Boolean( config.force );
         node.status( "" );
         switch( node.valueType )
         {
@@ -29,13 +30,8 @@ module.exports = function(RED) {
 
         function setStatus(value)
         {
-            //let status = typeof value == "object" ? JSON.stringify(value) : value.toString();
-            let status = JSON.stringify( value );
-            if( status.length >= 17 )
-            {
-                status = status.slice( 0, 15 ) + "...";
-            }
-            node.status( status );
+            const status = JSON.stringify( value );
+            node.status( status.length >= 17 ? status.slice( 0, 15 ) + "..." : status );
         }
 
         writeLog( "constructed", `(${JSON.stringify(node.value)}:${node.valueType})` );
@@ -48,7 +44,7 @@ module.exports = function(RED) {
             else
             {
                 writeLog( "flow.get", value );
-                if( value === undefined )
+                if( node.force || value === undefined )
                 {
                     node.datacontext.set( node.name, node.value, function(err)
                     {

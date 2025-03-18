@@ -9,13 +9,14 @@ function delay(ms) {
   });
 }
 
-describe( 'init-flow Node', function () {
+describe( 'init-flow Node (flow context)', function () {
     "use strict";
 
   beforeEach(function (done) {
       helper.startServer(done);
   });
 
+  /*
   function initContext(done) {
     Context.init({
       contextStorage: {
@@ -28,6 +29,7 @@ describe( 'init-flow Node', function () {
       done();
     });
   }
+  */
 
   afterEach(function(done) {
       helper.unload().then(function() {
@@ -47,6 +49,8 @@ describe( 'init-flow Node', function () {
         n1.should.have.a.property('name', 'name');
         n1.should.have.a.property('value', 'value');
         n1.should.have.a.property('valueType', 'str');
+        n1.should.not.have.a.property('global');
+        n1.should.have.a.property('force', false);
         done();
       }
       catch(err) {

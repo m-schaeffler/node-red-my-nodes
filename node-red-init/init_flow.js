@@ -34,7 +34,7 @@ module.exports = function(RED) {
             node.status( status.length >= 17 ? status.slice( 0, 15 ) + "..." : status );
         }
 
-        writeLog( "constructed", `(${JSON.stringify(node.value)}:${node.valueType})` );
+        //writeLog( "constructed", `(${JSON.stringify(node.value)}:${node.valueType})` );
         node.datacontext.get( node.name, function(err,value)
         {
             if( err )
@@ -43,7 +43,7 @@ module.exports = function(RED) {
             }
             else
             {
-                writeLog( "flow.get", value );
+                //writeLog( "flow.get", value );
                 if( node.force || value === undefined )
                 {
                     node.datacontext.set( node.name, node.value, function(err)

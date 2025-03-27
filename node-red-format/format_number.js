@@ -54,13 +54,21 @@ module.exports = function(RED) {
                         }
                         else
                         {
-                            callback( value );
+                            callback( value === undefined ? null : value );
                         }
                     } );
                 }
                 else
                 {
-                    callback( RED.util.getMessageProperty( msg, node.property ) );
+                    try
+                    {
+                        callback( RED.util.getMessageProperty( msg, node.property ) );
+                    }
+                    catch( err )
+                    {
+                        node.error( err.message );
+                        callback( null );
+                    }
                 }
             }
             getPayload( function(value)

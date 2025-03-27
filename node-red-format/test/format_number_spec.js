@@ -38,7 +38,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should forward numbers rounded to integer', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
+    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
     var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
@@ -66,7 +66,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should forward numbers rounded to two digits', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
+    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
     var flow = [{ id: "n1", type: "formatNumber", digits: "2", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
@@ -100,7 +100,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should forward numbers rounded to two digits and changed decimal', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
+    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
     var flow = [{ id: "n1", type: "formatNumber", decimal: ",", digits: "2", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
@@ -135,7 +135,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should forward numbers with an added unit', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null];
+    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
     var flow = [{ id: "n1", type: "formatNumber", unit: "VAr", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
@@ -402,6 +402,118 @@ describe( 'format_number Node', function () {
         done(err);
       }
       n1.receive({ payload: 20 });
+    });
+  });
+
+  it('should handler payload == null', function (done) {
+    const numbers = [-1,null,1];
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg.payload);
+        try {
+          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          if( ++c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      for( const i of numbers )
+      {
+        n1.receive({ payload: i });
+      }
+    });
+  });
+
+  it('should handler payload == null with objects', function (done) {
+    const numbers = [-1,null,1];
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload.value", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg.payload);
+        try {
+          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          if( ++c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      for( const i of numbers )
+      {
+        n1.receive({ payload: {value:i} });
+      }
+    });
+  });
+
+  it('should handler payload == null with Jsonata', function (done) {
+    const numbers = [-1,null,1];
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg.payload);
+        try {
+          msg.should.have.property('payload',(Number(numbers[c])+5).toFixed(0));
+          if( ++c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      for( const i of numbers )
+      {
+        n1.receive({ payload: i });
+      }
+    });
+  });
+
+  it('should handler payload == null with Jsonata and objects', function (done) {
+    const numbers = [-1,null,1];
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload.value+5", propertyType:"jsonata", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg.payload);
+        try {
+          msg.should.have.property('payload',(Number(numbers[c])+5).toFixed(0));
+          if( ++c === numbers.length )
+          {
+            done();
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      for( const i of numbers )
+      {
+        n1.receive({ payload: {value:i} });
+      }
     });
   });
 

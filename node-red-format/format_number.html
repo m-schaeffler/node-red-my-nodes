@@ -81,6 +81,8 @@
     <p>This value is then</p>
     <ul>
         <li>if the value is a number: formated to a string according to the parameters and a unit is added</li>
+        <li>if the value is <code>null</code> or does not exist, <code>null</code> is sent</li>
+        <li>if a JSONata expression cannot be evaluated, <code>null</code> is sent</li>
         <li>in other cases: been sent out unmodified</li>
     </ul>
     

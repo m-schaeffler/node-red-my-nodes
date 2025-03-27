@@ -22,6 +22,8 @@ The message property to be used as payload can be defined with the `Property` pr
 
 This value is then
 - if the value is a number: converted to a string according to the parameters and a unit is added
+- if the value is `null` or does not exist, `null` is sent
+- if a JSONata expression cannot be evaluated, `null` is sent
 - in other cases: been sent out unmodified
 
 ### Output

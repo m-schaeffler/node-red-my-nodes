@@ -48,7 +48,9 @@ module.exports = function(RED) {
                     {
                         if( err )
                         {
-                            done( err.message );
+                            //done( err.message );
+                            node.error( err.message );
+                            callback( null );
                         }
                         else
                         {
@@ -65,7 +67,7 @@ module.exports = function(RED) {
             {
                 const number = Number( value );
                 let   status = {};
-                if( ! isNaN( number ) )
+                if( ! ( Number.isNaN( number ) || value === null ) )
                 {
                     const roundedNumber = number.toFixed( node.digits );
                     let integer,fractional;

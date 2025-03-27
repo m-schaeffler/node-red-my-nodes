@@ -2,6 +2,12 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../format_number.js");
 
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 describe( 'format_number Node', function () {
     "use strict";
 
@@ -416,7 +422,7 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         console.log(msg.payload);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          msg.should.have.property('payload',c==1 ? null : Number(numbers[c]).toFixed(0));
           if( ++c === numbers.length )
           {
             done();
@@ -444,7 +450,7 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         console.log(msg.payload);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          msg.should.have.property('payload',c==1 ? null : Number(numbers[c]).toFixed(0));
           if( ++c === numbers.length )
           {
             done();
@@ -465,14 +471,14 @@ describe( 'format_number Node', function () {
     const numbers = [-1,null,1];
     var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
         console.log(msg.payload);
         try {
-          msg.should.have.property('payload',(Number(numbers[c])+5).toFixed(0));
+          msg.should.have.property('payload',c==1 ? null : (Number(numbers[c])+5).toFixed(0));
           if( ++c === numbers.length )
           {
             done();
@@ -482,9 +488,11 @@ describe( 'format_number Node', function () {
           done(err);
         }
       });
+      await delay(750);
       for( const i of numbers )
       {
         n1.receive({ payload: i });
+        await delay(500);
       }
     });
   });
@@ -493,14 +501,14 @@ describe( 'format_number Node', function () {
     const numbers = [-1,null,1];
     var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload.value+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
         console.log(msg.payload);
         try {
-          msg.should.have.property('payload',(Number(numbers[c])+5).toFixed(0));
+          msg.should.have.property('payload',c==1 ? null : (Number(numbers[c])+5).toFixed(0));
           if( ++c === numbers.length )
           {
             done();
@@ -510,9 +518,11 @@ describe( 'format_number Node', function () {
           done(err);
         }
       });
+      await delay(750);
       for( const i of numbers )
       {
         n1.receive({ payload: {value:i} });
+        await delay(500);
       }
     });
   });

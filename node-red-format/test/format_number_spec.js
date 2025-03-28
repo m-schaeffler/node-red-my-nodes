@@ -533,25 +533,29 @@ describe( 'format_number Node', function () {
             default:
               msg.should.have.property('payload',(Number(numbers[c])+5).toFixed(0));
           }
-          if( ++c === numbers.length+2 )
-          {
-            done();
-          }
+          c++;
         }
         catch(err) {
           done(err);
         }
       });
-      await delay(100);
-      for( const i of numbers )
-      {
-        n1.receive({ payload: {value:i} });
+      try{
+        await delay(100);
+        for( const i of numbers )
+        {
+          n1.receive({ payload: {value:i} });
+          await delay(50);
+        }
+        n1.receive({ payload: null });
         await delay(50);
+        n1.receive({ payload: {value:255} });
+        await delay(50);
+        c.should.match( numbers.length + 2 );
+        done();
       }
-      n1.receive({ payload: null });
-      await delay(50);
-      n1.receive({ payload: {value:255} });
-      await delay(50);
+      catch(err) {
+        done(err);
+      }
     });
   });
 

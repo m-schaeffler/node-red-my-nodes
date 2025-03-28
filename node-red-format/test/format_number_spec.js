@@ -387,7 +387,7 @@ describe( 'format_number Node', function () {
         n1.receive({ payload: 255 });
         await delay(50);
         c.should.match( 2 );
-        doned();
+        done();
       }
       catch(err) {
         done(err);
@@ -401,6 +401,7 @@ describe( 'format_number Node', function () {
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
+      var c = 0;
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('payload',"98");
@@ -431,6 +432,7 @@ describe( 'format_number Node', function () {
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
+      var c = 0;
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('payload',"25");
@@ -464,7 +466,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         try {
           msg.should.have.property('payload',c==1 ? null : Number(numbers[c]).toFixed(0));
           ++c;
@@ -498,7 +500,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         try {
           switch( c )
           {
@@ -547,7 +549,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         try {
           msg.should.have.property('payload',c==1 ? null : (Number(numbers[c])+5).toFixed(0));
           ++c;
@@ -581,7 +583,7 @@ describe( 'format_number Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         try {
           switch( c )
           {

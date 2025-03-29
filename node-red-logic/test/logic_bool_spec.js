@@ -105,6 +105,7 @@ describe( 'logic_bool Node', function () {
         await delay(50);
         n1.receive({ payload: null });
         await delay(50);
+        c.should.match( 0 );
         n1.receive({ payload: true });
         await delay(50);
         c.should.match( 1 );

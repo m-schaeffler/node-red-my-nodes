@@ -106,6 +106,7 @@ describe( 'logic_not Node', function () {
         await delay(50);
         n1.receive({ payload: null });
         await delay(50);
+        c.should.match( 0 );
         n1.receive({ payload: false });
         await delay(50);
         c.should.match( 1 );

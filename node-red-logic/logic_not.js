@@ -17,10 +17,11 @@ module.exports = function(RED) {
                 done();
                 return;
             }
-            msg.payload = ! tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
+            msg.payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
             let status = { text:msg.payload ?? "error" };
             if( msg.payload !== null )
             {
+                msg.payload = ! msg.payload;
                 if( node.filter )
                 {
                     status.shape = "dot";

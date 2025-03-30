@@ -93,6 +93,7 @@ describe( 'counter Node', function () {
         await delay(50);
         n1.receive({ invalid:true, payload: 0 });
         await delay(50);
+        c.should.match( 0 );
         n1.receive({ payload: 255 });
         await delay(50);
         c.should.match( 1 );

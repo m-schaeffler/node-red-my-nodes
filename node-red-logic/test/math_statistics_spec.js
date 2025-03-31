@@ -23,7 +23,7 @@ describe( 'math_statistics Node', function () {
 
   it('should be loaded', function (done) {
     var flow = [{ id: "n1", type: "statistics", name: "test" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
@@ -31,6 +31,7 @@ describe( 'math_statistics Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('deltaTime', 60000);
         n1.should.have.a.property('minData', 1);
+        await delay(50);
         done();
       }
       catch(err) {
@@ -43,7 +44,7 @@ describe( 'math_statistics Node', function () {
     const numbers = [1000,10,99.9,100,100.1,2000,0];
     var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -71,18 +72,23 @@ describe( 'math_statistics Node', function () {
           const deviation = Math.sqrt( varianz / c );
           msg.stat.should.have.property('deviation').which.is.approximately(deviation,0.00001);
           msg.stat.should.have.property('variation').which.is.approximately(deviation/avg,0.00001);
-          if( c === numbers.length )
-          {
-            done();
-          }
         }
         catch(err) {
           done(err);
         }
       });
-      for( const i of numbers )
-      {
-        n1.receive({ topic:1, payload: i });
+      try {
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:1, payload: i });
+          await delay(50);
+        }
+        c.should.match( numbers.length );
+        done();
+      }
+      catch(err) {
+        done(err);
       }
     });
   });
@@ -91,7 +97,7 @@ describe( 'math_statistics Node', function () {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
     var flow = [{ id: "n1", type: "statistics", minData:"3", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -103,10 +109,6 @@ describe( 'math_statistics Node', function () {
           msg.should.have.property('payload',numbers[c-1]);
           msg.stat.should.have.property('count',c+2);
           msg.stat.should.have.property('average',s/(c+2));
-          if( c === numbers.length )
-          {
-            done();
-          }
         }
         catch(err) {
           done(err);
@@ -114,15 +116,21 @@ describe( 'math_statistics Node', function () {
       });
       try {
         n1.should.have.a.property('minData', 3);
+        await delay(50);
+        n1.receive({ topic:2, payload: 17 });
+        await delay(50);
+        n1.receive({ topic:2, payload: 34 });
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:2, payload: i });
+          await delay(50);
+        }
+        c.should.match( numbers.length );
+        done();
       }
       catch(err) {
         done(err);
-      }
-      n1.receive({ topic:2, payload: 17 });
-      n1.receive({ topic:2, payload: 34 });
-      for( const i of numbers )
-      {
-        n1.receive({ topic:2, payload: i });
       }
     });
   });
@@ -143,10 +151,6 @@ describe( 'math_statistics Node', function () {
           msg.should.have.a.property('payload',c*1000);
           msg.stat.should.have.a.property('count',1);
           msg.stat.should.have.property('average',c*1000);
-          if( c==3 && msg.payload===3000 )
-          {
-            done();
-          }
         }
         catch(err) {
           done(err);
@@ -154,23 +158,27 @@ describe( 'math_statistics Node', function () {
       });
       try {
         n1.should.have.a.property('deltaTime', 100);
+        await delay(50);
+        start = Date.now();
+        n1.receive({ payload: 1000 });
+        await delay(200);
+        n1.receive({ payload: 2000 });
+        await delay(200);
+        n1.receive({ payload: 3000 });
+        await delay(50);
+        c.should.match( 3 );
+        done();
       }
       catch(err) {
         done(err);
       }
-      start = Date.now();
-      n1.receive({ payload: 1000 });
-      await delay(200);
-      n1.receive({ payload: 2000 });
-      await delay(200);
-      n1.receive({ payload: 3000 });
     });
   });
 
   it('should not forward invalid data', function (done) {
     var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -180,29 +188,41 @@ describe( 'math_statistics Node', function () {
           msg.should.have.a.property('payload',5000);
           msg.stat.should.have.a.property('count',1);
           msg.stat.should.have.property('average',5000);
-          if( c === 1 && msg.payload === 5000 )
-          {
-            done();
-          }
         }
         catch(err) {
           done(err);
         }
       });
-      n1.receive({ invalid:true, payload: 1000 });
-      n1.receive({ invalid:true, payload: 0 });
-      n1.receive({ invalid:true, payload: 1000 });
-      n1.receive({ payload: undefined });
-      n1.receive({ payload: "FooBar" });
-      n1.receive({ payload: NaN });
-      n1.receive({ payload: 5000 });
+      try {
+        await delay(50);
+        n1.receive({ invalid:true, payload: 1000 });
+        await delay(50);
+        n1.receive({ invalid:true, payload: 0 });
+        await delay(50);
+        n1.receive({ invalid:true, payload: 1000 });
+        await delay(50);
+        n1.receive({ payload: undefined });
+        await delay(50);
+        n1.receive({ payload: "FooBar" });
+        await delay(50);
+        n1.receive({ payload: NaN });
+        await delay(50);
+        c.should.match( 0 );
+        n1.receive({ payload: 5000 });
+        await delay(50);
+        c.should.match( 1 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
     });
   });
 
   it('should have reset', function (done) {
     var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -225,7 +245,6 @@ describe( 'math_statistics Node', function () {
               msg.should.have.a.property('payload',5000);
               msg.stat.should.have.a.property('count',1);
               msg.stat.should.have.property('average',5000);
-              done();
               break;
           }
         }
@@ -233,20 +252,34 @@ describe( 'math_statistics Node', function () {
           done(err);
         }
       });
-      n1.receive({ payload: 0 });
-      n1.receive({ reset: true });
-      n1.receive({ payload: 1000 });
-      n1.receive({ topic: "init" });
-      n1.receive({ payload: 5000 });
+      try {
+        await delay(50);
+        n1.receive({ payload: 0 });
+        await delay(50);
+        n1.receive({ reset: true });
+        await delay(50);
+        n1.receive({ payload: 1000 });
+        await delay(50);
+        n1.receive({ topic: "init" });
+        await delay(50);
+        n1.receive({ payload: 5000 });
+        await delay(50);
+        c.should.match( 3 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
     });
   });
 
   it('should work with objects', function (done) {
     var flow = [{ id: "n1", type: "statistics", name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
+      var c = 0;
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('payload').which.is.Object();
@@ -254,7 +287,7 @@ describe( 'math_statistics Node', function () {
           msg.stat.should.have.a.property('value',98);
           msg.stat.should.have.a.property('count',1);
           msg.stat.should.have.a.property('average',98);
-          done();
+          c++;
         }
         catch(err) {
           done(err);
@@ -263,27 +296,32 @@ describe( 'math_statistics Node', function () {
       try {
         n1.should.have.a.property('property', "payload.value");
         n1.should.have.a.property('propertyType', "msg");
+        await delay(50);
+        n1.receive({ payload: {a:1,value:98,b:88} });
+        await delay(50);
+        c.should.match( 1 );
+        done();
       }
       catch(err) {
         done(err);
       }
-      n1.receive({ payload: {a:1,value:98,b:88} });
     });
   });
 
   it('should have Jsonata', function (done) {
     var flow = [{ id: "n1", type: "statistics", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
+      var c = 0;
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('payload',98);
           msg.stat.should.have.a.property('value',98+5);
           msg.stat.should.have.a.property('count',1);
           msg.stat.should.have.a.property('average',98+5);
-          done();
+          c++;
         }
         catch(err) {
           done(err);
@@ -292,11 +330,15 @@ describe( 'math_statistics Node', function () {
       try {
         n1.should.have.a.property('property', "payload+5");
         n1.should.have.a.property('propertyType', "jsonata");
+        await delay(50);
+        n1.receive({ payload: 98 });
+        await delay(50);
+        c.should.match( 1 );
+        done();
       }
       catch(err) {
         done(err);
       }
-      n1.receive({ payload: 98 });
     });
   });
 

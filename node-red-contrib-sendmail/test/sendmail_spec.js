@@ -4,6 +4,12 @@ var helper = require("node-red-node-test-helper");
 var node   = require("../sendmail.js");
 var child_process = require('child_process');
 
+function delay(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 describe( 'sendmail Node', function () {
     "use strict";
 
@@ -19,12 +25,13 @@ describe( 'sendmail Node', function () {
 
   it('should be loaded', function (done) {
     var flow = [{ id: "n1", type: "sendmail", name: "test" }];
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('from', 'node-red');
         n1.should.have.a.property('to', 'root');
+        await delay(50);
         done();
       }
       catch(err) {
@@ -61,7 +68,7 @@ describe( 'sendmail Node', function () {
               }
             },
             end:function(){
-              done();
+              //done();
             }
           }
         };
@@ -71,15 +78,19 @@ describe( 'sendmail Node', function () {
         done(err);
       }
     });
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('from', 'unittest@mail.lan');
         n1.should.have.a.property('to', 'postmaster@mail.lan');
+        await delay(50);
         n1.receive({ topic: "Unit Test", payload: "this is a test mail for nodered/sendmail unit tests." });
+        await delay(50);
         child_process.execFile.calledOnce.should.be.true();
         child_process.execFile.restore();
+        await delay(50);
+        done();
       }
       catch(err) {
         child_process.execFile.restore();
@@ -115,7 +126,7 @@ describe( 'sendmail Node', function () {
               }
             },
             end:function(){
-              done();
+              //done();
             }
           }
         };
@@ -126,13 +137,17 @@ describe( 'sendmail Node', function () {
       }
       arg4(null,arg1,arg1.toUpperCase());
     });
-    helper.load(node, flow, function () {
+    helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        await delay(50);
         n1.receive({ topic: "Unit Test", payload: "this is a test mail for nodered/sendmail unit tests.", from: "nodered@mail.lan", to: "root@mail.lan" });
+        await delay(50);
         child_process.execFile.calledOnce.should.be.true();
         child_process.execFile.restore();
+        await delay(50);
+        done();
       }
       catch(err) {
         child_process.execFile.restore();

@@ -458,7 +458,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should handle payload == null', function (done) {
-    const numbers = [-1,null,1];
+    const numbers = [null,null,-1,null,null,1];
     var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -468,7 +468,8 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg.payload);
         try {
-          msg.should.have.property('payload',c==1 ? null : Number(numbers[c]).toFixed(0));
+          const h = numbers[c];
+          msg.should.have.property('payload',typeof h == "number" ? h.toFixed(0) : h );
           ++c;
         }
         catch(err) {
@@ -483,6 +484,43 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should handle payload == null with filtering', function (done) {
+    const numbers = [null,null,-1,null,null,1];
+    var flow = [{ id: "n1", type: "formatNumber", name: "test", filter:true, wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg.payload);
+        try {
+          const h = numbers[c];
+          msg.should.have.property('payload',typeof h == "number" ? h.toFixed(0) : h );
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        await delay(50);
+        n1.should.have.a.property('filter', true);
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ payload: i });
+          await delay(50);
+        }
+        c.should.match( numbers.length - 2 );
         done();
       }
       catch(err) {

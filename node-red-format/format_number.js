@@ -12,7 +12,7 @@ module.exports = function(RED) {
         this.digits       = Number( config.digits ?? 0 );
         this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
-        this.last         = null;
+        this.last         = undefined;
         if( this.propertyType === "jsonata" )
         {
             try {

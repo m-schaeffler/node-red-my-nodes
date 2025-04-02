@@ -493,7 +493,8 @@ describe( 'format_number Node', function () {
   });
 
   it('should handle payload == null with filtering', function (done) {
-    const numbers = [null,null,-1,null,null,1];
+    const numbers = [null,null,-1,-1,null,null,null,1,1];
+    const results = [null,-1,null,1];
     var flow = [{ id: "n1", type: "formatNumber", name: "test", filter:true, wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -503,7 +504,7 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg.payload);
         try {
-          const h = numbers[c];
+          const h = results[c];
           msg.should.have.property('payload',typeof h == "number" ? h.toFixed(0) : h );
           ++c;
         }
@@ -520,7 +521,7 @@ describe( 'format_number Node', function () {
           n1.receive({ payload: i });
           await delay(50);
         }
-        c.should.match( numbers.length - 2 );
+        c.should.match( results.length );
         done();
       }
       catch(err) {

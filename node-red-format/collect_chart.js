@@ -13,6 +13,7 @@ module.exports = function(RED) {
         this.eraseCycles  = Number( config.eraseCycles ?? 10 );
         this.hours        = Number( config.hours ?? 24 );
         this.steps        = Boolean( config.steps );
+        this.eraseAlways  = ! config.eraseWithData;
         this.showState    = Boolean( config.showState );
         this.cycleJitter  = Number( config.cycleJitter ?? 2000 );
         this.newData      = false;
@@ -208,22 +209,25 @@ module.exports = function(RED) {
             if( node.cycleCounter >= node.eraseCycles )
             {
                 node.cycleCounter = 0;
-                const start = node.topics.length;
-                let   end   = start;
-                while( node.data[end]?.t < dateStart )
+                if( node.eraseAlways || node.newData )
                 {
-                    end++;
-                }
-                if( end > start )
-                {
-                    //console.log( `delete data ${end-start}` );
-                    node.data.splice( start, end - start );
-                    node.newData = true;
+                    const start = node.topics.length;
+                    let   end   = start;
+                    while( node.data[end]?.t < dateStart )
+                    {
+                        end++;
+                    }
+                    if( end > start )
+                    {
+                        //console.log( `delete data ${end-start}` );
+                        node.data.splice( start, end - start );
+                        node.newData = true;
+                    }
                 }
             }
-            dateStart -= node.eraseCycles * node.cyclic * 1000;
             if( node.newData )
             {
+                dateStart -= node.eraseCycles * node.cyclic * 1000;
                 for( const i in node.topics )
                 {
                     node.data[i].t = dateStart;

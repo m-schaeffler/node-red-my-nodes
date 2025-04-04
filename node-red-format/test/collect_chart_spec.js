@@ -56,6 +56,7 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('eraseCycles',10);
         n1.should.have.a.property('hours', 24);
         n1.should.have.a.property('steps', false);
+        n1.should.have.a.property('eraseAlways', true);
         n1.should.have.a.property('showState', false);
         n1.should.have.a.property('cycleJitter', 2000);
         await delay(750);

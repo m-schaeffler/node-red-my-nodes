@@ -482,6 +482,133 @@ describe( 'collect_chart Node', function () {
     });
   });
 
+  it('should delete old data when no new data arrives', function (done) {
+    this.timeout( 30000 );
+    const numbers = [0,1,2,3,4,5,6,7,8,9];
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "0.5", eraseCycles: "5", hours: 4/3600, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[]);
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','series');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
+                v.should.have.a.property('v',Number(i));
+              }
+              break;
+            case 3:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload',[]);
+              break;
+            default:
+              done("too much output messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('cyclic', 0.5);
+        n1.should.have.a.property('eraseCycles', 5);
+        n1.should.have.a.property('hours', 4/3600);
+        await delay(750);
+        c.should.be.equal(1);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:"series", payload: i });
+        }
+        await delay(2500);
+        c.should.be.equal(2);
+        await delay(8000);
+        c.should.be.equal(3);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should not delete old data when no new data arrives', function (done) {
+    this.timeout( 30000 );
+    const numbers = [0,1,2,3,4,5,6,7,8,9];
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "0.5", eraseCycles: "5", hours: 4/3600, eraseWithData:true, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[]);
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','series');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
+                v.should.have.a.property('v',Number(i));
+              }
+              break;
+            default:
+              done("too much output messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('cyclic', 0.5);
+        n1.should.have.a.property('eraseCycles', 5);
+        n1.should.have.a.property('hours', 4/3600);
+        n1.should.have.a.property('eraseAlways', false);
+        await delay(750);
+        c.should.be.equal(1);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:"series", payload: i });
+        }
+        await delay(2500);
+        c.should.be.equal(2);
+        await delay(8000);
+        c.should.be.equal(2);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should store data in memory context', function (done) {
     this.timeout( 10000 );
     const numbers = [0,1,2,3,4];

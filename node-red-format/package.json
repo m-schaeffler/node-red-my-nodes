@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-format",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "nodes for formatting of simple data.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-format",

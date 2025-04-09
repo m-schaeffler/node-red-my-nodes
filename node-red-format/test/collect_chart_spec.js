@@ -578,6 +578,15 @@ describe( 'collect_chart Node', function () {
                 v.should.have.a.property('v',Number(i));
               }
               break;
+            case 3:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(1);
+              const v = msg.payload[0];
+              v.should.be.a.Object();
+              v.should.have.a.property('c','series');
+              v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
+              v.should.have.a.property('v',-1);
+              break;
             default:
               done("too much output messages");
           }
@@ -601,6 +610,9 @@ describe( 'collect_chart Node', function () {
         c.should.be.equal(2);
         await delay(8000);
         c.should.be.equal(2);
+        n1.receive({ topic:"series", payload: -1 });
+        await delay(2500);
+        c.should.be.equal(3);
         done();
       }
       catch(err) {

@@ -208,9 +208,10 @@ module.exports = function(RED) {
             let dateStart = Date.now() - node.hours * 3600*1000;
             if( node.cycleCounter >= node.eraseCycles )
             {
-                node.cycleCounter = 0;
+                //node.cycleCounter = 0;
                 if( node.eraseAlways || node.newData )
                 {
+                    node.cycleCounter = 0;
                     const start = node.topics.length;
                     let   end   = start;
                     while( node.data[end]?.t < dateStart )

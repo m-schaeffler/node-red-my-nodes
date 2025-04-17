@@ -1,4 +1,5 @@
 var should = require("should");
+var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../bthome.js");
 
@@ -17,23 +18,25 @@ describe( 'bthome Node', function () {
 
   afterEach(function(done) {
       helper.unload().then(function() {
+          return Context.clean({allNodes: {}});
+      }).then(function () {
+          return Context.close();
+      }).then(function () {
           helper.stopServer(done);
       });
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "bthome", name: "test" }];
+    var flow = [{ id: "n1", type: "bthome", name: "test", z:"flow" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('interval', 1000);
-        n1.should.have.a.property('maxCount', 1);
-        n1.should.have.a.property('forceClone', false);
-        n1.should.have.a.property('firstDelayed', false);
-        n1.should.have.a.property('byTopic', false);
-        n1.should.have.a.property('addCounters', false);
+        n1.should.have.a.property('devices', {});
+        n1.should.have.a.property('contextStore', "none");
         await delay(50);
+        n1.should.have.a.property('data', {} );
+        should.not.exist( n1.context().flow.get("bthome") );
         done();
       }
       catch(err) {

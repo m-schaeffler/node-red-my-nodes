@@ -1,10 +1,11 @@
 <script type="text/javascript">
     RED.nodes.registerType('bthome',{
-        category: 'function',
-        color: '#E6E0F8',
+        category: 'input',
+        color: '#a6bbcf',
         defaults: {
             name: {value:""},
-            devices:{value:"[]",required:true}
+            devices:{value:"[]",required:true},
+            contextStore:{value:"",required:true}
         },
         inputs:1,
         outputs:1,
@@ -19,10 +20,24 @@
         inputLabels: 'bthome frame',
         outputLabels: 'decoded frame',
         oneditprepare: function() {
+            const node = this;
             $("#node-input-devices").typedInput({ 
                 type:"json", 
                 types:["json"]
             });
+            // populate store names
+            $("#node-input-contextStore").empty();
+            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : '';
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                   $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
         }
     });
 </script>
@@ -33,8 +48,12 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-devices"><i class="fa fa-tags"></i> Devices</label>
+        <label for="node-input-devices"><i class="fa fa-bluetooth-b"></i> Devices</label>
         <input type="text" id="node-input-devices">
+    </div>
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
     </div>
 </script>
 

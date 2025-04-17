@@ -1,0 +1,37 @@
+{
+    "name": "@mschaeffler/node-red-bthome",
+    "version": "1.0.0",
+    "description": "A Node Red node to decrypt and decode bthome frames",
+    "author": {
+        "name": "Mathias Schäffler",
+        "url": "https://github.com/m-schaeffler"
+    },
+    "license": "LGPL-2.1",
+    "keywords": [
+        "node-red",
+        "BT-Home",
+        "bthome",
+        "Shelly BLU",
+        "BLE"
+    ],
+    "bugs": {
+        "url": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-bthome/issues"
+    },
+    "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-bthome",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+    },
+    "node-red": {
+        "version": ">=4.0.0",
+        "nodes": {
+            "bthome": "bthome.js"
+        }
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "test": "mocha \"test/*_spec.js\""
+    }
+}

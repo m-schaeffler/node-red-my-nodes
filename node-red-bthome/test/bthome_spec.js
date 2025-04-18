@@ -95,4 +95,156 @@ describe( 'bthome Node', function () {
     });
   });
 
+  const testDevices = '{ \
+    "11:22:33:44:55:66": { "topic": "dev_unencrypted_1" }, \
+    "00:01:02:03:04:05": { "topic": "dev_unencrypted_2" }, \
+    "00:10:20:30:40:50": { "topic": "dev_encrypted_1", "key": "00112233445566778899AABBCCDDEEFF" }, \
+    "00:00:00:00:00:00": { "topic": "dev_encrypted_2", "key": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16] } }';
+
+  function checkData(data,t,pid,tests={})
+  {
+    data.should.be.an.Object();
+    data.should.have.a.property(t);
+    const v = data[t];
+    v.should.be.an.Object();
+    v.should.have.a.property("pid",pid)
+    v.should.have.a.property("gw").which.is.an.Object();
+    if( pid )
+    {
+      v.should.have.a.property("encyrpted");
+      v.should.have.a.property("time");
+    }
+    for( const i in tests )
+    {
+      v.should.have.a.property(i,tests[i]);
+    }
+    return v.data;
+  }
+
+  it('should ignore invalid input', function (done) {
+    let flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        try {
+          c1++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        try {
+          c2++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('devices');
+        n1.should.have.a.property('contextVar', "bthome");
+        n1.should.have.a.property('contextStore', "none");
+        await delay(50);
+        n1.should.have.a.property('data', {} );
+        n1.receive({});
+        n1.receive({ payload: 0 });
+        n1.receive({ payload: {} });
+        n1.receive({ topic: "" });
+        await delay(50);
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:FF",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,54,1,94,46,57,69,125,0]
+        } }); // unknow mac
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [0x24,0,54,1,94,46,57,69,125,0]
+        } }); // version 1
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    0x24
+        } }); // data not an array
+        await delay(50);
+        n1.should.have.a.property('data', {} );
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should decode unencrypted messages', function (done) {
+    let flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        try {
+          c1++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        try {
+          c2++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('devices');
+        n1.should.have.a.property('contextVar', "bthome");
+        n1.should.have.a.property('contextStore', "none");
+        await delay(50);
+        n1.should.have.a.property('data', {} );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,54,1,94,46,57,69,125,0]
+        } });
+        await delay(50);
+        n1.should.have.a.property('data');
+        checkData(n1.data,"dev_unencrypted_1",null);
+        c1.should.match( 1 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });

@@ -55,6 +55,54 @@ class Rawdata {
     }
 }
 
+class BtEvent {
+    constructor()
+    {
+        this._events = {};
+    }
+    pushEvent(type,event)
+    {
+        switch( typeof this._events[type] )
+        {
+            case "undefined":
+                this._events[type] = event;
+                break;
+            case "string":
+                this._events[type] = [this._events[type]];
+                // fall through
+            case "object":
+                this._events[type].push( event );
+                break;
+        }
+    }
+    eventMessages()
+    {
+        let result = [];
+        for( const t in this._events )
+        {
+            const event = this._events[t];
+            if( typeof event == "string" )
+            {
+                if( event )
+                {
+                    result.push( { topic: `Event/${name}/${event}`, payload: { type: t, event: event } } );
+                }
+            }
+            else
+            {
+                for( const i in event )
+                {
+                    if( event[i] )
+                    {
+                        const index = Number( i ) + 1;
+                        result.push( { topic: `Event/${name}/${index}/${event[i]}`, payload: { type: t, id: index, event: event[i] } } );
+                    }
+                }
+            }
+        }
+    }
+}
+
 module.exports = function(RED) {
 
     function BtHomeNode(config) {
@@ -113,13 +161,80 @@ module.exports = function(RED) {
         }
 
         node.on('input', function(msg,send,done) {
-            console.log(node.data)
-            node.data[msg.topic] = msg.payload;
-            if( node.contextStore !== "none" )
+
+            function checkMsg()
             {
-                node.flowcontext.set( node.contextVar, node.data, node.contextStore );
+                if( name === undefined )
+                {
+                    node.error( "unknown BT-Home " + msg.payload.addr );
+                }
+                else if( ! Array.isArray( msg.payload.data ) )
+                {
+                    node.error( "msg.payload.data must be an Array!" );
+                }
+                else if( version !== 2 )
+                {
+                    node.error( "wrong BT-Home version " + version );
+                }
+                else if( encrypted && !node.devices[msg.payload.addr].key )
+                {
+                    node.error( name + " encryption key needed" );
+                }
+                else if( (!encrypted) && node.devices[msg.payload.addr].key )
+                {
+                    node.error( name + " encrypted messages needed" );
+                }
+                else
+                {
+                    return true;
+                }
+                return false;
             }
-            send( {topic:"bthome",payload:node.data} )
+
+            function decryptMsg()
+            {
+                console.log("encrypted");
+            }
+
+            function decodeMsg()
+            {
+                rawdata = new Rawdata( rawdata );
+            }
+
+            const name      = node.devices[msg?.payload.addr].topic;
+            const dib       = msg.payload.data[0];
+            let   rawdata   = msg.payload.data.slice( 1 );
+            const encrypted = Boolean( dib & 0x1 );
+            const version   = dib >> 5;
+            if( checkMsg() )
+            {
+                if( encrypted )
+                {
+                    decyrptMsg();
+                    done();return;
+                }
+                let pid    = null;
+                let events = new BtEvent();
+                let item   = node.data[name];
+                if( item == undefined )
+                {
+                    item = { pid: null, gw: {} };
+                    node.data[name] = item;
+                }
+                decodeMsg();
+                checkPid();
+                if( pid !== item.pid )
+                {
+                    if( node.contextStore !== "none" )
+                    {
+                        node.flowcontext.set( node.contextVar, node.data, node.contextStore );
+                    }
+                    send( [
+                        item.data ? { topic:name, payload:item.data } : null,
+                        null
+                    ] );
+                }
+            }
             done();
         });
     }

@@ -51,7 +51,7 @@ module.exports = function(RED) {
                     else
                     {
                         device.key = Buffer.alloc( 16 );
-                        console.log( mac + " keylength must be 16 bytes" );
+                        node.log( mac + " keylength must be 16 bytes" );
                     }
                     break;
                 default:
@@ -60,16 +60,19 @@ module.exports = function(RED) {
         }
 
         node.on('input', function(msg,send,done) {
+            if( ! Array.isArray( msg.payload.data ) )
+            {
+                node.error( "msg.payload.data must be an Array!" );
+                node.trace("msg processed");
+                done();
+                return;
+            }
 
             function checkMsg()
             {
                 if( name === undefined )
                 {
                     node.error( "unknown BT-Home " + msg.payload.addr );
-                }
-                else if( ! Array.isArray( msg.payload.data ) )
-                {
-                    node.error( "msg.payload.data must be an Array!" );
                 }
                 else if( version !== 2 )
                 {
@@ -100,11 +103,45 @@ module.exports = function(RED) {
                 rawdata = new Rawdata( rawdata );
             }
 
-            const name      = node.devices[msg?.payload.addr].topic;
+            function checkPid()
+            {
+                if( pid < item.pid && pid > 10 && pid > item.pid - 10 )
+                {
+                    // veraltete Nachricht und nicht reboot
+                    node.warn( `old ble message (${name}) dropped, ${msg.payload.pid} < ${item.data?.pid}` );
+                    return false;
+                }
+                if( msg.payload.gateway )
+                {
+                    item.gw[msg.payload.gateway] = {
+                        time: msg.payload.time ?? Date.now(),
+                        rssi: msg.payload.rssi ?? null
+                    };
+                }
+                return pid !== null && pid !== item.pid;
+            }
+
+            function newMessage()
+            {
+                if( node.contextStore !== "none" )
+                {
+                    node.flowcontext.set( node.contextVar, node.data, node.contextStore );
+                }
+                send( [
+                    item.data ? { topic:name, payload:item.data } : null,
+                    null
+                ] );
+            }
+
+            const name      = node.devices[msg.payload.addr]?.topic;
             const dib       = msg.payload.data[0];
             let   rawdata   = msg.payload.data.slice( 1 );
             const encrypted = Boolean( dib & 0x1 );
             const version   = dib >> 5;
+            let   pid       = null;
+            const events    = new BtEvent();
+            let   item      = node.data[name];
+
             if( checkMsg() )
             {
                 if( encrypted )
@@ -112,28 +149,18 @@ module.exports = function(RED) {
                     decyrptMsg();
                     done();return;
                 }
-                let pid    = null;
-                let events = new BtEvent();
-                let item   = node.data[name];
                 if( item == undefined )
                 {
                     item = { pid: null, gw: {} };
                     node.data[name] = item;
                 }
                 decodeMsg();
-                checkPid();
-                if( pid !== item.pid )
+                if( checkPid() )
                 {
-                    if( node.contextStore !== "none" )
-                    {
-                        node.flowcontext.set( node.contextVar, node.data, node.contextStore );
-                    }
-                    send( [
-                        item.data ? { topic:name, payload:item.data } : null,
-                        null
-                    ] );
+                    newMessage();
                 }
             }
+            node.trace("msg processed");
             done();
         });
     }

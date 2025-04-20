@@ -1,6 +1,6 @@
-const Crypto  = require('node:crypto');
-const Rawdata = require("./rawdata.js");
-const BtEvent = require("./btevent.js");
+const Crypto  = require( 'node:crypto' );
+const Rawdata = require( "./rawdata.js" );
+const BtEvent = require( "./btevent.js" );
 
 module.exports = function(RED) {
 
@@ -63,7 +63,7 @@ module.exports = function(RED) {
             if( ! Array.isArray( msg.payload.data ) )
             {
                 node.error( "msg.payload.data must be an Array!" );
-                node.trace("msg processed");
+                node.trace( "msg processed" );
                 done();
                 return;
             }
@@ -162,7 +162,7 @@ module.exports = function(RED) {
                             break;
                         default:
                             console.log("unknown BT-Home id "+id);
-                            node.warn( "unknown BT-Home id "+id );
+                            node.warn( "unknown BT-Home id " + id );
                             rawdata.clean();
                     }
                 }
@@ -170,7 +170,7 @@ module.exports = function(RED) {
 
             function checkPid()
             {
-                if( pid < item.pid && pid > 10 && pid > item.pid - 10 )
+                if( pid < item.pid && pid > 10 /*&& pid > item.pid - 10*/ )
                 {
                     // veraltete Nachricht und nicht reboot
                     node.warn( `old ble message (${name}) dropped, ${msg.payload.pid} < ${item.data?.pid}` );
@@ -188,13 +188,17 @@ module.exports = function(RED) {
 
             function newMessage()
             {
+                item.time      = msg.payload.time ?? Date.now();
+                item.pid       = pid;
+                item.encrypted = encrypted;
                 if( node.contextStore !== "none" )
                 {
                     node.flowcontext.set( node.contextVar, node.data, node.contextStore );
                 }
+                node.status( name );
                 send( [
                     item.data ? { topic:name, payload:item.data } : null,
-                    null
+                    null //events.eventMessages()
                 ] );
             }
 
@@ -225,10 +229,10 @@ module.exports = function(RED) {
                     newMessage();
                 }
             }
-            node.trace("msg processed");
+            node.trace( "msg processed" );
             done();
         });
     }
 
-    RED.nodes.registerType("bthome",BtHomeNode);
+    RED.nodes.registerType( "bthome", BtHomeNode );
 }

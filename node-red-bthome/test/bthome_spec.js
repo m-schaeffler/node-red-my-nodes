@@ -109,9 +109,9 @@ describe( 'bthome Node', function () {
     const v = data[t];
     v.should.be.an.Object();
     v.should.have.a.property("pid",pid)
+    v.should.have.a.property("gw").which.is.an.Object();
     if( gw )
     {
-      v.should.have.a.property("gw").which.is.an.Object();
       v.gw.should.have.a.property(gw).which.is.an.Object();
       v.gw[gw].should.have.a.property("time").which.is.approximately(Date.now()-45,15);
       v.gw[gw].should.have.a.property("rssi").which.is.within(-100,-40);

@@ -98,9 +98,74 @@ module.exports = function(RED) {
                 console.log("encrypted");
             }
 
+            function setData(name,value)
+            {
+                if( item.data === undefined )
+                {
+                    item.data = {};
+                }
+                item.data[name] = value;
+            }
+
             function decodeMsg()
             {
                 rawdata = new Rawdata( rawdata );
+                while( rawdata.length() > 0 )
+                {
+                    const id = rawdata.getUInt8();
+                    switch( id )
+                    {
+                        case 0x00:
+                            pid = rawdata.getUInt8();
+                            break;
+                        case 0x01:
+                            item.battery = rawdata.getUInt8();
+                            break;
+                        case 0x05:
+                            setData( "lux", rawdata.getUInt24() * 0.01 );
+                            break;
+                        case 0x21:
+                            events.pushEvent( "motion", rawdata.getEnum( ["","motion"] ) );
+                            break;
+                        case 0x2D:
+                            setData( "state", rawdata.getEnum( ["close","open"] ) );
+                            break;
+                        case 0x2E:
+                            setData( "humidity", rawdata.getUInt8() );
+                            break;
+                        case 0x3A:
+                            events.pushEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
+                            break;
+                        case 0x3F:
+                            setData( "tilt", rawdata.getInt16() * 0.1 );
+                            break;
+                        case 0x45:
+                            setData( "temperature", rawdata.getInt16() * 0.1 );
+                            break;
+                        case 0xF0:
+                            item.typeId = rawdata.getUInt16();
+                            break;
+                        case 0xF1:
+                            item.version = {
+                                sub:   rawdata.getUInt8(),
+                                patch: rawdata.getUInt8(),
+                                minor: rawdata.getUInt8(),
+                                major: rawdata.getUInt8()
+                            };
+                            break;
+                        case 0xF2:
+                            item.version = {
+                                patch: rawdata.getUInt8(),
+                                minor: rawdata.getUInt8(),
+                                major: rawdata.getUInt8()
+                            };
+                            break;
+                        default:
+                            console.log("unknown BT-Home id "+id);
+                            node.warn( "unknown BT-Home id "+id );
+                            rawdata.clean();
+                    }
+                }
             }
 
             function checkPid()

@@ -8,6 +8,14 @@ class Rawdata {
         const mask = 1 << ( bits - 1 );
         return num & mask ? num - ( 1 << bits ) : num;
     }
+    length()
+    {
+        return this._data.length;
+    }
+    clean()
+    {
+        this._data = [];
+    }
     getUInt8()
     {
         return this._data.shift();

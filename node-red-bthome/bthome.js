@@ -161,7 +161,6 @@ module.exports = function(RED) {
                             };
                             break;
                         default:
-                            console.log("unknown BT-Home id "+id);
                             node.warn( "unknown BT-Home id " + id );
                             rawdata.reset();
                     }

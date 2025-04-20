@@ -9,7 +9,7 @@ module.exports = function(RED) {
         var node = this;
         this.flowcontext  = this.context().flow;
         this.devices      = JSON.parse( config.devices ?? "{}" );
-        this.contextVar   = config.contextVar ?? "bthome";
+        this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
         this.data         = {};
         node.status( "" );
@@ -163,7 +163,7 @@ module.exports = function(RED) {
                         default:
                             console.log("unknown BT-Home id "+id);
                             node.warn( "unknown BT-Home id " + id );
-                            rawdata.clean();
+                            rawdata.reset();
                     }
                 }
             }

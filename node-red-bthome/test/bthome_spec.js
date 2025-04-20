@@ -357,7 +357,59 @@ describe( 'bthome Node', function () {
 
 // all values
 
-// version message
+  it('should decode version messages', function (done) {
+    let flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        c1++;
+      });
+      n3.on("input", function (msg) {
+        c2++;
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('devices');
+        n1.should.have.a.property('contextVar', "bthome");
+        n1.should.have.a.property('contextStore', "none");
+        await delay(50);
+        n1.should.have.a.property('data', {} );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,1,1,94,0xF0,1,2,0xF1,1,2,3,4]
+        } });
+        await delay(50);
+        checkData(n1.data,"dev_unencrypted_1",{pid:1,encrypted:false,battery:94,typeId:0x201,version:{sub:1,patch:2,minor:3,major:4}},"UnitTest");
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "00:01:02:03:04:05",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,1,1,94,0xF0,1,2,0xF2,2,3,4]
+        } });
+        await delay(50);
+        checkData(n1.data,"dev_unencrypted_2",{pid:1,encrypted:false,battery:94,typeId:0x201,version:{patch:2,minor:3,major:4}},"UnitTest");
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
 
 // events
 

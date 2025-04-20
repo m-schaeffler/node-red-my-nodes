@@ -12,7 +12,7 @@ class Rawdata {
     {
         return this._data.length;
     }
-    clean()
+    reset()
     {
         this._data = [];
     }

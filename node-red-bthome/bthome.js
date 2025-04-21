@@ -9,6 +9,7 @@ module.exports = function(RED) {
         var node = this;
         this.flowcontext  = this.context().flow;
         this.devices      = JSON.parse( config.devices ?? "{}" );
+        this.eventPrefix  = config.eventPrefix  ?? "Event";
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
         this.data         = {};
@@ -197,7 +198,7 @@ module.exports = function(RED) {
                 node.status( name );
                 send( [
                     item.data ? { topic:name, payload:item.data } : null,
-                    null //events.eventMessages()
+                    events.eventMessages( name )
                 ] );
             }
 
@@ -207,7 +208,7 @@ module.exports = function(RED) {
             const encrypted = Boolean( dib & 0x1 );
             const version   = dib >> 5;
             let   pid       = null;
-            const events    = new BtEvent();
+            const events    = new BtEvent( node.eventPrefix );
             let   item      = node.data[name];
 
             if( checkMsg() )

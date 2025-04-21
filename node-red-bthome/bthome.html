@@ -5,6 +5,7 @@
         defaults: {
             name: {value:""},
             devices:{value:"[]",required:true},
+            eventPrefix:{value:"Event",required:true},
             contextStore:{value:"",required:true}
         },
         inputs:1,
@@ -50,6 +51,10 @@
     <div class="form-row">
         <label for="node-input-devices"><i class="fa fa-bluetooth-b"></i> Devices</label>
         <input type="text" id="node-input-devices">
+    </div>
+    <div class="form-row">
+        <label for="node-input-eventPrefix"><i class="fa fa-play"></i> Event-Prefix</label>
+        <input type="text" id="node-input-eventPrefix"></input>
     </div>
     <div class="form-row">
         <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>

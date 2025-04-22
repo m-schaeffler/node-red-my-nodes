@@ -33,15 +33,21 @@ $ npm install @mschaeffler/node-red-bthome
 
 ### msg.payload
 
+Only the first two values are needed, the others are optional.
+
 |msg.payload| type   | description                       |
 |:----------|:-------|:----------------------------------|
-|addr       | string | |
-|rssi       | number | |
-|time       | number | |
-|gateway    | string | |
-|data       | array of bytes| |
+|addr       | string |mac of the BT-Home device (needed) |
+|data       | array of bytes|raw BT-Home message (needed) |
+|rssi       | number |signal strength |
+|time       | number |Javscript timestamp of the reception |
+|gateway    | string |name of the geteway |
 
 ## Outputs
+
+THere are two output ports:
+1. one for meassurement vales (states)
+2. one for actions done with the devices (events)
 
 ### State
 

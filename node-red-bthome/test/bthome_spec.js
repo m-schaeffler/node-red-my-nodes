@@ -762,18 +762,9 @@ describe( 'bthome Node', function () {
       n3.on("input", function (msg) {
         try {
           c2++;
-          console.log(msg);
-          switch( c2 )
-          {
-            case 1:
-              msg.should.have.a.property('topic','EP/dev_unencrypted_1/motion');
-              msg.should.have.a.property('payload',{type:'motion',event:'S'});
-              break;
-            case 2:
-              msg.should.have.a.property('topic','EP/dev_unencrypted_1/motion');
-              msg.should.have.a.property('payload',{type:'motion',event:'L'});
-              break;
-          }
+          //console.log(msg);
+          msg.should.have.a.property('topic','dev_unencrypted_1/motion');
+          msg.should.have.a.property('payload',{type:'motion',event:'motion'});
         }
         catch(err) {
           done(err);

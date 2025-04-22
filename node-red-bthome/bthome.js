@@ -9,7 +9,8 @@ module.exports = function(RED) {
         var node = this;
         this.flowcontext  = this.context().flow;
         this.devices      = JSON.parse( config.devices ?? "{}" );
-        this.eventPrefix  = config.eventPrefix  ?? "Event";
+        this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' :"";
+        this.eventPrefix  = config.eventPrefix ? config.eventPrefix+'/' : "";
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
         this.data         = {};
@@ -197,7 +198,7 @@ module.exports = function(RED) {
                 }
                 node.status( name );
                 send( [
-                    item.data ? { topic:name, payload:item.data } : null,
+                    item.data ? { topic:node.statusPrefix+name, payload:item.data } : null,
                     events.eventMessages( name )
                 ] );
             }

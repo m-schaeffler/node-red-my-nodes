@@ -29,7 +29,7 @@ class BtEvent {
             {
                 if( event )
                 {
-                    result.push( { topic: `${this._prefix}/${name}/${event}`, payload: { type: t, event: event } } );
+                    result.push( { topic: `${this._prefix}${name}/${event}`, payload: { type: t, event: event } } );
                 }
             }
             else
@@ -39,7 +39,7 @@ class BtEvent {
                     if( event[i] )
                     {
                         const index = Number( i ) + 1;
-                        result.push( { topic: `${this._prefix}/${name}/${index}/${event[i]}`, payload: { type: t, id: index, event: event[i] } } );
+                        result.push( { topic: `${this._prefix}${name}/${index}/${event[i]}`, payload: { type: t, id: index, event: event[i] } } );
                     }
                 }
             }

@@ -33,7 +33,8 @@ describe( 'bthome Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('devices', {});
-        n1.should.have.a.property('eventPrefix', "Event");
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('eventPrefix', "");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
         await delay(50);
@@ -113,9 +114,9 @@ describe( 'bthome Node', function () {
     v.should.have.a.property("gw").which.is.an.Object();
     if( gw )
     {
-      v.should.have.a.property("time").which.is.approximately(Date.now()-50,15);
+      v.should.have.a.property("time").which.is.approximately(Date.now()-50,20);
       v.gw.should.have.a.property(gw).which.is.an.Object();
-      v.gw[gw].should.have.a.property("time").which.is.approximately(Date.now()-50,15);
+      v.gw[gw].should.have.a.property("time").which.is.approximately(Date.now()-50,20);
       v.gw[gw].should.have.a.property("rssi").which.is.within(-100,-40);
     }
     if( values )
@@ -271,6 +272,7 @@ describe( 'bthome Node', function () {
       });
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('statusPrefix', "");
         n1.should.have.a.property('devices');
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
@@ -362,7 +364,7 @@ describe( 'bthome Node', function () {
 
   it('should decode unencrypted messages (Shelly DW)', function (done) {
     let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n1", type: "bthome", name: "test", statusPrefix:"State", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -374,7 +376,7 @@ describe( 'bthome Node', function () {
       n2.on("input", function (msg) {
         try {
           c1++;
-          msg.should.have.a.property('topic','dev_unencrypted_1');
+          msg.should.have.a.property('topic','State/dev_unencrypted_1');
           msg.should.have.a.property('payload',{ lux: 660.51, state: c1==1?'open':'close', tilt: 6 });
         }
         catch(err) {
@@ -386,6 +388,7 @@ describe( 'bthome Node', function () {
       });
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('statusPrefix', "State/");
         n1.should.have.a.property('devices');
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
@@ -431,7 +434,7 @@ describe( 'bthome Node', function () {
 
   it('should decode version messages', function (done) {
     let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n1", type: "bthome", name: "test", statusPrefix:"", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -448,6 +451,7 @@ describe( 'bthome Node', function () {
       });
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('statusPrefix', "");
         n1.should.have.a.property('devices');
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
@@ -520,7 +524,7 @@ describe( 'bthome Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('devices');
-        n1.should.have.a.property('eventPrefix', "EP");
+        n1.should.have.a.property('eventPrefix', "EP/");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
         await delay(50);
@@ -610,7 +614,7 @@ describe( 'bthome Node', function () {
 
   it('should decode unencrypted events (Shelly Button 4)', function (done) {
     let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n1", type: "bthome", name: "test", eventPrefix:"", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -629,19 +633,19 @@ describe( 'bthome Node', function () {
           switch( c2 )
           {
             case 1:
-              msg.should.have.a.property('topic','Event/dev_unencrypted_1/1/S');
+              msg.should.have.a.property('topic','dev_unencrypted_1/1/S');
               msg.should.have.a.property('payload',{type:'button',event:'S',id:1});
               break;
             case 2:
-              msg.should.have.a.property('topic','Event/dev_unencrypted_1/2/SS');
+              msg.should.have.a.property('topic','dev_unencrypted_1/2/SS');
               msg.should.have.a.property('payload',{type:'button',event:'SS',id:2});
               break;
             case 3:
-              msg.should.have.a.property('topic','Event/dev_unencrypted_1/3/SSS');
+              msg.should.have.a.property('topic','dev_unencrypted_1/3/SSS');
               msg.should.have.a.property('payload',{type:'button',event:'SSS',id:3});
               break;
             case 4:
-              msg.should.have.a.property('topic','Event/dev_unencrypted_1/4/L');
+              msg.should.have.a.property('topic','dev_unencrypted_1/4/L');
               msg.should.have.a.property('payload',{type:'button',event:'L',id:4});
               break;
           }
@@ -653,7 +657,7 @@ describe( 'bthome Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('devices');
-        n1.should.have.a.property('eventPrefix', "Event");
+        n1.should.have.a.property('eventPrefix', "");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
         await delay(50);

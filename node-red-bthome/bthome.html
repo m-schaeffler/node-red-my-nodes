@@ -5,7 +5,8 @@
         defaults: {
             name: {value:""},
             devices:{value:"[]",required:true},
-            eventPrefix:{value:"Event",required:true},
+            statusPrefix:{value:""},
+            eventPrefix:{value:""},
             contextStore:{value:"",required:true}
         },
         inputs:1,
@@ -53,7 +54,11 @@
         <input type="text" id="node-input-devices">
     </div>
     <div class="form-row">
-        <label for="node-input-eventPrefix"><i class="fa fa-play"></i> Event-Prefix</label>
+        <label for="node-input-statusPrefix"><i class="fa fa-star"></i> Status-Prefix</label>
+        <input type="text" id="node-input-statusPrefix"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-eventPrefix"><i class="fa fa-star-o"></i> Event-Prefix</label>
         <input type="text" id="node-input-eventPrefix"></input>
     </div>
     <div class="form-row">

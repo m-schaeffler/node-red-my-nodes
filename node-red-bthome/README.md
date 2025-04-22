@@ -55,4 +55,4 @@ $ npm install @mschaeffler/node-red-bthome
 
 ## License
 
-Apache-2.0
+LGPL-2.1

@@ -7,6 +7,7 @@
             devices:{value:"[]",required:true},
             statusPrefix:{value:""},
             eventPrefix:{value:""},
+            contextVar:{value:"bthome",required:true},
             contextStore:{value:"",required:true}
         },
         inputs:1,
@@ -60,6 +61,10 @@
     <div class="form-row">
         <label for="node-input-eventPrefix"><i class="fa fa-star-o"></i> Event-Prefix</label>
         <input type="text" id="node-input-eventPrefix"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-contextVar"><i class="fa fa-database"></i> Context-Variable</label>
+        <input type="text" id="node-input-contextVar"></input>
     </div>
     <div class="form-row">
         <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>

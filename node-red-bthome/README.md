@@ -75,6 +75,10 @@ There are two output ports:
 
 ### Device-Configuration
 
+```
+{}
+```
+
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/bthome.json)

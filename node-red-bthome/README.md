@@ -45,8 +45,8 @@ Only the first two values are needed, the others are optional.
 
 ## Outputs
 
-THere are two output ports:
-1. one for meassurement vales (states)
+There are two output ports:
+1. one for meassurement values (states)
 2. one for actions done with the devices (events)
 
 ### State
@@ -65,9 +65,15 @@ THere are two output ports:
 
 ## Parameters
 
-|config| type   | description                       |
-|:-----|:-------|:----------------------------------|
-| | number | |
+|config       | type   | description                       |
+|:------------|:-------|:----------------------------------|
+|Devices      | JSON   | |
+|Status-Prefix| string | |
+|Event-Prefix | string | |
+|Contextvar   | string | |
+|Contextstore | string | |
+
+### Device-Configuration
 
 ## Example Flow
 

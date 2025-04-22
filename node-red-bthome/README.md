@@ -13,9 +13,9 @@ At the moment these sensors are implemented and tested:
 - Shelly BLU Wall Switch 4
 - Shelly BLU Motion 
 
-## capture of raw frames
+## Capture of Raw Frames
 
-The raw data frames are captured by Shellym devices with Bluetooth (Gen2 up to Gen4) and then sent via MQTT to Node-Red.
+The raw data frames are captured by Shelly devices with Bluetooth (Gen2 up to Gen4) and then sent via MQTT to Node-Red.
 
 [This is the script to be used.](https://raw.githubusercontent.com/m-schaeffler/ShellyScripts/refs/heads/main/ShellyBlu.js)
 
@@ -48,8 +48,6 @@ $ npm install @mschaeffler/node-red-bthome
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/bthome.json)
-
-## Corresponding Shelly-Script
 
 ## Author
 

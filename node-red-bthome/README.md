@@ -29,21 +29,39 @@ $ npm install @mschaeffler/node-red-bthome
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic   | string | topic for the output message|
-|payload |        | payload for the output message |
+|payload | object | data from Shelly script|
 
-## Output
+### msg.payload
+
+|msg.payload| type   | description                       |
+|:----------|:-------|:----------------------------------|
+|addr       | string | |
+|rssi       | number | |
+|time       | number | |
+|gateway    | string | |
+|data       | array of bytes| |
+
+## Outputs
+
+### State
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic   | string | same is in corresponding input message|
-|payload |        | same is in corresponding input message|
+|topic   | string | State-Prefix + name of the device|
+|payload | object | decoded state data|
+
+### Events
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | Event-Prefix + name of the device|
+|payload | object | data of the decoded event|
 
 ## Parameters
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
-|interval | number | the intervall between two resends |
+| | number | |
 
 ## Example Flow
 

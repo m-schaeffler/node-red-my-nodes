@@ -21,7 +21,7 @@ The raw data frames are captured by Shelly devices with Bluetooth (Gen2 up to Ge
 
 ## Encryption
 
-is at the moment not supported, an update will follow shortly.
+This node can decrypt [encrypted messages](https://bthome.io/encryption/), if the AES key is set in the `devices` parameter.
 
 ## Install
 

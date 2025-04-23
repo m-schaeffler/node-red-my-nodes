@@ -64,8 +64,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             if( ! Array.isArray( msg.payload.data ) )
             {
-                node.error( "msg.payload.data must be an Array!" );
-                done();
+                done( "msg.payload.data must be an Array!" );
                 return;
             }
 
@@ -73,19 +72,19 @@ module.exports = function(RED) {
             {
                 if( name === undefined )
                 {
-                    node.error( "unknown BT-Home " + msg.payload.addr );
+                    error = "unknown BT-Home " + msg.payload.addr;
                 }
                 else if( version !== 2 )
                 {
-                    node.error( "wrong BT-Home version " + version );
+                    error = "wrong BT-Home version " + version;
                 }
                 else if( encrypted && !node.devices[msg.payload.addr].key )
                 {
-                    node.error( name + " encryption key needed" );
+                    error = name + " encryption key needed";
                 }
                 else if( (!encrypted) && node.devices[msg.payload.addr].key )
                 {
-                    node.error( name + " encrypted messages needed" );
+                    error = name + " encrypted messages needed";
                 }
                 else
                 {
@@ -107,9 +106,18 @@ module.exports = function(RED) {
                 const mic        = Buffer.from( rawdata.slice( -4 ) );
                 const nonce      = Buffer.from( mac.concat( uuid16, dib, counter ) );
                 const decipher   = Crypto.createDecipheriv( "aes-128-ccm", node.devices[msg.payload.addr].key, nonce, { authTagLength: 4 } );
-                decipher.setAuthTag( mic );
-                rawdata = Array.from( decipher.update( ciphertext ) );
-                decipher.final();
+                try
+                {
+                    decipher.setAuthTag( mic );
+                    rawdata = Array.from( decipher.update( ciphertext ) );
+                    decipher.final();
+                    return true;
+                }
+                catch(e)
+                {
+                    error = e.message;
+                    return false;
+                }
             }
 
             function setData(name,value)
@@ -223,6 +231,7 @@ module.exports = function(RED) {
             let   pid       = null;
             const events    = new BtEvent( node.eventPrefix );
             let   item      = node.data[name];
+            let   error;
 
             if( checkMsg() )
             {
@@ -230,6 +239,8 @@ module.exports = function(RED) {
                 {
                     decryptMsg();
                 }
+                if( ! error )
+                {
                 if( item == undefined )
                 {
                     item = { pid: null, gw: {} };
@@ -240,8 +251,9 @@ module.exports = function(RED) {
                 {
                     newMessage();
                 }
+                }
             }
-            done();
+            done( error );
         });
     }
 

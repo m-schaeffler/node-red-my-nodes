@@ -43,6 +43,17 @@ Only the first two values are needed, the others are optional.
 |time       | number |Javscript timestamp of the reception |
 |gateway    | string |name of the geteway |
 
+This is an example of such a message payload:
+```
+{
+    "addr":    "00:11:22:33:44:55",
+    "rssi":    -85,
+    "time":    1745395033113,
+    "gateway": "Shelly Gateway",
+    "data":    [68,0,164,1,100,46,56,69,43,255]
+}
+```
+
 ## Outputs
 
 There are two output ports:
@@ -67,17 +78,19 @@ There are two output ports:
 
 |config       | type   | description                       |
 |:------------|:-------|:----------------------------------|
-|Devices      | JSON   | |
-|Status-Prefix| string | |
-|Event-Prefix | string | |
-|Contextvar   | string | |
-|Contextstore | string | |
+|Devices      | JSON   | configuration of the BT-Home devices |
+|Status-Prefix| string | prefix for the topic for state output |
+|Event-Prefix | string | prefix for the topic for event output |
+|Contextvar   | string | name of the variable in flow context storage |
+|Contextstore | string | context store to be used |
 
 ### Device-Configuration
 
 ```
 {}
 ```
+
+### Context storage
 
 ## Example Flow
 

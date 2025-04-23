@@ -216,7 +216,7 @@ module.exports = function(RED) {
             {
                 if( encrypted )
                 {
-                    decyrptMsg();
+                    decryptMsg();
                     done();return;
                 }
                 if( item == undefined )

@@ -8,16 +8,20 @@ At the moment these sensors are implemented and tested:
 - Shelly BLU Door/Window
 - Shelly BLU H&T
 - Shelly BLU Button 1
-- Shelly BLU Button Tough 1 
+- Shelly BLU Button Tough 1
 - Shelly BLU RC Button 4
 - Shelly BLU Wall Switch 4
-- Shelly BLU Motion 
+- Shelly BLU Motion
 
 ## Capture of Raw Frames
 
 The raw data frames are captured by Shelly devices with Bluetooth (Gen2 up to Gen4) and then sent via MQTT to Node-Red.
 
 [This is the script to be used.](https://raw.githubusercontent.com/m-schaeffler/ShellyScripts/refs/heads/main/ShellyBlu.js)
+
+## Encryption
+
+is at the moment not supported, an update will follow shortly.
 
 ## Install
 
@@ -64,14 +68,14 @@ There are two output ports:
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic   | string | State-Prefix + name of the device|
+|topic   | string | `State-Prefix` + name of the device|
 |payload | object | decoded state data|
 
 ### Events
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic   | string | Event-Prefix + name of the device|
+|topic   | string | `Event-Prefix` + name of the device|
 |payload | object | data of the decoded event|
 
 ## Parameters
@@ -105,6 +109,11 @@ An example for such a config from the unit tests:
 
 ### Context storage
 
+All recorded data can be stored in a flow context variable for
+- initialisation
+- statistics
+- visualisation
+
 Example:
 ```
 {
@@ -119,7 +128,6 @@ Example:
     }
 }
 ```
-
 
 ## Example Flow
 

@@ -116,15 +116,13 @@
     </dl>
 
     <p>This is an example of such a message payload:</p>
-    <code>
-{<br>
+    <code>{<br>
     "addr":    "11:22:33:44:55:66",<br>
     "rssi":    -85,<br>
     "time":    1745395033113,<br>
     "gateway": "Shelly Gateway",<br>
     "data":    [68,0,164,1,100,46,56,69,43,255]<br>
-}
-    </code>
+}</code>
     
     <h3>Outputs</h3>
     <p>There are two output ports:</p>
@@ -151,12 +149,51 @@
     
     <h3>Parameters</h3>
     <dl class="message-properties">
-        <dt>devices <span class="property-type">JSON</span></dt>
-        <dd> data of the connected BT-Home devices.</dd>
+        <dt>Devices <span class="property-type">JSON</span></dt>
+        <dd> configuration of the BT-Home devices.</dd>
+        <dt>Status-Prefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for state output.</dd>
+        <dt>Event-Prefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for event output.</dd>
+        <dt>Context-Variable <span class="property-type">string</span></dt>
+        <dd> name of the variable in flow context storage.</dd>
+        <dt>Contextstore <span class="property-type">string</span></dt>
+        <dd>  context store to be used.</dd>
     </dl>
     
     <h4>Device-Configuration</h4>
-    
+    <p>With this JSON string the installed <a href="https://bthome.io">BT-Home</a> devices are configured:</p>
+    <code>{<br>
+    "<mac address of the device>": { "topic": "<name of the device>", "key": "<encryption key, if device is encrypted>" }<br>
+}</code>
+
+    <p>An example for such a config from the unit tests:</p>
+    <code>{<br>
+    "11:22:33:44:55:66": { "topic": "dev_unencrypted_1" },<br>
+    "00:01:02:03:04:05": { "topic": "dev_unencrypted_2" },<br>
+    "00:10:20:30:40:50": { "topic": "dev_encrypted_1", "key": "00112233445566778899AABBCCDDEEFF" },<br>
+    "00:00:00:00:00:00": { "topic": "dev_encrypted_2", "key": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16] }<br>
+}</code>
+
     <h4>Context storage</h4>
+    <p>All recorded data can be stored in a flow context variable for</p>
+    <ul>
+      <li>initialisation</li>
+      <li>statistics</li>
+      <li>visualisation</li>
+    </ul>
+
+    <p>Example:</p>
+    <code>{<br>
+    "dev_unencrypted_1":<br>
+    {<br>
+        "pid":       164,<br>
+        "time":      1745395033113,<br>
+        "encrypted": false,<br>
+        "battery":   100,<br>
+        "gw":        { "Shelly Gateway": { "time": 1745395033113, "rssi":-85 } },<br>
+        data":       { "humidity":56, "temperature":-21.3 }<br>
+    }
+}<code>
     
 </script>

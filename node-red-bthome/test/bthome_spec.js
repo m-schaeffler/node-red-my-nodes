@@ -1066,7 +1066,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.trace.should.have.callCount(2);
         n1.should.have.a.property('data');
-        checkData(n1.data,"dev_encrypted_2",{pid:255,encrypted:true,battery:10},"UnitTest",{lux:660.51,state:'close',tilt:0});
+        checkData(n1.data,"dev_encrypted_2",{pid:255,encrypted:true},"UnitTest",{lux:660.51,state:'close',tilt:0});
         c1.should.match( 2 );
         c2.should.match( 0 );
         done();

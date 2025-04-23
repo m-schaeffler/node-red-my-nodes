@@ -25,7 +25,7 @@ module.exports = function(RED) {
                 }
                 else
                 {
-                    console.log( "context read", value );
+                    //console.log( "context read", value );
                     if( value !== undefined )
                     {
                         node.data = value;
@@ -97,7 +97,20 @@ module.exports = function(RED) {
 
             function decryptMsg()
             {
-                console.log("encrypted");
+                let mac = [];
+                for( const help of msg.payload.addr.split( ":" ) )
+                {
+                    mac.push( Number.parseInt( help, 16 ) );
+                }
+                const uuid16     = [0xD2,0xFC];
+                const ciphertext = Buffer.from( rawdata.slice( 0, -8 ) );
+                const counter    = rawdata.slice( -8, -4 );
+                const mic        = Buffer.from( rawdata.slice( -4 ) );
+                const nonce      = Buffer.from( mac.concat( uuid16, dib, counter ) );
+                const decipher   = Crypto.createDecipheriv( "aes-128-ccm", node.devices[msg.payload.addr].key, nonce, { authTagLength: 4 } );
+                decipher.setAuthTag( mic );
+                rawdata = Array.from( decipher.update( ciphertext ) );
+                decipher.final();
             }
 
             function setData(name,value)
@@ -217,7 +230,6 @@ module.exports = function(RED) {
                 if( encrypted )
                 {
                     decryptMsg();
-                    done();return;
                 }
                 if( item == undefined )
                 {

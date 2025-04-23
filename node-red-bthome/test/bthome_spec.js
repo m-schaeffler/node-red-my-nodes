@@ -1041,10 +1041,10 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
           gateway: "UnitTest",
-          addr:    "00:01:02:03:04:05",
+          addr:    "00:10:20:30:40:50",
           rssi:    -50,
           time:    Date.now(),
-          data:    [68,0,128,5,3,2,1,0x2D,1,0x3F,60,0]
+          data:    [69,185,49,198,170,133,200,48,253,111,234,66,0,17,34,51,42,184,90,0] // 69,0,128,5,3,2,1,0x2D,1,0x3F,60,0
         } });
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -1059,7 +1059,7 @@ describe( 'bthome Node', function () {
           addr:    "00:00:00:00:00:00",
           rssi:    -50,
           time:    Date.now(),
-          data:    [68,0,255,5,3,2,1,0x2D,0,0x3F,0,0]
+          data:    [69,225,109,205,234,202,185,33,132,88,244,81,18,52,86,120,3,120,57,157] // 69,0,255,5,3,2,1,0x2D,0,0x3F,0,0
          } });
         await delay(50);
         n1.warn.should.have.callCount(0);

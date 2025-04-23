@@ -81,13 +81,26 @@ There are two output ports:
 |Devices      | JSON   | configuration of the BT-Home devices |
 |Status-Prefix| string | prefix for the topic for state output |
 |Event-Prefix | string | prefix for the topic for event output |
-|Contextvar   | string | name of the variable in flow context storage |
+|Context-Variable| string | name of the variable in flow context storage |
 |Contextstore | string | context store to be used |
 
 ### Device-Configuration
 
+With this JSON string the installed [BT-Home](https://bthome.io) devices are configured:
 ```
-{}
+{
+    "<mac address of the device>": { "topic": "<name of the device>", "key": "<encryption key, if device is encrypted>" }
+}
+```
+
+An example for such a config from the unit tests:
+```
+{
+    "11:22:33:44:55:66": { "topic": "dev_unencrypted_1" },
+    "00:01:02:03:04:05": { "topic": "dev_unencrypted_2" },
+    "00:10:20:30:40:50": { "topic": "dev_encrypted_1", "key": "00112233445566778899AABBCCDDEEFF" },
+    "00:00:00:00:00:00": { "topic": "dev_encrypted_2", "key": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16] }
+}
 ```
 
 ### Context storage

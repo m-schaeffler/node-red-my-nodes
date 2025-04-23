@@ -9,8 +9,8 @@ module.exports = function(RED) {
         var node = this;
         this.flowcontext  = this.context().flow;
         this.devices      = JSON.parse( config.devices ?? "{}" );
-        this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' :"";
-        this.eventPrefix  = config.eventPrefix ? config.eventPrefix+'/' : "";
+        this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
+        this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
         this.data         = {};
@@ -65,7 +65,6 @@ module.exports = function(RED) {
             if( ! Array.isArray( msg.payload.data ) )
             {
                 node.error( "msg.payload.data must be an Array!" );
-                node.trace( "msg processed" );
                 done();
                 return;
             }
@@ -242,7 +241,6 @@ module.exports = function(RED) {
                     newMessage();
                 }
             }
-            node.trace( "msg processed" );
             done();
         });
     }

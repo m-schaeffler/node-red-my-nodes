@@ -7,6 +7,7 @@ My personal Nodes and some small usefull utility functions for Node-Red.
 The node red node packages are released in this repository:
 
 - [node-red-contrib-sendmail](node-red-contrib-sendmail/README.md)
+- [@mschaeffler/node-red-bthome](node-red-bthome/README.md)
 - [@mschaeffler/node-red-debounce](node-red-debounce/README.md)
 - [@mschaeffler/node-red-format](node-red-format/README.md)
 - [@mschaeffler/node-red-init](node-red-init/README.md)

@@ -1,0 +1,137 @@
+[
+    {
+        "id": "3a9fcdbd98993dbc",
+        "type": "mqtt in",
+        "z": "8e0e9a167c607864",
+        "name": "",
+        "topic": "node-red/bleraw",
+        "qos": "0",
+        "datatype": "json",
+        "broker": "66b8b47e.0f87bc",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 1460,
+        "wires": [
+            [
+                "c4df490573c18fc4"
+            ]
+        ]
+    },
+    {
+        "id": "c4df490573c18fc4",
+        "type": "bthome",
+        "z": "8e0e9a167c607864",
+        "name": "",
+        "devices": "{\"11:22:33:44:55:66\":{\"topic\":\"dev_unencrypted_1\"},\"00:01:02:03:04:05\":{\"topic\":\"dev_unencrypted_2\"},\"00:10:20:30:40:50\":{\"topic\":\"dev_encrypted_1\",\"key\":\"00112233445566778899AABBCCDDEEFF\"},\"00:00:00:00:00:00\":{\"topic\":\"dev_encrypted_2\",\"key\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]}}",
+        "statusPrefix": "Status",
+        "eventPrefix": "Event",
+        "contextVar": "bt-home",
+        "contextStore": "memoryOnly",
+        "x": 340,
+        "y": 1440,
+        "wires": [
+            [
+                "3c9fee837ed43fc0"
+            ],
+            [
+                "26ebe1833f97c4d4"
+            ]
+        ]
+    },
+    {
+        "id": "3c9fee837ed43fc0",
+        "type": "debug",
+        "z": "8e0e9a167c607864",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 1420,
+        "wires": []
+    },
+    {
+        "id": "26ebe1833f97c4d4",
+        "type": "debug",
+        "z": "8e0e9a167c607864",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 520,
+        "y": 1460,
+        "wires": []
+    },
+    {
+        "id": "e3ad83be53fa3fe3",
+        "type": "inject",
+        "z": "8e0e9a167c607864",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"addr\":\"11:22:33:44:55:66\",\"rssi\":-85,\"time\":1745395033113,\"gateway\":\"Shelly Gateway\",\"data\":[68,0,164,1,100,46,56,69,43,255]}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 1420,
+        "wires": [
+            [
+                "c4df490573c18fc4"
+            ]
+        ]
+    },
+    {
+        "id": "66b8b47e.0f87bc",
+        "type": "mqtt-broker",
+        "name": "mqtt.lan",
+        "broker": "mqtt.lan",
+        "port": "1883",
+        "clientid": "node-red",
+        "autoConnect": false,
+        "usetls": false,
+        "compatmode": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "node-red/online",
+        "birthQos": "1",
+        "birthRetain": "true",
+        "birthPayload": "true",
+        "birthMsg": {},
+        "closeTopic": "node-red/online",
+        "closeQos": "1",
+        "closeRetain": "true",
+        "closePayload": "false",
+        "closeMsg": {},
+        "willTopic": "node-red/online",
+        "willQos": "1",
+        "willRetain": "true",
+        "willPayload": "false",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]

@@ -46,7 +46,7 @@ Only the first two values are needed, the others are optional.
 This is an example of such a message payload:
 ```
 {
-    "addr":    "00:11:22:33:44:55",
+    "addr":    "11:22:33:44:55:66",
     "rssi":    -85,
     "time":    1745395033113,
     "gateway": "Shelly Gateway",

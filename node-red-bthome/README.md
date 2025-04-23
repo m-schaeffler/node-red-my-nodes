@@ -105,6 +105,22 @@ An example for such a config from the unit tests:
 
 ### Context storage
 
+Example:
+```
+{
+    "dev_unencrypted_1":
+    {
+        "pid":       164,
+        "time":      1745395033113,
+        "encrypted": false,
+        "battery":   100,
+        "gw":        { "Shelly Gateway": { "time": 1745395033113, "rssi":-85 } },
+        data":       { "humidity":56, "temperature":-21.3 }
+    }
+}
+```
+
+
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/bthome.json)

@@ -5,6 +5,7 @@
         defaults: {
             name: {value:""},
             devices:{value:"[]",required:true},
+            counterTime:{value:false},
             statusPrefix:{value:""},
             eventPrefix:{value:""},
             contextVar:{value:"bthome",required:true},
@@ -64,6 +65,10 @@
     <div class="form-row">
         <label for="node-input-devices"><i class="fa fa-bluetooth-b"></i> Devices</label>
         <input type="text" id="node-input-devices">
+    </div>
+    <div class="form-row">
+        <label for="node-input-counterTime"><i class="fa fa-clock-o"></i> counter is time</label>
+        <input type="checkbox" id="node-input-counterTime" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
     <div class="form-row">
         <label for="node-input-statusPrefix"><i class="fa fa-star"></i> Status-Prefix</label>

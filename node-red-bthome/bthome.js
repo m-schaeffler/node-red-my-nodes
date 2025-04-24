@@ -9,6 +9,7 @@ module.exports = function(RED) {
         var node = this;
         this.flowcontext  = this.context().flow;
         this.devices      = JSON.parse( config.devices ?? "{}" );
+        this.counterTime  = Boolean( config.counterTime );
         this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar   ?? "bthome";
@@ -98,12 +99,17 @@ module.exports = function(RED) {
                 const uuid16     = [0xD2,0xFC];
                 const ciphertext = Buffer.from( rawdata.slice( 0, -8 ) );
                 const counter    = rawdata.slice( -8, -4 );
+                const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
                 const mic        = Buffer.from( rawdata.slice( -4 ) );
                 const nonce      = Buffer.from( mac.concat( uuid16, dib, counter ) );
                 const decipher   = Crypto.createDecipheriv( "aes-128-ccm", node.devices[msg.payload.addr].key, nonce, { authTagLength: 4 } );
                 decipher.setAuthTag( mic );
                 rawdata = Array.from( decipher.update( ciphertext ) );
                 decipher.final();
+                if( node.counterTime && Date.now() - counterInt*1000 > 7500 )
+                {
+                    node.error("bthome "+name+" "+(new Date(counterInt*1000))+" "+(Date.now()-counterInt*1000));
+                }
             }
 
             function setData(name,value)

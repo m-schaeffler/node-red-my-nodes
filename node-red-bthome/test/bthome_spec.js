@@ -33,6 +33,7 @@ describe( 'bthome Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('devices', {});
+        n1.should.have.a.property('counterTime', false);
         n1.should.have.a.property('statusPrefix', "");
         n1.should.have.a.property('eventPrefix', "");
         n1.should.have.a.property('contextVar', "bthome");

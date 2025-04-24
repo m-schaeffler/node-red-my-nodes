@@ -8,7 +8,7 @@
             statusPrefix:{value:""},
             eventPrefix:{value:""},
             contextVar:{value:"bthome",required:true},
-            contextStore:{value:"",required:true}
+            contextStore:{value:"none",required:true}
         },
         inputs:1,
         outputs:2,
@@ -39,6 +39,17 @@
                 }
             });
             const currentStore = node.contextStore || '';
+            // set changed handler
+            $("#node-input-contextStore").on('change',function() {
+                console.log($("#node-input-contextStore").val());
+                if( $("#node-input-contextStore").val() == "none" ) {
+                    $("#node-contextVar-line").hide();
+                    $("#node-input-contextVar").val("bthome");
+                }
+                else {
+                    $("#node-contextVar-line").show();
+                }
+            });
             // select the current option
             $("#node-input-contextStore").val(currentStore);
         }
@@ -63,12 +74,12 @@
         <input type="text" id="node-input-eventPrefix"></input>
     </div>
     <div class="form-row">
-        <label for="node-input-contextVar"><i class="fa fa-database"></i> Context-Variable</label>
-        <input type="text" id="node-input-contextVar"></input>
-    </div>
-    <div class="form-row">
         <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
         <select type="text" id="node-input-contextStore"></select>
+    </div>
+    <div class="form-row" id="node-contextVar-line">
+        <label for="node-input-contextVar"><i class="fa fa-database"></i> Context-Variable</label>
+        <input type="text" id="node-input-contextVar"></input>
     </div>
 </script>
 

@@ -84,7 +84,7 @@ module.exports = function(RED) {
                 if( node.counterTime )
                 {
                     const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
-                    const delta      = Date.now() - counterInt*1000;
+                    const delta      = msgTime - counterInt*1000;
                     console.log(delta)
                     if( delta < -1000 || delta > 10000 )
                     {
@@ -179,7 +179,7 @@ module.exports = function(RED) {
                 if( msg.payload.gateway )
                 {
                     item.gw[msg.payload.gateway] = {
-                        time: msg.payload.time ?? Date.now(),
+                        time: msgTime,
                         rssi: msg.payload.rssi ?? null
                     };
                 }
@@ -188,7 +188,7 @@ module.exports = function(RED) {
 
             function newMessage()
             {
-                item.time      = msg.payload.time ?? Date.now();
+                item.time      = msgTime;
                 item.pid       = pid;
                 item.encrypted = encrypted;
                 if( node.contextStore !== "none" )
@@ -203,6 +203,7 @@ module.exports = function(RED) {
             }
 
             const name      = node.devices[msg.payload.addr]?.topic;
+            const msgTime   = msg.payload.time ?? Date.now()
             const dib       = msg.payload.data[0];
             let   rawdata   = msg.payload.data.slice( 1 );
             const encrypted = Boolean( dib & 0x1 );

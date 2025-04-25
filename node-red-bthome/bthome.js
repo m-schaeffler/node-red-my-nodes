@@ -1,4 +1,5 @@
 const Crypto  = require( 'node:crypto' );
+const Tools   = require( './tools.js' );
 const Rawdata = require( "./rawdata.js" );
 const BtEvent = require( "./btevent.js" );
 
@@ -37,28 +38,14 @@ module.exports = function(RED) {
         for( const mac in node.devices )
         {
             const device = node.devices[mac];
-            switch( typeof device.key )
+            try
             {
-                case "undefined":
-                    break;
-                case "string":
-                    if( device.key.length == 32 )
-                    {
-                        const buf = Buffer.alloc( 16 );
-                        for( let i=0; i<16 ; i++ )
-                        {
-                            buf[i] = Number.parseInt( device.key.slice( i*2, i*2 + 2 ), 16 );
-                        }
-                        device.key = buf;
-                    }
-                    else
-                    {
-                        device.key = Buffer.alloc( 16 );
-                        node.log( mac + " keylength must be 16 bytes" );
-                    }
-                    break;
-                default:
-                    device.key = Buffer.from( device.key );
+                device.key = Tools.key2bytes( device.key );
+            }
+            catch( e )
+            {
+                node.log( mac + e.message );
+                device.key = null;
             }
         }
 
@@ -91,25 +78,38 @@ module.exports = function(RED) {
 
             function decryptMsg()
             {
-                let mac = [];
-                for( const help of msg.payload.addr.split( ":" ) )
-                {
-                    mac.push( Number.parseInt( help, 16 ) );
-                }
+                const mac        = Tools.mac2bytes( msg.payload.addr );
                 const uuid16     = [0xD2,0xFC];
                 const ciphertext = Buffer.from( rawdata.slice( 0, -8 ) );
                 const counter    = rawdata.slice( -8, -4 );
-                const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
+                if( node.counterTime )
+                {
+                    const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
+                    const delta      = Date.now() - counterInt*1000;
+                    console.log(delta)
+                    if( delta < -1000 || delta > 7000 )
+                    {
+                        throw new Error( "bthome "+name+" "+(new Date(counterInt*1000))+" "+delta );
+                    }
+                }
                 const mic        = Buffer.from( rawdata.slice( -4 ) );
                 const nonce      = Buffer.from( mac.concat( uuid16, dib, counter ) );
                 const decipher   = Crypto.createDecipheriv( "aes-128-ccm", node.devices[msg.payload.addr].key, nonce, { authTagLength: 4 } );
                 decipher.setAuthTag( mic );
                 rawdata = Array.from( decipher.update( ciphertext ) );
                 decipher.final();
-                if( node.counterTime && Date.now() - counterInt*1000 > 7500 )
+                /*
+                if( node.counterTime )
                 {
-                    node.error("bthome "+name+" "+(new Date(counterInt*1000))+" "+(Date.now()-counterInt*1000));
+                    const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
+                    const delta      = Date.now() - counterInt*1000;
+                    console.log(delta)
+                    if( delta < -1000 || delta > 7000 )
+                    {
+                        throw new Error( "bthome "+name+" "+(new Date(counterInt*1000))+" "+delta );
+                    }
                 }
+                */
             }
 
             function setData(name,value)

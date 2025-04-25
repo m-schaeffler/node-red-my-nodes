@@ -1,5 +1,7 @@
 // Tooling for bthome
 
+exports.uuid16 = [0xd2,0xfc];
+
 exports.key2bytes = function(str)
 {
     switch( typeof str )

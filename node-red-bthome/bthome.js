@@ -79,7 +79,6 @@ module.exports = function(RED) {
             function decryptMsg()
             {
                 const mac        = Tools.mac2bytes( msg.payload.addr );
-                const uuid16     = [0xD2,0xFC];
                 const ciphertext = Buffer.from( rawdata.slice( 0, -8 ) );
                 const counter    = rawdata.slice( -8, -4 );
                 if( node.counterTime )
@@ -87,29 +86,17 @@ module.exports = function(RED) {
                     const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
                     const delta      = Date.now() - counterInt*1000;
                     console.log(delta)
-                    if( delta < -1000 || delta > 7000 )
+                    if( delta < -1000 || delta > 10000 )
                     {
-                        throw new Error( "bthome "+name+" "+(new Date(counterInt*1000))+" "+delta );
+                        throw new Error( "bthome "+msg.payload.gateway+" "+name+" "+(new Date(counterInt*1000))+" "+delta );
                     }
                 }
                 const mic        = Buffer.from( rawdata.slice( -4 ) );
-                const nonce      = Buffer.from( mac.concat( uuid16, dib, counter ) );
+                const nonce      = Buffer.from( mac.concat( Tools.uuid16, dib, counter ) );
                 const decipher   = Crypto.createDecipheriv( "aes-128-ccm", node.devices[msg.payload.addr].key, nonce, { authTagLength: 4 } );
                 decipher.setAuthTag( mic );
                 rawdata = Array.from( decipher.update( ciphertext ) );
                 decipher.final();
-                /*
-                if( node.counterTime )
-                {
-                    const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
-                    const delta      = Date.now() - counterInt*1000;
-                    console.log(delta)
-                    if( delta < -1000 || delta > 7000 )
-                    {
-                        throw new Error( "bthome "+name+" "+(new Date(counterInt*1000))+" "+delta );
-                    }
-                }
-                */
             }
 
             function setData(name,value)
@@ -186,7 +173,7 @@ module.exports = function(RED) {
                 if( pid < item.pid && pid > 10 /*&& pid > item.pid - 10*/ )
                 {
                     // veraltete Nachricht und nicht reboot
-                    node.warn( `old ble message (${name}) dropped, ${msg.payload.pid} < ${item.data?.pid}` );
+                    node.warn( `old ble message ${name} from ${msg.payload.gateway} dropped, ${pid} < ${item.pid}` );
                     return false;
                 }
                 if( msg.payload.gateway )

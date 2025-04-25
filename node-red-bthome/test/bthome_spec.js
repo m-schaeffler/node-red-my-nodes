@@ -1084,11 +1084,10 @@ describe( 'bthome Node', function () {
           rssi:    -50,
           time:    Date.now(),
           data:    [69,186,49,198,170,133,200,48,253,111,234,66,0,17,34,51,42,184,90,0]
-        } });
+        } }); // ciphertext changed
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
-        n1.should.have.a.property('data');
         n1.should.have.a.property('data', {} );
         c1.should.match( 0 );
         c2.should.match( 0 );
@@ -1098,11 +1097,23 @@ describe( 'bthome Node', function () {
           rssi:    -50,
           time:    Date.now(),
           data:    [69,225,109,205,234,202,185,33,132,88,244,81,18,52,86,120,3,120,57,158]
-         } });
+         } }); // mic changed
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(2);
-        n1.should.have.a.property('data');
+        n1.should.have.a.property('data', {} );
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "00:00:00:00:00:00",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [69,225,109,205,234,202,185,33,132,88,244,81,18,52,68,120,3,120,57,157]
+        } }); // counter changed
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(3);
         n1.should.have.a.property('data', {} );
         c1.should.match( 0 );
         c2.should.match( 0 );

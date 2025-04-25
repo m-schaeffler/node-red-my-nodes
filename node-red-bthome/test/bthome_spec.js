@@ -1184,7 +1184,7 @@ describe( 'bthome Node', function () {
           data:    Encrypt.encryptBthome(
             [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
             '00:10:20:30:40:50',
-            Math.floor( Date.now()/1000 + 5 ),
+            Math.floor( Date.now()/1000 + 8 ),
             '00112233445566778899AABBCCDDEEFF'
           )
         } });

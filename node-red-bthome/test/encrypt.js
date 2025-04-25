@@ -17,7 +17,7 @@ exports.encryptBthome = function(data,amac,acounter,akey)
 
     return encrypt(
         Tools.mac2bytes( amac ),
-        [ (acounter & 0xFF000000)>>24, (acounter & 0xFF0000)>>16, (acounter & 0xFF00)>>8, acounter & 0xFF ],
+        [ acounter & 0xFF, (acounter & 0xFF00)>>8, (acounter & 0xFF0000)>>16, (acounter & 0xFF000000)>>24 ],
         Tools.key2bytes( akey )
     );
 }

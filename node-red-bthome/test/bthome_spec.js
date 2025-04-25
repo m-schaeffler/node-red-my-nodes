@@ -2,6 +2,7 @@ var should = require("should");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../bthome.js");
+var Encrypt= require( './encrypt.js' );
 require("./encrypt_spec.js");
 
 function delay(ms) {
@@ -1162,7 +1163,12 @@ describe( 'bthome Node', function () {
           addr:    "00:10:20:30:40:50",
           rssi:    -50,
           time:    Date.now(),
-          data:    [69,185,49,198,170,133,200,48,253,111,234,66,0,17,34,51,42,184,90,0] // 69,0,128,5,3,2,1,0x2D,1,0x3F,60,0
+          data:    Encrypt.encryptBthome(
+            [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
+            '00:10:20:30:40:50',
+            Math.floor( Date.now()/1000 - 30 ),
+            '00112233445566778899AABBCCDDEEFF'
+          )
         } });
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -1175,7 +1181,12 @@ describe( 'bthome Node', function () {
           addr:    "00:10:20:30:40:50",
           rssi:    -50,
           time:    Date.now(),
-          data:    [69,225,109,205,234,202,185,33,132,88,244,81,18,52,86,120,3,120,57,157] // 69,0,255,5,3,2,1,0x2D,0,0x3F,0,0
+          data:    Encrypt.encryptBthome(
+            [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
+            '00:10:20:30:40:50',
+            Math.floor( Date.now()/1000 + 5 ),
+            '00112233445566778899AABBCCDDEEFF'
+          )
         } });
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -1188,7 +1199,12 @@ describe( 'bthome Node', function () {
           addr:    "00:10:20:30:40:50",
           rssi:    -50,
           time:    Date.now(),
-          data:    [69,185,49,198,170,133,200,48,253,111,234,66,0,17,34,51,42,184,90,0] // 69,0,128,5,3,2,1,0x2D,1,0x3F,60,0
+          data:    Encrypt.encryptBthome(
+            [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
+            '00:10:20:30:40:50',
+            Math.floor( Date.now()/1000 ),
+           '00112233445566778899AABBCCDDEEFF'
+          )
         } });
         await delay(50);
         n1.warn.should.have.callCount(0);

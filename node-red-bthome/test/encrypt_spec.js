@@ -11,7 +11,22 @@ describe( 'encrypt helper', function () {
         '00:10:20:30:40:50',
         0x00112233,
         '00112233445566778899AABBCCDDEEFF'
-      ).should.match( [69,185,49,198,170,133,200,48,253,111,234,66,0,17,34,51,42,184,90,0] );
+      ).should.match( [ 69, 186, 65, 105, 101, 114, 218, 124, 8, 91, 106, 156, 51, 34, 17, 0, 250, 138, 147, 197 ] );
+      done();
+    }
+    catch(err) {
+      done(err);
+    }
+  });
+
+  it('should encrypt bthome messages with timestamp as counter', function (done) {
+    try {
+      Encrypt.encryptBthome(
+        [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
+        '00:10:20:30:40:50',
+        Math.floor( Date.now()/1000 ),
+        '00112233445566778899AABBCCDDEEFF'
+      ).should.be.an.Array();
       done();
     }
     catch(err) {

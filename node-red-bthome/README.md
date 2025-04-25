@@ -124,7 +124,7 @@ Example:
         "encrypted": false,
         "battery":   100,
         "gw":        { "Shelly Gateway": { "time": 1745395033113, "rssi":-85 } },
-        data":       { "humidity":56, "temperature":-21.3 }
+        "data":      { "humidity":56, "temperature":-21.3 }
     }
 }
 ```

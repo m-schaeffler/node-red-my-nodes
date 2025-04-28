@@ -83,6 +83,7 @@ There are two output ports:
 |config       | type   | description                       |
 |:------------|:-------|:----------------------------------|
 |Devices      | JSON   | configuration of the BT-Home devices |
+|counter is time|Boolean| the counter in encrypted messages is checked again the actual time |
 |Status-Prefix| string | prefix for the topic for state output |
 |Event-Prefix | string | prefix for the topic for event output |
 |Context-Variable| string | name of the variable in flow context storage |

@@ -84,8 +84,8 @@ module.exports = function(RED) {
                 if( node.counterTime )
                 {
                     const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
-                    const delta      = msgTime - counterInt*1000;
-                    if( delta < -5000 || delta > 15000 )
+                    const delta      = Math.abs( msgTime - counterInt*1000 );
+                    if( delta > 15000 )
                     {
                         throw new Error( "bthome "+msg.payload.gateway+" "+name+" "+(new Date(counterInt*1000))+" "+delta );
                     }

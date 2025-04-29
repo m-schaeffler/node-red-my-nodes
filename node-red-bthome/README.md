@@ -130,6 +130,11 @@ Example:
 }
 ```
 
+If content storage is active, statistical data is also stored in a variable with the suffix `-stat`:
+```
+{ ok:0, err:0, old:0, dup:0 }
+```
+
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/bthome.json)

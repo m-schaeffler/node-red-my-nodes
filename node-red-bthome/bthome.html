@@ -181,17 +181,17 @@
     
     <h4>Device-Configuration</h4>
     <p>With this JSON string the installed <a href="https://bthome.io">BT-Home</a> devices are configured:</p>
-    <code>{<br>
-    "<mac address of the device>": { "topic": "<name of the device>", "key": "<encryption key, if device is encrypted>" }<br>
-}</code>
+    <pre><code>{
+    "<mac address of the device>": { "topic": "<name of the device>", "key": "<encryption key, if device is encrypted>" }
+}</code></pre>
 
     <p>An example for such a config from the unit tests:</p>
-    <code>{<br>
-    "11:22:33:44:55:66": { "topic": "dev_unencrypted_1" },<br>
-    "00:01:02:03:04:05": { "topic": "dev_unencrypted_2" },<br>
-    "00:10:20:30:40:50": { "topic": "dev_encrypted_1", "key": "00112233445566778899AABBCCDDEEFF" },<br>
-    "00:00:00:00:00:00": { "topic": "dev_encrypted_2", "key": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16] }<br>
-}</code>
+    <pre><code>{
+    "11:22:33:44:55:66": { "topic": "dev_unencrypted_1" },
+    "00:01:02:03:04:05": { "topic": "dev_unencrypted_2" },
+    "00:10:20:30:40:50": { "topic": "dev_encrypted_1", "key": "00112233445566778899AABBCCDDEEFF" },
+    "00:00:00:00:00:00": { "topic": "dev_encrypted_2", "key": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16] }
+}</code></pre>
 
     <h4>Context storage</h4>
     <p>All recorded data can be stored in a flow context variable for</p>
@@ -202,17 +202,17 @@
     </ul>
 
     <p>Example:</p>
-    <code>{<br>
-    "dev_unencrypted_1":<br>
-    {<br>
-        "pid":       164,<br>
-        "time":      1745395033113,<br>
-        "encrypted": false,<br>
-        "battery":   100,<br>
-        "gw":        { "Shelly Gateway": { "time": 1745395033113, "rssi":-85 } },<br>
-        "data":      { "humidity":56, "temperature":-21.3 }<br>
-    }<br>
-}<code>
+    <pre><code>{<br>
+    "dev_unencrypted_1":
+    {
+        "pid":       164,
+        "time":      1745395033113,
+        "encrypted": false,
+        "battery":   100,
+        "gw":        { "Shelly Gateway": { "time": 1745395033113, "rssi":-85 } },
+        "data":      { "humidity":56, "temperature":-21.3 }
+    }
+}<code></pre>
     
     <p>If content storage is active, statistical data is also stored in a variable with the suffix <code>-stat</code>:</p>
     <code>{ ok:0, err:0, old:0, dup:0 }</code>

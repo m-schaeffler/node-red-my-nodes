@@ -16,6 +16,7 @@ module.exports = function(RED) {
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
         this.data         = {};
+        this.statistics   = { ok:0, err:0, old:0, dup:0 };
         node.status( "" );
         if( node.contextStore !== "none" )
         {
@@ -34,6 +35,7 @@ module.exports = function(RED) {
                     }
                 }
             } );
+            node.flowcontext.set( node.contextVar+"-stat", node.statistics );
         }
         for( const mac in node.devices )
         {
@@ -52,6 +54,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             if( ! Array.isArray( msg.payload.data ) )
             {
+                node.statistics.err++;
                 done( "msg.payload.data must be an Array!" );
                 return;
             }
@@ -172,6 +175,7 @@ module.exports = function(RED) {
                 if( pid < item.pid && pid > 10 /*&& pid > item.pid - 10*/ )
                 {
                     // veraltete Nachricht und nicht reboot
+                    node.statistics.old++;
                     node.warn( `old ble message ${name} from ${msg.payload.gateway} dropped, ${pid} < ${item.pid}` );
                     return false;
                 }
@@ -182,7 +186,16 @@ module.exports = function(RED) {
                         rssi: msg.payload.rssi ?? null
                     };
                 }
-                return pid !== null && pid !== item.pid;
+                if( pid !== null && pid !== item.pid )
+                {
+                    node.statistics.ok++;
+                    return true;
+                }
+                else
+                {
+                    node.statistics.dup++;
+                    return false;
+                }
             }
 
             function newMessage()
@@ -232,6 +245,7 @@ module.exports = function(RED) {
             }
             catch( e )
             {
+                node.statistics.err++;
                 done( e.message );
             }
         });

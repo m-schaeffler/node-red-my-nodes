@@ -42,7 +42,9 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('contextStore', "none");
         await delay(50);
         n1.should.have.a.property('data', {} );
+        n1.should.have.a.property('statistics',{ok:0,err:0,old:0,dup:0});
         should.not.exist( n1.context().flow.get("bthome") );
+        should.not.exist( n1.context().flow.get("bthome-stat") );
         done();
       }
       catch(err) {
@@ -93,6 +95,7 @@ describe( 'bthome Node', function () {
         n1.log.should.have.callCount(2);
         n1.should.have.a.property('data', {} );
         should.not.exist( n1.context().flow.get("bthome") );
+        should.not.exist( n1.context().flow.get("bthome-stat") );
         done();
       }
       catch(err) {
@@ -228,6 +231,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(9);
         n1.should.have.a.property('data', {} );
+        n1.should.have.a.property('statistics',{ok:0,err:9,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 0 );
         done();
@@ -350,6 +354,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:1},null,{});
+        n1.should.have.a.property('statistics',{ok:3,err:0,old:1,dup:2});
         c1.should.match( 3 );
         c2.should.match( 0 );
         done();
@@ -418,6 +423,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:129,encrypted:false,battery:10},"UnitTest",{lux:660.51,state:'close',tilt:6});
+        n1.should.have.a.property('statistics',{ok:2,err:0,old:0,dup:0});
         c1.should.match( 2 );
         c2.should.match( 0 );
         done();
@@ -473,6 +479,7 @@ describe( 'bthome Node', function () {
         } });
         await delay(50);
         checkData(n1.data,"dev_unencrypted_2",{pid:1,encrypted:false,battery:94,typeId:0x201,version:{patch:2,minor:3,major:4}},"UnitTest");
+        n1.should.have.a.property('statistics',{ok:2,err:0,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 0 );
         done();
@@ -593,6 +600,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:5},"UnitTest");
+        n1.should.have.a.property('statistics',{ok:5,err:0,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 2 );
         done();
@@ -721,6 +729,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:5},"UnitTest");
+        n1.should.have.a.property('statistics',{ok:5,err:0,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 4 );
         done();
@@ -803,6 +812,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:3},"UnitTest");
+        n1.should.have.a.property('statistics',{ok:3,err:0,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 1 );
         done();
@@ -850,6 +860,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:54,encrypted:false,battery:94},"UnitTest",{temperature:12.5,humidity:57});
+        n1.should.have.a.property('statistics',{ok:1,err:0,old:0,dup:0});
         should.not.exist( n1.context().flow.get("shellyBlu") );
         c1.should.match( 1 );
         c2.should.match( 0 );
@@ -884,7 +895,9 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:54,encrypted:false,battery:90},"UnitTest",{temperature:12.5,humidity:57});
+        n1.should.have.a.property('statistics',{ok:1,err:0,old:0,dup:0});
         should.not.exist( n1.context().flow.get("shellyBlu") );
+        should.not.exist( n1.context().flow.get("shellyBlu-stat") );
         c1.should.match( 2 );
         c2.should.match( 0 );
         done();
@@ -933,6 +946,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:54,encrypted:false,battery:94},"UnitTest",{temperature:12.5,humidity:57});
         checkData(n1.context().flow.get("shellyBlu"),"dev_unencrypted_1",{pid:54,encrypted:false,battery:94},"UnitTest",{temperature:12.5,humidity:57});
+        n1.should.have.a.property('statistics',{ok:1,err:0,old:0,dup:0});
         c1.should.match( 1 );
         c2.should.match( 0 );
         await helper._redNodes.stopFlows();
@@ -968,6 +982,8 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:54,encrypted:false,battery:90},null,{temperature:12.5,humidity:57});
         checkData(n1.context().flow.get("shellyBlu"),"dev_unencrypted_1",{pid:54,encrypted:false,battery:90},null,{temperature:12.5,humidity:57});
+        n1.should.have.a.property('statistics',{ok:0,err:0,old:0,dup:1});
+        n1.context().flow.get("shellyBlu-stat").should.match( n1.statistics );
         c1.should.match( 1 );
         c2.should.match( 0 );
         done();
@@ -1045,6 +1061,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_encrypted_2",{pid:255,encrypted:true},"UnitTest",{lux:660.51,state:'close',tilt:0});
+        n1.should.have.a.property('statistics',{ok:2,err:0,old:0,dup:0});
         c1.should.match( 2 );
         c2.should.match( 0 );
         done();
@@ -1116,6 +1133,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(3);
         n1.should.have.a.property('data', {} );
+        n1.should.have.a.property('statistics',{ok:0,err:3,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 0 );
         done();
@@ -1211,6 +1229,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(2);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_encrypted_1",{pid:128,encrypted:true},"UnitTest",{lux:660.51,state:'open',tilt:6});
+        n1.should.have.a.property('statistics',{ok:1,err:2,old:0,dup:0});
         c1.should.match( 1 );
         c2.should.match( 0 );
         done();

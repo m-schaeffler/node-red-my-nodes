@@ -309,6 +309,8 @@ Each `topic` is treated seperatly.
 
 The message property to be used as payload can be defined with the `Property` property.
 
+With a input message with `msg.topic=="query"` or `msg.query=true`, you can query the latest states of all topics.
+
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |topic   | string | name of the input channel.        |

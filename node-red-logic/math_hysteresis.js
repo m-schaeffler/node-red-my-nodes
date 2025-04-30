@@ -29,7 +29,14 @@ module.exports = function(RED) {
         node.cntFall = 0;
         node.status( "" );
 
+        function msgSetEdge(msg,edge)
+        {
+            msg.payload = edge ? node.outputRise : node.outputFall;
+            msg.edge    = edge ? "rising" : 'falling';
+        }
+
         node.on('input', function(msg,send,done) {
+            let data = context.get( "data" ) ?? {};
             if( msg.invalid )
             {
                 done();
@@ -38,6 +45,16 @@ module.exports = function(RED) {
             {
                 context.set( "data", {} );
                 node.status( "" );
+                done();
+            }
+            else if( msg.querry || msg.topic==="query" )
+            {
+                for( const i in data )
+                {
+                    let help ={ topic: i, query: true };
+                    msgSetEdge( help, data[i].edge );
+                    send( help );
+                }
                 done();
             }
             else
@@ -65,8 +82,7 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
-                    msg.value = Number( value );
-                    let data   = context.get( "data" ) ?? {};
+                    msg.value  = Number( value );
                     let status = { fill:data[msg.topic]?.status??"gray", shape:"dot", text:msg.value.toPrecision(4) };
 
                     if( ! isNaN( msg.value ) )
@@ -78,9 +94,8 @@ module.exports = function(RED) {
                             status.fill = edge ? "red" : "blue";
                             data[msg.topic] = { edge:edge, status:status.fill };
                             context.set( "data", data );
-                            msg.payload = edge ? node.outputRise : node.outputFall;
-                            msg.edge    = edge ? "rising" : 'falling';
-                            msg.init    = last === undefined;
+                            msgSetEdge( msg, edge );
+                            msg.init = last === undefined;
                             send( msg );
                         }
 

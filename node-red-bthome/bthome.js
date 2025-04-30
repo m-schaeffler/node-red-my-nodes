@@ -16,7 +16,7 @@ module.exports = function(RED) {
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
         this.data         = {};
-        this.statistics   = { ok:0, err:0, old:0, dup:0 };
+        this.statistics   = { ok:0, dup:0, old:0, err:0 };
         node.status( "" );
         if( node.contextStore !== "none" )
         {
@@ -87,8 +87,8 @@ module.exports = function(RED) {
                 if( node.counterTime )
                 {
                     const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
-                    const delta      = Math.abs( msgTime - counterInt*1000 );
-                    if( delta > 15000 )
+                    const delta      = msgTime - counterInt*1000;
+                    if( delta > 30000 || delta < -15000 )
                     {
                         throw new Error( "bthome "+msg.payload.gateway+" "+name+" "+(new Date(counterInt*1000))+" "+delta );
                     }

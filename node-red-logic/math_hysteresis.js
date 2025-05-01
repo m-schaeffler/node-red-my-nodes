@@ -47,7 +47,7 @@ module.exports = function(RED) {
                 node.status( "" );
                 done();
             }
-            else if( msg.querry || msg.topic==="query" )
+            else if( msg.query || msg.topic==="query" )
             {
                 for( const i in data )
                 {

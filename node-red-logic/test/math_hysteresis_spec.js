@@ -97,6 +97,8 @@ describe( 'math_hysteresis Node', function () {
           n1.receive({ payload: i });
           await delay(50);
         }
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 4 );
         done();
       }
@@ -155,6 +157,8 @@ describe( 'math_hysteresis Node', function () {
           n1.receive({ payload: i });
           await delay(50);
         }
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 3 );
         done();
       }
@@ -217,6 +221,8 @@ describe( 'math_hysteresis Node', function () {
           n1.receive({ payload: i });
           await delay(50);
         }
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 4 );
         done();
       }
@@ -274,6 +280,8 @@ describe( 'math_hysteresis Node', function () {
           n1.receive({ payload: i });
           await delay(50);
         }
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 3 );
         done();
       }
@@ -319,6 +327,8 @@ describe( 'math_hysteresis Node', function () {
         c.should.match( 0 );
         n1.receive({ payload: 5000 });
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 1 );
         done();
       }
@@ -354,6 +364,8 @@ describe( 'math_hysteresis Node', function () {
         await delay(50);
         n1.receive({ topic:"B", payload: 2000 });
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 2 );
         done();
       }
@@ -366,7 +378,7 @@ describe( 'math_hysteresis Node', function () {
   it('should have reset', function (done) {
     const jsonR = { text:"Text R", num:42 };
     const jsonF = { text:"Text F", num:-1 };
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"200", threshold_fall:"100", outputRise:JSON.stringify(jsonR), outputRiseType:"json", outputFall:JSON.stringify(jsonF), outputFallType:"json", initial:"any", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"200", threshold_fall:"100", outputRise:JSON.stringify(jsonR), outputRiseType:"json", outputFall:JSON.stringify(jsonF), outputFallType:"json", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -420,7 +432,65 @@ describe( 'math_hysteresis Node', function () {
         await delay(50);
         n1.receive({ payload: 2 });
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 5 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should have query', function (done) {
+    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"1.1", threshold_fall:"1.9", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.property('topic',(c%4).toString());
+          const h = ( c % 4 ) > 1.5;
+          msg.should.have.property('payload',h);
+          msg.should.have.property('edge',h ? 'rising' : 'falling');
+          if( c <= 3 )
+          {
+            msg.should.have.a.property('value',c);
+            msg.should.have.a.property('init',true);
+            msg.should.not.have.a.property('query');
+          }
+          else
+          {
+            msg.should.not.have.a.property('value');
+            msg.should.not.have.a.property('init');
+            msg.should.have.a.property('query',true);
+          }
+          c++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        await delay(50);
+        n1.receive({ topic:'0', payload:0 });
+        n1.receive({ topic:'1', payload:1 });
+        n1.receive({ topic:'2', payload:2 });
+        n1.receive({ topic:'3', payload:3 });
+        await delay(50);
+        c.should.match( 4 );
+        n1.receive({ query: true });
+        await delay(50);
+        c.should.match( 2*4 );
+        n1.receive({ topic: "query" });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 3*4 );
         done();
       }
       catch(err) {
@@ -454,6 +524,8 @@ describe( 'math_hysteresis Node', function () {
         await delay(50);
         n1.receive({ payload: {a:1,value:210,b:88} });
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 1 );
         done();
       }
@@ -488,6 +560,8 @@ describe( 'math_hysteresis Node', function () {
         await delay(50);
         n1.receive({ payload: 198 });
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         c.should.match( 1 );
         done();
       }

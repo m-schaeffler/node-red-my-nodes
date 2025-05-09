@@ -130,6 +130,9 @@ module.exports = function(RED) {
                         case 0x21:
                             events.pushEvent( "motion", rawdata.getEnum( ["","motion"] ) );
                             break;
+                        case 0x2C:
+                            setData( "vibration", rawdata.getUInt8() );
+                            break;
                         case 0x2D:
                             setData( "state", rawdata.getEnum( ["close","open"] ) );
                             break;
@@ -141,6 +144,9 @@ module.exports = function(RED) {
                             break;
                         case 0x3F:
                             setData( "tilt", rawdata.getInt16() * 0.1 );
+                            break;
+                        case 0x40:
+                            setData( "distance", rawdata.getUInt16() );
                             break;
                         case 0x45:
                             setData( "temperature", rawdata.getInt16() * 0.1 );

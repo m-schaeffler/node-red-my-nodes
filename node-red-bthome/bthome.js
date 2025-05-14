@@ -3,6 +3,13 @@ const Tools   = require( './tools.js' );
 const Rawdata = require( "./rawdata.js" );
 const BtEvent = require( "./btevent.js" );
 
+/*
+const state2str = {
+    "514": ["close","open"],
+    "undefined": ["","near","middle","far"]
+};
+*/
+
 module.exports = function(RED) {
 
     function BtHomeNode(config) {
@@ -131,10 +138,10 @@ module.exports = function(RED) {
                             events.pushEvent( "motion", rawdata.getEnum( ["","motion"] ) );
                             break;
                         case 0x2C:
-                            setData( "vibration", rawdata.getUInt8() );
+                            setData( "vibration", Boolean( rawdata.getUInt8() ) );
                             break;
                         case 0x2D:
-                            setData( "state", rawdata.getEnum( ["close","open"] ) );
+                            setData( "state", rawdata.getUInt8() );
                             break;
                         case 0x2E:
                             setData( "humidity", rawdata.getUInt8() );
@@ -239,7 +246,7 @@ module.exports = function(RED) {
                 }
                 if( item == undefined )
                 {
-                    item = { pid: null, gw: {} };
+                    item = { pid: null, typeId: null, gw: {} };
                     node.data[name] = item;
                 }
                 decodeMsg();

@@ -380,7 +380,7 @@ describe( 'bthome Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','State/dev_unencrypted_1');
-          msg.should.have.a.property('payload',{ lux: 660.51, state: c1==1?'open':'close', tilt: 6 });
+          msg.should.have.a.property('payload',{ lux: 660.51, state: c1==1?1:0, tilt: 6 });
         }
         catch(err) {
           done(err);
@@ -408,7 +408,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        checkData(n1.data,"dev_unencrypted_1",{pid:128,encrypted:false},"UnitTest",{lux:660.51,state:'open',tilt:6});
+        checkData(n1.data,"dev_unencrypted_1",{pid:128,encrypted:false},"UnitTest",{lux:660.51,state:1,tilt:6});
         c1.should.match( 1 );
         c2.should.match( 0 );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -422,7 +422,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        checkData(n1.data,"dev_unencrypted_1",{pid:129,encrypted:false,battery:10},"UnitTest",{lux:660.51,state:'close',tilt:6});
+        checkData(n1.data,"dev_unencrypted_1",{pid:129,encrypted:false,battery:10},"UnitTest",{lux:660.51,state:0,tilt:6});
         n1.should.have.a.property('statistics',{ok:2,err:0,old:0,dup:0});
         c1.should.match( 2 );
         c2.should.match( 0 );
@@ -1012,11 +1012,11 @@ describe( 'bthome Node', function () {
           {
               case 1:
                   msg.should.have.a.property('topic','dev_encrypted_1');
-                  msg.should.have.a.property('payload',{ lux: 660.51, state: 'open', tilt: 6 });
+                  msg.should.have.a.property('payload',{ lux: 660.51, state: 1, tilt: 6 });
                   break;
               case 2:
                   msg.should.have.a.property('topic','dev_encrypted_2');
-                  msg.should.have.a.property('payload',{ lux: 660.51, state: 'close', tilt: 0 });
+                  msg.should.have.a.property('payload',{ lux: 660.51, state: 0, tilt: 0 });
                   break;
           }
         }
@@ -1046,7 +1046,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        checkData(n1.data,"dev_encrypted_1",{pid:128,encrypted:true},"UnitTest",{lux:660.51,state:'open',tilt:6});
+        checkData(n1.data,"dev_encrypted_1",{pid:128,encrypted:true},"UnitTest",{lux:660.51,state:1,tilt:6});
         c1.should.match( 1 );
         c2.should.match( 0 );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -1060,7 +1060,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        checkData(n1.data,"dev_encrypted_2",{pid:255,encrypted:true},"UnitTest",{lux:660.51,state:'close',tilt:0});
+        checkData(n1.data,"dev_encrypted_2",{pid:255,encrypted:true},"UnitTest",{lux:660.51,state:0,tilt:0});
         n1.should.have.a.property('statistics',{ok:2,err:0,old:0,dup:0});
         c1.should.match( 2 );
         c2.should.match( 0 );
@@ -1159,7 +1159,7 @@ describe( 'bthome Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','dev_encrypted_1');
-          msg.should.have.a.property('payload',{ lux: 660.51, state: 'open', tilt: 6 });
+          msg.should.have.a.property('payload',{ lux: 660.51, state: 1, tilt: 6 });
         }
         catch(err) {
           done(err);
@@ -1184,7 +1184,7 @@ describe( 'bthome Node', function () {
           data:    Encrypt.encryptBthome(
             [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
             '00:10:20:30:40:50',
-            Math.floor( Date.now()/1000 - 20 ),
+            Math.floor( Date.now()/1000 - 60 ),
             '00112233445566778899AABBCCDDEEFF'
           )
         } });
@@ -1202,7 +1202,7 @@ describe( 'bthome Node', function () {
           data:    Encrypt.encryptBthome(
             [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
             '00:10:20:30:40:50',
-            Math.floor( Date.now()/1000 + 20 ),
+            Math.floor( Date.now()/1000 + 30 ),
             '00112233445566778899AABBCCDDEEFF'
           )
         } });
@@ -1228,7 +1228,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(2);
         n1.should.have.a.property('data');
-        checkData(n1.data,"dev_encrypted_1",{pid:128,encrypted:true},"UnitTest",{lux:660.51,state:'open',tilt:6});
+        checkData(n1.data,"dev_encrypted_1",{pid:128,encrypted:true},"UnitTest",{lux:660.51,state:1,tilt:6});
         n1.should.have.a.property('statistics',{ok:1,err:2,old:0,dup:0});
         c1.should.match( 1 );
         c2.should.match( 0 );

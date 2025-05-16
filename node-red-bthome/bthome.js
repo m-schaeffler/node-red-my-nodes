@@ -3,13 +3,6 @@ const Tools   = require( './tools.js' );
 const Rawdata = require( "./rawdata.js" );
 const BtEvent = require( "./btevent.js" );
 
-/*
-const state2str = {
-    "514": ["close","open"],
-    "undefined": ["","near","middle","far"]
-};
-*/
-
 module.exports = function(RED) {
 
     function BtHomeNode(config) {
@@ -141,7 +134,12 @@ module.exports = function(RED) {
                             setData( "vibration", Boolean( rawdata.getUInt8() ) );
                             break;
                         case 0x2D:
-                            setData( "state", rawdata.getUInt8() );
+                            let state = rawdata.getUInt8();
+                            if( item.typeId === 0x0202 )
+                            {
+                                state = Boolean( state );
+                            }
+                            setData( "state", state );
                             break;
                         case 0x2E:
                             setData( "humidity", rawdata.getUInt8() );

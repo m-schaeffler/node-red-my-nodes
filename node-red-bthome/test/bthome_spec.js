@@ -289,6 +289,14 @@ describe( 'bthome Node', function () {
           addr:    "11:22:33:44:55:66",
           rssi:    -50,
           time:    Date.now(),
+          data:    [68,0,1,0xF0,3,2]
+        } });
+        await delay(50);
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
           data:    [68,0,54,1,94,46,57,69,125,0]
         } });
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -354,7 +362,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:1},null,{});
-        n1.should.have.a.property('statistics',{ok:3,err:0,old:1,dup:2});
+        n1.should.have.a.property('statistics',{ok:4,err:0,old:1,dup:2});
         c1.should.match( 3 );
         c2.should.match( 0 );
         done();
@@ -380,7 +388,7 @@ describe( 'bthome Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','State/dev_unencrypted_1');
-          msg.should.have.a.property('payload',{ lux: 660.51, state: c1==1?1:0, tilt: 6 });
+          msg.should.have.a.property('payload',{ lux: 660.51, state: c1==1, tilt: 6 });
         }
         catch(err) {
           done(err);
@@ -402,13 +410,21 @@ describe( 'bthome Node', function () {
           addr:    "11:22:33:44:55:66",
           rssi:    -50,
           time:    Date.now(),
+          data:    [68,0,1,0xF0,2,2]
+        } });
+        await delay(50);
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
           data:    [68,0,128,5,3,2,1,0x2D,1,0x3F,60,0]
         } });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        checkData(n1.data,"dev_unencrypted_1",{pid:128,encrypted:false},"UnitTest",{lux:660.51,state:1,tilt:6});
+        checkData(n1.data,"dev_unencrypted_1",{pid:128,encrypted:false},"UnitTest",{lux:660.51,state:true,tilt:6});
         c1.should.match( 1 );
         c2.should.match( 0 );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -422,8 +438,8 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        checkData(n1.data,"dev_unencrypted_1",{pid:129,encrypted:false,battery:10},"UnitTest",{lux:660.51,state:0,tilt:6});
-        n1.should.have.a.property('statistics',{ok:2,err:0,old:0,dup:0});
+        checkData(n1.data,"dev_unencrypted_1",{pid:129,encrypted:false,battery:10},"UnitTest",{lux:660.51,state:false,tilt:6});
+        n1.should.have.a.property('statistics',{ok:3,err:0,old:0,dup:0});
         c1.should.match( 2 );
         c2.should.match( 0 );
         done();

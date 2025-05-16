@@ -553,6 +553,14 @@ describe( 'bthome Node', function () {
           addr:    "11:22:33:44:55:66",
           rssi:    -50,
           time:    Date.now(),
+          data:    [68,0,0,0xF0,1,2]
+        } });
+        await delay(50);
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
           data:    [68,0,1,0x3A,0x80]
         } });
         await delay(50);
@@ -616,7 +624,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:5},"UnitTest");
-        n1.should.have.a.property('statistics',{ok:5,err:0,old:0,dup:0});
+        n1.should.have.a.property('statistics',{ok:6,err:0,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 2 );
         done();
@@ -677,6 +685,14 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('contextStore', "none");
         await delay(50);
         n1.should.have.a.property('data', {} );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,0,0xF0,6,2]
+        } });
+        await delay(50);
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
           gateway: "UnitTest",
           addr:    "11:22:33:44:55:66",
@@ -745,7 +761,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:5},"UnitTest");
-        n1.should.have.a.property('statistics',{ok:5,err:0,old:0,dup:0});
+        n1.should.have.a.property('statistics',{ok:6,err:0,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 4 );
         done();
@@ -793,6 +809,14 @@ describe( 'bthome Node', function () {
           addr:    "11:22:33:44:55:66",
           rssi:    -50,
           time:    Date.now(),
+          data:    [68,0,0,0xF0,5,2]
+        } });
+        await delay(50);
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
           data:    [68,0,1,0x21,0]
         } });
         await delay(50);
@@ -828,7 +852,7 @@ describe( 'bthome Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:3},"UnitTest");
-        n1.should.have.a.property('statistics',{ok:3,err:0,old:0,dup:0});
+        n1.should.have.a.property('statistics',{ok:4,err:0,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 1 );
         done();

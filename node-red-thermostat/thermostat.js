@@ -8,7 +8,9 @@ module.exports = function(RED) {
         this.nominal    = Number( config.nominal ?? 20 );
         this.cycleTime  = Number( config.cycleTime ?? 600 );
         this.cycleCount = Number( config.cycleCount ?? 1 );
-        this.data       = { running:false };
+        this.data       = { running:0 };
+        this.timerHeat  = null;
+        this.timerCycle = null;
         initData();
         node.status( "" );
         context.get( "data", function(err,value)
@@ -23,6 +25,7 @@ module.exports = function(RED) {
                 if( value !== undefined )
                 {
                     node.data = value;
+                    node.data.running = 0;
                 }
             }
         } );
@@ -37,45 +40,73 @@ module.exports = function(RED) {
 
         function sendOutput()
         {
-            return [
-                { topic: node.topic, payload: node.data.running },
-                { topic: node.topic, payload: false }
-            ];
+            node.send( [
+                { topic: node.topic, payload: Boolean( node.data.running ) },
+                { topic: node.topic, payload: Boolean( node.data.running % 2 ) && !node.data.block }
+            ] );
+            setStatus();
+        }
+
+        function setStatus()
+        {
+            node.status( {
+                fill:  node.data.running ? "green" : "gray",
+                shape: "dot",
+                text:  node.data.temperature
+            } );
         }
 
         function stopHeating()
         {
-            node.data.running = false;
-            node.send( sendOutput() );
+            node.data.running = 0;
+            clearTimeout( node.timerHeat );
+            clearTimeout( node.timerCycle );
+            sendOutput();
         }
 
         function startHeating()
         {
-            node.data.running = true;
+            node.data.running = 1;
+            sendOutput();
         }
 
         node.on('started', function() {
-            stopHeating();
+            sendOutput();
         } );
 
         node.on('input', function(msg,send,done) {
             if( msg.invalid )
             {
             }
-            if( msg.reset || msg.topic==="init" )
+            else if( msg.reset || msg.topic==="init" )
             {
                 initData();
-                stopHeating();
+                if( node.data.running )
+                {
+                    stopHeating();
+                }
+            }
+            else if( false )
+            {
+                if( ! node.data.running )
+                {
+                    startHeating();
+                }
             }
             else
             {
                 if( msg.payload?.block !== undefined )
                 {
                     node.data.block = msg.payload.block;
+                    if( node.data.running )
+                    {
+                        sendOutput();
+                    }
                 }
                 if( msg.payload?.temperature !== undefined )
                 {
                     node.data.temperature = msg.payload.temperature;
+                    setStatus();
                 }
                 if( msg.payload?.nominal !== undefined )
                 {
@@ -89,19 +120,14 @@ module.exports = function(RED) {
                 {
                     node.data.cycleCount = msg.payload.cycleCount;
                 }
-                if( ! node.data.running && false )
-                {
-                    startHeating();
-                }
             }
             context.set( "data", node.data );
-            node.status( { fill:node.data.running?"green":"gray", shape:"dot", text:node.data.temperature } );
-            send( sendOutput() );
             done();
         });
 
         node.on('close', function() {
-            //clearInterval( node.interval_id );
+            clearTimeout( node.timerHeat );
+            clearTimeout( node.timerCycle );
         });
     }
 

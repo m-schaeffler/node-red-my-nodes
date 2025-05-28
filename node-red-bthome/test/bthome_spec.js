@@ -1357,4 +1357,119 @@ describe( 'bthome Node', function () {
     });
   });
 
+  it('should decode encrypted messages, counterMode==rising', function (done) {
+    let flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "bthome", name: "test", counterMode:"rising", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        try {
+          c1++;
+          msg.should.have.a.property('topic','dev_encrypted_1');
+          msg.should.have.a.property('payload',{ lux: 660.51, state: 1, tilt: 6 });
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        c2++;
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('devices');
+        n1.should.have.a.property('counterMode', "rising");
+        n1.should.have.a.property('contextVar', "bthome");
+        n1.should.have.a.property('contextStore', "none");
+        await delay(50);
+        n1.should.have.a.property('data', {} );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "00:10:20:30:40:50",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    Encrypt.encryptBthome(
+            [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
+            '00:10:20:30:40:50',
+            512,
+            '00112233445566778899AABBCCDDEEFF'
+          )
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data',{});
+        checkData(n1.data,"dev_encrypted_1",{pid:128,encrypted:true,lastCounter:512},"UnitTest",{lux:660.51,state:1,tilt:6});
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "00:10:20:30:40:50",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    Encrypt.encryptBthome(
+            [69,0,129,5,3,2,1,0x2D,1,0x3F,60,0],
+            '00:10:20:30:40:50',
+            512,
+            '00112233445566778899AABBCCDDEEFF'
+          )
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        n1.should.have.a.property('data',{});
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "00:10:20:30:40:50",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    Encrypt.encryptBthome(
+            [69,0,130,5,3,2,1,0x2D,1,0x3F,60,0],
+            '00:10:20:30:40:50',
+            513,
+           '00112233445566778899AABBCCDDEEFF'
+          )
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        n1.should.have.a.property('data');
+        checkData(n1.data,"dev_encrypted_1",{pid:130,encrypted:true,lastCounter:513},"UnitTest",{lux:660.51,state:1,tilt:6});
+        c1.should.match( 2 );
+        c2.should.match( 0 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "00:10:20:30:40:50",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    Encrypt.encryptBthome(
+            [69,0,131,5,3,2,1,0x2D,1,0x3F,60,0],
+            '00:10:20:30:40:50',
+            0,
+           '00112233445566778899AABBCCDDEEFF'
+          )
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(2);
+        n1.should.have.a.property('data');
+        n1.should.have.a.property('statistics',{ok:2,err:2,old:0,dup:0});
+        c1.should.match( 2 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });

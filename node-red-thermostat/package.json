@@ -1,0 +1,33 @@
+{
+    "name": "@mschaeffler/node-red-thermostat",
+    "version": "0.0.1",
+    "description": "A Node Red node to control an (electric) heater",
+    "author": {
+        "name": "Mathias Schäffler",
+        "url": "https://github.com/m-schaeffler"
+    },
+    "license": "LGPL-2.1",
+    "keywords": [
+        "node-red"
+    ],
+    "bugs": {
+        "url": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-thermostat/issues"
+    },
+    "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-thermostat",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+    },
+    "node-red": {
+        "version": ">=4.0.0",
+        "nodes": {
+            "thermostat": "thermostatjs"
+        }
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "test": "mocha \"test/*_spec.js\""
+    }
+}

@@ -1,0 +1,84 @@
+<script type="text/javascript">
+    RED.nodes.registerType('thermostat',{
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            topic: {value:""},
+            nominal: {value:"20",rerquired:true,validate:RED.validators.number()},
+            cycleTime: {value:"600",rerquired:true,validate:RED.validators.number()},
+            cycleCount: {value:"1",rerquired:true,validate:RED.validators.number()}
+        },
+        inputs:1,
+        outputs:2,
+        icon: "bthome.png",
+        label: function() {
+            return this.name||"Thermostat";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "thermostat",
+        inputLabels: 'input data',
+        outputLabels: ['switch feedback','heater control']
+    });
+</script>
+
+<script type="text/x-red" data-template-name="thermostat">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-envelope-o"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+    <div class="form-row">
+        <label for="node-input-nominal"><i class="fa fa-thermometer-half"></i> nom Temp</label>
+        <input type="text" id="node-input-nominal">
+    </div>
+    <div class="form-row">
+        <label for="node-input-cycleTime"><i class="fa fa-star"></i> cycle time</label>
+        <input type="text" id="node-input-cycleTime"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-cycleCount"><i class="fa fa-repeat"></i> cycle count</label>
+        <input type="text" id="node-input-cycleCount"></input>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="thermostat">
+
+    <p>.</p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> data from Shelly script</dd>
+    </dl>
+    
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>State-Prefix</code> + name of the device</dd>
+        <dt>payload <span class="property-type"></span></dt>
+        <dd> decoded state data</dd>
+    </dl>
+    
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>Devices <span class="property-type">JSON</span></dt>
+        <dd> configuration of the BT-Home devices.</dd>
+        <dt>counter is times <span class="property-type">Boolean</span></dt>
+        <dd> the counter in encrypted messages is checked again the actual time.</dd>
+        <dt>Status-Prefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for state output.</dd>
+        <dt>Event-Prefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for event output.</dd>
+        <dt>Context-Variable <span class="property-type">string</span></dt>
+        <dd> name of the variable in flow context storage.</dd>
+        <dt>Contextstore <span class="property-type">string</span></dt>
+        <dd>  context store to be used.</dd>
+    </dl>
+    
+</script>

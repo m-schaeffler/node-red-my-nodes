@@ -10,7 +10,7 @@ module.exports = function(RED) {
         var node = this;
         this.flowcontext  = this.context().flow;
         this.devices      = JSON.parse( config.devices ?? "{}" );
-        this.counterTime  = Boolean( config.counterTime );
+        this.counterMode  = config.counterMode ?? "none";
         this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar   ?? "bthome";
@@ -84,14 +84,26 @@ module.exports = function(RED) {
                 const mac        = Tools.mac2bytes( msg.payload.addr );
                 const ciphertext = Buffer.from( rawdata.slice( 0, -8 ) );
                 const counter    = rawdata.slice( -8, -4 );
-                if( node.counterTime )
+                const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
+                switch( node.counterMode )
                 {
-                    const counterInt = counter[0] | (counter[1]<<8) | (counter[2]<<16) | (counter[3]<<24);
-                    const delta      = msgTime - counterInt*1000;
-                    if( delta > 30000 || delta < -15000 )
-                    {
-                        throw new Error( "bthome "+msg.payload.gateway+" "+name+" "+(new Date(counterInt*1000))+" "+delta );
-                    }
+                    case "rising":
+                        if( counterInt > ( item.lastCounter ?? -1 ) )
+                        {
+                            item.lastCounter = counterInt;
+                        }
+                        else
+                        {
+                            throw new Error( "bthome "+msg.payload.gateway+" "+name+" "+counterInt+" <= "+item.lastCounter );
+                        }
+                        break;
+                    case "time":
+                        const deltaTime = msgTime - counterInt*1000;
+                        if( deltaTime > 30000 || deltaTime < -15000 )
+                        {
+                            throw new Error( "bthome "+msg.payload.gateway+" "+name+" "+(new Date(counterInt*1000))+" "+deltaTime );
+                        }
+                        break;
                 }
                 const mic        = Buffer.from( rawdata.slice( -4 ) );
                 const nonce      = Buffer.from( mac.concat( Tools.uuid16, dib, counter ) );
@@ -238,14 +250,14 @@ module.exports = function(RED) {
             try
             {
                 checkMsg();
-                if( encrypted )
-                {
-                    decryptMsg();
-                }
                 if( item == undefined )
                 {
                     item = { pid: null, typeId: null, gw: {} };
                     node.data[name] = item;
+                }
+                if( encrypted )
+                {
+                    decryptMsg();
                 }
                 decodeMsg();
                 if( checkPid() )

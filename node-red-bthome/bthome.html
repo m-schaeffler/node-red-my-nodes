@@ -5,7 +5,7 @@
         defaults: {
             name: {value:""},
             devices:{value:"[]",required:true},
-            counterTime:{value:false},
+            counterMode:{value:"none",required:true},
             statusPrefix:{value:""},
             eventPrefix:{value:""},
             contextVar:{value:"bthome",required:true},
@@ -67,8 +67,12 @@
         <input type="text" id="node-input-devices">
     </div>
     <div class="form-row">
-        <label for="node-input-counterTime"><i class="fa fa-clock-o"></i> counter is time</label>
-        <input type="checkbox" id="node-input-counterTime" style="display:inline-block; width:20px; vertical-align:baseline;">
+        <label for="node-input-counterMode"><i class="fa fa-clock-o"></i> Countermode</label>
+        <select type="text" id="node-input-counterMode">
+            <option value="none">no check</option>
+            <option value="rising">always rising</option>
+            <option value="time">time stamp</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-statusPrefix"><i class="fa fa-star"></i> Status-Prefix</label>

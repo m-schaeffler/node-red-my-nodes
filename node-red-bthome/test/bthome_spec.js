@@ -35,7 +35,7 @@ describe( 'bthome Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('devices', {});
-        n1.should.have.a.property('counterTime', false);
+        n1.should.have.a.property('counterMode', "none");
         n1.should.have.a.property('statusPrefix', "");
         n1.should.have.a.property('eventPrefix', "");
         n1.should.have.a.property('contextVar', "bthome");
@@ -1147,7 +1147,7 @@ describe( 'bthome Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('devices');
-        n1.should.have.a.property('counterTime', false);
+        n1.should.have.a.property('counterMode', "none");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
         await delay(50);
@@ -1261,9 +1261,9 @@ describe( 'bthome Node', function () {
     });
   });
 
-  it('should decode encrypted messages, counterTime', function (done) {
+  it('should decode encrypted messages, counterMode==time', function (done) {
     let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", counterTime:"true", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n1", type: "bthome", name: "test", counterMode:"time", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -1288,7 +1288,7 @@ describe( 'bthome Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('devices');
-        n1.should.have.a.property('counterTime', true);
+        n1.should.have.a.property('counterMode', "time");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
         await delay(50);

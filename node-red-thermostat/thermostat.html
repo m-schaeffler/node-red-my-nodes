@@ -1,10 +1,10 @@
 <script type="text/javascript">
     RED.nodes.registerType('thermostat',{
-        category: 'function',
+        category: 'input',
         color: '#a6bbcf',
         defaults: {
             name: {value:""},
-            topic: {value:""},
+            topic: {value:"",rerquired:true},
             nominal: {value:"20",rerquired:true,validate:RED.validators.number()},
             cycleTime: {value:"600",rerquired:true,validate:RED.validators.number()},
             cycleCount: {value:"1",rerquired:true,validate:RED.validators.number()}

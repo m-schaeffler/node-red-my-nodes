@@ -4,7 +4,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         var node    = this;
         var context = this.context()
-        this.topic      = config.topic ?? "";
+        this.topic      = config.topic ?? "thermostat";
         this.nominal    = Number( config.nominal ?? 20 );
         this.cycleTime  = Number( config.cycleTime ?? 600 );
         this.cycleCount = Number( config.cycleCount ?? 1 );
@@ -71,31 +71,31 @@ module.exports = function(RED) {
             {
                 if( msg.payload?.block !== undefined )
                 {
-                    data.block = msg.payload.block;
+                    node.data.block = msg.payload.block;
                 }
                 if( msg.payload?.temperature !== undefined )
                 {
-                    data.temperature = msg.payload.temperature;
+                    node.data.temperature = msg.payload.temperature;
                 }
                 if( msg.payload?.nominal !== undefined )
                 {
-                    data.nominal = msg.payload.nominal;
+                    node.data.nominal = msg.payload.nominal;
                 }
                 if( msg.payload?.cycleTime !== undefined )
                 {
-                    data.cycleTime = msg.payload.cycleTime;
+                    node.data.cycleTime = msg.payload.cycleTime;
                 }
                 if( msg.payload?.cycleCount !== undefined )
                 {
-                    data.cycleCount = msg.payload.cycleCount;
+                    node.data.cycleCount = msg.payload.cycleCount;
                 }
-                if( ! data.running )
+                if( ! node.data.running && false )
                 {
                     startHeating();
                 }
             }
-            context.set( "data", data );
-            node.status( { fill:data.running?"green":"gray", shape:"dot", text:data.temperature } );
+            context.set( "data", node.data );
+            node.status( { fill:node.data.running?"green":"gray", shape:"dot", text:node.data.temperature } );
             send( sendOutput() );
             done();
         });

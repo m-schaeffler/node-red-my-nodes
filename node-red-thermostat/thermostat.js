@@ -8,7 +8,10 @@ module.exports = function(RED) {
         this.nominal    = Number( config.nominal ?? 20 );
         this.cycleTime  = Number( config.cycleTime ?? 600 );
         this.cycleCount = Number( config.cycleCount ?? 1 );
-        this.data       = { running:0 };
+        this.data       = {};
+        this.running    = 0;
+        this.lastR      = null;
+        this.lastO      = null;
         this.timerHeat  = null;
         this.timerCycle = null;
         initData();
@@ -25,7 +28,6 @@ module.exports = function(RED) {
                 if( value !== undefined )
                 {
                     node.data = value;
-                    node.data.running = 0;
                 }
             }
         } );
@@ -40,34 +42,41 @@ module.exports = function(RED) {
 
         function sendOutput()
         {
+            const active = Boolean( node.running );
+            const output = Boolean( node.running % 2 ) && !node.data.block;
             node.send( [
-                { topic: node.topic, payload: Boolean( node.data.running ) },
-                { topic: node.topic, payload: Boolean( node.data.running % 2 ) && !node.data.block }
+                active !== node.lastR ? { topic: node.topic, payload: active } : null,
+                output !== node.lastO ? { topic: node.topic, payload: output } : null
             ] );
-            setStatus();
-        }
-
-        function setStatus()
-        {
             node.status( {
-                fill:  node.data.running ? "green" : "gray",
+                fill:  active ? ( output ? "green" : "yellow" ) : "gray",
                 shape: "dot",
-                text:  node.data.temperature
+                text:  node.data.temperature + "°C"
             } );
-        }
-
-        function stopHeating()
-        {
-            node.data.running = 0;
-            clearTimeout( node.timerHeat );
-            clearTimeout( node.timerCycle );
-            sendOutput();
+            node.lastR = active;
+            node.lastO = output;
         }
 
         function startHeating()
         {
-            node.data.running = 1;
-            sendOutput();
+            if( ! node.running )
+            {
+                node.running = 1;
+                sendOutput();
+            }
+        }
+
+        function stopHeating()
+        {
+            if( node.running )
+            {
+                node.running = 0;
+                clearTimeout( node.timerHeat );
+                clearTimeout( node.timerCycle );
+                node.timerHeat  = null;
+                node.timerCycle = null;
+                sendOutput();
+            }
         }
 
         node.on('started', function() {
@@ -81,32 +90,19 @@ module.exports = function(RED) {
             else if( msg.reset || msg.topic==="init" )
             {
                 initData();
-                if( node.data.running )
-                {
-                    stopHeating();
-                }
-            }
-            else if( false )
-            {
-                if( ! node.data.running )
-                {
-                    startHeating();
-                }
+                stopHeating();
             }
             else
             {
                 if( msg.payload?.block !== undefined )
                 {
                     node.data.block = msg.payload.block;
-                    if( node.data.running )
-                    {
-                        sendOutput();
-                    }
+                    sendOutput();
                 }
                 if( msg.payload?.temperature !== undefined )
                 {
                     node.data.temperature = msg.payload.temperature;
-                    setStatus();
+                    sendOutput();
                 }
                 if( msg.payload?.nominal !== undefined )
                 {
@@ -119,6 +115,17 @@ module.exports = function(RED) {
                 if( msg.payload?.cycleCount !== undefined )
                 {
                     node.data.cycleCount = msg.payload.cycleCount;
+                }
+                switch( msg.payload?.trigger )
+                {
+                    case true:
+                    case "on":
+                        startHeating();
+                        break;
+                    case false:
+                    case "off":
+                        stopHeating();
+                        break;
                 }
             }
             context.set( "data", node.data );

@@ -44,6 +44,7 @@ module.exports = function(RED) {
         {
             const active = Boolean( node.running );
             const output = Boolean( node.running % 2 ) && !node.data.block;
+            console.log("  ",active,output)
             node.send( [
                 force || active !== node.lastR ? { topic: node.topic, payload: active } : null,
                 force || output !== node.lastO ? { topic: node.topic, payload: output } : null
@@ -57,13 +58,35 @@ module.exports = function(RED) {
             node.lastO = output;
         }
 
-        function startHeating()
+        function startCycle()
         {
-            if( !node.running && node.data.temperature < node.data.nominal-0.25 )
+            if( node.data.temperature < node.data.nominal-0.25 )
             {
-                node.running = 1;
+                node.running++;
+                let time = ( node.data.nominal - node.data.temperature + 0.4 ) / 5.0 * node.data.cycleTime;
+                switch( node.running )
+                {
+                    case 1: time *= 1.4; break; // 1st cycle
+                    case 3: time *= 1.2; break; // 2nd cycle
+                }
+                time = Math.min( time, node.data.cycleTime * 0.985 );
+                console.log(time)
+                node.timerHeat  = setTimeout( function(){ node.emit("stopHeater"); }, time                * 1000 );
+                node.timerCycle = setTimeout( function(){ node.emit("newCycle"); },   node.data.cycleTime * 1000 );
+            }
+            else
+            {
+                node.running = 0;
             }
             sendOutput( true );
+        }
+
+        function startHeating()
+        {
+            if( ! node.running )
+            {
+                startCycle();
+            }
         }
 
         function stopHeating()
@@ -75,12 +98,32 @@ module.exports = function(RED) {
                 clearTimeout( node.timerCycle );
                 node.timerHeat  = null;
                 node.timerCycle = null;
+                sendOutput( true );
             }
-            sendOutput( true );
         }
 
         node.on('started', function() {
             sendOutput();
+        } );
+
+        node.on('stopHeater', function() {
+            console.log('stopHeater');
+            if( (++node.running)>>1 < node.data.cycleCount )
+            {
+                console.log("  weiter");
+                sendOutput();
+            }
+            else
+            {
+                console.log("  stopp");
+                stopHeating();
+            }
+        } );
+
+        node.on('newCycle', function() {
+            console.log('newCycle');
+            startCycle();
+            console.log(node.running)
         } );
 
         node.on('input', function(msg,send,done) {

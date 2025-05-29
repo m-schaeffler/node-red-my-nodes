@@ -140,8 +140,8 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data',{nominal:20,cycleTime:600,cycleCount:1,block:false,temperature:19});
         n1.context().get("data").should.match(n1.data);
-        c1.should.match( 2 );
-        c2.should.match( 2 );
+        c1.should.match( 1 );
+        c2.should.match( 1 );
         done();
       }
       catch(err) {
@@ -192,7 +192,7 @@ describe( 'thermostat Node', function () {
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
-        n1.receive({ topic:"data", payload: { temperature:19.7, trigger: true } });
+        n1.receive({ topic:"data", payload: { temperature: 19.7, trigger: true } });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -243,6 +243,86 @@ describe( 'thermostat Node', function () {
     });
   });
 
+  it('should handle double switching', function (done) {
+    let flow = [{ id: "n1", type: "thermostat", name: "test", wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        //console.log("  c1",msg);
+        try {
+          c1++;
+          msg.should.have.a.property('topic','thermostat');
+          msg.should.have.a.property('payload',Boolean((c1-1)%2));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        //console.log("  c2",msg);
+        try {
+          c2++;
+          msg.should.have.a.property('topic','thermostat');
+          msg.should.have.a.property('payload',Boolean((c2-1)%2));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', 'thermostat');
+        n1.should.have.a.property('nominal', 20);
+        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleCount', 1);
+        await delay(500);
+        n1.should.have.a.property('data',{nominal:20,cycleTime:600,cycleCount:1});
+        c1.should.match( 1 );
+        c2.should.match( 1 );
+        // switch on
+        n1.receive({ topic:"data", payload: { temperature:19.7, trigger: true } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        // 2nd switch on
+        n1.receive({ topic:"data", payload: { trigger: true } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        // switch off
+        n1.receive({ topic:"data", payload: { trigger: false } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 3 );
+        c2.should.match( 3 );
+        // 2nd switch off
+        n1.receive({ topic:"data", payload: { trigger: false } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data',{nominal:20,cycleTime:600,cycleCount:1,temperature:19.7});
+        n1.context().get("data").should.match(n1.data);
+        c1.should.match( 3 );
+        c2.should.match( 3 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should not switch on with high temp', function (done) {
     let flow = [{ id: "n1", type: "thermostat", name: "test", wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
@@ -285,7 +365,7 @@ describe( 'thermostat Node', function () {
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
-        n1.receive({ topic:"data", payload: { temperature:19.8, trigger: true } });
+        n1.receive({ topic:"data", payload: { temperature: 19.8, trigger: true } });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -298,8 +378,8 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data',{nominal:20,cycleTime:600,cycleCount:1,temperature:19.8});
         n1.context().get("data").should.match(n1.data);
-        c1.should.match( 3 );
-        c2.should.match( 3 );
+        c1.should.match( 2 );
+        c2.should.match( 2 );
         done();
       }
       catch(err) {
@@ -362,6 +442,74 @@ describe( 'thermostat Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data',{nominal:20,cycleTime:600,cycleCount:1});
+        n1.context().get("data").should.match(n1.data);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should do one cycle', function (done) {
+    this.timeout( 15000 );
+    let flow = [{ id: "n1", type: "thermostat", cycleTime:"10", name: "test", wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        //console.log("  c1",msg);
+        try {
+          c1++;
+          msg.should.have.a.property('topic','thermostat');
+          msg.should.have.a.property('payload',Boolean((c1-1)%2));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        //console.log("  c2",msg);
+        try {
+          c2++;
+          msg.should.have.a.property('topic','thermostat');
+          msg.should.have.a.property('payload',Boolean((c2-1)%2));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', 'thermostat');
+        n1.should.have.a.property('nominal', 20);
+        n1.should.have.a.property('cycleTime', 10);
+        n1.should.have.a.property('cycleCount', 1);
+        await delay(500);
+        n1.should.have.a.property('data',{nominal:20,cycleTime:10,cycleCount:1});
+        c1.should.match( 1 );
+        c2.should.match( 1 );
+        // switch on
+        n1.receive({ topic:"data", payload: { temperature: 18.9, trigger: true } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        await delay(4500);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 3 );
+        c2.should.match( 3 );
+        await delay(5500);
+        n1.should.have.a.property('data',{nominal:20,cycleTime:10,cycleCount:1,temperature:18.9});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 3 );
         c2.should.match( 3 );

@@ -2,7 +2,7 @@
 
 .
 
-![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/examples/theermostat.png)
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/examples/thermostat.png)
 
 ## Install
 

@@ -503,16 +503,163 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         c1.should.match( 2 );
         c2.should.match( 2 );
-        await delay(4500);
+        await delay(4100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        await delay(200);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c1.should.match( 3 );
         c2.should.match( 3 );
-        await delay(5500);
+        await delay(6000);
         n1.should.have.a.property('data',{nominal:20,cycleTime:10,cycleCount:1,temperature:18.9});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 3 );
         c2.should.match( 3 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should do four cycles', function (done) {
+    this.timeout( 45000 );
+    let flow = [{ id: "n1", type: "thermostat", cycleTime:"10", cycleCount:"4", name: "test", wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      let time;
+      n2.on("input", function (msg) {
+        console.log("  c1",msg,Date.now()-time);
+        try {
+          c1++;
+          msg.should.have.a.property('topic','thermostat');
+          msg.should.have.a.property('payload',Boolean((c1-1)%2));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        console.log("  c2",msg,Date.now()-time);
+        try {
+          c2++;
+          msg.should.have.a.property('topic','thermostat');
+          msg.should.have.a.property('payload',Boolean((c2-1)%2));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', 'thermostat');
+        n1.should.have.a.property('nominal', 20);
+        n1.should.have.a.property('cycleTime', 10);
+        n1.should.have.a.property('cycleCount', 4);
+        await delay(500);
+        n1.should.have.a.property('data',{nominal:20,cycleTime:10,cycleCount:4});
+        c1.should.match( 1 );
+        c2.should.match( 1 );
+        // switch on
+        time = Date.now();
+        n1.receive({ topic:"data", payload: { temperature: 18.1, trigger: true } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        await delay(6340);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        // 1st off
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 3 );
+        await delay(3360);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 3 );
+        // 2nd on
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 4 );
+        await delay(5220);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 4 );
+        // 2nd off
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 5 );
+        await delay(4380);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 5 );
+        // 3rd on
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 6 );
+        await delay(4400);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 6 );
+        // 3rd off
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 7 );
+        await delay(5200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 7 );
+        // 4th on
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 8 );
+        await delay(4400);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 2 );
+        c2.should.match( 8 );
+        // 4th off
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 3 );
+        c2.should.match( 9 );
+        await delay(6000);
+        n1.should.have.a.property('data',{nominal:20,cycleTime:10,cycleCount:4,temperature:18.1});
+        n1.context().get("data").should.match(n1.data);
+        c1.should.match( 3 );
+        c2.should.match( 9 );
         done();
       }
       catch(err) {

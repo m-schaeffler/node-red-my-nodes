@@ -78,7 +78,6 @@ module.exports = function(RED) {
             {
                 node.running = 0;
             }
-            sendOutput( true );
         }
 
         function startHeating()
@@ -86,6 +85,7 @@ module.exports = function(RED) {
             if( ! node.running )
             {
                 startCycle();
+                sendOutput( true );
             }
         }
 
@@ -98,7 +98,7 @@ module.exports = function(RED) {
                 clearTimeout( node.timerCycle );
                 node.timerHeat  = null;
                 node.timerCycle = null;
-                sendOutput( true );
+                sendOutput();
             }
         }
 
@@ -123,7 +123,7 @@ module.exports = function(RED) {
         node.on('newCycle', function() {
             console.log('newCycle');
             startCycle();
-            console.log(node.running)
+            sendOutput();
         } );
 
         node.on('input', function(msg,send,done) {

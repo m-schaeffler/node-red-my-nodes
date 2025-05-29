@@ -40,13 +40,13 @@ module.exports = function(RED) {
             node.data.cycleCount = node.cycleCount;
         }
 
-        function sendOutput()
+        function sendOutput(force=false)
         {
             const active = Boolean( node.running );
             const output = Boolean( node.running % 2 ) && !node.data.block;
             node.send( [
-                active !== node.lastR ? { topic: node.topic, payload: active } : null,
-                output !== node.lastO ? { topic: node.topic, payload: output } : null
+                force || active !== node.lastR ? { topic: node.topic, payload: active } : null,
+                force || output !== node.lastO ? { topic: node.topic, payload: output } : null
             ] );
             node.status( {
                 fill:  active ? ( output ? "green" : "yellow" ) : "gray",
@@ -59,11 +59,11 @@ module.exports = function(RED) {
 
         function startHeating()
         {
-            if( ! node.running )
+            if( !node.running && node.data.temperature < node.data.nominal-0.25 )
             {
                 node.running = 1;
-                sendOutput();
             }
+            sendOutput( true );
         }
 
         function stopHeating()
@@ -75,8 +75,8 @@ module.exports = function(RED) {
                 clearTimeout( node.timerCycle );
                 node.timerHeat  = null;
                 node.timerCycle = null;
-                sendOutput();
             }
+            sendOutput( true );
         }
 
         node.on('started', function() {

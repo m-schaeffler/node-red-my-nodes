@@ -1,4 +1,4 @@
-<script type="text/javascript">
+#<script type="text/javascript">
     RED.nodes.registerType('thermostat',{
         category: 'input',
         color: '#a6bbcf',
@@ -6,6 +6,9 @@
             name: {value:""},
             topic: {value:"",rerquired:true},
             nominal: {value:"20",rerquired:true,validate:RED.validators.number()},
+            minDelta: {value:"0.25",rerquired:true,validate:RED.validators.number()},
+            summand: {value:"0.4",rerquired:true,validate:RED.validators.number()},
+            factor: {value:"0.2",rerquired:true,validate:RED.validators.number()},
             cycleTime: {value:"600",rerquired:true,validate:RED.validators.number()},
             cycleCount: {value:"1",rerquired:true,validate:RED.validators.number()}
         },
@@ -37,6 +40,19 @@
         <label for="node-input-nominal"><i class="fa fa-thermometer-half"></i> nom Temp</label>
         <input type="text" id="node-input-nominal">
     </div>
+    <div class="form-row">
+        <label for="node-input-minDelta"><i class="fa fa-factor"></i> min Delta</label>
+        <input type="text" id="node-input-minDelta"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-summand"><i class="fa fa-plus"></i> control Summand</label>
+        <input type="text" id="node-input-summand"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-factor"><i class="fa fa-asterisk"></i> control Factor</label>
+        <input type="text" id="node-input-factor"></input>
+    </div>
+   
     <div class="form-row">
         <label for="node-input-cycleTime"><i class="fa fa-star"></i> cycle time</label>
         <input type="text" id="node-input-cycleTime"></input>

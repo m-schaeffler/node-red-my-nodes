@@ -13,6 +13,7 @@ The node red node packages are released in this repository:
 - [@mschaeffler/node-red-init](node-red-init/README.md)
 - [@mschaeffler/node-red-logic](node-red-logic/README.md)
 - [@mschaeffler/node-red-msg-resend](node-red-msg-resend/README.md)
+- [@mschaeffler/node-red-thermostat](node-red-thermostat/README.md)
 
 This nodes are no longer used by me, so they will probably not get any further updates:
 

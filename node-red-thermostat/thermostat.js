@@ -6,6 +6,9 @@ module.exports = function(RED) {
         var context = this.context()
         this.topic      = config.topic ?? "thermostat";
         this.nominal    = Number( config.nominal ?? 20 );
+        this.minDelta   = Number( config.minDelta ?? 0.25 );
+        this.summand    = Number( config.summand ?? 0.4 );
+        this.factor     = Number( config.factor ?? 0.2 );
         this.cycleTime  = Number( config.cycleTime ?? 600 );
         this.cycleCount = Number( config.cycleCount ?? 1 );
         this.data       = {};
@@ -36,6 +39,7 @@ module.exports = function(RED) {
         function initData()
         {
             node.data.nominal    = node.nominal;
+            node.data.factor     = node.factor;
             node.data.cycleTime  = node.cycleTime;
             node.data.cycleCount = node.cycleCount;
         }
@@ -60,10 +64,10 @@ module.exports = function(RED) {
 
         function startCycle()
         {
-            if( node.data.temperature < node.data.nominal-0.25 )
+            if( node.data.temperature < node.data.nominal - node.minDelta )
             {
                 node.running++;
-                let time = ( node.data.nominal - node.data.temperature + 0.4 ) / 5.0 * node.data.cycleTime;
+                let time = ( node.data.nominal - node.data.temperature + node.summand ) * node.data.factor * node.data.cycleTime;
                 switch( node.running )
                 {
                     case 1: time *= 1.4; break; // 1st cycle
@@ -72,7 +76,7 @@ module.exports = function(RED) {
                 time = Math.min( time, node.data.cycleTime * 0.985 );
                 console.log(time)
                 node.timerHeat  = setTimeout( function(){ node.emit("stopHeater"); }, time                * 1000 );
-                node.timerCycle = setTimeout( function(){ node.emit("newCycle"); },   node.data.cycleTime * 1000 );
+                node.timerCycle = setTimeout( function(){ node.emit("newCycle");   }, node.data.cycleTime * 1000 );
             }
             else
             {

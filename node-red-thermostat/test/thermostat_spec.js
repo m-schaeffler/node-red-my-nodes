@@ -126,6 +126,15 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data',{nominal:22,factor:0.2,cycleTime:900,cycleCount:3});
         n1.context().get("data").should.match(n1.data);
+        // change closed loop control data
+        n1.receive({ topic:"data", payload: {
+          factor: 2
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data',{nominal:22,factor:0.4,cycleTime:900,cycleCount:3});
+        n1.context().get("data").should.match(n1.data);
         // set actual data
         n1.receive({ topic:"data", payload: {
           block:       false,
@@ -134,7 +143,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:22,factor:0.2,cycleTime:900,cycleCount:3,block:false,temperature:19});
+        n1.should.have.a.property('data',{nominal:22,factor:0.4,cycleTime:900,cycleCount:3,block:false,temperature:19});
         n1.context().get("data").should.match(n1.data);
         // reset
         n1.receive({ reset: true });

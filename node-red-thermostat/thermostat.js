@@ -155,6 +155,10 @@ module.exports = function(RED) {
                 {
                     node.data.nominal = msg.payload.nominal;
                 }
+                if( msg.payload?.factor !== undefined )
+                {
+                    node.data.factor = node.factor * msg.payload.factor;
+                }
                 if( msg.payload?.cycleTime !== undefined )
                 {
                     node.data.cycleTime = msg.payload.cycleTime;

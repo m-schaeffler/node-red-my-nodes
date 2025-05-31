@@ -1,0 +1,283 @@
+[
+    {
+        "id": "f363270f42032d6a",
+        "type": "thermostat",
+        "z": "af4b65d62a566666",
+        "name": "",
+        "topic": "Bad OG",
+        "nominal": "21",
+        "minDelta": "0.25",
+        "summand": "0.4",
+        "factor": "0.2",
+        "cycleTime": "900",
+        "cycleCount": "2",
+        "x": 410,
+        "y": 1200,
+        "wires": [
+            [
+                "3f2bed5df4b3cad0",
+                "78de9ac1512a5d28"
+            ],
+            [
+                "bf273f9687671492"
+            ]
+        ]
+    },
+    {
+        "id": "3f2bed5df4b3cad0",
+        "type": "debug",
+        "z": "af4b65d62a566666",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "bf273f9687671492",
+        "type": "debug",
+        "z": "af4b65d62a566666",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "c4c7080ad2e3a40b",
+        "type": "inject",
+        "z": "af4b65d62a566666",
+        "name": "reset",
+        "props": [
+            {
+                "p": "reset",
+                "v": "true",
+                "vt": "bool"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 190,
+        "y": 1160,
+        "wires": [
+            [
+                "f363270f42032d6a"
+            ]
+        ]
+    },
+    {
+        "id": "81871a8c2147279f",
+        "type": "inject",
+        "z": "af4b65d62a566666",
+        "name": "19",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"temperature\":19}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 1200,
+        "wires": [
+            [
+                "f363270f42032d6a"
+            ]
+        ]
+    },
+    {
+        "id": "fcee8cb2a9bfabe1",
+        "type": "inject",
+        "z": "af4b65d62a566666",
+        "name": "25",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"temperature\":25}",
+        "payloadType": "json",
+        "x": 190,
+        "y": 1240,
+        "wires": [
+            [
+                "f363270f42032d6a"
+            ]
+        ]
+    },
+    {
+        "id": "78de9ac1512a5d28",
+        "type": "ui-switch",
+        "z": "af4b65d62a566666",
+        "name": "",
+        "label": "Aktiv",
+        "group": "c05a48b1249cb8e4",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "decouple": true,
+        "topic": "topic",
+        "topicType": "str",
+        "style": "",
+        "className": "",
+        "layout": "",
+        "clickableArea": "switch",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "x": 350,
+        "y": 1100,
+        "wires": [
+            [
+                "37fad16b93998966"
+            ]
+        ]
+    },
+    {
+        "id": "37fad16b93998966",
+        "type": "change",
+        "z": "af4b65d62a566666",
+        "name": "trigger",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"trigger\":payload}",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 470,
+        "y": 1100,
+        "wires": [
+            [
+                "f363270f42032d6a"
+            ]
+        ]
+    },
+    {
+        "id": "c05a48b1249cb8e4",
+        "type": "ui-group",
+        "name": "Bad DG",
+        "page": "a40b4f7d100b595c",
+        "width": "3",
+        "height": "1",
+        "order": 5,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "a40b4f7d100b595c",
+        "type": "ui-page",
+        "name": "Heizung",
+        "ui": "fd06eabec55c4e5d",
+        "path": "/heizung",
+        "icon": "fire",
+        "layout": "flex",
+        "theme": "a965ccfef139317a",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 8,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "fd06eabec55c4e5d",
+        "type": "ui-base",
+        "name": "Dashboard 2.0",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": false,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "fixed",
+        "showReconnectNotification": false,
+        "notificationDisplayTime": "5",
+        "showDisconnectNotification": false,
+        "allowInstall": true
+    },
+    {
+        "id": "a965ccfef139317a",
+        "type": "ui-theme",
+        "name": "Default",
+        "colors": {
+            "surface": "#6db046",
+            "primary": "#32cd32",
+            "bgPage": "#000000",
+            "groupBg": "#333333",
+            "groupOutline": "#616161"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px",
+            "density": "default"
+        }
+    }
+]

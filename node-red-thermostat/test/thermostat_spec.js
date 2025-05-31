@@ -232,12 +232,26 @@ describe( 'thermostat Node', function () {
         c1.should.match( 5 );
         c2.should.match( 5 );
         // switch on
-        n1.receive({ topic:"data", payload: { trigger: "on" } });
+        n1.receive({ topic:"data", payload: true });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c1.should.match( 6 );
         c2.should.match( 6 );
+        // switch off
+        n1.receive({ topic:"data", payload: false });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 7 );
+        c2.should.match( 7 );
+        // switch on
+        n1.receive({ topic:"data", payload: { trigger: "on" } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 8 );
+        c2.should.match( 8 );
         // reset
         n1.receive({ reset: true });
         await delay(50);
@@ -245,8 +259,8 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
-        c1.should.match( 7 );
-        c2.should.match( 7 );
+        c1.should.match( 9 );
+        c2.should.match( 9 );
         done();
       }
       catch(err) {

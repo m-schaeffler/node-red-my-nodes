@@ -167,7 +167,7 @@ module.exports = function(RED) {
                 {
                     node.data.cycleCount = msg.payload.cycleCount;
                 }
-                switch( msg.payload?.trigger )
+                switch( msg.payload?.trigger ?? msg.payload )
                 {
                     case true:
                     case "on":

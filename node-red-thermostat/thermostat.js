@@ -53,6 +53,7 @@ module.exports = function(RED) {
                 {
                     case "boolean":    return f;
                     case "on_off":     return f ? "on" : "off";
+                    case "0_1":        return Number( f );
                     case "cycleCount": return f ? node.data.cycleCount : 0;
                 }
             }

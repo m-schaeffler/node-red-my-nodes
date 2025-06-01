@@ -487,7 +487,7 @@ describe( 'thermostat Node', function () {
 
   it('should do one cycle', function (done) {
     this.timeout( 15000 );
-    let flow = [{ id: "n1", type: "thermostat", cycleTime:"10", name: "test", wires: [["n2"],["n3"]], z:"flow" },
+    let flow = [{ id: "n1", type: "thermostat", cycleTime:"10", feedback:"0_1", name: "test", wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -501,7 +501,7 @@ describe( 'thermostat Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','thermostat');
-          msg.should.have.a.property('payload',Boolean((c1-1)%2));
+          msg.should.have.a.property('payload',(c1-1)%2);
         }
         catch(err) {
           done(err);
@@ -524,7 +524,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 10);
         n1.should.have.a.property('cycleCount', 1);
-        n1.should.have.a.property('feedback', "boolean");
+        n1.should.have.a.property('feedback', "0_1");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:1});
         c1.should.match( 1 );

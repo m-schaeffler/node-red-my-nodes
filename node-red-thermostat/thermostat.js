@@ -11,6 +11,7 @@ module.exports = function(RED) {
         this.factor     = Number( config.factor ?? 0.2 );
         this.cycleTime  = Number( config.cycleTime ?? 600 );
         this.cycleCount = Number( config.cycleCount ?? 1 );
+        this.feedback   = config.feedback ?? "boolean";
         this.data       = {};
         this.running    = 0;
         this.lastR      = null;
@@ -46,11 +47,21 @@ module.exports = function(RED) {
 
         function sendOutput(force=false)
         {
+            function formatFeedback(f)
+            {
+                switch( node.feedback )
+                {
+                    case "boolean":    return f;
+                    case "on_off":     return f ? "on" : "off";
+                    case "cycleCount": return f ? node.data.cycleCount : 0;
+                }
+            }
+
             const active = Boolean( node.running );
             const output = Boolean( node.running % 2 ) && !node.data.block;
             console.log("  ",active,output)
             node.send( [
-                force || active !== node.lastR ? { topic: node.topic, payload: active } : null,
+                force || active !== node.lastR ? { topic: node.topic, payload: formatFeedback(active) } : null,
                 force || output !== node.lastO ? { topic: node.topic, payload: output } : null
             ] );
             node.status( {
@@ -175,7 +186,34 @@ module.exports = function(RED) {
                         break;
                     case false:
                     case "off":
+                    case 0:
+                    case "0":
                         stopHeating();
+                        break;
+                    case 1:
+                    case "1":
+                        node.data.cycleCount = 1;
+                        startHeating();
+                        break;
+                    case 2:
+                    case "2":
+                        node.data.cycleCount = 2;
+                        startHeating();
+                        break;
+                    case 3:
+                    case "3":
+                        node.data.cycleCount = 3;
+                        startHeating();
+                        break;
+                    case 4:
+                    case "4":
+                        node.data.cycleCount = 4;
+                        startHeating();
+                        break;
+                    case 5:
+                    case "5":
+                        node.data.cycleCount = 5;
+                        startHeating();
                         break;
                 }
             }

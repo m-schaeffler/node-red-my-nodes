@@ -60,6 +60,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('factor', 0.2);
         n1.should.have.a.property('cycleTime', 600);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "boolean");
         await delay(500);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -111,6 +112,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 600);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "boolean");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
         c1.should.match( 1 );
@@ -199,6 +201,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 600);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "boolean");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
         c1.should.match( 1 );
@@ -270,7 +273,7 @@ describe( 'thermostat Node', function () {
   });
 
   it('should handle double switching', function (done) {
-    let flow = [{ id: "n1", type: "thermostat", name: "test", wires: [["n2"],["n3"]], z:"flow" },
+    let flow = [{ id: "n1", type: "thermostat", feedback:"on_off", name: "test", wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -284,7 +287,7 @@ describe( 'thermostat Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','thermostat');
-          msg.should.have.a.property('payload',Boolean((c1-1)%2));
+          msg.should.have.a.property('payload',Boolean((c1-1)%2)?"on":"off");
         }
         catch(err) {
           done(err);
@@ -307,6 +310,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 600);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "on_off");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
         c1.should.match( 1 );
@@ -386,6 +390,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 600);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "boolean");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
         c1.should.match( 1 );
@@ -415,7 +420,7 @@ describe( 'thermostat Node', function () {
   });
 
   it('should not switch on without temp', function (done) {
-    let flow = [{ id: "n1", type: "thermostat", name: "test", wires: [["n2"],["n3"]], z:"flow" },
+    let flow = [{ id: "n1", type: "thermostat", feedback:"cycleCount", name: "test", wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -429,7 +434,7 @@ describe( 'thermostat Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','thermostat');
-          msg.should.have.a.property('payload',false);
+          msg.should.have.a.property('payload',0);
         }
         catch(err) {
           done(err);
@@ -451,6 +456,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 600);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "cycleCount");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
         c1.should.match( 1 );
@@ -518,6 +524,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 10);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "boolean");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:1});
         c1.should.match( 1 );
@@ -554,7 +561,7 @@ describe( 'thermostat Node', function () {
 
   it('should do four cycles', function (done) {
     this.timeout( 45000 );
-    let flow = [{ id: "n1", type: "thermostat", cycleTime:"10", cycleCount:"4", name: "test", wires: [["n2"],["n3"]], z:"flow" },
+    let flow = [{ id: "n1", type: "thermostat", cycleTime:"10", feedback:"cycleCount", name: "test", wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -569,7 +576,7 @@ describe( 'thermostat Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','thermostat');
-          msg.should.have.a.property('payload',Boolean((c1-1)%2));
+          msg.should.have.a.property('payload',((c1-1)%2)*4);
         }
         catch(err) {
           done(err);
@@ -591,14 +598,16 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 10);
-        n1.should.have.a.property('cycleCount', 4);
+        n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "cycleCount");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:4});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
         time = Date.now();
-        n1.receive({ topic:"data", payload: { temperature: 18.1, trigger: true } });
+        n1.receive({ topic:"data", payload: { temperature: 18.1 } });
+        n1.receive({ topic:"data", payload: 4 });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -732,6 +741,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 600);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "boolean");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
         c1.should.match( 1 );
@@ -812,6 +822,7 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('nominal', 20);
         n1.should.have.a.property('cycleTime', 600);
         n1.should.have.a.property('cycleCount', 1);
+        n1.should.have.a.property('feedback', "boolean");
         await delay(500);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
         c1.should.match( 1 );

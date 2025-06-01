@@ -11,6 +11,7 @@
         "factor": "0.2",
         "cycleTime": "900",
         "cycleCount": "2",
+        "feedback": "booolean",
         "x": 410,
         "y": 1200,
         "wires": [
@@ -156,34 +157,7 @@
         "offvalueType": "bool",
         "officon": "",
         "offcolor": "",
-        "x": 350,
-        "y": 1100,
-        "wires": [
-            [
-                "37fad16b93998966"
-            ]
-        ]
-    },
-    {
-        "id": "37fad16b93998966",
-        "type": "change",
-        "z": "af4b65d62a566666",
-        "name": "trigger",
-        "rules": [
-            {
-                "t": "set",
-                "p": "payload",
-                "pt": "msg",
-                "to": "{\"trigger\":payload}",
-                "tot": "jsonata"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 470,
+        "x": 410,
         "y": 1100,
         "wires": [
             [

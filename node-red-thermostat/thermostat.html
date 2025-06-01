@@ -10,7 +10,8 @@
             summand: {value:"0.4",rerquired:true,validate:RED.validators.number()},
             factor: {value:"0.2",rerquired:true,validate:RED.validators.number()},
             cycleTime: {value:"600",rerquired:true,validate:RED.validators.number()},
-            cycleCount: {value:"1",rerquired:true,validate:RED.validators.number()}
+            cycleCount: {value:"1",rerquired:true,validate:RED.validators.number()},
+            feedback: {value:"boolean",required:true}
         },
         inputs:1,
         outputs:2,
@@ -60,6 +61,14 @@
     <div class="form-row">
         <label for="node-input-cycleCount"><i class="fa fa-repeat"></i> cycle count</label>
         <input type="text" id="node-input-cycleCount"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-feedback"><i class="fa fa-chevron-left"></i> switch feedback</label>
+        <select type="text" id="node-input-feedback">
+            <option value="booolean">Boolean</option>
+            <option value="on_off">"on" / "off"</option>
+            <option value="cycleCount">cycle count</option>
+        </select>
     </div>
 </script>
 

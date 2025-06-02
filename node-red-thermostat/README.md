@@ -12,23 +12,7 @@ $ npm install @mschaeffler/node-red-thermostat
 
 A heating device that just can be switched on and off, can be closed loop controlled:
 
-```mermaid
----
-config:
-  theme: mc
-  look: classic
----
-flowchart LR
-    n3["nominal temperature"] --> n8(("\-"))
-    n4["thermostat node"] -- on/off --> n5["heater"]
-    n8 --> n4
-    n7["actual temperature"] --> n8
-    n5 --> n7
-    n3@{ shape: lean-r}
-    n4@{ shape: rect}
-    n5@{ shape: rect}
-    n7@{ shape: lean-r}
-```
+![closed loop control](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/doc/closedLoop.png)
 
 ## Input
 
@@ -55,7 +39,7 @@ There are two different ways to control the thermostat:
 |`5`    |number | sets the cycle count to 5 and starts heating |
 |`0`    |number | stops heating |
 
-### control woith objects
+### control with objects
 
 `msg.payload` is an object with at least one of these members:
 

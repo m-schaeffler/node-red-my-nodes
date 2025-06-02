@@ -58,15 +58,15 @@ module.exports = function(RED) {
                 }
             }
 
-            const active = Boolean( node.running );
+            const active = formatFeedback( Boolean( node.running ) );
             const output = Boolean( node.running % 2 ) && !node.data.block;
             console.log("  ",active,output)
             node.send( [
-                force || active !== node.lastR ? { topic: node.topic, payload: formatFeedback(active) } : null,
+                force || active !== node.lastR ? { topic: node.topic, payload: active } : null,
                 force || output !== node.lastO ? { topic: node.topic, payload: output } : null
             ] );
             node.status( {
-                fill:  active ? ( output ? "green" : "yellow" ) : "gray",
+                fill:  node.running ? ( output ? "green" : "yellow" ) : "gray",
                 shape: "dot",
                 text:  node.data.temperature + "°C"
             } );
@@ -86,7 +86,6 @@ module.exports = function(RED) {
                     case 3: time *= 1.2; break; // 2nd cycle
                 }
                 time = Math.min( time, node.data.cycleTime * 0.985 );
-                console.log(time)
                 node.timerHeat  = setTimeout( function(){ node.emit("stopHeater"); }, time                * 1000 );
                 node.timerCycle = setTimeout( function(){ node.emit("newCycle");   }, node.data.cycleTime * 1000 );
             }

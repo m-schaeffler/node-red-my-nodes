@@ -41,7 +41,7 @@ There are two different ways to control the thermostat:
 
 |msg.payload.| type  | description |
 |:------|:------|:------------|
-|temperature|number | actual temperature |
+|temperature|number | actual temperature for the closed loop control |
 |block|boolean| blocks the heating (e.G. open window)|
 |nominal|number | nominal temperature |
 |factor|number |multilies the control coefficent (parameter factor) with this value |
@@ -73,13 +73,15 @@ This controls the heater according to the cycles.
 |config    | type   | description                       |
 |:---------|:-------|:----------------------------------|
 |topic     | string | topic value for the output messages |
-|nominal   | number |  |
-|minDelta  | number |  |
-|summand   | number |  |
-|factor    | number |  |
-|cycleTime | number |  |
-|cycleCount| number |  |
-|feedback  | string |  |
+|nominal   | number | nominal temperature for the closed loop control |
+|minDelta  | number | actual temp must be by this value lower then the nominal to start heating |
+|summand   | number | additional summand for the closed loop control |
+|factor    | number | control coefficient for the closed loop control |
+|cycleTime | number | time period of one heating cycle |
+|cycleCount| number | number of heating cycles |
+|feedback  | string | stlye of the state feedback |
+
+### feedback formats
 
 ## Example Flow
 

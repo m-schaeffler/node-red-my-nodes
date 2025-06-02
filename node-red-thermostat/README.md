@@ -12,7 +12,7 @@ $ npm install @mschaeffler/node-red-thermostat
 
 A heating device that just can be switched on and off, can be closed loop controlled:
 
-![closed loop control](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/doc/closedLoop.png)
+![closed loop control](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/doc/closedLoop.svg)
 
 ## Input
 

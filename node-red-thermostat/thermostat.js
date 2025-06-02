@@ -47,18 +47,13 @@ module.exports = function(RED) {
 
         function sendOutput(force=false)
         {
-            function formatFeedback(f)
+            let active = Boolean( node.running );
+            switch( node.feedback )
             {
-                switch( node.feedback )
-                {
-                    case "boolean":    return f;
-                    case "on_off":     return f ? "on" : "off";
-                    case "0_1":        return Number( f );
-                    case "cycleCount": return f ? node.data.cycleCount : 0;
-                }
-            }
-
-            const active = formatFeedback( Boolean( node.running ) );
+                case "on_off":     active = active ? "on" : "off"; break;
+                case "0_1":        active = Number( active ); break;
+                case "cycleCount": active = active ? node.data.cycleCount : 0; break;
+            }            
             const output = Boolean( node.running % 2 ) && !node.data.block;
             console.log("  ",active,output)
             node.send( [

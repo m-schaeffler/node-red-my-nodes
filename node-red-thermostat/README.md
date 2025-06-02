@@ -70,14 +70,16 @@ This controls the heater according to the cycles.
 
 ## Parameters
 
-|config       | type   | description                       |
-|:------------|:-------|:----------------------------------|
-|Devices      | JSON   | configuration of the BT-Home devices |
-|counter is time|Boolean| the counter in encrypted messages is checked again the actual time |
-|Status-Prefix| string | prefix for the topic for state output |
-|Event-Prefix | string | prefix for the topic for event output |
-|Context-Variable| string | name of the variable in flow context storage |
-|Contextstore | string | context store to be used |
+|config    | type   | description                       |
+|:---------|:-------|:----------------------------------|
+|topic     | string | topic value for the output messages |
+|nominal   | number |  |
+|minDelta  | number |  |
+|summand   | number |  |
+|factor    | number |  |
+|cycleTime | number |  |
+|cycleCount| number |  |
+|feedback  | string |  |
 
 ## Example Flow
 

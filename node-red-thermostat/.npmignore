@@ -1,6 +1,9 @@
 # Editor Backups
 *~
 
+# mermaid
+*.mmd
+
 # Dependency directories
 node_modules/
 jspm_packages/

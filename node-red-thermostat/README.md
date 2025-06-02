@@ -79,9 +79,18 @@ This controls the heater according to the cycles.
 |factor    | number | control coefficient for the closed loop control |
 |cycleTime | number | time period of one heating cycle |
 |cycleCount| number | number of heating cycles |
-|feedback  | string | stlye of the state feedback |
+|feedback  | string | style of the state feedback |
 
 ### feedback formats
+
+There are four formats for the state feedback:
+
+|feedback type| description                       |
+|:------------|:----------------------------------|
+|Boolean      | boolean value |
+|"on" / "off" | strings `"on"` or `"off"` |
+|1 / 0        | numbers `1` or `0` |
+|cycle count  | numbers `cycleCount` or `0` |
 
 ## Example Flow
 

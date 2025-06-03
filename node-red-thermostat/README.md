@@ -14,24 +14,27 @@ $ npm install @mschaeffler/node-red-thermostat
 
 A heating device that just can be switched on and off, can be closed loop controlled:
 
+![closed loop control](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/docs/closedLoop.png)
 
 The on / off cycles are done like this:
 
+![cycle state](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/docs/cycleState.png)
 
 The on time is calculated in this way:
 
+![formula](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/docs/formula.png)
 
 with this values
-|value             |description     |
-|:-----------------|:---------------|
-|t_{\mathrm{on}}   |time of on cycle|
-|T_{\mathrm{nom}}  |nominal Temperature, parameter `nominal`|
-|T_{\mathrm{act}}  |actual temperature, `msg.payload.temperature`|
-|s                 |minimal Delta, parameter `summand`|
-|f_{\mathrm{cycle}}|$1.4$ for the 1st cycle, $1.2$ for the 2nd, then $1$|
-|f_{\mathrm{msg}}  |control coefficient, `msg.payload.factor`|
-|f_{\mathrm{node}} |control coefficient, parameter `factor`|
-|t_{\mathrm{cycle}}|time of complete cycle, parameter `cycleTime`|
+|value  |description     |
+|:------|:---------------|
+|t_on   |time of on cycle|
+|T_nom  |nominal Temperature, parameter `nominal`|
+|T_act  |actual temperature, `msg.payload.temperature`|
+|s      |minimal Delta, parameter `summand`|
+|f_cycle|$1.4$ for the 1st cycle, $1.2$ for the 2nd, then $1$|
+|f_msg  |control coefficient, `msg.payload.factor`|
+|f_node |control coefficient, parameter `factor`|
+|t_cycle|time of complete cycle, parameter `cycleTime`|
 
 ## Input
 

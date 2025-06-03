@@ -14,63 +14,24 @@ $ npm install @mschaeffler/node-red-thermostat
 
 A heating device that just can be switched on and off, can be closed loop controlled:
 
-```mermaid
----
-config:
-  theme: mc
-  look: classic
----
-flowchart LR
-    n3["nominal temperature"] --> n8(("\-"))
-    n4["thermostat node"] -- on/off --> n5["heater"]
-    n8 --> n4
-    n7["actual temperature"] --> n8
-    n5 --> n7
-    n3@{ shape: lean-r}
-    n4@{ shape: rect}
-    n5@{ shape: rect}
-    n7@{ shape: lean-r}
-```
 
 The on / off cycles are done like this:
 
-```mermaid
----
-config:
-  look: classic
-  theme: neo
----
-stateDiagram
-  direction LR
-  state s5 <<choice>>
-  [*] --> s1
-  s1 --> s2:control on / counter = 0
-  s5 --> s6:[counter < cycleCount]
-  s2 --> s5:control off / counter++
-  s6 --> s2
-  s5 --> s1:[counter == cycleCount]
-  s1:heating off
-  s2:on cycle
-  s6:off cycle
-```
 
 The on time is calculated in this way:
 
-$$
-t_{\mathrm{on}} = \left( T_{\mathrm{nom}} - T_{\mathrm{act}} + s \right) \cdot f_{\mathrm{cycle}} \cdot f_{\mathrm{msg}} \cdot f_{\mathrm{node}} \cdot t_{\mathrm{cycle}}
-$$
 
 with this values
-|value               |description     |
-|:-------------------|:---------------|
-|$t_{\mathrm{on}}$   |time of on cycle|
-|$T_{\mathrm{nom}}$  |nominal Temperature, parameter `nominal`|
-|$T_{\mathrm{act}}$  |actual temperature, `msg.payload.temperature`|
-|$s$                 |minimal Delta, parameter `summand`|
-|$f_{\mathrm{cycle}}$|$1.4$ for the 1st cycle, $1.2$ for the 2nd, then $1$|
-|$f_{\mathrm{msg}}$  |control coefficient, `msg.payload.factor`|
-|$f_{\mathrm{node}}$ |control coefficient, parameter `factor`|
-|$t_{\mathrm{cycle}}$|time of complete cycle, parameter `cycleTime`|
+|value             |description     |
+|:-----------------|:---------------|
+|t_{\mathrm{on}}   |time of on cycle|
+|T_{\mathrm{nom}}  |nominal Temperature, parameter `nominal`|
+|T_{\mathrm{act}}  |actual temperature, `msg.payload.temperature`|
+|s                 |minimal Delta, parameter `summand`|
+|f_{\mathrm{cycle}}|$1.4$ for the 1st cycle, $1.2$ for the 2nd, then $1$|
+|f_{\mathrm{msg}}  |control coefficient, `msg.payload.factor`|
+|f_{\mathrm{node}} |control coefficient, parameter `factor`|
+|t_{\mathrm{cycle}}|time of complete cycle, parameter `cycleTime`|
 
 ## Input
 

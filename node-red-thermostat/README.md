@@ -28,13 +28,13 @@ with this values
 |value               |description     |
 |:-------------------|:---------------|
 |$t_{\mathrm{on}}$   |time of on cycle|
-|$T_{\mathrm{nom}}$  ||
-|$T_{\mathrm{act}}$  ||
-|$s$                 ||
-|$f_{\mathrm{cycle}}$||
-|$f_{\mathrm{msg}}$  ||
-|$f_{\mathrm{node}}$ ||
-|$t_{\mathrm{cycle}}$||
+|$T_{\mathrm{nom}}$  |nominal Temperature, parameter `nominal`|
+|$T_{\mathrm{act}}$  |actual temperature, `msg.payload.temperature`|
+|$s$                 |minimal Delta, parameter `summand`|
+|$f_{\mathrm{cycle}}$|$1.4$ for the 1st cycle, $1.2$ for the 2nd, then $1$|
+|$f_{\mathrm{msg}}$  |control coefficient, `msg.payload.factor`|
+|$f_{\mathrm{node}}$ |control coefficient, parameter `factor`|
+|$t_{\mathrm{cycle}}$|time of complete cycle, parameter `cycleTime`|
 
 ## Input
 

@@ -25,16 +25,16 @@ t_{\mathrm{on}} = \left( T_{\mathrm{nom}} - T_{\mathrm{act}} + s \right) \cdot f
 $$
 
 with this values
-|value             |description     |
-|:-----------------|:---------------|
-|$t_{\mathrm{on}}$ |time of on cycle|
-|T_{\mathrm{nom}}  ||
-|T_{\mathrm{act}}  ||
-|s                 ||
-|f_{\mathrm{cycle}}||
-|f_{\mathrm{msg}}  ||
-|f_{\mathrm{node}} ||
-|t_{\mathrm{cycle}}||
+|value               |description     |
+|:-------------------|:---------------|
+|$t_{\mathrm{on}}$   |time of on cycle|
+|$T_{\mathrm{nom}}$  ||
+|$T_{\mathrm{act}}§  ||
+|$s§                 ||
+|$f_{\mathrm{cycle}}§||
+|$f_{\mathrm{msg}}§  ||
+|$f_{\mathrm{node}}§ ||
+|$t_{\mathrm{cycle}}§||
 
 ## Input
 

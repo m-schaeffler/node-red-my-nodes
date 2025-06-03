@@ -21,7 +21,7 @@ The on / off cycles are done like this:
 The on time is calculated in this way:
 
 $$
-t_on = ( T_nom - T_act + summand ) * factor * t_cycle
+t_{on} = ( T_{nom} - T_{act} + summand ) \cdot factor \cdot t_{cycle}
 $$
 
 ## Input

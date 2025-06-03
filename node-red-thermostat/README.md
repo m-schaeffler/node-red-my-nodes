@@ -14,9 +14,15 @@ A heating device that just can be switched on and off, can be closed loop contro
 
 ![closed loop control](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/doc/closedLoop.svg)
 
-The on off cycles are done like this:
+The on / off cycles are done like this:
 
 ![cycle state](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/doc/cycleState.png)
+
+The on time is calculated in this way:
+
+$$
+t_on = ( T_nom - T_act + summand ) * factor * t_cycle
+$$
 
 ## Input
 

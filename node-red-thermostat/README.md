@@ -29,12 +29,12 @@ with this values
 |:-------------------|:---------------|
 |$t_{\mathrm{on}}$   |time of on cycle|
 |$T_{\mathrm{nom}}$  ||
-|$T_{\mathrm{act}}§  ||
-|$s§                 ||
-|$f_{\mathrm{cycle}}§||
-|$f_{\mathrm{msg}}§  ||
-|$f_{\mathrm{node}}§ ||
-|$t_{\mathrm{cycle}}§||
+|$T_{\mathrm{act}}$  ||
+|$s$                 ||
+|$f_{\mathrm{cycle}}$||
+|$f_{\mathrm{msg}}$  ||
+|$f_{\mathrm{node}}$ ||
+|$t_{\mathrm{cycle}}$||
 
 ## Input
 

@@ -12,7 +12,7 @@ $ npm install @mschaeffler/node-red-thermostat
 
 A heating device that just can be switched on and off, can be closed loop controlled:
 
-![closed loop control](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/doc/closedLoop.svg)
+![closed loop control](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-thermostat/doc/closedLoop.png)
 
 The on / off cycles are done like this:
 
@@ -21,7 +21,7 @@ The on / off cycles are done like this:
 The on time is calculated in this way:
 
 $$
-t_{on} = ( T_{nom} - T_{act} + summand ) \cdot factor \cdot t_{cycle}
+t_{on} = \left( T_{nom} - T_{act} + s \right) \cdot f \cdot t_{\mathrm{cycle}}
 $$
 
 ## Input

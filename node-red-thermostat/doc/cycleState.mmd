@@ -1,0 +1,17 @@
+---
+config:
+  look: classic
+  theme: neo
+---
+stateDiagram
+  direction LR
+  state s5 <<choice>>
+  [*] --> s1
+  s1 --> s2:control on / counter = 0
+  s5 --> s6:[counter < cycleCount]
+  s2 --> s5:control off / counter++
+  s6 --> s2
+  s5 --> s1:[counter == cycleCount]
+  s1:heating off
+  s2:on cycle
+  s6:off cycle

@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-bthome",
-    "version": "0.6.0",
+    "version": "1.0.0",
     "description": "A Node Red node to decrypt and decode BT-Home frames",
     "author": {
         "name": "Mathias Schäffler",

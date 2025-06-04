@@ -156,21 +156,38 @@
     </dl>
     
     <h3>Parameters</h3>
+    
     <dl class="message-properties">
-        <dt>Devices <span class="property-type">JSON</span></dt>
-        <dd> configuration of the BT-Home devices.</dd>
-        <dt>counter is times <span class="property-type">Boolean</span></dt>
-        <dd> the counter in encrypted messages is checked again the actual time.</dd>
-        <dt>Status-Prefix <span class="property-type">string</span></dt>
-        <dd> prefix for the topic for state output.</dd>
-        <dt>Event-Prefix <span class="property-type">string</span></dt>
-        <dd> prefix for the topic for event output.</dd>
-        <dt>Context-Variable <span class="property-type">string</span></dt>
-        <dd> name of the variable in flow context storage.</dd>
-        <dt>Contextstore <span class="property-type">string</span></dt>
-        <dd>  context store to be used.</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> topic value for the output messages.</dd>
+        <dt>nominal <span class="property-type">number</span></dt>
+        <dd> nominal temperature for the closed loop control.</dd>
+        <dt>minDelta <span class="property-type">number</span></dt>
+        <dd> actual temp must be by this value lower then the nominal to start heating.</dd>
+        <dt>summand <span class="property-type">number</span></dt>
+        <dd> additional summand for the closed loop control.</dd>
+        <dt>factor <span class="property-type">number</span></dt>
+        <dd> control coefficient for the closed loop control.</dd>
+        <dt>cycleTime <span class="property-type">number</span></dt>
+        <dd> time period of one heating cycle.</dd>
+        <dt>cycleCount <span class="property-type">number</span></dt>
+        <dd> number of heating cycles.</dd>
+        <dt>feedback <span class="property-type">string</span></dt>
+        <dd> style of the state feedback.</dd>
     </dl>
     
     <h4>feedback formats</h4>
     
+    <p>There are four formats for the state feedback:</p>
+    <dl class="message-properties">
+        <dt>Boolean</dt>
+        <dd> boolean value</dd>
+        <dt>"on" / "off" </dt>
+        <dd> strings <code>"on"</code> or <code>"off"</code></dd>
+        <dt>1 / 0 </dt>
+        <dd> numbers <code>1</code> or <code>0</code></dd>
+        <dt>cycle count </dt>
+        <dd> numbers <code>cycleCount</code> or <code>0</code></dd>
+    </dl>
+
 </script>

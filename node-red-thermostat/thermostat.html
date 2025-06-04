@@ -75,21 +75,63 @@
 
 <script type="text/x-red" data-help-name="thermostat">
 
-    <p>.</p>
+    <p>A Node Red node to control an (electric) heater.</p>
+    
+    <h3>Closed Loop Control</h3>
+    
+    <img src="docs/closedLoop.png" alt="closed loop control" />
+    
+    <img src="docs/cycleState.png" alt="closed loop control" />
+    
+    <img src="docs/formula.png" alt="closed loop control" />
     
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
-        <dd> data from Shelly script</dd>
+        <dd>data to control the thermostat </dd>
     </dl>
     
+    <p>There are two different ways to control the thermostat:</p>
+    
+    <h4>direct control</h4>
+    
+    <p><code>msg.payload</code> is a destinct value:</p>
+    <dl class="message-properties">
+        <dt>true <span class="property-type">boolean</span></dt>
+        <dd>starts heating according to already set data </dd>
+        <dt>false <span class="property-type">boolean</span></dt>
+        <dd>stops heating </dd>
+        <dt>on <span class="property-type">string </span></dt>
+        <dd>starts heating according to already set data </dd>
+        <dt>off <span class="property-type">string </span></dt>
+        <dd>stops heating </dd>
+        <dt>1 <span class="property-type">number </span></dt>
+        <dd>sets the cycle count to 1 and starts heating </dd>
+        <dt>2 <span class="property-type">number </span></dt>
+        <dd>sets the cycle count to 2 and starts heating </dd>
+        <dt>3 <span class="property-type">number </span></dt>
+        <dd>sets the cycle count to 3 and starts heating </dd>
+        <dt>4 <span class="property-type">number </span></dt>
+        <dd>sets the cycle count to 4 and starts heating </dd>
+        <dt>5 <span class="property-type">number </span></dt>
+        <dd>sets the cycle count to 5 and starts heating </dd>
+        <dt>0 <span class="property-type">number </span></dt>
+        <dd>stops heating </dd>
+    </dl>
+    
+    <h4>control with objects</h4>
+    
     <h3>Outputs</h3>
+    
+    <h4>state feedback</h4>
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
         <dd> <code>State-Prefix</code> + name of the device</dd>
         <dt>payload <span class="property-type"></span></dt>
         <dd> decoded state data</dd>
     </dl>
+    
+    <h4>control output</h4>
     
     <h3>Parameters</h3>
     <dl class="message-properties">
@@ -106,5 +148,7 @@
         <dt>Contextstore <span class="property-type">string</span></dt>
         <dd>  context store to be used.</dd>
     </dl>
+    
+    <h4>feedback formats</h4>
     
 </script>

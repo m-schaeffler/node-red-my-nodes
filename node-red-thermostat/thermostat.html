@@ -17,7 +17,7 @@
         outputs:2,
         icon: "font-awesome/fa-thermometer-half",
         label: function() {
-            return this.name <span class="property-type"> <span class="property-type">"Thermostat";
+            return this.name||"Thermostat";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
@@ -152,7 +152,7 @@
         <dt>topic <span class="property-type">string</span></dt>
         <dd> parameter <code>topic</code></dd>
         <dt>payload <span class="property-type">boolean</span></dt>
-        <dd> control value to switch the heater</code></dd>
+        <dd> control value to switch the heater</dd>
     </dl>
     
     <h3>Parameters</h3>

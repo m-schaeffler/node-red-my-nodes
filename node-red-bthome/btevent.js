@@ -4,8 +4,12 @@ class BtEvent {
         this._events = {};
         this._prefix = prefix;
     }
-    pushEvent(type,event)
+    pushEvent(type,event,data=null)
     {
+        if( event && data !== null )
+        {
+            event = `${event}|${data}`;
+        }
         switch( typeof this._events[type] )
         {
             case "undefined":
@@ -21,26 +25,47 @@ class BtEvent {
     }
     eventMessages(name)
     {
-        let result = [];
+        function pushResult(type,event,index=null)
+        {
+            if( event )
+            {
+                const help    = event.split( '|' );
+                let   payload = { type: type, event: help[0] };
+                let   topic;
+                if( index === null )
+                {
+                    topic = `${prefix}${name}/${help[0]}`;
+                }
+                else
+                {
+                    topic = `${prefix}${name}/${index}/${help[0]}`;
+                    payload.id = index;
+                }
+                if( help[1] !== undefined )
+                {
+                    payload.data = help[1];
+                }
+                result.push( {
+                    topic:   topic,
+                    payload: payload
+                } );
+            }
+        }
+
+        let   result = [];
+        const prefix = this._prefix;
         for( const t in this._events )
         {
             const event = this._events[t];
             if( typeof event == "string" )
             {
-                if( event )
-                {
-                    result.push( { topic: `${this._prefix}${name}/${event}`, payload: { type: t, event: event } } );
-                }
+                pushResult( t, event );
             }
             else
             {
                 for( const i in event )
                 {
-                    if( event[i] )
-                    {
-                        const index = Number( i ) + 1;
-                        result.push( { topic: `${this._prefix}${name}/${index}/${event[i]}`, payload: { type: t, id: index, event: event[i] } } );
-                    }
+                    pushResult( t, event[i], Number( i ) + 1 );
                 }
             }
         }

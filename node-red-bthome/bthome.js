@@ -136,8 +136,20 @@ module.exports = function(RED) {
                         case 0x01:
                             item.battery = rawdata.getUInt8();
                             break;
+                        case 0x04:
+                            setData( "pressure", rawdata.getUInt24() * 0.01 );
+                            break;
                         case 0x05:
                             setData( "lux", rawdata.getUInt24() * 0.01 );
+                            break;
+                        case 0x08:
+                            setData( "dewpoint", rawdata.getInt16() * 0.01 );
+                            break;
+                        case 0x0C:
+                            setData( "voltage", rawdata.getUInt16() * 0.001 );
+                            break;
+                        case 0x20:
+                            setData( "rain", Boolean( rawdata.getUInt8() ) );
                             break;
                         case 0x21:
                             events.pushEvent( "motion", rawdata.getEnum( ["","motion"] ) );
@@ -160,11 +172,7 @@ module.exports = function(RED) {
                             events.pushEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
                             break;
                         case 0x3C:
-                            {
-                                const e = rawdata.getEnum( ["","Left","Right"] );
-                                const d = rawdata.getUInt8();
-                                events.pushEvent( "dimmer", e != "" ? e+d : "" );
-                            }
+                            events.pushEvent( "dimmer", rawdata.getEnum( ["","Left","Right"] ), rawdata.getUInt8() );
                             break;
                         case 0x3F:
                             // 3 axis to be implemented
@@ -173,8 +181,21 @@ module.exports = function(RED) {
                         case 0x40:
                             setData( "distance", rawdata.getUInt16() );
                             break;
+                        case 0x44:
+                            // 2 values to be implemented
+                            setData( "wind", rawdata.getUInt16() * 0.01 );
+                            break;
                         case 0x45:
                             setData( "temperature", rawdata.getInt16() * 0.1 );
+                            break;
+                        case 0x46:
+                            setData( "uv", rawdata.getUInt8() * 0.1 );
+                            break;
+                        case 0x5E:
+                            setData( "direction", rawdata.getUInt16() * 0.01 );
+                            break;
+                        case 0x5F:
+                            setData( "precipitation", rawdata.getUInt16() * 0.1 );
                             break;
                         case 0x60:
                             setData( "channel", rawdata.getUInt8() );

@@ -159,7 +159,15 @@ module.exports = function(RED) {
                         case 0x3A:
                             events.pushEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
                             break;
+                        case 0x3C:
+                            {
+                                const e = rawdata.getEnum( ["","Left","Right"] );
+                                const d = rawdata.getUInt8();
+                                events.pushEvent( "dimmer", e != "" ? e+d : "" );
+                            }
+                            break;
                         case 0x3F:
+                            // 3 axis to be implemented
                             setData( "tilt", rawdata.getInt16() * 0.1 );
                             break;
                         case 0x40:
@@ -167,6 +175,9 @@ module.exports = function(RED) {
                             break;
                         case 0x45:
                             setData( "temperature", rawdata.getInt16() * 0.1 );
+                            break;
+                        case 0x60:
+                            setData( "channel", rawdata.getUInt8() );
                             break;
                         case 0xF0:
                             item.typeId = rawdata.getUInt16();

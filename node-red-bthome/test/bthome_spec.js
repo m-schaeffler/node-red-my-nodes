@@ -583,6 +583,127 @@ describe( 'bthome Node', function () {
     });
   });
 
+  it('should decode unencrypted messages (Shelly Weather)', function (done) {
+    let flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "bthome", name: "test", statusPrefix:"State", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        try {
+          c1++;
+          msg.should.have.a.property('topic','State/dev_unencrypted_1');
+          switch( c1 )
+          {
+            case 1:
+              msg.should.have.a.property('payload',{
+                lux: 13460.67,
+                rain: true,
+                wind: [ 11.02, 133.9 ],
+                uv: 12.8,
+                direction: 359.99
+              });
+              break;
+            case 2:
+              msg.should.have.a.property('payload',{
+                lux: 13460.67,
+                rain: true,
+                wind: [ 11.02, 133.9 ],
+                uv: 12.8,
+                direction: 359.99,
+                pressure: 1008.83,
+                dewpoint: 17.38,
+                voltage: 3.074,
+                humidity: 55,
+                temperature: 27.3,
+                precipitation: 400
+              });
+              break;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        c2++;
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('statusPrefix', "State/");
+        n1.should.have.a.property('devices');
+        n1.should.have.a.property('contextVar', "bthome");
+        n1.should.have.a.property('contextStore', "none");
+        await delay(50);
+        n1.should.have.a.property('data', {} );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,1,0xF0,255,2] // tbds
+        } });
+        await delay(50);
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,2,0x05,0x13,0x8A,0x14,0x20,1,0x44,0x4E,0x04,0x44,0x4E,0x34,0x46,128,0x5E,0x9F,0x8C]
+        } }); // packet type 1
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        checkData(n1.data,"dev_unencrypted_1",{pid:2,encrypted:false},"UnitTest",{
+          lux: 13460.67,
+          rain: true,
+          wind: [ 11.02, 133.9 ],
+          uv: 12.8,
+          direction: 359.99
+        });
+        c1.should.match( 1 );
+        c2.should.match( 0 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,3,1,45,0x04,0x13,0x8A,0x01,0x08,0xCA,0x06,0x0C,0x02,0x0C,0x2E,55,0x45,0x11,0x01,0x5F,0xA0,0x0F]
+         } }); // packet type 2
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        checkData(n1.data,"dev_unencrypted_1",{pid:3,encrypted:false,battery:45},"UnitTest",{
+          lux: 13460.67,
+          rain: true,
+          wind: [ 11.02, 133.9 ],
+          uv: 12.8,
+          direction: 359.99,
+          pressure: 1008.83,
+          dewpoint: 17.38,
+          voltage: 3.074,
+          humidity: 55,
+          temperature: 27.3,
+          precipitation: 400
+        });
+        n1.should.have.a.property('statistics',{ok:3,err:0,old:0,dup:0});
+        c1.should.match( 2 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should decode unencrypted events (Shelly Button)', function (done) {
     let flow = [{ id:'flow', type:'tab' },
                 { id: "n1", type: "bthome", name: "test", eventPrefix:"EP", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },

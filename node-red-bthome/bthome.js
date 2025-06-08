@@ -113,17 +113,34 @@ module.exports = function(RED) {
                 decipher.final();
             }
 
-            function setData(name,value)
-            {
-                if( item.data === undefined )
-                {
-                    item.data = {};
-                }
-                item.data[name] = value;
-            }
-
             function decodeMsg()
             {
+                let counter = {};
+
+                function setData(name,value)
+                {
+                    if( item.data === undefined )
+                    {
+                        item.data = {};
+                    }
+                    switch( typeof counter[name] )
+                    {
+                        case "undefined":
+                            counter[name] = 1;
+                            item.data[name] = value;
+                            break;
+                        case "boolean":
+                        case "number":
+                        case "string":
+                            item.data[name] = [ item.data[name] ];
+                            // fall through
+                        case "object":
+                            counter[name]++;
+                            item.data[name].push( value );
+                            break;
+                    }
+                }
+
                 rawdata = new Rawdata( rawdata );
                 while( rawdata.length() > 0 )
                 {
@@ -223,6 +240,7 @@ module.exports = function(RED) {
                             rawdata.reset();
                     }
                 }
+                //console.log(counter)
             }
 
             function checkPid()

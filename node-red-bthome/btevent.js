@@ -16,7 +16,7 @@ class BtEvent {
                 this._events[type] = event;
                 break;
             case "string":
-                this._events[type] = [this._events[type]];
+                this._events[type] = [ this._events[type] ];
                 // fall through
             case "object":
                 this._events[type].push( event );

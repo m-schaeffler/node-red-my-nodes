@@ -32,6 +32,16 @@ module.exports = function(RED) {
                     if( value !== undefined )
                     {
                         node.data = value;
+                        // upgrade old data
+                        for( const t in node.data )
+                        {
+                            const item = node.data[t];
+                            delete item.battery;
+                            if( item.data === undefined )
+                            {
+                                item.data = {};
+                            }
+                        }
                     }
                 }
             } );
@@ -119,10 +129,6 @@ module.exports = function(RED) {
 
                 function setData(name,value)
                 {
-                    if( item.data === undefined )
-                    {
-                        item.data = {};
-                    }
                     switch( typeof counter[name] )
                     {
                         case "undefined":
@@ -151,7 +157,7 @@ module.exports = function(RED) {
                             pid = rawdata.getUInt8();
                             break;
                         case 0x01:
-                            item.battery = rawdata.getUInt8();
+                            setData( "battery", rawdata.getUInt8() );
                             break;
                         case 0x04:
                             setData( "pressure", rawdata.getUInt24() * 0.01 );
@@ -302,7 +308,7 @@ module.exports = function(RED) {
                 checkMsg();
                 if( item == undefined )
                 {
-                    item = { pid: null, typeId: null, gw: {} };
+                    item = { pid: null, typeId: null, gw: {}, data: {} };
                     node.data[name] = item;
                 }
                 if( encrypted )

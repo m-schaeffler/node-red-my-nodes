@@ -9,7 +9,8 @@
             statusPrefix:{value:""},
             eventPrefix:{value:""},
             contextVar:{value:"bthome",required:true},
-            contextStore:{value:"none",required:true}
+            contextStore:{value:"none",required:true},
+            batteryState:{value:true,required:true}
         },
         inputs:1,
         outputs:2,
@@ -89,6 +90,10 @@
     <div class="form-row" id="node-contextVar-line">
         <label for="node-input-contextVar"><i class="fa fa-database"></i> Context-Variable</label>
         <input type="text" id="node-input-contextVar"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-batteryState"><i class="fa fa-"></i> battery is state</label>
+        <input type="checkbox" id="node-input-batteryState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
 </script>
 
@@ -181,6 +186,8 @@
         <dd> name of the variable in flow context storage.</dd>
         <dt>Contextstore <span class="property-type">string</span></dt>
         <dd>  context store to be used.</dd>
+        <dt>battery is state <span class="property-type">Boolean</span></dt>
+        <dd> battery level is included in state mesage.</dt>
     </dl>
     
     <h4>Device-Configuration</h4>

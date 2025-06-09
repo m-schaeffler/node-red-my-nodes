@@ -15,6 +15,7 @@ module.exports = function(RED) {
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
+        this.batteryState = Boolean( config.batteryState ?? true );
         this.data         = {};
         this.statistics   = { ok:0, dup:0, old:0, err:0 };
         node.status( "" );
@@ -32,16 +33,6 @@ module.exports = function(RED) {
                     if( value !== undefined )
                     {
                         node.data = value;
-                        // upgrade old data
-                        for( const t in node.data )
-                        {
-                            const item = node.data[t];
-                            delete item.battery;
-                            if( item.data === undefined )
-                            {
-                                item.data = {};
-                            }
-                        }
                     }
                 }
             } );
@@ -129,6 +120,10 @@ module.exports = function(RED) {
 
                 function setData(name,value)
                 {
+                    if( item.data === undefined )
+                    {
+                        item.data = {};
+                    }
                     switch( typeof counter[name] )
                     {
                         case "undefined":
@@ -157,7 +152,14 @@ module.exports = function(RED) {
                             pid = rawdata.getUInt8();
                             break;
                         case 0x01:
-                            setData( "battery", rawdata.getUInt8() );
+                            if( node.batteryState )
+                            {
+                                setData( "battery", rawdata.getUInt8() );
+                            }
+                            else
+                            {
+                                item.battery = rawdata.getUInt8();
+                            }
                             break;
                         case 0x04:
                             setData( "pressure", rawdata.getUInt24() * 0.01 );
@@ -198,14 +200,12 @@ module.exports = function(RED) {
                             events.pushEvent( "dimmer", rawdata.getEnum( ["","Left","Right"] ), rawdata.getUInt8() );
                             break;
                         case 0x3F:
-                            // 3 axis to be implemented
                             setData( "tilt", rawdata.getInt16() * 0.1 );
                             break;
                         case 0x40:
                             setData( "distance", rawdata.getUInt16() );
                             break;
                         case 0x44:
-                            // 2 values to be implemented
                             setData( "wind", rawdata.getUInt16() * 0.01 );
                             break;
                         case 0x45:
@@ -308,7 +308,7 @@ module.exports = function(RED) {
                 checkMsg();
                 if( item == undefined )
                 {
-                    item = { pid: null, typeId: null, gw: {}, data: {} };
+                    item = { pid: null, typeId: null, gw: {} };
                     node.data[name] = item;
                 }
                 if( encrypted )

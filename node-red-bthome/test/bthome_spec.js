@@ -40,7 +40,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('eventPrefix', "");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('batteryState', true);
+        n1.should.have.a.property('batteryState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.should.have.a.property('statistics',{ok:0,err:0,old:0,dup:0});
@@ -70,7 +70,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('devices');
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('batteryState', true);
+        n1.should.have.a.property('batteryState', false);
         let d = n1.devices;
         d.should.be.an.Object();
         function testDevice(dev,topic,key)
@@ -170,7 +170,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('devices');
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('batteryState', true);
+        n1.should.have.a.property('batteryState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -304,7 +304,7 @@ describe( 'bthome Node', function () {
 
   it('should decode unencrypted messages (Shelly HT)', function (done) {
     let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n1", type: "bthome", name: "test", devices:testDevices, batteryState:true, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -522,7 +522,7 @@ describe( 'bthome Node', function () {
 
   it('should decode unencrypted messages (Shelly Distance)', function (done) {
     let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", statusPrefix:"State", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n1", type: "bthome", name: "test", statusPrefix:"State", devices:testDevices, batteryState:true, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -1079,7 +1079,7 @@ describe( 'bthome Node', function () {
 
   it('should not store into a context variable', function (done) {
     let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", contextVar:"shellyBlu", contextStore:"none", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n1", type: "bthome", name: "test", contextVar:"shellyBlu", contextStore:"none", devices:testDevices, batteryState:true, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {

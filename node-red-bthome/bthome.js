@@ -15,7 +15,7 @@ module.exports = function(RED) {
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
-        this.batteryState = Boolean( config.batteryState ?? true );
+        this.batteryState = Boolean( config.batteryState );
         this.data         = {};
         this.statistics   = { ok:0, dup:0, old:0, err:0 };
         node.status( "" );
@@ -155,10 +155,12 @@ module.exports = function(RED) {
                             if( node.batteryState )
                             {
                                 setData( "battery", rawdata.getUInt8() );
+                                delete item.battery;
                             }
                             else
                             {
                                 item.battery = rawdata.getUInt8();
+                                delete item.data?.battery;
                             }
                             break;
                         case 0x04:

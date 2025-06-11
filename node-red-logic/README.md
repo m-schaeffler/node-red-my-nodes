@@ -226,12 +226,12 @@ The message property to be used as payload can be defined with the `Property` pr
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | | same as in input message.|
-|stats.count | number | number of data elements.|
-|stats.min number | number | minimal value.|
-|stats.max number | number | maximal value.|
-|stats.average number | number | average value.|
-|stats.deviation number | number | standard deviation.|
-|stats.variation number | number | coefficient of variation.|
+|stat.count | number | number of data elements.|
+|stat.min number | number | minimal value.|
+|stat.max number | number | maximal value.|
+|stat.average number | number | average value.|
+|stat.deviation number | number | standard deviation.|
+|stat.variation number | number | coefficient of variation.|
 
 #### Parameters
 

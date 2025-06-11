@@ -173,7 +173,16 @@ module.exports = function(RED) {
                             setData( "dewpoint", rawdata.getInt16() * 0.01 );
                             break;
                         case 0x0C:
-                            setData( "voltage", rawdata.getUInt16() * 0.001 );
+                            if( node.batteryState )
+                            {
+                                setData( "voltage", rawdata.getUInt16() * 0.001 );
+                                delete item.voltage;
+                            }
+                            else
+                            {
+                                item.voltage = rawdata.getUInt16() * 0.001;
+                                delete item.data?.voltage;
+                            }
                             break;
                         case 0x20:
                             setData( "rain", Boolean( rawdata.getUInt8() ) );

@@ -11,7 +11,8 @@
             },
             minData:{value:"1", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;}
-            }
+            },
+            showState:{value:false}
         },
         inputs:1,
         outputs:1,
@@ -51,6 +52,10 @@
     <div class="form-row">
         <label for="node-input-minData"><i class="fa fa-check-square-o "></i> min. Data</label>
         <input type="text" id="node-input-minData">
+    </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
 </script>
 
@@ -104,5 +109,7 @@
         <dd> time frame to collect the data for the analysis.</dd>
         <dt>min. Data <span class="property-type">number</span></dt>
         <dd> min. amount of data points to generate an output.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
     </dl>
 </script>

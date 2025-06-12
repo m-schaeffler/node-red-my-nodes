@@ -31,6 +31,7 @@ describe( 'math_statistics Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('deltaTime', 60000);
         n1.should.have.a.property('minData', 1);
+        n1.should.have.a.property('showState', false);
         await delay(50);
         done();
       }

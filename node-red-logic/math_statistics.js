@@ -9,6 +9,7 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.deltaTime    = Number( config.deltaTime ?? 60 )*1000;
         this.minData      = Number( config.minData ?? 1 );
+        this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -99,17 +100,26 @@ module.exports = function(RED) {
                             }
                             msg.stat.deviation = Math.sqrt( varianz / msg.stat.count );
                             msg.stat.variation = msg.stat.deviation / msg.stat.average;
-                            node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation.toPrecision(4)}`});
+                            if( node.showState )
+                            {
+                                node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation.toPrecision(4)}`});
+                            }
                             send( msg );
                         }
                         else
                         {
-                            node.status({fill:"gray",shape:"dot",text:"to less data"});
+                            if( node.showState )
+                            {
+                                node.status({fill:"gray",shape:"dot",text:"to less data"});
+                            }
                         }
                     }
                     else
                     {
-                        node.status({fill:"red",shape:"dot",text:"payload is NaN"});
+                        if( node.showState )
+                        {
+                            node.status({fill:"red",shape:"dot",text:"payload is NaN"});
+                        }
                     }
                     done();
                 } );

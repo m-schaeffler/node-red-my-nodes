@@ -28,7 +28,7 @@ module.exports = function(RED) {
             }
             else
             {
-                console.log( "context read", value );
+                //console.log( "context read", value );
                 if( value !== undefined )
                 {
                     node.data = value;
@@ -53,9 +53,9 @@ module.exports = function(RED) {
                 case "on_off":     active = active ? "on" : "off"; break;
                 case "0_1":        active = Number( active ); break;
                 case "cycleCount": active = active ? node.data.cycleCount : 0; break;
-            }            
+            }
             const output = Boolean( node.running % 2 ) && !node.data.block;
-            console.log("  ",active,output)
+            //console.log("  ",active,output)
             node.send( [
                 force || active !== node.lastR ? { topic: node.topic, payload: active } : null,
                 force || output !== node.lastO ? { topic: node.topic, payload: output } : null

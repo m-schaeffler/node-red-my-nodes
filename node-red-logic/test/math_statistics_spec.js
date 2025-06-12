@@ -40,7 +40,7 @@ describe( 'math_statistics Node', function () {
     });
   });
 
-  it('should caclulate statistical values', function (done) {
+  it('should calculate statistical values', function (done) {
     const numbers = [1000,10,99.9,100,100.1,2000,0];
     var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -64,7 +64,8 @@ describe( 'math_statistics Node', function () {
           msg.should.have.property('topic',1);
           msg.should.have.property('payload',numbers[c]);
           msg.should.have.property('stat').which.is.Object();
-          msg.stat.should.have.property('value',numbers[c++]);
+          msg.stat.should.have.property('last',numbers[c++]);
+          msg.stat.should.have.property('first',numbers[0]);
           msg.stat.should.have.property('count',c);
           msg.stat.should.have.property('min',min);
           msg.stat.should.have.property('max',max);
@@ -93,7 +94,7 @@ describe( 'math_statistics Node', function () {
     });
   });
 
-  it('should caclulate mean values, minData=3', function (done) {
+  it('should calculate mean values, minData=3', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
     var flow = [{ id: "n1", type: "statistics", minData:"3", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -284,7 +285,7 @@ describe( 'math_statistics Node', function () {
         try {
           msg.should.have.a.property('payload').which.is.Object();
           msg.payload.should.have.a.property('value',98);
-          msg.stat.should.have.a.property('value',98);
+          msg.stat.should.have.a.property('last',98);
           msg.stat.should.have.a.property('count',1);
           msg.stat.should.have.a.property('average',98);
           c++;
@@ -318,7 +319,7 @@ describe( 'math_statistics Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('payload',98);
-          msg.stat.should.have.a.property('value',98+5);
+          msg.stat.should.have.a.property('last',98+5);
           msg.stat.should.have.a.property('count',1);
           msg.stat.should.have.a.property('average',98+5);
           c++;

@@ -73,7 +73,8 @@ module.exports = function(RED) {
                         if( item.length >= node.minData )
                         {
                             msg.stat = {
-                                value: payload,
+                                first: item[0].value,
+                                last:  payload,
                                 count: item.length,
                                 min:   Number.MAX_SAFE_INTEGER,
                                 max:   Number.MIN_SAFE_INTEGER };

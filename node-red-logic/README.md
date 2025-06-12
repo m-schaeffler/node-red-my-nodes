@@ -226,6 +226,8 @@ The message property to be used as payload can be defined with the `Property` pr
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | | same as in input message.|
+|stat.first | number | oldest data element.|
+|stat.last | number | newest data element.|
 |stat.count | number | number of data elements.|
 |stat.min number | number | minimal value.|
 |stat.max number | number | maximal value.|

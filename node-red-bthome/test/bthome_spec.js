@@ -618,7 +618,7 @@ describe( 'bthome Node', function () {
             case 1:
               msg.should.have.a.property('payload',{
                 lux: 13460.67,
-                rain: true,
+                moisture: true,
                 wind: [ 11.02, 133.9 ],
                 uv: 12.8,
                 direction: 359.99
@@ -627,13 +627,12 @@ describe( 'bthome Node', function () {
             case 2:
               msg.should.have.a.property('payload',{
                 lux: 13460.67,
-                rain: true,
+                moisture: true,
                 wind: [ 11.02, 133.9 ],
                 uv: 12.8,
                 direction: 359.99,
                 pressure: 1008.83,
                 dewpoint: 17.38,
-                voltage: 3.074,
                 humidity: 55,
                 temperature: 27.3,
                 precipitation: 400
@@ -678,7 +677,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:2,encrypted:false},"UnitTest",{
           lux: 13460.67,
-          rain: true,
+          moisture: true,
           wind: [ 11.02, 133.9 ],
           uv: 12.8,
           direction: 359.99
@@ -698,13 +697,12 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('data');
         checkData(n1.data,"dev_unencrypted_1",{pid:3,encrypted:false,battery:45},"UnitTest",{
           lux: 13460.67,
-          rain: true,
+          moisture: true,
           wind: [ 11.02, 133.9 ],
           uv: 12.8,
           direction: 359.99,
           pressure: 1008.83,
           dewpoint: 17.38,
-          voltage: 3.074,
           humidity: 55,
           temperature: 27.3,
           precipitation: 400

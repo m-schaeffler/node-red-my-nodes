@@ -12,6 +12,7 @@
             minData:{value:"1", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
+            contextStore:{value:"",required:true},
             showState:{value:false}
         },
         inputs:1,
@@ -26,11 +27,25 @@
         inputLabels: 'input',
         outputLabels: 'output',
         oneditprepare: function() {
+            const node = this;
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
                 typeField: "#node-input-propertyType"
             });
+            // populate store names
+            $("#node-input-contextStore").empty();
+            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : ''
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                   $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
         }
     });
 </script>
@@ -52,6 +67,10 @@
     <div class="form-row">
         <label for="node-input-minData"><i class="fa fa-check-square-o "></i> min. Data</label>
         <input type="text" id="node-input-minData">
+    </div>
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
@@ -109,6 +128,8 @@
         <dd> time frame to collect the data for the analysis.</dd>
         <dt>min. Data <span class="property-type">number</span></dt>
         <dd> min. amount of data points to generate an output.</dd>
+        <dt>Contextstore <span class="property-type">context store</span></dt>
+        <dd> context store for storing the values; <code>none</code> is no storage.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

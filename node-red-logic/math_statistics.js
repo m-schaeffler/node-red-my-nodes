@@ -9,6 +9,7 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.deltaTime    = Number( config.deltaTime ?? 60 )*1000;
         this.minData      = Number( config.minData ?? 1 );
+        this.contextStore = config.contextStore ?? "none";
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {

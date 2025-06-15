@@ -185,7 +185,7 @@ module.exports = function(RED) {
                             }
                             break;
                         case 0x20:
-                            setData( "rain", Boolean( rawdata.getUInt8() ) );
+                            setData( "moisture", Boolean( rawdata.getUInt8() ) );
                             break;
                         case 0x21:
                             events.pushEvent( "motion", rawdata.getEnum( ["","motion"] ) );
@@ -194,6 +194,7 @@ module.exports = function(RED) {
                             setData( "vibration", Boolean( rawdata.getUInt8() ) );
                             break;
                         case 0x2D:
+                          {
                             let state = rawdata.getUInt8();
                             if( item.typeId === 0x0202 )
                             {
@@ -201,6 +202,7 @@ module.exports = function(RED) {
                             }
                             setData( "state", state );
                             break;
+                          }
                         case 0x2E:
                             setData( "humidity", rawdata.getUInt8() );
                             break;
@@ -214,8 +216,11 @@ module.exports = function(RED) {
                             setData( "tilt", rawdata.getInt16() * 0.1 );
                             break;
                         case 0x40:
-                            setData( "distance", rawdata.getUInt16() );
+                          {
+                            const distance = rawdata.getUInt16();
+                            setData( "distance", distance != 0 ? distance : null );
                             break;
+                          }
                         case 0x44:
                             setData( "wind", rawdata.getUInt16() * 0.01 );
                             break;

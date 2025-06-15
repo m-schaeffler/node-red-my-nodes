@@ -62,7 +62,7 @@ module.exports = function(RED) {
                     const payload = Number( value );
                     if( ! isNaN( payload ) )
                     {
-                        let data = context.get( "data" ) ?? {};
+                        let data = context.get( "data", node.contextStore ) ?? {};
                         let item = data[msg.topic] ?? [];
                         item.push( { time:now, value:payload } );
                         while( item[0].time < now - node.deltaTime )
@@ -70,7 +70,7 @@ module.exports = function(RED) {
                             item.shift();
                         }
                         data[msg.topic] = item;
-                        context.set( "data", data );
+                        context.set( "data", data, node.contextStore );
 
                         if( item.length >= node.minData )
                         {

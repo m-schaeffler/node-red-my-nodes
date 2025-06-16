@@ -10,7 +10,7 @@ module.exports = function(RED) {
         var node = this;
         this.flowcontext  = this.context().flow;
         this.devices      = JSON.parse( config.devices ?? "{}" );
-        this.counterMode  = config.counterMode ?? "none";
+        this.counterMode  = config.counterMode  ?? "none";
         this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar   ?? "bthome";
@@ -124,18 +124,18 @@ module.exports = function(RED) {
                     {
                         item.data = {};
                     }
-                    switch( typeof counter[name] )
+                    switch( counter[name] )
                     {
-                        case "undefined":
+                        case undefined:
                             counter[name] = 1;
                             item.data[name] = value;
                             break;
-                        case "boolean":
-                        case "number":
-                        case "string":
+                        case 1:
                             item.data[name] = [ item.data[name] ];
                             // fall through
-                        case "object":
+                        case 2:
+                        case 3:
+                        case 4:
                             counter[name]++;
                             item.data[name].push( value );
                             break;
@@ -262,7 +262,6 @@ module.exports = function(RED) {
                             rawdata.reset();
                     }
                 }
-                //console.log(counter)
             }
 
             function checkPid()

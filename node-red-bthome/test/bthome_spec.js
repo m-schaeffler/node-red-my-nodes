@@ -998,7 +998,7 @@ describe( 'bthome Node', function () {
       n2.on("input", function (msg) {
         try {
           c1++;
-          console.log(msg)
+          //console.log(msg)
           switch( c1 )
           {
             case 1:
@@ -1014,6 +1014,7 @@ describe( 'bthome Node', function () {
               msg.should.have.a.property('payload',{channel:2});
               break;
             case 4:
+            case 5:
               msg.should.have.a.property('topic','dev_unencrypted_1');
               msg.should.have.a.property('payload',{channel:4});
               break;
@@ -1026,16 +1027,16 @@ describe( 'bthome Node', function () {
       n3.on("input", function (msg) {
         try {
           c2++;
-          console.log(msg);
+          //console.log(msg);
           switch( c2 )
           {
             case 1:
-              msg.should.have.a.property('topic','dev_unencrypted_1/1/1/S');
-              msg.should.have.a.property('payload',{type:'button',event:'S',channel:1,id:1});
+              msg.should.have.a.property('topic','dev_unencrypted_1/1/left/S');
+              msg.should.have.a.property('payload',{type:'button',event:'S',channel:1,id:"left"});
               break;
             case 2:
-              msg.should.have.a.property('topic','dev_unencrypted_1/3/2/S');
-              msg.should.have.a.property('payload',{type:'button',event:'S',channel:3,id:2});
+              msg.should.have.a.property('topic','dev_unencrypted_1/3/right/S');
+              msg.should.have.a.property('payload',{type:'button',event:'S',channel:3,id:"right"});
               break;
             case 3:
               msg.should.have.a.property('topic','dev_unencrypted_1/2/up');
@@ -1044,6 +1045,10 @@ describe( 'bthome Node', function () {
             case 4:
               msg.should.have.a.property('topic','dev_unencrypted_1/4/down');
               msg.should.have.a.property('payload',{type:'dimmer',event:'down',channel:4,data:9});
+              break;
+            case 5:
+              msg.should.have.a.property('topic','dev_unencrypted_1/4/rotation');
+              msg.should.have.a.property('payload',{type:'rotation',event:'rotation',channel:4,data:[5.5,-54.5,76]});
               break;
           }
         }
@@ -1123,23 +1128,21 @@ describe( 'bthome Node', function () {
         checkData(n1.data,"dev_unencrypted_1",{pid:4},"UnitTest",{channel:4});
         c1.should.match( 4 );
         c2.should.match( 4 );
-        /*
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
           gateway: "UnitTest",
           addr:    "11:22:33:44:55:66",
           rssi:    -50,
           time:    Date.now(),
-          data:    [68,0,5,0x3A,0,0x3A,0,0x3A,0,0x3A,0]
+          data:    [68,0,5,1,100,63,55,0,63,223,253,63,248,2,96,3]
         } });
-        */
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        //checkData(n1.data,"dev_unencrypted_1",{pid:5},"UnitTest");
+        checkData(n1.data,"dev_unencrypted_1",{pid:5},"UnitTest",{channel:4});
         n1.should.have.a.property('statistics',{ok:6,err:0,old:0,dup:0});
-        c1.should.match( 0 );
-        c2.should.match( 4 );
+        c1.should.match( 5 );
+        c2.should.match( 5 );
         done();
       }
       catch(err) {

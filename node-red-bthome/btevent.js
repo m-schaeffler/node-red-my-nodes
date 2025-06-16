@@ -12,7 +12,7 @@ class BtEvent {
         }
         this._events[type].push( { event:event, data:data } );
     }
-    eventMessages(name,channel)
+    eventMessages(name,channel,indexLut)
     {
         function pushResult(type,event,index=null)
         {
@@ -56,7 +56,7 @@ class BtEvent {
             {
                 for( const i in event )
                 {
-                    pushResult( t, event[i], Number( i ) + 1 );
+                    pushResult( t, event[i], indexLut !== null ? indexLut[i] : Number( i ) + 1 );
                 }
             }
         }

@@ -262,6 +262,11 @@ module.exports = function(RED) {
                             rawdata.reset();
                     }
                 }
+                if( item.typeId === 0x020A && item.data?.tilt )
+                {
+                    events.pushEvent( "rotation", "rotation", item.data.tilt );
+                    delete item.data.tilt;
+                }
             }
 
             function checkPid()
@@ -304,7 +309,7 @@ module.exports = function(RED) {
                 node.status( name );
                 send( [
                     item.data ? { topic:node.statusPrefix+name, payload:item.data } : null,
-                    events.eventMessages( name, item.data?.channel ?? null )
+                    events.eventMessages( name, item.data?.channel ?? null, item.typeId === 0x020A ? ["left","right"] : null )
                 ] );
             }
 

@@ -6,55 +6,40 @@ class BtEvent {
     }
     pushEvent(type,event,data=null)
     {
-        if( event && data !== null )
+        if( this._events[type] === undefined )
         {
-            event = `${event}|${data}`;
+            this._events[type] = [];
         }
-        switch( typeof this._events[type] )
-        {
-            case "undefined":
-                this._events[type] = event;
-                break;
-            case "string":
-                this._events[type] = [ this._events[type] ];
-                // fall through
-            case "object":
-                this._events[type].push( event );
-                break;
-        }
+        this._events[type].push( { event:event, data:data } );
     }
     eventMessages(name,channel)
     {
         function pushResult(type,event,index=null)
         {
-            if( event )
+            if( event.event && event.data !== "0" )
             {
-                const help = event.split( '|' );
-                if( help[1] !== "0" )
+                let payload  = { type: type, event: event.event };
+                let indexStr = "";;
+                if( channel !== null )
                 {
-                    let payload  = { type: type, event: help[0] };
-                    let indexStr = "";;
-                    if( channel !== null )
-                    {
-                        indexStr += "/"
-                        indexStr += channel;
-                        payload.channel = channel;
-                    }
-                    if( index !== null )
-                    {
-                        indexStr += "/";
-                        indexStr += index;
-                        payload.id = index;
-                    }
-                    if( help[1] !== undefined )
-                    {
-                        payload.data = Number( help[1] );
-                    }
-                    result.push( {
-                        topic:   `${prefix}${name}${indexStr}/${help[0]}`,
-                        payload: payload
-                    } );
+                    indexStr += "/"
+                    indexStr += channel;
+                    payload.channel = channel;
                 }
+                if( index !== null )
+                {
+                    indexStr += "/";
+                    indexStr += index;
+                    payload.id = index;
+                }
+                if( event.data !== null )
+                {
+                    payload.data = event.data;
+                }
+                result.push( {
+                    topic:   `${prefix}${name}${indexStr}/${event.event}`,
+                    payload: payload
+                } );
             }
         }
 
@@ -63,9 +48,9 @@ class BtEvent {
         for( const t in this._events )
         {
             const event = this._events[t];
-            if( typeof event == "string" )
+            if( event.length == 1 )
             {
-                pushResult( t, event );
+                pushResult( t, event[0] );
             }
             else
             {

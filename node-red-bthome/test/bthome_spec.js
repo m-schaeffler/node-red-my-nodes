@@ -984,6 +984,170 @@ describe( 'bthome Node', function () {
     });
   });
 
+  it('should decode unencrypted events (Shelly Remote)', function (done) {
+    let flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "bthome", name: "test", eventPrefix:"", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        try {
+          c1++;
+          console.log(msg)
+          switch( c1 )
+          {
+            case 1:
+              msg.should.have.a.property('topic','dev_unencrypted_1');
+              msg.should.have.a.property('payload',{channel:1});
+              break;
+            case 2:
+              msg.should.have.a.property('topic','dev_unencrypted_1');
+              msg.should.have.a.property('payload',{channel:3});
+              break;
+            case 3:
+              msg.should.have.a.property('topic','dev_unencrypted_1');
+              msg.should.have.a.property('payload',{channel:2});
+              break;
+            case 4:
+              msg.should.have.a.property('topic','dev_unencrypted_1');
+              msg.should.have.a.property('payload',{channel:4});
+              break;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        try {
+          c2++;
+          console.log(msg);
+          switch( c2 )
+          {
+            case 1:
+              msg.should.have.a.property('topic','dev_unencrypted_1/1/1/S');
+              msg.should.have.a.property('payload',{type:'button',event:'S',channel:1,id:1});
+              break;
+            case 2:
+              msg.should.have.a.property('topic','dev_unencrypted_1/3/2/S');
+              msg.should.have.a.property('payload',{type:'button',event:'S',channel:3,id:2});
+              break;
+            case 3:
+              msg.should.have.a.property('topic','dev_unencrypted_1/2/up');
+              msg.should.have.a.property('payload',{type:'dimmer',event:'up',channel:2,data:13});
+              break;
+            case 4:
+              msg.should.have.a.property('topic','dev_unencrypted_1/4/down');
+              msg.should.have.a.property('payload',{type:'dimmer',event:'down',channel:4,data:9});
+              break;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('devices');
+        n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('contextVar', "bthome");
+        n1.should.have.a.property('contextStore', "none");
+        await delay(50);
+        n1.should.have.a.property('data', {} );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,0,0xF0,10,2]
+        } });
+        await delay(50);
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,1,1,100,58,1,58,0,96,0]
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        checkData(n1.data,"dev_unencrypted_1",{pid:1},"UnitTest",{channel:1});
+        c1.should.match( 1 );
+        c2.should.match( 1 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,2,1,100,58,0,58,1,96,2]
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        checkData(n1.data,"dev_unencrypted_1",{pid:2},"UnitTest",{channel:3});
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,3,1,100,60,1,13,96,1]
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        checkData(n1.data,"dev_unencrypted_1",{pid:3},"UnitTest",{channel:2});
+        c1.should.match( 3 );
+        c2.should.match( 3 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,4,1,100,60,2,9,96,3]
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        checkData(n1.data,"dev_unencrypted_1",{pid:4},"UnitTest",{channel:4});
+        c1.should.match( 4 );
+        c2.should.match( 4 );
+        /*
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,5,0x3A,0,0x3A,0,0x3A,0,0x3A,0]
+        } });
+        */
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        //checkData(n1.data,"dev_unencrypted_1",{pid:5},"UnitTest");
+        n1.should.have.a.property('statistics',{ok:6,err:0,old:0,dup:0});
+        c1.should.match( 0 );
+        c2.should.match( 4 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should decode unencrypted events (Shelly Motion)', function (done) {
     let flow = [{ id:'flow', type:'tab' },
                 { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },

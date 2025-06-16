@@ -237,7 +237,7 @@ module.exports = function(RED) {
                             setData( "precipitation", rawdata.getUInt16() * 0.1 );
                             break;
                         case 0x60:
-                            setData( "channel", rawdata.getUInt8() );
+                            setData( "channel", rawdata.getUInt8() + 1 );
                             break;
                         case 0xF0:
                             item.typeId = rawdata.getUInt16();

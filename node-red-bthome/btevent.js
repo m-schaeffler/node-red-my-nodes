@@ -23,32 +23,38 @@ class BtEvent {
                 break;
         }
     }
-    eventMessages(name)
+    eventMessages(name,channel)
     {
         function pushResult(type,event,index=null)
         {
             if( event )
             {
-                const help    = event.split( '|' );
-                let   payload = { type: type, event: help[0] };
-                let   topic;
-                if( index === null )
+                const help = event.split( '|' );
+                if( help[1] !== "0" )
                 {
-                    topic = `${prefix}${name}/${help[0]}`;
+                    let payload  = { type: type, event: help[0] };
+                    let indexStr = "";;
+                    if( channel !== null )
+                    {
+                        indexStr += "/"
+                        indexStr += channel;
+                        payload.channel = channel;
+                    }
+                    if( index !== null )
+                    {
+                        indexStr += "/";
+                        indexStr += index;
+                        payload.id = index;
+                    }
+                    if( help[1] !== undefined )
+                    {
+                        payload.data = Number( help[1] );
+                    }
+                    result.push( {
+                        topic:   `${prefix}${name}${indexStr}/${help[0]}`,
+                        payload: payload
+                    } );
                 }
-                else
-                {
-                    topic = `${prefix}${name}/${index}/${help[0]}`;
-                    payload.id = index;
-                }
-                if( help[1] !== undefined )
-                {
-                    payload.data = help[1];
-                }
-                result.push( {
-                    topic:   topic,
-                    payload: payload
-                } );
             }
         }
 

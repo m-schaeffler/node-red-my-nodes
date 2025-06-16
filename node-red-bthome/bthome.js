@@ -210,7 +210,7 @@ module.exports = function(RED) {
                             events.pushEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
                             break;
                         case 0x3C:
-                            events.pushEvent( "dimmer", rawdata.getEnum( ["","Left","Right"] ), rawdata.getUInt8() );
+                            events.pushEvent( "dimmer", rawdata.getEnum( ["","up","down"] ), rawdata.getUInt8() );
                             break;
                         case 0x3F:
                             setData( "tilt", rawdata.getInt16() * 0.1 );
@@ -305,7 +305,7 @@ module.exports = function(RED) {
                 node.status( name );
                 send( [
                     item.data ? { topic:node.statusPrefix+name, payload:item.data } : null,
-                    events.eventMessages( name )
+                    events.eventMessages( name, item.data?.channel ?? null )
                 ] );
             }
 

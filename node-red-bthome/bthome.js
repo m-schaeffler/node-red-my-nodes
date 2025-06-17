@@ -321,7 +321,7 @@ module.exports = function(RED) {
             const version   = dib >> 5;
             let   pid       = null;
             let   item      = node.data[name];
-            const events    = new BtEvent( node.eventPrefix, item );
+            let   events;
 
             try
             {
@@ -335,6 +335,7 @@ module.exports = function(RED) {
                 {
                     decryptMsg();
                 }
+                events = new BtEvent( node.eventPrefix, item );
                 decodeMsg();
                 if( checkPid() )
                 {

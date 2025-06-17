@@ -22,7 +22,7 @@ class BtEvent {
     {
         function pushResult(type,event,index=null)
         {
-            if( event.event && event.data !== "0" )
+            if( event.event && event.data !== 0 )
             {
                 let payload  = { type: type, event: event.event };
                 let indexStr = "";;

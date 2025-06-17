@@ -309,7 +309,7 @@ module.exports = function(RED) {
                 node.status( name );
                 send( [
                     item.data ? { topic:node.statusPrefix+name, payload:item.data } : null,
-                    events.eventMessages( name, item.data?.channel ?? null, item.typeId === 0x020A ? ["left","right"] : null )
+                    events.eventMessages( name, item.data?.channel ?? null )
                 ] );
             }
 
@@ -320,8 +320,8 @@ module.exports = function(RED) {
             const encrypted = Boolean( dib & 0x1 );
             const version   = dib >> 5;
             let   pid       = null;
-            const events    = new BtEvent( node.eventPrefix );
             let   item      = node.data[name];
+            const events    = new BtEvent( node.eventPrefix, item );
 
             try
             {

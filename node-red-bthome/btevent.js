@@ -1,8 +1,14 @@
 class BtEvent {
-    constructor(prefix)
+    static eventLut = {
+        0x020A: {
+            button: ["left","right"]
+        }
+    };
+    constructor(prefix,item)
     {
         this._events = {};
         this._prefix = prefix;
+        this._item   = item;
     }
     pushEvent(type,event,data=null)
     {
@@ -56,7 +62,11 @@ class BtEvent {
             {
                 for( const i in event )
                 {
-                    pushResult( t, event[i], indexLut !== null ? indexLut[i] : Number( i ) + 1 );
+                    pushResult(
+                        t,
+                        event[i],
+                        BtEvent.eventLut[this._item.typeId]?.[t]?.[i] ?? Number( i ) + 1
+                    );
                 }
             }
         }

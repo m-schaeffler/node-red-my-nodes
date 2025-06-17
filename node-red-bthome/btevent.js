@@ -18,7 +18,7 @@ class BtEvent {
         }
         this._events[type].push( { event:event, data:data } );
     }
-    eventMessages(name,channel,indexLut)
+    eventMessages(name,channel)
     {
         function pushResult(type,event,index=null)
         {

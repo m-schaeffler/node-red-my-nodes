@@ -3,6 +3,12 @@ const Tools   = require( './tools.js' );
 const Rawdata = require( "./rawdata.js" );
 const BtEvent = require( "./btevent.js" );
 
+class TypeIds {
+    static bluDW     = 0x0202;
+    static bluRemote = 9;
+}
+Object.freeze( TypeIds );
+
 module.exports = function(RED) {
 
     function BtHomeNode(config) {
@@ -196,7 +202,7 @@ module.exports = function(RED) {
                         case 0x2D:
                           {
                             let state = rawdata.getUInt8();
-                            if( item.typeId === 0x0202 )
+                            if( item.typeId === TypeIds.bluDW )
                             {
                                 state = Boolean( state );
                             }
@@ -210,8 +216,12 @@ module.exports = function(RED) {
                             events.pushEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
                             break;
                         case 0x3C:
-                            events.pushEvent( "dimmer", rawdata.getEnum( ["","up","down"] ), rawdata.getUInt8() );
+                          {
+                            const dimmer = rawdata.getEnum( ["","up","down"] );
+                            const data   = rawdata.getUInt8();
+                            events.pushEvent( "dimmer", dimmer, dimmer!="down" ? data : -data );
                             break;
+                          }
                         case 0x3F:
                             setData( "tilt", rawdata.getInt16() * 0.1 );
                             break;
@@ -262,7 +272,7 @@ module.exports = function(RED) {
                             rawdata.reset();
                     }
                 }
-                if( item.typeId === 0x020A && item.data?.tilt )
+                if( item.typeId === TypeIds.bluRemote && item.data?.tilt )
                 {
                     events.pushEvent( "rotation", "rotation", item.data.tilt );
                     delete item.data.tilt;

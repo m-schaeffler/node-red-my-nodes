@@ -1045,7 +1045,7 @@ describe( 'bthome Node', function () {
               break;
             case 4:
               msg.should.have.a.property('topic','dev_unencrypted_1/4/down');
-              msg.should.have.a.property('payload',{type:'dimmer',event:'down',channel:4,data:9});
+              msg.should.have.a.property('payload',{type:'dimmer',event:'down',channel:4,data:-9});
               break;
             case 5:
               msg.should.have.a.property('topic','dev_unencrypted_1/4/rotation');
@@ -1070,7 +1070,7 @@ describe( 'bthome Node', function () {
           addr:    "11:22:33:44:55:66",
           rssi:    -50,
           time:    Date.now(),
-          data:    [68,0,0,0xF0,10,2]
+          data:    [68,0,0,0xF0,9,0]
         } });
         await delay(50);
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {

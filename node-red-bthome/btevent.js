@@ -1,6 +1,6 @@
 class BtEvent {
     static eventLut = {
-        0x020A: {
+        9: {
             button: ["left","right"]
         }
     };

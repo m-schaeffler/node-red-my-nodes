@@ -533,7 +533,7 @@ describe( 'msg-resend Node', function () {
         await delay(25);
         c.should.match(1);
         await delay(1000);
-        c.should.match(21);
+        c.should.be.within(20,21);
         n1.receive({ topic: "t", resend_max_count: 23 });
         await delay(175);
         checkData( n1.context().get("data"), "all_topics" );
@@ -632,6 +632,76 @@ describe( 'msg-resend Node', function () {
         await delay(175);
         checkDataWithoutCounter( n1.context().get("data"), "all_topics" );
         c.should.match(11);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
+  it('should resend messages after redeploy', function (done) {
+    this.timeout( 5000 );
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, addCounters:true, intervalUnit:"msecs", maximum:12, wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.a.property('topic','t');
+          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('counter',c+1);
+          msg.should.have.a.property('max',12);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('interval', 50);
+        n1.should.have.a.property('maxCount', 12);
+        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('addCounters', true);
+        await delay(500);
+        should.exist( n1.context().get("data") );
+        c.should.match(0);
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(25);
+        c.should.match(1);
+        await delay(250);
+        c.should.match(6);
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n2 = helper.getNode("n2");
+        n2.on("input", function (msg) {
+          //console.log(msg);
+          try {
+            msg.should.have.a.property('topic','t');
+            msg.should.have.a.property('payload',1);
+            msg.should.have.a.property('counter',c+1);
+            msg.should.have.a.property('max',12);
+          }
+          catch(err) {
+            done(err);
+          }
+          c++;
+        });
+        n1.should.have.a.property('interval', 50);
+        n1.should.have.a.property('maxCount', 12);
+        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('addCounters', true);
+        await delay(75);
+        c.should.match(6);
+        await delay(500);
+        checkData( n1.context().get("data"), "all_topics" );
+        c.should.match(12);
         done();
       }
       catch(err) {

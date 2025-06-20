@@ -27,6 +27,21 @@ module.exports = function(RED) {
         }
         setTimeout( function() { node.emit("started"); }, 100 );
         node.status( "" );
+        context.get( "data", function(err,value)
+        {
+            if( err )
+            {
+                node.error( err );
+            }
+            else
+            {
+                //console.log( "context read", value );
+                if( value !== undefined )
+                {
+                    node.data = value;
+                }
+            }
+        } );
 
         function defaultStat()
         {
@@ -51,6 +66,14 @@ module.exports = function(RED) {
         node.on('started', function() {
             //console.log( "msg-resend started" );
             context.set( "data", node.data );
+            for( const i in node.data )
+            {
+                if( node.data[i].message && node.data[i].timer == null )
+                {
+                    console.log( "msg-resend restarting timer for "+i );
+                    node.data[i].timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, node.data[i].interval, node.data[i] );
+                }
+            }
         });
 
         node.on('input', function(msg,send,done) {
@@ -132,6 +155,7 @@ module.exports = function(RED) {
             for( const i in node.data )
             {
                 clearInterval( node.data[i].timer );
+                node.data[i].timer = null;
             }
         } );
     }

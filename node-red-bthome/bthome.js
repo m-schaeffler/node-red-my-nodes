@@ -240,6 +240,9 @@ module.exports = function(RED) {
                         case 0x46:
                             setData( "uv", rawdata.getUInt8() * 0.1 );
                             break;
+                        case 0x59:
+                            setData( "count", rawdata.getInt8() );
+                            break;
                         case 0x5E:
                             setData( "direction", rawdata.getUInt16() * 0.01 );
                             break;

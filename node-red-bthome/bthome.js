@@ -217,9 +217,9 @@ module.exports = function(RED) {
                             break;
                         case 0x3C:
                           {
-                            const dimmer = rawdata.getEnum( ["","up","down"] );
+                            const dimmer = rawdata.getUInt8();
                             const data   = rawdata.getUInt8();
-                            events.pushEvent( "dimmer", dimmer, dimmer!="down" ? data : -data );
+                            events.pushEvent( "dimmer", "dimmer", dimmer==1 ? data : -data );
                             break;
                           }
                         case 0x3F:

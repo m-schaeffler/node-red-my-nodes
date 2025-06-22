@@ -1040,12 +1040,12 @@ describe( 'bthome Node', function () {
               msg.should.have.a.property('payload',{type:'button',event:'S',channel:3,id:"right"});
               break;
             case 3:
-              msg.should.have.a.property('topic','dev_unencrypted_1/2/up');
-              msg.should.have.a.property('payload',{type:'dimmer',event:'up',channel:2,data:13});
+              msg.should.have.a.property('topic','dev_unencrypted_1/2/dimmer');
+              msg.should.have.a.property('payload',{type:'dimmer',event:'dimmer',channel:2,data:13});
               break;
             case 4:
-              msg.should.have.a.property('topic','dev_unencrypted_1/4/down');
-              msg.should.have.a.property('payload',{type:'dimmer',event:'down',channel:4,data:-9});
+              msg.should.have.a.property('topic','dev_unencrypted_1/4/dimmer');
+              msg.should.have.a.property('payload',{type:'dimmer',event:'dimmer',channel:4,data:-9});
               break;
             case 5:
               msg.should.have.a.property('topic','dev_unencrypted_1/4/rotation');

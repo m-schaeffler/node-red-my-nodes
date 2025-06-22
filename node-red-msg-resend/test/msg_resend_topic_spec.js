@@ -578,4 +578,81 @@ describe( 'msg-resend Node, byTopic', function () {
     });
   });
 
+  it('should resend messages after redeploy', function (done) {
+    this.timeout( 5000 );
+    const maxes=[12,6,9]
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", bytopic:true, interval:50, addCounters:true, intervalUnit:"msecs", maximum:12, wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.a.property('topic',topics1[c%3]);
+          msg.should.have.a.property('payload',(c%3)+1);
+          msg.should.have.a.property('counter',Math.floor(c/3)+1);
+          msg.should.have.a.property('max',maxes[c%3]);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('interval', 50);
+        n1.should.have.a.property('maxCount', 12);
+        n1.should.have.a.property('byTopic', true);
+        n1.should.have.a.property('addCounters', true);
+        await delay(500);
+        should.exist( n1.context().get("data") );
+        c.should.match(0);
+        n1.receive({ topic: "t", payload: 1 });
+        n1.receive({ topic: "u", payload: 2, resend_max_count: 6 });
+        n1.receive({ topic: "v", payload: 3, resend_max_count: 9 });
+        await delay(25);
+        c.should.match(3);
+        await delay(250);
+        c.should.match(6*3);
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n2 = helper.getNode("n2");
+        c = 0;
+        n2.on("input", function (msg) {
+          //console.log(c,msg);
+          try {
+            const h = c < 6 ? c % 2 : 0;
+            msg.should.have.a.property('topic',h?'v':'t');
+            msg.should.have.a.property('payload',h?3:1);
+            msg.should.have.a.property('counter',c<6?Math.floor(c/2)+7:c+4);
+            msg.should.have.a.property('max',h?9:12);
+          }
+          catch(err) {
+            done(err);
+          }
+          c++;
+        });
+        n1.should.have.a.property('interval', 50);
+        n1.should.have.a.property('maxCount', 12);
+        n1.should.have.a.property('byTopic', true);
+        n1.should.have.a.property('addCounters', true);
+        await delay(75);
+        c.should.match(0);
+        await delay(500);
+        checkData( n1.context().get("data"), "t" );
+        checkData( n1.context().get("data"), "u" );
+        checkData( n1.context().get("data"), "v" );
+        c.should.match(9);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
 });

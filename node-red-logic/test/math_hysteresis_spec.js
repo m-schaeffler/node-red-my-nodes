@@ -56,6 +56,7 @@ describe( 'math_hysteresis Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
+          //console.log(msg)
           c++;
           switch( c )
           {
@@ -63,21 +64,25 @@ describe( 'math_hysteresis Node', function () {
                msg.should.have.property('payload','Text R');
                msg.should.have.property('value',1000);
                msg.should.have.property('edge','rising');
+               msg.should.have.property('init',true);
                break;
              case 2:
                msg.should.have.property('payload','Text F');
                msg.should.have.property('value',10);
                msg.should.have.property('edge','falling');
+               msg.should.have.property('init',false);
                break;
              case 3:
                msg.should.have.property('payload','Text R');
                msg.should.have.property('value',200.1);
                msg.should.have.property('edge','rising');
+               msg.should.have.property('init',false);
                break;
              case 4:
                msg.should.have.property('payload','Text F');
                msg.should.have.property('value',99.9);
                msg.should.have.property('edge','falling');
+               msg.should.have.property('init',false);
                break;
              default:
                done("too much messages");
@@ -92,6 +97,7 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('threshold_fall', 100);
         n1.should.have.a.property('outputRise', 'Text R');
         n1.should.have.a.property('outputFall', 'Text F');
+        n1.should.have.a.property('noInit', false);
         await delay(50);
         for( const i of numbers )
         {
@@ -126,16 +132,19 @@ describe( 'math_hysteresis Node', function () {
                msg.should.have.property('payload',42);
                msg.should.have.property('value',252);
                msg.should.have.property('edge','rising');
+               msg.should.have.property('init',true);
                break;
              case 2:
                msg.should.have.property('payload',-1);
                msg.should.have.property('value',2);
                msg.should.have.property('edge','falling');
+               msg.should.have.property('init',false);
                break;
              case 3:
                msg.should.have.property('payload',42);
                msg.should.have.property('value',302);
                msg.should.have.property('edge','rising');
+               msg.should.have.property('init',false);
                break;
              default:
                done("too much messages");
@@ -186,21 +195,25 @@ describe( 'math_hysteresis Node', function () {
                msg.should.have.property('payload',-1);
                msg.should.have.property('value',10);
                msg.should.have.property('edge','falling');
+               msg.should.have.property('init',true);
                break;
              case 2:
                msg.should.have.property('payload',42);
                msg.should.have.property('value',252);
                msg.should.have.property('edge','rising');
+               msg.should.have.property('init',false);
                break;
              case 3:
                msg.should.have.property('payload',-1);
                msg.should.have.property('value',0);
                msg.should.have.property('edge','falling');
+               msg.should.have.property('init',false);
                break;
              case 4:
                msg.should.have.property('payload',42);
                msg.should.have.property('value',302);
                msg.should.have.property('edge','rising');
+               msg.should.have.property('init',false);
                break;
              default:
                done("too much messages");
@@ -250,16 +263,19 @@ describe( 'math_hysteresis Node', function () {
                msg.should.have.property('payload',42);
                msg.should.have.property('value',250);
                msg.should.have.property('edge','rising');
+               msg.should.have.property('init',true);
                break;
              case 2:
                msg.should.have.property('payload',-1);
                msg.should.have.property('value',2);
                msg.should.have.property('edge','falling');
+               msg.should.have.property('init',false);
                break;
              case 3:
                msg.should.have.property('payload',42);
                msg.should.have.property('value',300);
                msg.should.have.property('edge','rising');
+               msg.should.have.property('init',false);
                break;
              default:
                done("too much messages");
@@ -304,6 +320,7 @@ describe( 'math_hysteresis Node', function () {
         try {
           msg.should.have.property('payload',true);
           msg.should.have.property('value',5000);
+          msg.should.have.property('init',true);
         }
         catch(err) {
           done(err);
@@ -386,6 +403,7 @@ describe( 'math_hysteresis Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
+        console.log(msg);
         c++;
         try {
           switch( c ) {
@@ -393,15 +411,18 @@ describe( 'math_hysteresis Node', function () {
             case 2:
               msg.should.have.property('payload',jsonF);
               msg.should.have.a.property('value',0);
+              msg.should.have.property('init',true);
               break;
             case 3:
             case 4:
               msg.should.have.property('payload',jsonR);
               msg.should.have.a.property('value',1000);
+              msg.should.have.property('init',c==4);
               break;
             case 5:
               msg.should.have.property('payload',jsonF);
               msg.should.have.a.property('value',2);
+              msg.should.have.property('init',true);
               break;
             default:
               done("too much messages");
@@ -511,6 +532,7 @@ describe( 'math_hysteresis Node', function () {
         try {
           msg.should.have.property('payload',true);
           msg.should.have.property('value',210);
+          msg.should.have.property('init',true);
           c++;
         }
         catch(err) {
@@ -547,6 +569,7 @@ describe( 'math_hysteresis Node', function () {
         try {
           msg.should.have.property('payload',true);
           msg.should.have.property('value',198+5);
+          msg.should.have.property('init',true);
           c++;
         }
         catch(err) {

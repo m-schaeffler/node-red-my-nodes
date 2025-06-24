@@ -95,9 +95,12 @@ module.exports = function(RED) {
                             status.fill = edge ? "red" : "blue";
                             data[msg.topic] = { edge:edge, status:status.fill };
                             context.set( "data", data );
-                            msgSetEdge( msg, edge );
-                            msg.init = last === undefined;
-                            send( msg );
+                            if( last !== undefined || ! node.noInit )
+                            {
+                                msgSetEdge( msg, edge );
+                                msg.init = last === undefined;
+                                send( msg );
+                            }
                         }
 
                         if( msg.value > node.threshold_rise && last !== true )

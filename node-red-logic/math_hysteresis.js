@@ -14,6 +14,7 @@ module.exports = function(RED) {
         this.consecutiveFall= Number( config.consecutiveFall ?? 1 );
         this.outputRise     = tools.convertTypedInput( config.outputRise ?? "true", config.outputRiseType ?? "bool" );
         this.outputFall     = tools.convertTypedInput( config.outputFall ?? "false",config.outputFallType ?? "bool" );
+        this.noInit         = Boolean( config.noInit );
         this.showState      = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {

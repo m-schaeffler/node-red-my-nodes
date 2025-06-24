@@ -17,6 +17,7 @@
             outputRiseType:{value:"bool"},
             outputFall:{value:false,required:true},
             outputFallType:{value:"bool"},
+            noInit:{value:false},
             showState:{value:false}
         },
         inputs:1,
@@ -88,6 +89,10 @@
         <input type="hidden" id="node-input-outputFallType">
     </div>
     <div class="form-row">
+        <label for="node-input-noInit"><i class="fa fa-play"></i> no inits</label>
+        <input type="checkbox" id="node-input-noInit" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
         <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
@@ -146,6 +151,8 @@
         <dd> Value to be sent in case of a rising edge.</dd>
         <dt>fall Output <span class="property-type">multi</span></dt>
         <dd> Value to be sent in case of a falling edge.</dd>
+        <dt>no init <span class="property-type">boolean</span></dt>
+        <dd> does not send init messages.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

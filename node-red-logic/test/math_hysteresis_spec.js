@@ -35,6 +35,7 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('consecutiveFall', 1);
         n1.should.have.a.property('outputRise', true);
         n1.should.have.a.property('outputFall', false);
+        n1.should.have.a.property('noInit', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         done();

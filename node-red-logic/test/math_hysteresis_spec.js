@@ -46,9 +46,9 @@ describe( 'math_hysteresis Node', function () {
     });
   });
 
-  it('should check for edges', function (done) {
+  it('should check for edges, without init msg', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "hysteresisEdge", noInit:true, outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -56,7 +56,7 @@ describe( 'math_hysteresis Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          //console.log(msg)
+          console.log(msg)
           c++;
           switch( c )
           {
@@ -64,7 +64,7 @@ describe( 'math_hysteresis Node', function () {
                msg.should.have.property('payload','Text R');
                msg.should.have.property('value',1000);
                msg.should.have.property('edge','rising');
-               msg.should.have.property('init',true);
+               msg.should.have.property('init',false);
                break;
              case 2:
                msg.should.have.property('payload','Text F');
@@ -97,7 +97,7 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('threshold_fall', 100);
         n1.should.have.a.property('outputRise', 'Text R');
         n1.should.have.a.property('outputFall', 'Text F');
-        n1.should.have.a.property('noInit', false);
+        n1.should.have.a.property('noInit', true);
         await delay(50);
         for( const i of numbers )
         {

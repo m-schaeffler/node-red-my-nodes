@@ -45,6 +45,75 @@ describe( 'math_hysteresis Node', function () {
       }
     });
   });
+  
+  it('should check for edges', function (done) {
+    const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
+    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          //console.log(msg)
+          c++;
+          switch( c )
+          {
+             case 1:
+               msg.should.have.property('payload','Text R');
+               msg.should.have.property('value',1000);
+               msg.should.have.property('edge','rising');
+               msg.should.have.property('init',true);
+               break;
+             case 2:
+               msg.should.have.property('payload','Text F');
+               msg.should.have.property('value',10);
+               msg.should.have.property('edge','falling');
+               msg.should.have.property('init',false);
+               break;
+             case 3:
+               msg.should.have.property('payload','Text R');
+               msg.should.have.property('value',200.1);
+               msg.should.have.property('edge','rising');
+               msg.should.have.property('init',false);
+               break;
+             case 4:
+               msg.should.have.property('payload','Text F');
+               msg.should.have.property('value',99.9);
+               msg.should.have.property('edge','falling');
+               msg.should.have.property('init',false);
+               break;
+             default:
+               done("too much messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('threshold_rise', 200);
+        n1.should.have.a.property('threshold_fall', 100);
+        n1.should.have.a.property('outputRise', 'Text R');
+        n1.should.have.a.property('outputFall', 'Text F');
+        n1.should.have.a.property('noInit', false);
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ payload: i });
+          await delay(50);
+        }
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 4 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
 
   it('should check for edges, without init msg', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
@@ -403,7 +472,7 @@ describe( 'math_hysteresis Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         c++;
         try {
           switch( c ) {

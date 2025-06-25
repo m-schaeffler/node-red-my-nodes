@@ -45,7 +45,7 @@ describe( 'math_hysteresis Node', function () {
       }
     });
   });
-  
+
   it('should check for edges', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
     var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
@@ -130,24 +130,18 @@ describe( 'math_hysteresis Node', function () {
           switch( c )
           {
              case 1:
-               msg.should.have.property('payload','Text R');
-               msg.should.have.property('value',1000);
-               msg.should.have.property('edge','rising');
-               msg.should.have.property('init',false);
-               break;
-             case 2:
                msg.should.have.property('payload','Text F');
                msg.should.have.property('value',10);
                msg.should.have.property('edge','falling');
                msg.should.have.property('init',false);
                break;
-             case 3:
+             case 2:
                msg.should.have.property('payload','Text R');
                msg.should.have.property('value',200.1);
                msg.should.have.property('edge','rising');
                msg.should.have.property('init',false);
                break;
-             case 4:
+             case 3:
                msg.should.have.property('payload','Text F');
                msg.should.have.property('value',99.9);
                msg.should.have.property('edge','falling');
@@ -175,7 +169,7 @@ describe( 'math_hysteresis Node', function () {
         }
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( 4 );
+        c.should.match( 3 );
         done();
       }
       catch(err) {

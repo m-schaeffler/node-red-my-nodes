@@ -80,7 +80,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -141,13 +141,13 @@ describe( 'collect_chart Node', function () {
         c.should.match(1);
         for( const i of numbers1 )
         {
-          n1.receive({ topic:"series1", payload: i });
+          n1.receive({ topic:"series1", payload: numbers1[i] });
         }
         await delay(500);
         c.should.match(2);
         for( const i of numbers2 )
         {
-          n1.receive({ topic:"series2", payload: i });
+          n1.receive({ topic:"series2", payload: numbers2[i] });
         }
         await delay(2000);
         c.should.match(3);
@@ -157,6 +157,103 @@ describe( 'collect_chart Node', function () {
         n1.receive({ topic:"series3", payload: 42 });
         await delay(2000);
         c.should.match(5);
+        should.not.exist( n1.context().get("last") );
+        should.not.exist( n1.context().get("data") );
+        should.not.exist( n1.context().get("data", "memoryOnly") );
+        should.not.exist( n1.context().get("data", "storeInFile") );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
+  it('should collect data and get remove command', function (done) {
+    this.timeout( 10000 );
+    const numbers1 = [0,1,2,3,4];
+    const numbers2 = ["128","255",130,131,132];
+    const topics = ["series1","series2","series3"];
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "1", topics: JSON.stringify(topics), showState:true, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          switch( c )
+          {
+            case 1:
+              msg.should.have.property('init',true);
+              msg.should.have.property('payload',[]);
+              break;
+            case 2:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(3*numbers1.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c','series1');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
+                v.should.have.a.property('v',Number(numbers1[i]));
+              }
+              break;
+            case 3:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length+numbers2.length);
+              for(const i in msg.payload)
+              {
+                const v = msg.payload[i];
+                v.should.be.a.Object();
+                v.should.have.a.property('c',i<numbers1.length?'series1':'series2');
+                v.should.have.a.property('t').which.is.approximately(Date.now()-(i<numbers1.length?1250:750),20);
+                v.should.have.a.property('v',Number(i<numbers1.length?numbers1[i]:numbers2[i-numbers1.length]));
+              }
+              break;
+            case 4:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload',[]);
+              break;
+            case 5:
+              msg.should.not.have.property('init');
+              msg.should.have.property('payload').which.is.an.Array().of.length(1);
+              msg.payload[0].should.be.a.Object();
+              msg.payload[0].should.have.a.property('c','series3');
+              msg.payload[0].should.have.a.property('t').which.is.approximately(Date.now()-750,50);
+              msg.payload[0].should.have.a.property('v',42);
+              break;
+            default:
+              done("too much output messages");
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('cyclic', 1);
+        n1.should.have.a.property('cycleJitter', 0);
+        n1.should.have.a.property('topics', topics);
+        n1.should.have.a.property('showState', true);
+        await delay(750);
+        c.should.match(1);
+        for( const i of numbers1 )
+        {
+          n1.receive({ topic:"series1", payload: numbers1[i] });
+          n1.receive({ topic:"series2", payload: numbers2[i] });
+          n1.receive({ topic:"series3", payload: 1024-i });
+        }
+        await delay(500);
+        c.should.match(2);
+        n1.receive({ topic:"series2", remove:true });
+        await delay(1000);
+        c.should.match(4);
         should.not.exist( n1.context().get("last") );
         should.not.exist( n1.context().get("data") );
         should.not.exist( n1.context().get("data", "memoryOnly") );
@@ -182,7 +279,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -246,7 +343,7 @@ describe( 'collect_chart Node', function () {
       var cS = 0;
       var cD = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -327,7 +424,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           c.should.match(1);
@@ -366,7 +463,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -492,7 +589,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -557,7 +654,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -632,7 +729,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -705,7 +802,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -904,7 +1001,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -958,7 +1055,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -1023,7 +1120,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -1090,7 +1187,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -1157,7 +1254,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )

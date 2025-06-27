@@ -42,6 +42,17 @@ describe( 'collect_chart Node', function () {
       });
   });
 
+  function checkItem(item,c,t,v)
+  {
+     item.should.be.a.Object();
+     item.should.have.a.property('c',c);
+     item.should.have.a.property('t').which.is.approximately(Date.now()-t,20);
+     if( v !== null )
+       item.should.have.a.property('v',Number(v));
+     else
+       item.should.not.have.a.property('v');
+  }
+
   it('should be loaded', function (done) {
     var flow = [{ id: "n1", type: "collectChart", name: "test" }];
     helper.load(node, flow, async function () {
@@ -141,13 +152,13 @@ describe( 'collect_chart Node', function () {
         c.should.match(1);
         for( const i of numbers1 )
         {
-          n1.receive({ topic:"series1", payload: numbers1[i] });
+          n1.receive({ topic:"series1", payload: i });
         }
         await delay(500);
         c.should.match(2);
         for( const i of numbers2 )
         {
-          n1.receive({ topic:"series2", payload: numbers2[i] });
+          n1.receive({ topic:"series2", payload: i });
         }
         await delay(2000);
         c.should.match(3);
@@ -174,6 +185,8 @@ describe( 'collect_chart Node', function () {
     this.timeout( 10000 );
     const numbers1 = [0,1,2,3,4];
     const numbers2 = ["128","255",130,131,132];
+    const numbers3 = [1024,1023,1022,1021,1020];
+    const numbers = [ numbers1, numbers2, numbers3 ];
     const topics = ["series1","series2","series3"];
     var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "1", topics: JSON.stringify(topics), showState:true, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -190,43 +203,37 @@ describe( 'collect_chart Node', function () {
           {
             case 1:
               msg.should.have.property('init',true);
-              msg.should.have.property('payload',[]);
+              msg.should.have.property('payload',[{ c: 'series1', t: null },{ c: 'series2', t: null },{ c: 'series3', t: null }]);
               break;
             case 2:
               msg.should.not.have.property('init');
-              msg.should.have.property('payload').which.is.an.Array().of.length(3*numbers1.length);
-              for(const i in msg.payload)
+              msg.should.have.property('payload').which.is.an.Array().of.length(3+3*numbers1.length);
+              checkItem( msg.payload[0], 'series1', 24*3600*1000+10*1000, null );
+              checkItem( msg.payload[1], 'series2', 24*3600*1000+10*1000, null );
+              checkItem( msg.payload[2], 'series3', 24*3600*1000+10*1000, null );
+              for(let i=3; i<msg.payload.length; i++)
               {
-                const v = msg.payload[i];
-                v.should.be.a.Object();
-                v.should.have.a.property('c','series1');
-                v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
-                v.should.have.a.property('v',Number(numbers1[i]));
+                checkItem(
+                  msg.payload[i],
+                  topics[i%3],
+                  250,
+                  numbers[i%3][Math.floor((i-3)/3)] );
               }
               break;
             case 3:
               msg.should.not.have.property('init');
-              msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length+numbers2.length);
-              for(const i in msg.payload)
+              msg.should.have.property('payload').which.is.an.Array().of.length(3+2*numbers1.length);
+              checkItem( msg.payload[0], 'series1', 24*3600*1000+10*1000, null );
+              checkItem( msg.payload[1], 'series2', 24*3600*1000+10*1000, null );
+              checkItem( msg.payload[2], 'series3', 24*3600*1000+10*1000, null );
+              for(let i=3; i<msg.payload.length; i++)
               {
-                const v = msg.payload[i];
-                v.should.be.a.Object();
-                v.should.have.a.property('c',i<numbers1.length?'series1':'series2');
-                v.should.have.a.property('t').which.is.approximately(Date.now()-(i<numbers1.length?1250:750),20);
-                v.should.have.a.property('v',Number(i<numbers1.length?numbers1[i]:numbers2[i-numbers1.length]));
+                checkItem(
+                  msg.payload[i],
+                  i%2 ? 'series1' : 'series3',
+                  750,
+                  i%2 ? numbers1[Math.floor((i-3)/2)] : numbers3[Math.floor((i-3)/2)] );
               }
-              break;
-            case 4:
-              msg.should.not.have.property('init');
-              msg.should.have.property('payload',[]);
-              break;
-            case 5:
-              msg.should.not.have.property('init');
-              msg.should.have.property('payload').which.is.an.Array().of.length(1);
-              msg.payload[0].should.be.a.Object();
-              msg.payload[0].should.have.a.property('c','series3');
-              msg.payload[0].should.have.a.property('t').which.is.approximately(Date.now()-750,50);
-              msg.payload[0].should.have.a.property('v',42);
               break;
             default:
               done("too much output messages");
@@ -243,7 +250,7 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('showState', true);
         await delay(750);
         c.should.match(1);
-        for( const i of numbers1 )
+        for( const i in numbers1 )
         {
           n1.receive({ topic:"series1", payload: numbers1[i] });
           n1.receive({ topic:"series2", payload: numbers2[i] });
@@ -253,7 +260,7 @@ describe( 'collect_chart Node', function () {
         c.should.match(2);
         n1.receive({ topic:"series2", remove:true });
         await delay(1000);
-        c.should.match(4);
+        c.should.match(3);
         should.not.exist( n1.context().get("last") );
         should.not.exist( n1.context().get("data") );
         should.not.exist( n1.context().get("data", "memoryOnly") );

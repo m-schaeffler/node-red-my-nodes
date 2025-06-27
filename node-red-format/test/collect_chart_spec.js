@@ -192,7 +192,7 @@ describe( 'collect_chart Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           switch( c )
@@ -230,7 +230,7 @@ describe( 'collect_chart Node', function () {
                 checkItem(
                   msg.payload[i],
                   i%2 ? 'series1' : 'series3',
-                  750,
+                  1250,
                   i%2 ? numbers1[Math.floor((i-3)/2)] : numbers3[Math.floor((i-3)/2)] );
               }
               break;

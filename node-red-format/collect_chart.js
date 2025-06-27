@@ -104,6 +104,16 @@ module.exports = function(RED) {
                 done();
                 return;
             }
+            if( msg.remove )
+            {
+                // remove all data points of msg.topic
+                node.data = node.data.filter( function(item){ return item.c != msg.topic || item.v === undefined; } );
+                node.newData = true;
+                setData();
+                setStatus();
+                done();
+                return;
+            }
             function getPayload(callback)
             {
                 if( node.propertyPrepared )

@@ -105,11 +105,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length);
               for(const i in msg.payload)
               {
-                const v = msg.payload[i];
-                v.should.be.a.Object();
-                v.should.have.a.property('c','series1');
-                v.should.have.a.property('t').which.is.approximately(Date.now()-250,20);
-                v.should.have.a.property('v',Number(numbers1[i]));
+                checkItem( msg.payload[i], 'series1', 250, numbers1[i] );
               }
               break;
             case 3:
@@ -117,11 +113,11 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length+numbers2.length);
               for(const i in msg.payload)
               {
-                const v = msg.payload[i];
-                v.should.be.a.Object();
-                v.should.have.a.property('c',i<numbers1.length?'series1':'series2');
-                v.should.have.a.property('t').which.is.approximately(Date.now()-(i<numbers1.length?1250:750),20);
-                v.should.have.a.property('v',Number(i<numbers1.length?numbers1[i]:numbers2[i-numbers1.length]));
+                checkItem(
+                  msg.payload[i],
+                  i<numbers1.length ? 'series1' : 'series2',
+                  i<numbers1.length ? 1250 : 750,
+                  i<numbers1.length ? numbers1[i] : numbers2[i-numbers1.length] );
               }
               break;
             case 4:
@@ -131,10 +127,7 @@ describe( 'collect_chart Node', function () {
             case 5:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(1);
-              msg.payload[0].should.be.a.Object();
-              msg.payload[0].should.have.a.property('c','series3');
-              msg.payload[0].should.have.a.property('t').which.is.approximately(Date.now()-750,50);
-              msg.payload[0].should.have.a.property('v',42);
+              checkItem( msg.payload[0], 'series3', 750, 42 );
               break;
             default:
               done("too much output messages");
@@ -254,7 +247,7 @@ describe( 'collect_chart Node', function () {
         {
           n1.receive({ topic:"series1", payload: numbers1[i] });
           n1.receive({ topic:"series2", payload: numbers2[i] });
-          n1.receive({ topic:"series3", payload: 1024-i });
+          n1.receive({ topic:"series3", payload: numbers3[i] });
         }
         await delay(500);
         c.should.match(2);
@@ -300,11 +293,11 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers2.length);
               for(const i in msg.payload)
               {
-                const v = msg.payload[i];
-                v.should.be.a.Object();
-                v.should.have.a.property('c','steps');
-                v.should.have.a.property('t').which.is.approximately(Date.now()-1250+time[i],20);
-                v.should.have.a.property('v',Number(numbers2[i]));
+                checkItem(
+                  msg.payload[i],
+                  'steps',
+                  1250-time[i],
+                  numbers2[i] );
               }
               break;
             default:
@@ -360,7 +353,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length);
               for( const i in topics )
               {
-                msg.payload[i].should.match({c:topics[i].topic});
+                checkItem( msg.payload[i], topics[i].topic}, 24*3600*1000+10*1000, null );
               }
               break;
             case 2:
@@ -370,7 +363,7 @@ describe( 'collect_chart Node', function () {
               {
                 if( i < 2 )
                 {
-                  msg.payload[i].should.match({c:topics[i].topic});
+                  checkItem( msg.payload[i], topics[i].topic}, 24*3600*1000+10*1000, null );
                 }
                 else
                 {
@@ -379,12 +372,10 @@ describe( 'collect_chart Node', function () {
                   switch( v.c )
                   {
                     case 'step':
-                      v.should.have.a.property('t').which.is.approximately(Date.now()-1250+time[cS],20);
-                      v.should.have.a.property('v',Number(numbers2[cS++]));
+                      checkItem( v, 'step', 1250-time[cS], numbers2[cS++] );
                       break;
                     case "direct":
-                      v.should.have.a.property('t').which.is.approximately(Date.now()-1250+cD*200,20);
-                      v.should.have.a.property('v',Number(numbers1[cD++]));
+                      checkItem( v, 'direct', 1250-cD*200, numbers1[cD++] );
                       break;
                     default:
                       done("wrong v.c");
@@ -437,12 +428,8 @@ describe( 'collect_chart Node', function () {
           c.should.match(1);
           msg.should.have.property('init',true);
           msg.should.have.property('payload').which.is.an.Array().of.length(2);
-          msg.payload[0].should.have.a.property('c',"s1");
-          msg.payload[0].should.have.a.property('t',null);
-          msg.payload[0].should.not.have.a.property('v');
-          msg.payload[1].should.have.a.property('c',"s2");
-          msg.payload[1].should.have.a.property('t',null);
-          msg.payload[1].should.not.have.a.property('v');
+          checkItem( msg.payload[0], "s1", null, null );
+          checkItem( msg.payload[1], "s2", null, null );
         }
         catch(err) {
           done(err);

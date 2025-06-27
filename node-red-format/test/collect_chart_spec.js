@@ -1019,9 +1019,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length);
               for( const i in topics )
               {
-                msg.payload[i].should.have.a.property('c',topics[i]);
-                msg.payload[i].should.have.a.property('t',null);
-                msg.payload[i].should.not.have.a.property('v');
+                checkItem( msg.payload[i], topics[i], null, null );
               }
               break;
             case 2:
@@ -1084,9 +1082,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                msg.payload[i].should.have.a.property('c',topics[i]);
-                msg.payload[i].should.have.a.property('t',null);
-                msg.payload[i].should.not.have.a.property('v');
+                checkItem( msg.payload[i], topics[i], null, null );
               }
               break;
             case 2:
@@ -1151,9 +1147,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                msg.payload[i].should.have.a.property('c',topics[i]);
-                msg.payload[i].should.have.a.property('t',null);
-                msg.payload[i].should.not.have.a.property('v');
+                checkItem( msg.payload[i], topics[i], null, null );
               }
               break;
             case 2:
@@ -1218,9 +1212,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                msg.payload[i].should.have.a.property('c',topics[i]);
-                msg.payload[i].should.have.a.property('t',null);
-                msg.payload[i].should.not.have.a.property('v');
+                checkItem( msg.payload[i], topics[i], null, null );
               }
               break;
             case 2:

@@ -64,6 +64,8 @@ The message property to be used as payload can be defined with the `Property` pr
 |:-------|:-------|:--------------|
 |topic   | string | series of the input value.|
 |payload | string | input value.|
+|reset   | boolean| deletes all stored data from the node.|
+|remove  | boolean| deletes all data points of `topic` series.|
 
 ### Output
 

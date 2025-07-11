@@ -84,7 +84,7 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.value  = Number( value );
-                    let status = { fill:data[msg.topic]?.status??"gray", shape:"dot", text:msg.value.toPrecision(4) };
+                    let status = { fill:data[msg.topic]?.status??"gray", shape:"dot", text:tools.formatNumber( msg.value ) };
 
                     if( ! isNaN( msg.value ) )
                     {

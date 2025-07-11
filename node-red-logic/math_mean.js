@@ -93,7 +93,7 @@ module.exports = function(RED) {
                             msg.count   = count;
                             last[msg.topic] = {value:value,time:now};
                             context.set( "last", last );
-                            node.status({fill:"green",shape:"dot",text:`${item.length} / ${value.toPrecision(4)}`});
+                            node.status({fill:"green",shape:"dot",text:`${item.length} / ${tools.formatNumber(value)}`});
                             send( msg );
                         }
 
@@ -118,7 +118,7 @@ module.exports = function(RED) {
                             }
                             else
                             {
-                                node.status({fill:"gray",shape:"dot",text:`${item.length} / ${value.toPrecision(4)}`});
+                                node.status({fill:"gray",shape:"dot",text:`${item.length} / ${tools.formatNumber(value)}`});
                             }
                         }
                         else

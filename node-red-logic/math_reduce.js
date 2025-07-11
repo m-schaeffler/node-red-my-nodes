@@ -1,4 +1,5 @@
 module.exports = function(RED) {
+    var tools = require('./tools.js');
 
     function ReduceNode(config) {
         RED.nodes.createNode(this,config);
@@ -112,7 +113,7 @@ module.exports = function(RED) {
                             {
                                 case "mean": msg.payload /= msg.count; break;
                             }
-                            status.text = msg.payload.toPrecision(4);
+                            status.text = tools.formatNumber( msg.payload );
                             if( node.filter )
                             {
                                 if( msg.payload !== node.last )

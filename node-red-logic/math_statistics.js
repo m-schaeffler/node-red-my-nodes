@@ -1,4 +1,5 @@
 module.exports = function(RED) {
+    var tools = require('./tools.js');
 
     function StatsNode(config) {
         RED.nodes.createNode(this,config);
@@ -103,7 +104,7 @@ module.exports = function(RED) {
                             msg.stat.variation = msg.stat.deviation / msg.stat.average;
                             if( node.showState )
                             {
-                                node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${msg.stat.deviation.toPrecision(4)}`});
+                                node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${tools.formatNumber(msg.stat.deviation)}`});
                             }
                             send( msg );
                         }

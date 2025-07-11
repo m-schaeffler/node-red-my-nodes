@@ -77,3 +77,8 @@ exports.distance = function(a,b)
 {
     return a>b ? a-b : b-a;
 }
+
+exports.formatNumber = function(value)
+{
+    return value > 5000 ? value.toFixed( 0 ) : value.toPrecision( 4 );
+}

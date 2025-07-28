@@ -81,10 +81,12 @@ module.exports = function(RED) {
                                 count: item.length,
                                 min:   Number.MAX_SAFE_INTEGER,
                                 max:   Number.MIN_SAFE_INTEGER };
-                            let sum = 0;
+                            let sumV = 0;
+                            let sumT = 0;
                             for( const value of item )
                             {
-                                sum += value.value;
+                                sumV += value.value;
+                                sumT += value.time;
                                 if( value.value < msg.stat.min )
                                 {
                                     msg.stat.min = value.value;
@@ -94,14 +96,20 @@ module.exports = function(RED) {
                                     msg.stat.max = value.value;
                                 }
                             }
-                            msg.stat.average = sum/msg.stat.count;
+                            msg.stat.average = sumV / msg.stat.count;
+                            const avgT = sumT / msg.stat.count;
                             let varianz = 0;
+                            let zaehler = 0;
+                            let nenner  = 0;
                             for( const value of item )
                             {
                                 varianz += ( value.value - msg.stat.average ) ** 2;
+                                zaehler += ( value.value - msg.stat.average ) * ( value.time - avgT );
+                                nenner  += ( value.time - avgT ) ** 2;
                             }
                             msg.stat.deviation = Math.sqrt( varianz / msg.stat.count );
                             msg.stat.variation = msg.stat.deviation / msg.stat.average;
+                            msg.stat.slope     = msg.stat.count > 1 ? zaehler / nenner * 1000 : null;
                             if( node.showState )
                             {
                                 node.status({fill:"green",shape:"dot",text:`${msg.stat.count} / ${tools.formatNumber(msg.stat.deviation)}`});

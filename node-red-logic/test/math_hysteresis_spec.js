@@ -125,7 +125,7 @@ describe( 'math_hysteresis Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          console.log(msg)
+          //console.log(msg)
           c++;
           switch( c )
           {

@@ -54,6 +54,7 @@ describe( 'math_statistics Node', function () {
       var min = 10000;
       var max = -1000;
       n2.on("input", function (msg) {
+        //console.log(msg);
         try {
           s += numbers[c];
           min = Math.min( min, numbers[c] );
@@ -88,6 +89,56 @@ describe( 'math_statistics Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should calculate a regression line', function (done) {
+    this.timeout( 10000 );
+    const numbers = [10,1010,2010];
+    var flow = [{ id: "n1", type: "statistics", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.property('topic',"regression");
+          msg.should.have.property('payload',numbers[c]);
+          msg.should.have.property('stat').which.is.Object();
+          msg.stat.should.have.property('last',numbers[c]);
+          msg.stat.should.have.property('first',numbers[0]);
+          msg.stat.should.have.property('count',c+1);
+          if( c == 0 )
+          {
+            msg.stat.should.have.property('slope',null);
+          }
+          else
+          {
+            msg.stat.should.have.property('slope').which.is.approximately( 1000, 7.5 );
+          }
+          c++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:"regression", payload: i });
+          await delay(999);
+        }
+        c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

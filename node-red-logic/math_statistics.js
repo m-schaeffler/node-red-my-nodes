@@ -97,7 +97,7 @@ module.exports = function(RED) {
                                 }
                             }
                             msg.stat.average = sumV / msg.stat.count;
-                            const avgT = sumT / msg.stat.count;
+                            const avgT       = sumT / msg.stat.count;
                             let varianz = 0;
                             let zaehler = 0;
                             let nenner  = 0;

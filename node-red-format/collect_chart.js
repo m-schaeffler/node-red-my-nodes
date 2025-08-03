@@ -55,7 +55,6 @@ module.exports = function(RED) {
         function createData()
         {
             node.warn( "resetting chart!" );
-            console.log( "createData" );
             let data = [];
             for( const i in node.topics )
             {
@@ -179,7 +178,6 @@ module.exports = function(RED) {
                     if( node.data.length < node.topics.length )
                     {
                         node.warn( "too less topics => resetting chart" );
-                        console.log( "data too short" );
                         node.data = null;
                     }
                     else
@@ -191,7 +189,6 @@ module.exports = function(RED) {
                             if( node.data[i].v !== undefined )
                             {
                                 node.warn( "additional topic" );
-                                console.log( "additional topic" );
                                 node.data[i].t = null;
                                 delete node.data[i].v;
                             }
@@ -200,7 +197,6 @@ module.exports = function(RED) {
                         while( node.data[node.topics.length] && node.data[node.topics.length].v === undefined )
                         {
                             node.warn( "surplus topic deleted" );
-                            console.log( "topic deleted" );
                             node.data.splice( node.topics.length, 1 );
                         }
                     }

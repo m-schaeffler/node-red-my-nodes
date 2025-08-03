@@ -70,7 +70,7 @@ module.exports = function(RED) {
             {
                 if( node.data[i].message && node.data[i].timer == null )
                 {
-                    console.log( "msg-resend restarting timer for "+i );
+                    node.log( "msg-resend restarting timer for "+i );
                     node.data[i].timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, node.data[i].interval, node.data[i] );
                 }
             }

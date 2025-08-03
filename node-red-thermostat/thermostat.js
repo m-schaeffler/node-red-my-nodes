@@ -117,21 +117,21 @@ module.exports = function(RED) {
         } );
 
         node.on('stopHeater', function() {
-            console.log('stopHeater');
+            //console.log('stopHeater');
             if( (++node.running)>>1 < node.data.cycleCount )
             {
-                console.log("  weiter");
+                //console.log("  weiter");
                 sendOutput();
             }
             else
             {
-                console.log("  stopp");
+                //console.log("  stopp");
                 stopHeating();
             }
         } );
 
         node.on('newCycle', function() {
-            console.log('newCycle');
+            //console.log('newCycle');
             startCycle();
             sendOutput();
         } );

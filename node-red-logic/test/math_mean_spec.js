@@ -37,6 +37,8 @@ describe( 'math_mean Node', function () {
         n1.should.have.a.property('zeroIsZero', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -73,6 +75,8 @@ describe( 'math_mean Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -115,6 +119,8 @@ describe( 'math_mean Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -152,6 +158,8 @@ describe( 'math_mean Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -191,6 +199,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 3000 });
         await delay(50);
         c.should.match( 3 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -241,6 +251,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 5000 });
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -287,6 +299,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 1102 });
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -343,6 +357,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 1038 });
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -392,6 +408,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 2000 });
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -450,6 +468,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 2000 });
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -493,6 +513,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 5000 });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -544,6 +566,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 5000 });
         await delay(50);
         c.should.match( 3 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -575,6 +599,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: {a:1,value:98,b:88} });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -606,6 +632,8 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 98 });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

@@ -34,6 +34,8 @@ describe( 'math_rising Node', function () {
         n1.should.have.a.property('output', true);
         n1.should.have.a.property('showState', false);
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -71,6 +73,8 @@ describe( 'math_rising Node', function () {
           await delay(50);
         }
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -109,6 +113,8 @@ describe( 'math_rising Node', function () {
           await delay(50);
         }
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -155,6 +161,8 @@ describe( 'math_rising Node', function () {
         n1.receive({ payload: 5000 });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -193,6 +201,8 @@ describe( 'math_rising Node', function () {
         n1.receive({ topic:"B", payload: 2000 });
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -239,6 +249,8 @@ describe( 'math_rising Node', function () {
         n1.receive({ payload: 5000 });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -273,6 +285,8 @@ describe( 'math_rising Node', function () {
         n1.receive({ payload: {a:1,value:110,b:88} });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -307,6 +321,8 @@ describe( 'math_rising Node', function () {
         n1.receive({ payload: 98 });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

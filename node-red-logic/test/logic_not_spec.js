@@ -32,6 +32,8 @@ describe( 'logic_not Node', function () {
         n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -65,6 +67,8 @@ describe( 'logic_not Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -110,6 +114,8 @@ describe( 'logic_not Node', function () {
         n1.receive({ payload: false });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -146,6 +152,8 @@ describe( 'logic_not Node', function () {
         n1.receive({ payload: 0 });
         await delay(50);
         c.should.match( 4 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -182,6 +190,8 @@ describe( 'logic_not Node', function () {
         n1.receive({ payload: 0 });
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -213,6 +223,8 @@ describe( 'logic_not Node', function () {
         n1.receive({ payload: {a:1,value:false,b:88} });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -245,6 +257,8 @@ describe( 'logic_not Node', function () {
         n1.receive({ payload: 5 });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

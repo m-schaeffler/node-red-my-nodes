@@ -38,6 +38,8 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('noInit', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

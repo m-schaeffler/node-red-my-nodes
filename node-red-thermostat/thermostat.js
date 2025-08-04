@@ -32,6 +32,7 @@ module.exports = function(RED) {
                 if( value !== undefined )
                 {
                     node.data = value;
+                    initData();
                 }
             }
         } );

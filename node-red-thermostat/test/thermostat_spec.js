@@ -1,6 +1,7 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../thermostat.js");
+var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -15,8 +16,29 @@ describe( 'thermostat Node', function () {
       helper.startServer(done);
   });
 
+  function initContext(done) {
+    Context.init({
+      contextStorage: {
+        default: "memoryOnly",
+        memoryOnly: {
+          module: "memory"
+        },
+        storeInFile: {
+          module: "memory"
+        }
+      }
+    });
+    Context.load().then(function () {
+      done();
+    });
+  }
+
   afterEach(function(done) {
       helper.unload().then(function() {
+          return Context.clean({allNodes: {}});
+      }).then(function () {
+          return Context.close();
+      }).then(function () {
           helper.stopServer(done);
       });
   });
@@ -80,7 +102,8 @@ describe( 'thermostat Node', function () {
     let flow = [{ id: "n1", type: "thermostat", name: "test", wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
-    helper.load(node, flow, async function () {
+    helper.load(node, flow, function () {
+     initContext(async function () {
       let n1 = helper.getNode("n1");
       let n2 = helper.getNode("n2");
       let n3 = helper.getNode("n3");
@@ -154,13 +177,56 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,block:false,temperature:19});
         n1.context().get("data").should.match(n1.data);
-        c1.should.match( 1 );
-        c2.should.match( 1 );
+        // change nominal data again
+        n1.receive({ topic:"data", payload: {
+          nominal:    22,
+          cycleTime:  900,
+          cycleCount: 3
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data',{nominal:22,factor:0.2,cycleTime:900,cycleCount:3,block:false,temperature:19});
+        n1.context().get("data").should.match(n1.data);
+        // redeploy node
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n2 = helper.getNode("n2");
+        n3 = helper.getNode("n3");
+        n2.on("input", function (msg) {
+          try {
+            c1++;
+            msg.should.have.a.property('topic','thermostat');
+            msg.should.have.a.property('payload',false);
+          }
+          catch(err) {
+            done(err);
+          }
+        });
+        n3.on("input", function (msg) {
+          try {
+            c2++;
+            msg.should.have.a.property('topic','thermostat');
+            msg.should.have.a.property('payload',false);
+          }
+          catch(err) {
+            done(err);
+          }
+        });
+        await delay(500);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,block:false,temperature:19});
+        n1.context().get("data").should.match(n1.data);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
         done();
       }
       catch(err) {
         done(err);
       }
+     });
     });
   });
 

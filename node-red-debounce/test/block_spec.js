@@ -69,6 +69,8 @@ describe( 'block Node', function () {
         n1.should.have.a.property('byTopic', false);
         await delay(500);
         should.exist( n1.context().get("data") );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -109,6 +111,8 @@ describe( 'block Node', function () {
         await delay(100);
         c.should.match(numbers.length);
         checkData( n1, "all_topics" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -142,6 +146,8 @@ describe( 'block Node', function () {
         await delay(150);
         c.should.match(0);
         checkData( n1, "all_topics" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -195,6 +201,8 @@ describe( 'block Node', function () {
         await delay(100);
         c.should.match(numbersOut.length);
         checkData( n1, "all_topics" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -237,6 +245,8 @@ describe( 'block Node', function () {
         await delay(100);
         c.should.match(numbers.length);
         checkData( n1, "all_topics" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -279,6 +289,8 @@ describe( 'block Node', function () {
         await delay(100);
         c.should.match(numbers.length);
         checkData( n1, "all_topics" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -327,6 +339,8 @@ describe( 'block Node', function () {
         await delay(150);
         c.should.match(Math.ceil(numbers.length/4)+2);
         checkData( n1, "all_topics" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -376,6 +390,8 @@ describe( 'block Node', function () {
         await delay(150);
         c.should.match(3);
         checkData( n1, "all_topics" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -423,6 +439,8 @@ describe( 'block Node', function () {
         await delay(150);
         c.should.match(2);
         checkData( n1, "all_topics" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

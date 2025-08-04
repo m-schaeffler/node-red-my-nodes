@@ -89,6 +89,8 @@ describe( 'block Node, byTopic', function () {
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -124,6 +126,8 @@ describe( 'block Node, byTopic', function () {
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "i" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -198,6 +202,8 @@ describe( 'block Node, byTopic', function () {
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -240,6 +246,8 @@ describe( 'block Node, byTopic', function () {
         await delay(100);
         c.should.match(numbers.length);
         checkData( n1, "Object" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -282,6 +290,8 @@ describe( 'block Node, byTopic', function () {
         await delay(100);
         c.should.match(numbers.length);
         checkData( n1, "JSONata" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -352,6 +362,8 @@ describe( 'block Node, byTopic', function () {
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -423,6 +435,8 @@ describe( 'block Node, byTopic', function () {
         checkData( n1, "t" );
         checkData( n1, "u" );
         checkData( n1, "v" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

@@ -74,6 +74,8 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('showState', false);
         n1.should.have.a.property('cycleJitter', 2000);
         await delay(750);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -168,6 +170,8 @@ describe( 'collect_chart Node', function () {
         should.not.exist( n1.context().get("data") );
         should.not.exist( n1.context().get("data", "memoryOnly") );
         should.not.exist( n1.context().get("data", "storeInFile") );
+        n1.warn.should.have.callCount(2);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -264,6 +268,8 @@ describe( 'collect_chart Node', function () {
         should.not.exist( n1.context().get("data") );
         should.not.exist( n1.context().get("data", "memoryOnly") );
         should.not.exist( n1.context().get("data", "storeInFile") );
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -326,6 +332,8 @@ describe( 'collect_chart Node', function () {
         await delay(3750);
         c.should.match(2);
         should.exist( n1.context().get("last") );
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -411,6 +419,8 @@ describe( 'collect_chart Node', function () {
         await delay(3750);
         c.should.match(2);
         should.exist( n1.context().get("last") );
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -445,6 +455,8 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('topics', ['s1','s2']);
         await delay(2500);
         c.should.match(1);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -551,6 +563,8 @@ describe( 'collect_chart Node', function () {
         }
         await delay(8000);
         c.should.be.equal(7);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -612,6 +626,8 @@ describe( 'collect_chart Node', function () {
         c.should.be.equal(2);
         await delay(8000);
         c.should.be.equal(3);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -678,6 +694,8 @@ describe( 'collect_chart Node', function () {
         n1.receive({ topic:"series", payload: -1 });
         await delay(2500);
         c.should.be.equal(3);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -746,6 +764,8 @@ describe( 'collect_chart Node', function () {
           v.should.have.a.property('t').which.is.approximately(Date.now()-500,20);
           v.should.have.a.property('v',Number(numbers[i]));
         }
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -815,6 +835,8 @@ describe( 'collect_chart Node', function () {
           v.should.have.a.property('t').which.is.approximately(Date.now()-500,20);
           v.should.have.a.property('v',Number(numbers[i]));
         }
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -851,6 +873,8 @@ describe( 'collect_chart Node', function () {
       n1.receive({ topic:"s", payload: "Test-Text" });
       await delay(1750);
       c.should.match(1);
+      n1.warn.should.have.callCount(1);
+      n1.error.should.have.callCount(0);
       done();
     });
   });
@@ -892,6 +916,8 @@ describe( 'collect_chart Node', function () {
         n1.receive({ topic:"object", payload: {a:1,value:98,b:88} });
         await delay(2750);
         c.should.match(2);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -937,6 +963,8 @@ describe( 'collect_chart Node', function () {
         n1.receive({ topic:"jsonata", payload: 20 });
         await delay(2750);
         c.should.match(2);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -989,6 +1017,8 @@ describe( 'collect_chart Node', function () {
         q.should.be.an.Array().of.length(3);
         q[0].should.match({c:'old',t:0,v:0});
         q[1].should.match({c:'old',t:100,v:100});
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -1052,6 +1082,8 @@ describe( 'collect_chart Node', function () {
           v.should.have.a.property('t').which.is.approximately(Date.now()-24*3600*1000-12510,20);
           v.should.not.have.a.property('v');
         }
+        n1.warn.should.have.callCount(2);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -1117,6 +1149,8 @@ describe( 'collect_chart Node', function () {
         }
         q[4].should.match({c:'old',t:0,v:0});
         q[5].should.match({c:'old',t:100,v:100});
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -1182,6 +1216,8 @@ describe( 'collect_chart Node', function () {
         }
         q[4].should.match({c:'old',t:0,v:0});
         q[5].should.match({c:'old',t:100,v:100});
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -1247,6 +1283,8 @@ describe( 'collect_chart Node', function () {
         }
         q[4].should.match({c:'old',t:0,v:0});
         q[5].should.match({c:'old',t:100,v:100});
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

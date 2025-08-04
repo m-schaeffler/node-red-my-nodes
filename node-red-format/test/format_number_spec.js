@@ -36,6 +36,8 @@ describe( 'format_number Node', function () {
         n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -70,6 +72,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -105,6 +109,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -141,6 +147,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -176,6 +184,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -212,6 +222,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( results.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -248,6 +260,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( results.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -282,6 +296,8 @@ describe( 'format_number Node', function () {
         n1.receive({ payload: 255 });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -315,6 +331,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -351,6 +369,8 @@ describe( 'format_number Node', function () {
         n1.receive({ payload: 255 });
         await delay(50);
         c.should.match( 4 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -387,6 +407,8 @@ describe( 'format_number Node', function () {
         n1.receive({ payload: 255 });
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -418,6 +440,8 @@ describe( 'format_number Node', function () {
         n1.receive({ payload: {a:1,value:98,b:88} });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -449,6 +473,8 @@ describe( 'format_number Node', function () {
         n1.receive({ payload: 20 });
         await delay(50);
         c.should.match( 1 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -484,6 +510,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -522,6 +550,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( results.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -571,6 +601,8 @@ describe( 'format_number Node', function () {
         n1.receive({ payload: {value:255} });
         await delay(50);
         c.should.match( numbers.length + 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
         done();
       }
       catch(err) {
@@ -605,6 +637,8 @@ describe( 'format_number Node', function () {
           await delay(50);
         }
         c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
         done();
       }
       catch(err) {
@@ -654,6 +688,8 @@ describe( 'format_number Node', function () {
         n1.receive({ payload: {value:255} });
         await delay(50);
         c.should.match( numbers.length + 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
         done();
       }
       catch(err) {

@@ -51,6 +51,8 @@ describe( 'init-flow Node (flow context)', function () {
         n1.should.have.a.property('valueType', 'str');
         n1.should.not.have.a.property('global');
         n1.should.have.a.property('force', false);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -85,6 +87,8 @@ describe( 'init-flow Node (flow context)', function () {
         n1.receive({ topic: "init" });
         await delay(100);
         n1.context().flow.get("contextVar").should.be.equal( "Qwertzu" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -119,6 +123,8 @@ describe( 'init-flow Node (flow context)', function () {
         n1.receive({ topic: "init" });
         await delay(100);
         n1.context().flow.get("contextVar").should.be.equal( 3.141592 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -153,6 +159,8 @@ describe( 'init-flow Node (flow context)', function () {
         n1.receive({ topic: "init" });
         await delay(100);
         n1.context().flow.get("contextVar").should.be.equal( true );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -199,6 +207,8 @@ describe( 'init-flow Node (flow context)', function () {
         cv.should.be.an.Object();
         cv.should.have.a.property('foo', 21);
         cv.should.have.a.property('bar', 25);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -241,6 +251,8 @@ describe( 'init-flow Node (flow context)', function () {
         cv = n1.context().flow.get("contextVar");
         cv.should.be.an.Object();
         cv.should.be.empty();
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -274,6 +286,8 @@ describe( 'init-flow Node (flow context)', function () {
         await delay(100);
         should.exist( n1.context().flow.get("contextVar") );
         n1.context().flow.get("contextVar").should.be.equal( "anderer Wert" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -307,6 +321,8 @@ describe( 'init-flow Node (flow context)', function () {
         await delay(100);
         should.exist( n1.context().flow.get("contextVar") );
         n1.context().flow.get("contextVar").should.be.equal( "Qwertzu" );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

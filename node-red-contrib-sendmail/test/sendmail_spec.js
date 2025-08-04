@@ -32,6 +32,8 @@ describe( 'sendmail Node', function () {
         n1.should.have.a.property('from', 'node-red');
         n1.should.have.a.property('to', 'root');
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -90,6 +92,8 @@ describe( 'sendmail Node', function () {
         child_process.execFile.calledOnce.should.be.true();
         child_process.execFile.restore();
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -147,6 +151,8 @@ describe( 'sendmail Node', function () {
         child_process.execFile.calledOnce.should.be.true();
         child_process.execFile.restore();
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

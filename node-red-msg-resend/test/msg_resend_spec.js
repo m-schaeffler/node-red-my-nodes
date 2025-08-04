@@ -73,6 +73,8 @@ describe( 'msg-resend Node', function () {
         n1.should.have.a.property('addCounters', false);
         await delay(500);
         should.exist( n1.context().get("data") );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -122,6 +124,8 @@ describe( 'msg-resend Node', function () {
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(4);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -179,6 +183,8 @@ describe( 'msg-resend Node', function () {
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(10);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -235,6 +241,8 @@ describe( 'msg-resend Node', function () {
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(9);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -294,6 +302,8 @@ describe( 'msg-resend Node', function () {
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(3);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -346,6 +356,8 @@ describe( 'msg-resend Node', function () {
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(6);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -403,6 +415,8 @@ describe( 'msg-resend Node', function () {
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(9);
         n1.should.have.a.property('maxCount', 1);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -447,6 +461,8 @@ describe( 'msg-resend Node', function () {
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(4);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -491,6 +507,8 @@ describe( 'msg-resend Node', function () {
         await delay(475);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(4);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -538,6 +556,8 @@ describe( 'msg-resend Node', function () {
         await delay(175);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(23);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -585,6 +605,8 @@ describe( 'msg-resend Node', function () {
         await delay(175);
         checkDataWithoutCounter( n1.context().get("data"), "all_topics" );
         c.should.match(11);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -632,6 +654,8 @@ describe( 'msg-resend Node', function () {
         await delay(175);
         checkDataWithoutCounter( n1.context().get("data"), "all_topics" );
         c.should.match(11);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -702,6 +726,8 @@ describe( 'msg-resend Node', function () {
         await delay(500);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(12);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

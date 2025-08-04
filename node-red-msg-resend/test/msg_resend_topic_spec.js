@@ -102,6 +102,8 @@ describe( 'msg-resend Node, byTopic', function () {
         checkData( n1.context().get("data"), "u" );
         checkData( n1.context().get("data"), "v" );
         c.should.match(topics1.length);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -153,6 +155,8 @@ describe( 'msg-resend Node, byTopic', function () {
         checkData( n1.context().get("data"), "u" );
         checkData( n1.context().get("data"), "v" );
         c.should.match(expTopics.length);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -203,6 +207,8 @@ describe( 'msg-resend Node, byTopic', function () {
         checkData( n1.context().get("data"), "u" );
         checkData( n1.context().get("data"), "v" );
         c.should.match(topics2.length*3);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -253,6 +259,8 @@ describe( 'msg-resend Node, byTopic', function () {
         checkData( n1.context().get("data"), "u" );
         checkData( n1.context().get("data"), "v" );
         c.should.match(topics2.length);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -304,6 +312,8 @@ describe( 'msg-resend Node, byTopic', function () {
         checkData( n1.context().get("data"), "u" ).should.have.a.property('interval', 95);
         checkData( n1.context().get("data"), "v" ).should.have.a.property('interval', 90);
         c.should.match(expTopics.length);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -357,6 +367,8 @@ describe( 'msg-resend Node, byTopic', function () {
         checkData( n1.context().get("data"), "v" ).should.have.a.property('maxCount', 4);
         c.should.match(expTopics.length);
         n1.should.have.a.property('maxCount', 1);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -402,6 +414,8 @@ describe( 'msg-resend Node, byTopic', function () {
         await delay(475);
         checkData( n1.context().get("data"), "t" );
         c.should.match(4);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -447,6 +461,8 @@ describe( 'msg-resend Node, byTopic', function () {
         await delay(475);
         checkData( n1.context().get("data"), "t" );
         c.should.match(4);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -494,6 +510,8 @@ describe( 'msg-resend Node, byTopic', function () {
         await delay(175);
         checkData( n1.context().get("data"), "t" );
         c.should.match(23);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -569,6 +587,8 @@ describe( 'msg-resend Node, byTopic', function () {
         checkDataWithoutCounter( n1.context().get("data"), "u" );
         checkDataWithoutCounter( n1.context().get("data"), "v" );
         c.should.match(0);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {
@@ -646,6 +666,8 @@ describe( 'msg-resend Node, byTopic', function () {
         checkData( n1.context().get("data"), "u" );
         checkData( n1.context().get("data"), "v" );
         c.should.match(9);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

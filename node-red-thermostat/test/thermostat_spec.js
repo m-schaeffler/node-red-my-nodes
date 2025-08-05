@@ -180,13 +180,14 @@ describe( 'thermostat Node', function () {
         // change nominal data again
         n1.receive({ topic:"data", payload: {
           nominal:    22,
+          factor:     4,
           cycleTime:  900,
           cycleCount: 3
         } });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:22,factor:0.2,cycleTime:900,cycleCount:3,block:false,temperature:19});
+        n1.should.have.a.property('data',{nominal:22,factor:0.8,cycleTime:900,cycleCount:3,block:false,temperature:19});
         n1.context().get("data").should.match(n1.data);
         // redeploy node
         await helper._redNodes.stopFlows();

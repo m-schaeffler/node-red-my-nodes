@@ -59,7 +59,20 @@ module.exports = function(RED) {
         }
 
         node.on('input', function(msg,send,done) {
-            if( ! Array.isArray( msg.payload.data ) )
+            if( msg.resync )
+            {
+                for( const t in node.data )
+                {
+                    node.data[t].pid = null;
+                }
+                if( node.contextStore !== "none" )
+                {
+                    node.flowcontext.set( node.contextVar, node.data, node.contextStore );
+                }
+                done();
+                return;
+            }
+            if( ! Array.isArray( msg.payload?.data ) )
             {
                 node.statistics.err++;
                 done( "msg.payload.data must be an Array!" );
@@ -288,7 +301,7 @@ module.exports = function(RED) {
                 {
                     // veraltete Nachricht und nicht reboot
                     node.statistics.old++;
-                    node.warn( `old ble message ${name} from ${msg.payload.gateway} dropped, ${pid} < ${item.pid}` );
+                    node.warn( `old ble message ${name} dropped, ${pid} < ${item.pid}` );
                     return false;
                 }
                 if( msg.payload.gateway )

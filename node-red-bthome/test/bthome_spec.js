@@ -1,4 +1,5 @@
 var should = require("should");
+var assertions = require('./bthome_assert.js')
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../bthome.js");
@@ -118,7 +119,7 @@ describe( 'bthome Node', function () {
     data.should.have.a.property(t);
     const v = data[t];
     v.should.be.an.Object();
-    v.should.have.a.property("pid");
+    v.should.have.a.property("pid").which.is.a.NumberOrNull();
     v.should.have.a.property("gw").which.is.an.Object();
     if( gw )
     {

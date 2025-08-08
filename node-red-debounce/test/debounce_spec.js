@@ -1,5 +1,5 @@
 var should = require("should");
-var assertions = require('./asserts.js')
+var assertions = require('./asserts.js');
 var helper = require("node-red-node-test-helper");
 var node   = require("../debounce.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");

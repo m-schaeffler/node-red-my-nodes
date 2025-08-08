@@ -34,6 +34,7 @@ $ npm install @mschaeffler/node-red-bthome
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | object | data from Shelly script|
+|resync  | boolean| if set to yes, allow all packed ids; to resync after some issue|
 
 ### msg.payload
 

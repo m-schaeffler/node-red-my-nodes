@@ -1,4 +1,5 @@
 var should = require("should");
+var assertions = require('./asserts.js');
 var helper = require("node-red-node-test-helper");
 var node   = require("../debounce.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
@@ -46,14 +47,6 @@ describe( 'debounce Node, byTopic', function () {
       });
   });
 
-  function checkData(n1,topic) {
-      const data = n1.context().get("data");
-      data.should.have.a.property(topic).which.is.a.Object();
-      data[topic].should.have.a.property('timer',null);
-      data[topic].should.have.a.property('message',null);
-      return data[topic];
-  }
-
   it('should forward valid values', function (done) {
     const numbers = [-1,0,0,0,0,0,0,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false,null,NaN,"FooBar"];
     var flow = [{ id: "n1", type: "debounce", name: "test", bytopic:true, time:20, timeUnit:"msecs", wires: [["n2"]] },
@@ -85,9 +78,9 @@ describe( 'debounce Node, byTopic', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -122,9 +115,9 @@ describe( 'debounce Node, byTopic', function () {
         n1.receive({ topic:"i", invalid: true, payload: 255 });
         await delay(150);
         c.should.match(0);
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "i" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("i");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -172,35 +165,35 @@ describe( 'debounce Node, byTopic', function () {
         }
         await delay(100);
         c.should.match(3*(numbersOut.length-2));
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
         n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
         n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+1 });
         n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+2 });
         await delay(100);
         c.should.match(3*(numbersOut.length-2));
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
         n1.receive({ reset: true });
         n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
         n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+1 });
         n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+2 });
         await delay(100);
         c.should.match(3*(numbersOut.length-1));
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
         n1.receive({ topic:"t", reset: true });
         n1.receive({ topic: "t", payload: numbersIn[numbersIn.length-1] });
         n1.receive({ topic: "u", payload: numbersIn[numbersIn.length-1]+1 });
         n1.receive({ topic: "v", payload: numbersIn[numbersIn.length-1]+2 });
         await delay(100);
         c.should.match(3*numbersOut.length-2);
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -244,7 +237,7 @@ describe( 'debounce Node, byTopic', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "Object" );
+        n1.context().get("data").should.have.ValidData("Object");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -288,7 +281,7 @@ describe( 'debounce Node, byTopic', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "JSONata" );
+        n1.context().get("data").should.have.ValidData("JSONata");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -334,28 +327,28 @@ describe( 'debounce Node, byTopic', function () {
         }
         await delay(150);
         c.should.match(3*Math.ceil(numbers.length/4));
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
         n1.receive({ topic: "reset", payload: 40 });
         n1.receive({ topic: "t", payload: 40 });
         n1.receive({ topic: "u", payload: 40 });
         n1.receive({ reset: true });
         await delay(150);
         c.should.match(3*Math.ceil(numbers.length/4));
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
-        checkData( n1, "reset" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
+        n1.context().get("data").should.have.ValidData("reset");
         n1.receive({ topic: "reset", payload: 40 });
         n1.receive({ topic: "t", payload: 21 });
         n1.receive({ topic: "reset", reset: true });
         await delay(150);
         c.should.match(3*Math.ceil(numbers.length/4)+1);
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
-        checkData( n1, "reset" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
+        n1.context().get("data").should.have.ValidData("reset");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -402,28 +395,28 @@ describe( 'debounce Node, byTopic', function () {
         }
         await delay(150);
         c.should.match(3);
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
         n1.receive({ topic: "reset", payload: 40 });
         n1.receive({ topic: "t", payload: 40 });
         n1.receive({ topic: "u", payload: 40 });
         n1.receive({ reset: true });
         await delay(150);
         c.should.match(3);
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
-        checkData( n1, "reset" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
+        n1.context().get("data").should.have.ValidData("reset");
         n1.receive({ topic: "reset", payload: 40 });
         n1.receive({ topic: "t", payload: 21 });
         n1.receive({ topic: "reset", reset: true });
         await delay(150);
         c.should.match(4);
-        checkData( n1, "t" );
-        checkData( n1, "u" );
-        checkData( n1, "v" );
-        checkData( n1, "reset" );
+        n1.context().get("data").should.have.ValidData("t");
+        n1.context().get("data").should.have.ValidData("u");
+        n1.context().get("data").should.have.ValidData("v");
+        n1.context().get("data").should.have.ValidData("reset");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

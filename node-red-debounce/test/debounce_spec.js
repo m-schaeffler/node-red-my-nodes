@@ -1,4 +1,5 @@
 var should = require("should");
+var assertions = require('./asserts.js')
 var helper = require("node-red-node-test-helper");
 var node   = require("../debounce.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
@@ -44,14 +45,6 @@ describe( 'debounce Node', function () {
           helper.stopServer(done);
       });
   });
-
-  function checkData(n1,topic) {
-      const data = n1.context().get("data");
-      data.should.have.a.property(topic).which.is.a.Object();
-      data[topic].should.have.a.property('timer',null);
-      data[topic].should.have.a.property('message',null);
-      return data[topic];
-  }
 
   it('should be loaded', function (done) {
     var flow = [{ id: "n1", type: "debounce", name: "test" }];
@@ -109,7 +102,7 @@ describe( 'debounce Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -144,7 +137,7 @@ describe( 'debounce Node', function () {
         n1.receive({ invalid: true, payload: 255 });
         await delay(150);
         c.should.match(0);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -190,16 +183,16 @@ describe( 'debounce Node', function () {
         }
         await delay(100);
         c.should.match(numbersOut.length-1);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.receive({ topic: "z", payload: numbersIn[numbersIn.length-1] });
         await delay(100);
         c.should.match(numbersOut.length-1);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.receive({ reset: true });
         n1.receive({ topic: "reset", payload: numbersIn[numbersIn.length-1] });
         await delay(100);
         c.should.match(numbersOut.length);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -243,7 +236,7 @@ describe( 'debounce Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -287,7 +280,7 @@ describe( 'debounce Node', function () {
         }
         await delay(100);
         c.should.match(numbers.length);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -331,12 +324,12 @@ describe( 'debounce Node', function () {
         }
         await delay(150);
         c.should.match(Math.ceil(numbers.length/4));
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.receive({ topic: "reset", payload: 40 });
         n1.receive({ reset: true });
         await delay(150);
         c.should.match(Math.ceil(numbers.length/4));
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -381,12 +374,12 @@ describe( 'debounce Node', function () {
         }
         await delay(150);
         c.should.match(1);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.receive({ topic: "reset", payload: 40 });
         n1.receive({ reset: true });
         await delay(150);
         c.should.match(1);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -425,17 +418,17 @@ describe( 'debounce Node', function () {
         n1.receive({ topic: "t", payload: 1 });
         await delay(150);
         c.should.match(1);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.receive({ topic: "t", payload: 1 });
         await delay(150);
         c.should.match(1);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.receive({ topic: "o", payload: 0 });
         await delay(25);
         n1.receive({ topic: "t", payload: 1 });
         await delay(150);
         c.should.match(2);
-        checkData( n1, "all_topics" );
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

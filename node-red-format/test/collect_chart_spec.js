@@ -1,4 +1,5 @@
 var should = require("should");
+var assertions = require('./collect_chart_assert.js');
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../collect_chart.js");
@@ -41,20 +42,6 @@ describe( 'collect_chart Node', function () {
           helper.stopServer(done);
       });
   });
-
-  function checkItem(item,c,t,v)
-  {
-     item.should.be.a.Object();
-     item.should.have.a.property('c',c);
-     if( t != null )
-       item.should.have.a.property('t').which.is.approximately(Date.now()-t,30);
-     else
-       item.should.have.a.property('t',null);
-     if( v !== null )
-       item.should.have.a.property('v',Number(v));
-     else
-       item.should.not.have.a.property('v');
-  }
 
   it('should be loaded', function (done) {
     var flow = [{ id: "n1", type: "collectChart", name: "test" }];
@@ -110,7 +97,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length);
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'series1', 250, numbers1[i] );
+                msg.payload[i].should.be.a.ValidItem( 'series1', 250, numbers1[i] );
               }
               break;
             case 3:
@@ -118,8 +105,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers1.length+numbers2.length);
               for(const i in msg.payload)
               {
-                checkItem(
-                  msg.payload[i],
+                msg.payload[i].should.be.a.ValidItem(
                   i<numbers1.length ? 'series1' : 'series2',
                   i<numbers1.length ? 1250 : 750,
                   i<numbers1.length ? numbers1[i] : numbers2[i-numbers1.length] );
@@ -132,7 +118,7 @@ describe( 'collect_chart Node', function () {
             case 5:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(1);
-              checkItem( msg.payload[0], 'series3', 750, 42 );
+              msg.payload[0].should.be.a.ValidItem( 'series3', 750, 42 );
               break;
             default:
               done("too much output messages");
@@ -204,20 +190,19 @@ describe( 'collect_chart Node', function () {
             case 1:
               msg.should.have.property('init',true);
               msg.should.have.property('payload').which.is.an.Array().of.length(3);
-              checkItem( msg.payload[0], 'series1', null, null );
-              checkItem( msg.payload[1], 'series2', null, null );
-              checkItem( msg.payload[2], 'series3', null, null );
+              msg.payload[0].should.be.a.ValidItem( 'series1', null, null );
+              msg.payload[1].should.be.a.ValidItem( 'series2', null, null );
+              msg.payload[2].should.be.a.ValidItem( 'series3', null, null );
               break;
             case 2:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(3+3*numbers1.length);
-              checkItem( msg.payload[0], 'series1', 24*3600*1000+10*1000, null );
-              checkItem( msg.payload[1], 'series2', 24*3600*1000+10*1000, null );
-              checkItem( msg.payload[2], 'series3', 24*3600*1000+10*1000, null );
+              msg.payload[0].should.be.a.ValidItem( 'series1', 24*3600*1000+10*1000, null );
+              msg.payload[1].should.be.a.ValidItem( 'series2', 24*3600*1000+10*1000, null );
+              msg.payload[2].should.be.a.ValidItem( 'series3', 24*3600*1000+10*1000, null );
               for(let i=3; i<msg.payload.length; i++)
               {
-                checkItem(
-                  msg.payload[i],
+                msg.payload[i].should.be.a.ValidItem(
                   topics[i%3],
                   250,
                   numbers[i%3][Math.floor((i-3)/3)] );
@@ -226,13 +211,12 @@ describe( 'collect_chart Node', function () {
             case 3:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(3+2*numbers1.length);
-              checkItem( msg.payload[0], 'series1', 24*3600*1000+10*1000, null );
-              checkItem( msg.payload[1], 'series2', 24*3600*1000+10*1000, null );
-              checkItem( msg.payload[2], 'series3', 24*3600*1000+10*1000, null );
+              msg.payload[0].should.be.a.ValidItem( 'series1', 24*3600*1000+10*1000, null );
+              msg.payload[1].should.be.a.ValidItem( 'series2', 24*3600*1000+10*1000, null );
+              msg.payload[2].should.be.a.ValidItem( 'series3', 24*3600*1000+10*1000, null );
               for(let i=3; i<msg.payload.length; i++)
               {
-                checkItem(
-                  msg.payload[i],
+                msg.payload[i].should.be.a.ValidItem(
                   i%2 ? 'series1' : 'series3',
                   1250,
                   i%2 ? numbers1[Math.floor((i-3)/2)] : numbers3[Math.floor((i-3)/2)] );
@@ -305,8 +289,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers2.length);
               for(const i in msg.payload)
               {
-                checkItem(
-                  msg.payload[i],
+                msg.payload[i].should.be.a.ValidItem(
                   'steps',
                   1250-time[i],
                   numbers2[i] );
@@ -367,7 +350,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length);
               for( const i in topics )
               {
-                checkItem( msg.payload[i], topics[i].topic, null, null );
+                msg.payload[i].should.be.a.ValidItem( topics[i].topic, null, null );
               }
               break;
             case 2:
@@ -377,7 +360,7 @@ describe( 'collect_chart Node', function () {
               {
                 if( i < 2 )
                 {
-                  checkItem( msg.payload[i], topics[i].topic, 24*3600*1000+20*1000, null );
+                  msg.payload[i].should.be.a.ValidItem( topics[i].topic, 24*3600*1000+20*1000, null );
                 }
                 else
                 {
@@ -386,10 +369,10 @@ describe( 'collect_chart Node', function () {
                   switch( v.c )
                   {
                     case 'step':
-                      checkItem( v, 'step', 1250-time[cS], numbers2[cS++] );
+                      v.should.be.a.ValidItem( 'step', 1250-time[cS], numbers2[cS++] );
                       break;
                     case "direct":
-                      checkItem( v, 'direct', 1250-cD*200, numbers1[cD++] );
+                      v.should.be.a.ValidItem( 'direct', 1250-cD*200, numbers1[cD++] );
                       break;
                     default:
                       done("wrong v.c");
@@ -444,8 +427,8 @@ describe( 'collect_chart Node', function () {
           c.should.match(1);
           msg.should.have.property('init',true);
           msg.should.have.property('payload').which.is.an.Array().of.length(2);
-          checkItem( msg.payload[0], "s1", null, null );
-          checkItem( msg.payload[1], "s2", null, null );
+          msg.payload[0].should.be.a.ValidItem( "s1", null, null );
+          msg.payload[1].should.be.a.ValidItem( "s2", null, null );
         }
         catch(err) {
           done(err);
@@ -489,7 +472,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'series', 250, i );
+                msg.payload[i].should.be.a.ValidItem( 'series', 250, i );
               }
               break;
             case 3:
@@ -497,7 +480,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(2*numbers.length);
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'series', i<numbers.length?2750:250, i );
+                msg.payload[i].should.be.a.ValidItem( 'series', i<numbers.length?2750:250, i );
               }
               break;
             case 4:
@@ -505,7 +488,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'series', 1750, Number(i)+10 );
+                msg.payload[i].should.be.a.ValidItem( 'series', 1750, Number(i)+10 );
               }
               break;
             case 5:
@@ -515,7 +498,7 @@ describe( 'collect_chart Node', function () {
               //console.log(msg.payload[10].t-Date.now())
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'series', i<numbers.length?2750:250, Number(i)+10 );
+                msg.payload[i].should.be.a.ValidItem( 'series', i<numbers.length?2750:250, Number(i)+10 );
               }
               break;
             case 6:
@@ -524,7 +507,7 @@ describe( 'collect_chart Node', function () {
               //console.log(msg.payload[0].t-Date.now())
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'series', 1750, Number(i)+20 );
+                msg.payload[i].should.be.a.ValidItem( 'series', 1750, Number(i)+20 );
               }
               break;
             case 7:
@@ -597,7 +580,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'series', 250, i );
+                msg.payload[i].should.be.a.ValidItem( 'series', 250, i );
               }
               break;
             case 3:
@@ -660,13 +643,13 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'series', 250, i );
+                msg.payload[i].should.be.a.ValidItem( 'series', 250, i );
               }
               break;
             case 3:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(1);
-              checkItem( msg.payload[0], 'series', 250, -1 );
+              msg.payload[0].should.be.a.ValidItem( 'series', 250, -1 );
               break;
             default:
               done("too much output messages");
@@ -729,7 +712,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'memory', 250, numbers[i] );
+                msg.payload[i].should.be.a.ValidItem( 'memory', 250, numbers[i] );
               }
               break;
             default:
@@ -800,7 +783,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(numbers.length);
               for(const i in msg.payload)
               {
-                checkItem( msg.payload[i], 'file', 250, numbers[i] );
+                msg.payload[i].should.be.a.ValidItem( 'file', 250, numbers[i] );
               }
               break;
             default:
@@ -899,7 +882,7 @@ describe( 'collect_chart Node', function () {
             case 2:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(1);
-              checkItem( msg.payload[0], 'object', 250, 98 );
+              msg.payload[0].should.be.a.ValidItem( 'object', 250, 98 );
               break;
             default:
               done("too much output messages");
@@ -946,7 +929,7 @@ describe( 'collect_chart Node', function () {
             case 2:
               msg.should.not.have.property('init');
               msg.should.have.property('payload').which.is.an.Array().of.length(1);
-              checkItem( msg.payload[0], 'jsonata', 250, 25 );
+              msg.payload[0].should.be.a.ValidItem( 'jsonata', 250, 25 );
               break;
             default:
               done("too much output messages");
@@ -1049,7 +1032,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length);
               for( const i in topics )
               {
-                checkItem( msg.payload[i], topics[i], null, null );
+                msg.payload[i].should.be.a.ValidItem( topics[i], null, null );
               }
               break;
             case 2:
@@ -1114,7 +1097,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                checkItem( msg.payload[i], topics[i], null, null );
+                msg.payload[i].should.be.a.ValidItem( topics[i], null, null );
               }
               break;
             case 2:
@@ -1181,7 +1164,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                checkItem( msg.payload[i], topics[i], null, null );
+                msg.payload[i].should.be.a.ValidItem( topics[i], null, null );
               }
               break;
             case 2:
@@ -1248,7 +1231,7 @@ describe( 'collect_chart Node', function () {
               msg.should.have.property('payload').which.is.an.Array().of.length(topics.length+2);
               for( const i in topics )
               {
-                checkItem( msg.payload[i], topics[i], null, null );
+                msg.payload[i].should.be.a.ValidItem( topics[i], null, null );
               }
               break;
             case 2:

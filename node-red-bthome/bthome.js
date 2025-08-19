@@ -4,7 +4,7 @@ const Rawdata = require( "./rawdata.js" );
 const BtEvent = require( "./btevent.js" );
 
 class TypeIds {
-    static bluDW     = 0x0202;
+    static bluDW     = 2;
     static bluRemote = 9;
 }
 Object.freeze( TypeIds );
@@ -266,7 +266,7 @@ module.exports = function(RED) {
                             setData( "channel", rawdata.getUInt8() + 1 );
                             break;
                         case 0xF0:
-                            item.typeId = rawdata.getUInt16();
+                            item.typeId = rawdata.getUInt16() & 0xFF;
                             break;
                         case 0xF1:
                             item.version = {

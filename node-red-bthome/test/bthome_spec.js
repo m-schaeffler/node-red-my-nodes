@@ -244,7 +244,7 @@ describe( 'bthome Node', function () {
           data:    [68,0,1,1,94,0xF0,1,2,0xF1,1,2,3,4]
         } });
         await delay(50);
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:1,encrypted:false,typeId:0x201,version:{sub:1,patch:2,minor:3,major:4}},"UnitTest");
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:1,encrypted:false,typeId:0x01,version:{sub:1,patch:2,minor:3,major:4}},"UnitTest");
         c1.should.match( 0 );
         c2.should.match( 0 );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -255,7 +255,7 @@ describe( 'bthome Node', function () {
           data:    [68,0,1,1,94,0xF0,1,2,0xF2,2,3,4]
         } });
         await delay(50);
-        n1.data.should.have.ValidData("dev_unencrypted_2",{pid:1,encrypted:false,typeId:0x201,version:{patch:2,minor:3,major:4}},"UnitTest");
+        n1.data.should.have.ValidData("dev_unencrypted_2",{pid:1,encrypted:false,typeId:0x01,version:{patch:2,minor:3,major:4}},"UnitTest");
         n1.should.have.a.property('statistics',{ok:2,err:0,old:0,dup:0});
         c1.should.match( 0 );
         c2.should.match( 0 );

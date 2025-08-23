@@ -8,11 +8,15 @@ module.exports = function(RED) {
         this.property  = config.property || "payload";
         this.delay     = Number( config.delay ?? 0 );
         this.postrun   = Number( config.postrun ?? 0 );
+        this.minOn     = Number( config.minOn ?? 0 );
+        this.maxOn     = Number( config.maxOn ?? 0 );
         this.showState = Boolean( config.showState );
         this.last         = null;
         this.msg          = null;
         this.timerDelay   = null;
         this.timerPostRun = null;
+        this.timerMinOn   = null;
+        this.timerMaxOn   = null;
         node.status( "" );
 
         function setStatus(color,text)
@@ -21,6 +25,29 @@ module.exports = function(RED) {
             if( node.showState )
             {
                 node.status( { text:text, shape:"dot", fill:color } );
+            }
+        }
+
+        function doswitch()
+        {
+            node.send( node.msg );
+            if( node.msg.payload )
+            {
+                if( node.minOn )
+                {
+                    node.timerMinOn = setTimeout( function() { node.emit("minOn"); }, node.minOn );
+                }
+                if( node.maxOn )
+                {
+                    node.timerMaxOn = setTimeout( function() { node.emit("maxOn"); }, node.maxOn );
+                }
+            }
+            else
+            {
+                clearTimeout( node.timerMinOn );
+                clearTimeout( node.timerMaxOn );
+                node.timerMinOn = null;
+                node.timerMaxOn = null;
             }
         }
 
@@ -36,27 +63,26 @@ module.exports = function(RED) {
                 if( msg.payload !== node.last )
                 {
                     node.last = msg.payload;
-                    node.msg  = null;
+                    node.msg = msg;
                     if( msg.payload )
                     {
                         if( node.timerPostrun )
                         {
                             clearTimeout( node.timerPostrun );
                             node.timerPostrun = null;
-                            send( msg );
+                            doswitch();
                             setStatus( "green", "on (change of mind)" );
                         }
                         else
                         {
                             if( node.delay > 0 )
                             {
-                                node.msg = msg;
                                 node.timerDelay = setTimeout( function() { node.emit("sendOnMsg"); }, node.delay );
                                 setStatus( "yellow", "startdelay" );
                             }
                             else
                             {
-                                send( msg );
+                                doswitch();
                                 setStatus( "green", "on" );
                             }
                         }
@@ -67,20 +93,23 @@ module.exports = function(RED) {
                         {
                             clearTimeout( node.timerDelay );
                             node.timerDelay = null;
-                            send( msg );
+                            doswitch();
                             setStatus( "gray", "off (change of mind)" );
                         }
                         else
                         {
                             if( node.postrun > 0 )
                             {
-                                node.msg = msg;
                                 node.timerPostrun = setTimeout( function() { node.emit("sendOffMsg"); }, node.postrun );
                                 setStatus( "yellow", "postrun" );
                             }
+                            else if( node.timerMinOn )
+                            {
+                                setStatus( "yellow", "minimal on" );
+                            }
                             else
                             {
-                                send( msg );
+                                doswitch();
                                 setStatus( "gray", "off" );
                             }
                         }
@@ -101,21 +130,38 @@ module.exports = function(RED) {
 
         node.on('sendOnMsg', function() {
             node.timerDelay = null;
-            node.send( node.msg );
-            node.msg = null;
+            doswitch();
             setStatus( "green", "on" );
         });
 
         node.on('sendOffMsg', function() {
             node.timerPostrun = null;
-            node.send( node.msg );
-            node.msg = null;
+            doswitch();
             setStatus( "gray", "off" );
+        });
+
+        node.on('minOn', function() {
+            node.timerMinOn = null;
+            if( ! node.msg.payload )
+            {
+                doswitch();
+                setStatus( "gray", "off (min time)" );
+            }
+        });
+
+        node.on('maxOn', function() {
+            node.timerMaxOn  = null;
+            node.last        = false;
+            node.msg.payload = false;
+            doswitch();
+            setStatus( "gray", "off (max time)" );
         });
 
         node.on('close', function() {
             clearTimeout( node.timerDelay );
             clearTimeout( node.timerPostrun );
+            clearTimeout( node.timerMinOn );
+            clearTimeout( node.timerMaxOn );
         });
     }
 

@@ -6,6 +6,8 @@
             name:{value:""},
             property:{value:"payload",required:true},
             delay:{value:"0",required:true},
+            minOn:{value:"0",required:true},
+            maxOn:{value:"0",required:true},
             postrun:{value:"0",required:true},
             showState:{value:false}
         },
@@ -48,6 +50,14 @@
     <div class="form-row">
         <label for="node-input-postrun"><i class="fa fa-stop"></i> Postrun</label>
         <input type="text" id="node-input-postrun">
+    </div>
+    <div class="form-row">
+        <label for="node-input-minOn"><i class="fa fa-hourglass-start"></i> min on time</label>
+        <input type="text" id="node-input-minOn">
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxOn"><i class="fa fa-hourglass-end"></i> max on time</label>
+        <input type="text" id="node-input-maxOn">
     </div>
     <div class="form-row">
         <label for="node-input-howStatus"><i class="fa fa-star-o"></i> Status</label>
@@ -99,6 +109,10 @@
         <dd> delay time in msec for switching from on to off.</dd>
         <dt>Postrun <span class="property-type">number</span></dt>
         <dd> delay time in msec for switching from off to on.</dd>
+        <dt>min on time <span class="property-type">number</span></dt>
+        <dd> minimal time in msec to be in on state.</dd>
+        <dt>max on time <span class="property-type">number</span></dt>
+        <dd> maximal time in msec to be in on state; 0 is infinite.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

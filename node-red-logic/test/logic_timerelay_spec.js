@@ -31,6 +31,8 @@ describe( 'logic_timerrelay Node', function () {
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('delay', 0);
         n1.should.have.a.property('postrun', 0);
+        n1.should.have.a.property('minOn', 0);
+        n1.should.have.a.property('maxOn', 0);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -295,6 +297,117 @@ describe( 'logic_timerrelay Node', function () {
         c.should.match( 1 );
         await delay(50);
         c.should.match( 2 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should not have max on time', function (done) {
+    var flow = [{ id: "n1", type: "timerelay", maxOn:150, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        c++;
+        try {
+          msg.should.have.a.property('payload',Boolean(c%2));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('maxOn', 150);
+        await delay(50);
+        n1.receive({ payload: 1 });
+        await delay(50);
+        c.should.match( 1 );
+        n1.receive({ payload: 0 });
+        await delay(50);
+        c.should.match( 2 );
+        n1.receive({ payload: 1 });
+        await delay(50);
+        c.should.match( 3 );
+        await delay(75);
+        c.should.match( 3 );
+        await delay(50);
+        c.should.match( 4 );
+        n1.receive({ payload: 1 });
+        await delay(50);
+        c.should.match( 5 );
+        n1.receive({ payload: 0 });
+        await delay(50);
+        c.should.match( 6 );
+        n1.receive({ payload: 1 });
+        await delay(50);
+        c.should.match( 7 );
+        await delay(75);
+        c.should.match( 7 );
+        await delay(50);
+        c.should.match( 8 );
+        n1.receive({ payload: 0 });
+        await delay(50);
+        c.should.match( 8 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should not have min on time', function (done) {
+    var flow = [{ id: "n1", type: "timerelay", minOn:150, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        c++;
+        try {
+          msg.should.have.a.property('payload',Boolean(c%2));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('minOn', 150);
+        await delay(50);
+        n1.receive({ payload: 1 });
+        await delay(50);
+        c.should.match( 1 );
+        await delay(200);
+        c.should.match( 1 );
+        n1.receive({ payload: 0 });
+        await delay(50);
+        c.should.match( 2 );
+        n1.receive({ payload: 1 });
+        n1.receive({ payload: 0 });
+        await delay(50);
+        c.should.match( 3 );
+        await delay(75);
+        c.should.match( 3 );
+        await delay(50);
+        c.should.match( 4 );
+        n1.receive({ payload: 1 });
+        await delay(50);
+        c.should.match( 5 );
+        await delay(200);
+        c.should.match( 5 );
+        n1.receive({ payload: 0 });
+        await delay(50);
+        c.should.match( 6 );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

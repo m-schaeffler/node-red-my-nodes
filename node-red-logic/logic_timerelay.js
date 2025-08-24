@@ -10,7 +10,10 @@ module.exports = function(RED) {
         this.postrun   = Number( config.postrun ?? 0 );
         this.minOn     = Number( config.minOn ?? 0 );
         this.maxOn     = Number( config.maxOn ?? 0 );
+        this.outputOn  = tools.convertTypedInput( config.outputOn  ?? "true", config.outputOnType  ?? "bool" );
+        this.outputOff = tools.convertTypedInput( config.outputOff ?? "false",config.outputOffType ?? "bool" );
         this.showState = Boolean( config.showState );
+        this.state        = null;
         this.last         = null;
         this.msg          = null;
         this.timerDelay   = null;
@@ -30,8 +33,9 @@ module.exports = function(RED) {
 
         function doswitch()
         {
+            node.msg.payload = node.state ? node.outputOn : node.outputOff;
             node.send( node.msg );
-            if( node.msg.payload )
+            if( node.state )
             {
                 if( node.minOn )
                 {
@@ -48,6 +52,7 @@ module.exports = function(RED) {
                 clearTimeout( node.timerMaxOn );
                 node.timerMinOn = null;
                 node.timerMaxOn = null;
+                node.msg        = null;
             }
         }
 
@@ -57,14 +62,14 @@ module.exports = function(RED) {
                 done();
                 return;
             }
-            msg.payload = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
-            if( msg.payload !== null )
+            node.state = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
+            if( node.state !== null )
             {
-                if( msg.payload !== node.last )
+                if( node.state !== node.last )
                 {
-                    node.last = msg.payload;
-                    node.msg = msg;
-                    if( msg.payload )
+                    node.last = node.state;
+                    node.msg  = msg;
+                    if( node.state )
                     {
                         if( node.timerPostrun )
                         {
@@ -117,7 +122,7 @@ module.exports = function(RED) {
                 }
                 else
                 {
-                    setStatus( msg.payload ? "green" : "gray", "filter" );
+                    setStatus( node.state ? "green" : "gray", "filter" );
                 }
             }
             else
@@ -142,7 +147,7 @@ module.exports = function(RED) {
 
         node.on('minOn', function() {
             node.timerMinOn = null;
-            if( ! node.msg.payload )
+            if( ! node.state )
             {
                 doswitch();
                 setStatus( "gray", "off (min time)" );
@@ -150,9 +155,9 @@ module.exports = function(RED) {
         });
 
         node.on('maxOn', function() {
-            node.timerMaxOn  = null;
-            node.last        = false;
-            node.msg.payload = false;
+            node.timerMaxOn = null;
+            node.last       = false;
+            node.state      = false;
             doswitch();
             setStatus( "gray", "off (max time)" );
         });

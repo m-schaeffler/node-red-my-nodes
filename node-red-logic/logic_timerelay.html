@@ -9,6 +9,10 @@
             minOn:{value:"0",required:true},
             maxOn:{value:"0",required:true},
             postrun:{value:"0",required:true},
+            outputOn:{value:true,required:true},
+            outputOnType:{value:"bool"},
+            outputOff:{value:false,required:true},
+            outputOffType:{value:"bool"},
             showState:{value:false}
         },
         inputs:1,
@@ -28,6 +32,16 @@
                 type:"msg",
                 types:["msg"],
                 typeField: "#node-input-property-type"
+            })
+            $("#node-input-outputOn").typedInput({
+                type:"bool",
+                types:["str","num","bool","json"],
+                typeField: "#node-input-outputOnType"
+            })
+            $("#node-input-outputOff").typedInput({
+                type:"bool",
+                types:["str","num","bool","json"],
+                typeField: "#node-input-outputOffType"
             })
         }
     });
@@ -58,6 +72,16 @@
     <div class="form-row">
         <label for="node-input-maxOn"><i class="fa fa-hourglass-end"></i> max on time</label>
         <input type="text" id="node-input-maxOn">
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputOn"><i class="fa fa-sign-out"></i> on Output</label>
+        <input type="text" id="node-input-outputOn">
+        <input type="hidden" id="node-input-outputOnType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputOff"><i class="fa fa-sign-out"></i> off Output</label>
+        <input type="text" id="node-input-outputOff">
+        <input type="hidden" id="node-input-outputOffType">
     </div>
     <div class="form-row">
         <label for="node-input-howStatus"><i class="fa fa-star-o"></i> Status</label>
@@ -113,6 +137,10 @@
         <dd> minimal time in msec to be in on state.</dd>
         <dt>max on time <span class="property-type">number</span></dt>
         <dd> maximal time in msec to be in on state; 0 is infinite.</dd>
+        <dt>on Output <span class="property-type">multi</span></dt>
+        <dd> Value to be sent in on case.</dd>
+        <dt>off Output <span class="property-type">multi</span></dt>
+        <dd> Value to be sent in off case.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

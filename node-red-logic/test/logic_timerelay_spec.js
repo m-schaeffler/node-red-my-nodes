@@ -33,6 +33,8 @@ describe( 'logic_timerrelay Node', function () {
         n1.should.have.a.property('postrun', 0);
         n1.should.have.a.property('minOn', 0);
         n1.should.have.a.property('maxOn', 0);
+        n1.should.have.a.property('outputOn', true);
+        n1.should.have.a.property('outputOff', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -126,7 +128,7 @@ describe( 'logic_timerrelay Node', function () {
     });
   });
 
-  it('should not have any delays', function (done) {
+  it('should not have any delays, output boolean', function (done) {
     var flow = [{ id: "n1", type: "timerelay", delay:0, postrun:0, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -145,6 +147,8 @@ describe( 'logic_timerrelay Node', function () {
       try {
         n1.should.have.a.property('delay', 0);
         n1.should.have.a.property('postrun', 0);
+        n1.should.have.a.property('outputOn', true);
+        n1.should.have.a.property('outputOff', false);
         await delay(50);
         n1.receive({ payload: 1 });
         await delay(50);
@@ -168,8 +172,8 @@ describe( 'logic_timerrelay Node', function () {
     });
   });
 
-  it('should delay switching on', function (done) {
-    var flow = [{ id: "n1", type: "timerelay", delay:250, postrun:0, name: "test", wires: [["n2"]] },
+  it('should delay switching on, output number', function (done) {
+    var flow = [{ id: "n1", type: "timerelay", delay:250, postrun:0, outputOn:"1", outputOnType:"num", outputOff:"0", outputOffType:"num", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -178,7 +182,7 @@ describe( 'logic_timerrelay Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',c<3 ? Boolean(c%2) : false);
+          msg.should.have.a.property('payload',Number( c<3 ? Boolean(c%2) : false ));
         }
         catch(err) {
           done(err);
@@ -187,6 +191,8 @@ describe( 'logic_timerrelay Node', function () {
       try {
         n1.should.have.a.property('delay', 250);
         n1.should.have.a.property('postrun', 0);
+        n1.should.have.a.property('outputOn', 1);
+        n1.should.have.a.property('outputOff', 0);
         await delay(50);
         // normal
         n1.receive({ payload: 1 });
@@ -216,8 +222,8 @@ describe( 'logic_timerrelay Node', function () {
     });
   });
 
-  it('should delay switching off', function (done) {
-    var flow = [{ id: "n1", type: "timerelay", delay:0, postrun:250, name: "test", wires: [["n2"]] },
+  it('should delay switching off, output string', function (done) {
+    var flow = [{ id: "n1", type: "timerelay", delay:0, postrun:250, outputOn:"on", outputOnType:"str", outputOff:"off", outputOffType:"str", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -226,7 +232,7 @@ describe( 'logic_timerrelay Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',c<4 ? Boolean(c%2) : true);
+          msg.should.have.a.property('payload',( c<4 ? Boolean(c%2) : true ) ? "on" : "off" );
         }
         catch(err) {
           done(err);
@@ -235,6 +241,8 @@ describe( 'logic_timerrelay Node', function () {
       try {
         n1.should.have.a.property('delay', 0);
         n1.should.have.a.property('postrun', 250);
+        n1.should.have.a.property('outputOn', "on");
+        n1.should.have.a.property('outputOff', "off");
         await delay(50);
         // normal
         n1.receive({ payload: 1 });
@@ -267,8 +275,10 @@ describe( 'logic_timerrelay Node', function () {
     });
   });
 
-  it('should delay switching on and off', function (done) {
-    var flow = [{ id: "n1", type: "timerelay", delay:250, postrun:250, name: "test", wires: [["n2"]] },
+  it('should delay switching on and off, output json', function (done) {
+    const jsonOn  = { value:true, num:42 };
+    const jsonOff = { value:false, num:-1 };
+    var flow = [{ id: "n1", type: "timerelay", delay:250, postrun:250, outputOn:JSON.stringify(jsonOn), outputOnType:"json", outputOff:JSON.stringify(jsonOff), outputOffType:"json", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -277,7 +287,7 @@ describe( 'logic_timerrelay Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.a.property('payload',Boolean(c%2));
+          msg.should.have.a.property('payload',c%2 ? jsonOn : jsonOff );
         }
         catch(err) {
           done(err);
@@ -286,6 +296,8 @@ describe( 'logic_timerrelay Node', function () {
       try {
         n1.should.have.a.property('delay', 250);
         n1.should.have.a.property('postrun', 250);
+        n1.should.have.a.property('outputOn', jsonOn);
+        n1.should.have.a.property('outputOff', jsonOff);
         await delay(50);
         n1.receive({ payload: 1 });
         await delay(225);

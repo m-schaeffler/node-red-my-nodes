@@ -12,6 +12,7 @@ module.exports = function(RED) {
         this.cycleTime  = Number( config.cycleTime ?? 600 );
         this.cycleCount = Number( config.cycleCount ?? 1 );
         this.feedback   = config.feedback ?? "boolean";
+        this.resetAtStop= Boolean( config.resetAtStop );
         this.data       = {};
         this.running    = 0;
         this.lastR      = null;
@@ -110,6 +111,10 @@ module.exports = function(RED) {
                 node.timerHeat  = null;
                 node.timerCycle = null;
                 sendOutput();
+                if( node.resetAtStop )
+                {
+                    initData();
+                }
             }
         }
 

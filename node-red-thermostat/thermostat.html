@@ -11,7 +11,8 @@
             factor: {value:"0.2",rerquired:true,validate:RED.validators.number()},
             cycleTime: {value:"600",rerquired:true,validate:RED.validators.number()},
             cycleCount: {value:"1",rerquired:true,validate:RED.validators.number()},
-            feedback: {value:"boolean",required:true}
+            feedback: {value:"boolean",required:true},
+            resetAtStop: {value:false}
         },
         inputs:1,
         outputs:2,
@@ -70,6 +71,11 @@
             <option value="0_1">1 / 0</option>
             <option value="cycleCount">cycle count</option>
         </select>
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-flag"></i></label>
+        <input type="checkbox" id="node-input-resetAtStop" style="display: inline-block; width: 20px; vertical-align: baseline;">
+        <label for="node-input-resetAtStop" style="width:70%;">reset at off</label>
     </div>
 </script>
 
@@ -131,6 +137,8 @@
         <dd>sets the cyclic time </dd>
         <dt>cycleCount <span class="property-type">number</span></dt>
         <dd>sets the nuber of cycles </dd>
+        <dt>resetAtStop <span class="property-type">boolean</span></dt>
+        <dd>Reset to default values at switching off </dd>
     </dl>
     
     <h3>Outputs</h3>

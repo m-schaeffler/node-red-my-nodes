@@ -1153,7 +1153,7 @@ describe( 'thermostat Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','thermostat');
-          msg.should.have.a.property('payload',Boolean((c1-1)%2));
+          msg.should.have.a.property('payload',c1==2);
         }
         catch(err) {
           done(err);
@@ -1163,7 +1163,7 @@ describe( 'thermostat Node', function () {
         try {
           c2++;
           msg.should.have.a.property('topic','thermostat');
-          msg.should.have.a.property('payload',Boolean((c2-1)%2));
+          msg.should.have.a.property('payload',c2==2);
         }
         catch(err) {
           done(err);
@@ -1198,8 +1198,13 @@ describe( 'thermostat Node', function () {
         c2.should.match( 3 );
         n1.should.have.a.property('data',{nominal:22,factor:0.1,cycleTime:2000,cycleCount:2,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
-        c1.should.match( 3 );
-        c2.should.match( 3 );
+        // switch not on
+        n1.receive({ topic:"data", payload: { temperature: 19.7, trigger: true, nominal:19,factor:0.5,cycleTime:2500,cycleCount:3 } });
+        await delay(50);
+        c1.should.match( 4 );
+        c2.should.match( 4 );
+        n1.should.have.a.property('data',{nominal:19,factor:0.1,cycleTime:2500,cycleCount:3,temperature:19.7});
+        n1.context().get("data").should.match(n1.data);
         done();
       }
       catch(err) {
@@ -1223,7 +1228,7 @@ describe( 'thermostat Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','thermostat');
-          msg.should.have.a.property('payload',Boolean((c1-1)%2));
+          msg.should.have.a.property('payload',c1==2);
         }
         catch(err) {
           done(err);
@@ -1233,7 +1238,7 @@ describe( 'thermostat Node', function () {
         try {
           c2++;
           msg.should.have.a.property('topic','thermostat');
-          msg.should.have.a.property('payload',Boolean((c2-1)%2));
+          msg.should.have.a.property('payload',c2==2);
         }
         catch(err) {
           done(err);
@@ -1268,8 +1273,13 @@ describe( 'thermostat Node', function () {
         c2.should.match( 3 );
         n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
-        c1.should.match( 3 );
-        c2.should.match( 3 );
+        // switch not on
+        n1.receive({ topic:"data", payload: { temperature: 19.7, trigger: true, nominal:19,factor:0.5,cycleTime:2000,cycleCount:2 } });
+        await delay(50);
+        c1.should.match( 4 );
+        c2.should.match( 4 );
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7});
+        n1.context().get("data").should.match(n1.data);
         done();
       }
       catch(err) {

@@ -89,6 +89,10 @@ module.exports = function(RED) {
             else
             {
                 node.running = 0;
+                if( node.resetAtStop )
+                {
+                    initData();
+                }
             }
         }
 

@@ -24,7 +24,7 @@ module.exports = function(RED) {
 
         function setStatus(color,text)
         {
-            console.log( text );
+            //console.log( text );
             if( node.showState )
             {
                 node.status( { text:text, shape:"dot", fill:color } );
@@ -127,7 +127,7 @@ module.exports = function(RED) {
             }
             else
             {
-                console.log("error")
+                //console.log("error")
                 setStatus( "red", "error" );
             }
             done();

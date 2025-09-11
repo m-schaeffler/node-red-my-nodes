@@ -297,7 +297,7 @@ module.exports = function(RED) {
 
             function checkPid()
             {
-                if( pid < item.pid && pid > 10 /*&& pid > item.pid - 10*/ )
+                if( pid < item.pid && pid > 16 )
                 {
                     // veraltete Nachricht und nicht reboot
                     node.statistics.old++;

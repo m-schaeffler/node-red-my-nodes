@@ -183,23 +183,23 @@ module.exports = function(RED) {
                             }
                             break;
                         case 0x04:
-                            setData( "pressure", rawdata.getUInt24() * 0.01 );
+                            setData( "pressure", rawdata.getUInt24() / 100 );
                             break;
                         case 0x05:
-                            setData( "lux", rawdata.getUInt24() * 0.01 );
+                            setData( "lux", rawdata.getUInt24() / 100 );
                             break;
                         case 0x08:
-                            setData( "dewpoint", rawdata.getInt16() * 0.01 );
+                            setData( "dewpoint", rawdata.getInt16() /100 );
                             break;
                         case 0x0C:
                             if( node.batteryState )
                             {
-                                setData( "voltage", rawdata.getUInt16() * 0.001 );
+                                setData( "voltage", rawdata.getUInt16() / 1000 );
                                 delete item.voltage;
                             }
                             else
                             {
-                                item.voltage = rawdata.getUInt16() * 0.001;
+                                item.voltage = rawdata.getUInt16() / 1000;
                                 delete item.data?.voltage;
                             }
                             break;
@@ -236,7 +236,7 @@ module.exports = function(RED) {
                             break;
                           }
                         case 0x3F:
-                            setData( "tilt", rawdata.getInt16() * 0.1 );
+                            setData( "tilt", rawdata.getInt16() / 10 );
                             break;
                         case 0x40:
                           {
@@ -245,22 +245,22 @@ module.exports = function(RED) {
                             break;
                           }
                         case 0x44:
-                            setData( "wind", rawdata.getUInt16() * 0.01 );
+                            setData( "wind", rawdata.getUInt16() / 100 );
                             break;
                         case 0x45:
-                            setData( "temperature", rawdata.getInt16() * 0.1 );
+                            setData( "temperature", rawdata.getInt16() / 10 );
                             break;
                         case 0x46:
-                            setData( "uv", rawdata.getUInt8() * 0.1 );
+                            setData( "uv", rawdata.getUInt8() / 10 );
                             break;
                         case 0x59:
                             setData( "count", rawdata.getInt8() );
                             break;
                         case 0x5E:
-                            setData( "direction", rawdata.getUInt16() * 0.01 );
+                            setData( "direction", rawdata.getUInt16() / 100 );
                             break;
                         case 0x5F:
-                            setData( "precipitation", rawdata.getUInt16() * 0.1 );
+                            setData( "precipitation", rawdata.getUInt16() / 10 );
                             break;
                         case 0x60:
                             setData( "channel", rawdata.getUInt8() + 1 );
@@ -297,7 +297,8 @@ module.exports = function(RED) {
 
             function checkPid()
             {
-                if( pid < item.pid && pid > 16 )
+                if( pid < item.pid &&
+                    !( pid <= 16 || ( pid <= 50 && item.pid >= 200 ) ) )
                 {
                     // veraltete Nachricht und nicht reboot
                     node.statistics.old++;

@@ -16,6 +16,7 @@
             filterVal:{value:0, validate:RED.validators.number()},
             filterMul:{value:10, validate:RED.validators.number()},
             zeroIsZero:{value:false},
+            digits:{validate:RED.validators.number()},
             showState:{value:false}
         },
         inputs:1,
@@ -54,20 +55,24 @@
        <input type="text" id="node-input-deltaTime">
     </div>
     <div class="form-row">
-        <label for="node-input-minData"><i class="fa fa-check-square-o "></i> min. Data</label>
+        <label for="node-input-minData"><i class="fa fa-check-square-o"></i> min. Data</label>
         <input type="text" id="node-input-minData">
     </div>
     <div class="form-row">
-        <label for="node-input-filter"><i class="fa fa-filter "></i> Filterzeit</label>
+        <label for="node-input-filter"><i class="fa fa-filter"></i> Filterzeit</label>
         <input type="number" id="node-input-filter">
     </div>
     <div class="form-row">
-        <label for="node-input-filterVal"><i class="fa fa-filter "></i> Filter Wert</label>
+        <label for="node-input-filterVal"><i class="fa fa-filter"></i> Filter Wert</label>
         <input type="text" id="node-input-filterVal">
     </div>
     <div class="form-row">
-        <label for="node-input-filterMul"><i class="fa fa-filter "></i> Filter Wiederholungsfaktor</label>
+        <label for="node-input-filterMul"><i class="fa fa-filter"></i> Filter Wiederholungsfaktor</label>
         <input type="text" id="node-input-filterMul">
+    </div>
+    <div class="form-row">
+        <label for="node-input-digits"><i class="fa fa-sort-numeric-asc"></i> Nachkommastellen</label>
+        <input type="text" id="node-input-digits">
     </div>
     <div class="form-row">
         <label for="node-input-zeroIsZero"><i class="fa fa-exclamation-circle"></i> Null ist Null</label>
@@ -118,6 +123,8 @@
         <dd> send output only if change is bigger.</dd>
         <dt>Filter Wiederholungsfaktor <span class="property-type">number</span></dt>
         <dd> do send output if change is lower then <code>Filter Wert</code> after n times <code>Filterzeit</code>.</dd>
+        <dt>Nachkommastellen <span class="property-type">number</span></dt>
+        <dd> Anzahl an Nachkommastellen..</dd>
         <dt>Null ist NUll <span class="property-type">boolean</span></dt>
         <dd> If 0 is received, 0 is send immediately.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

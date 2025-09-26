@@ -14,6 +14,7 @@ module.exports = function(RED) {
         this.filterValue  = Number( config.filterVal ?? 0 );
         this.filterLongTime = this.filterTime * Number( config.filterMul ?? 10 );
         this.zeroIsZero   = Boolean( config.zeroIsZero );
+        this.round        = config.decimals ? Math.pow( 10, Number( config.decimals ) ) : null;
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
@@ -109,11 +110,15 @@ module.exports = function(RED) {
                                 sum += value.value;
                             }
                             const help  = last[msg.topic];
-                            const value = sum/item.length;
+                            let   value = sum/item.length;
                             if( help === undefined ||
                                 ( help.time + node.filterTime < now && tools.distance( help.value, value ) >= node.filterValue ) ||
                                 ( node.filterLongTime > 0 && help.time + node.filterLongTime < now  ) )
                             {
+                                if( node.round )
+                                {
+                                    value = Math.round( value * node.round ) / node.round;
+                                }
                                 sendValue( value, item.length );
                             }
                             else

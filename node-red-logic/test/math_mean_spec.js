@@ -35,6 +35,7 @@ describe( 'math_mean Node', function () {
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
         n1.should.have.a.property('zeroIsZero', false);
+        n1.should.have.a.property('round', null );
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -49,7 +50,7 @@ describe( 'math_mean Node', function () {
 
   it('should caclulate mean values', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
-    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", decimals:"", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -68,6 +69,7 @@ describe( 'math_mean Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('round', null );
         await delay(50);
         for( const i of numbers )
         {
@@ -87,7 +89,7 @@ describe( 'math_mean Node', function () {
 
   it('should caclulate mean values, minData=3', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
-    var flow = [{ id: "n1", type: "mean", minData:"3", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", minData:"3", decimals:"0", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -95,10 +97,11 @@ describe( 'math_mean Node', function () {
       var c = 0;
       var s = 17+34;
       n2.on("input", function (msg) {
+        //console.log(msg);
         try {
           s += numbers[c++];
           msg.should.have.property('topic',2);
-          msg.should.have.property('payload',s/(c+2));
+          msg.should.have.property('payload',Math.round(s/(c+2)));
           msg.should.have.property('count',c+2);
         }
         catch(err) {
@@ -107,6 +110,7 @@ describe( 'math_mean Node', function () {
       });
       try {
         n1.should.have.a.property('minData', 3);
+        n1.should.have.a.property('round', 1 );
         await delay(50);
         n1.receive({ topic:2, payload: 17 });
         await delay(50);
@@ -130,8 +134,8 @@ describe( 'math_mean Node', function () {
   });
 
   it('should have zeroIsZero', function (done) {
-    const numbers = [1000,10,99.9,100,100.1,1000,0,50];
-    var flow = [{ id: "n1", type: "mean", zeroIsZero:true, name: "test", wires: [["n2"]] },
+    const numbers = [10,10.1,10.1,10.2,10.2,10.1,10,0,5];
+    var flow = [{ id: "n1", type: "mean", zeroIsZero:true, decimals:"1", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -139,10 +143,11 @@ describe( 'math_mean Node', function () {
       var c = 0;
       var s = 0;
       n2.on("input", function (msg) {
+        //console.log(msg);
         try {
           s += numbers[c++];
           msg.should.have.property('topic',"zero");
-          msg.should.have.property('payload',c===numbers.length-1?0:s/c);
+          msg.should.have.property('payload',c===numbers.length-1?0:Math.round(s/c*10)/10);
           msg.should.have.property('count',c===numbers.length-1?1:c);
         }
         catch(err) {
@@ -151,6 +156,7 @@ describe( 'math_mean Node', function () {
       });
       try {
         n1.should.have.a.property('zeroIsZero', true);
+        n1.should.have.a.property('round', 10 );
         await delay(50);
         for( const i of numbers )
         {

@@ -16,7 +16,7 @@ module.exports = function(RED) {
                 node.value = Number( node.value );
                 break;
             case "bool":
-                node.value = Boolean( node.value );
+                node.value = node.value == "true";
                 break;
             case "json":
                 node.value = JSON.parse( node.value );

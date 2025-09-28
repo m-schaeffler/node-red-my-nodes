@@ -134,7 +134,7 @@ describe( 'init-flow Node (flow context)', function () {
   });
 
   it('should set contest variable to a boolean', function (done) {
-    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:true, valueType:"bool", z:"flow" }];
+    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:"true", valueType:"bool", z:"flow" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {

@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-init",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Node for initialisation of context storages.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-init",

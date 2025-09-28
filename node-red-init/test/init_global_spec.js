@@ -134,31 +134,31 @@ describe( 'init-flow Node (global context)', function () {
   });
 
   it('should set contest variable to a boolean', function (done) {
-    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:true, valueType:"bool", global:"true" }];
+    var flow = [{ id: "n1", type: "init-flow", name: "contextVar", value:"false", valueType:"bool", global:"true" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'contextVar');
-        n1.should.have.a.property('value', true);
+        n1.should.have.a.property('value', false);
         n1.should.have.a.property('valueType', 'bool');
         await delay(100);
         should.exist( n1.context().global.get("contextVar") );
-        n1.context().global.get("contextVar").should.be.equal( true );
+        n1.context().global.get("contextVar").should.be.equal( false );
         n1.receive({ invalid: true, payload: "ungültiger Wert" });
         await delay(100);
-        n1.context().global.get("contextVar").should.be.equal( true );
+        n1.context().global.get("contextVar").should.be.equal( false );
         n1.receive({ payload: "anderer Wert" });
         await delay(100);
         n1.context().global.get("contextVar").should.be.equal( "anderer Wert" );
         n1.receive({ reset: true });
         await delay(100);
-        n1.context().global.get("contextVar").should.be.equal( true );
+        n1.context().global.get("contextVar").should.be.equal( false );
         n1.receive({ payload: "dritter Wert" });
         await delay(100);
         n1.context().global.get("contextVar").should.be.equal( "dritter Wert" );
         n1.receive({ topic: "init" });
         await delay(100);
-        n1.context().global.get("contextVar").should.be.equal( true );
+        n1.context().global.get("contextVar").should.be.equal( false );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

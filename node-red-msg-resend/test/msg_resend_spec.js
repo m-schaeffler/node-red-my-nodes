@@ -71,6 +71,7 @@ describe( 'msg-resend Node', function () {
         n1.should.have.a.property('firstDelayed', false);
         n1.should.have.a.property('byTopic', false);
         n1.should.have.a.property('addCounters', false);
+        n1.should.have.a.property('showState', false);
         await delay(500);
         should.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);

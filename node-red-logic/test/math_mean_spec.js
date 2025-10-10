@@ -27,6 +27,7 @@ describe( 'math_mean Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', '');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('deltaTime', 60000);
@@ -89,7 +90,7 @@ describe( 'math_mean Node', function () {
 
   it('should caclulate mean values, minData=3', function (done) {
     const numbers = [1000,10,99.9,100,100.1,1000,0];
-    var flow = [{ id: "n1", type: "mean", minData:"3", decimals:"0", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", minData:"3", decimals:"0", topic:"", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -109,6 +110,7 @@ describe( 'math_mean Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', '');
         n1.should.have.a.property('minData', 3);
         n1.should.have.a.property('round', 1 );
         await delay(50);
@@ -135,7 +137,7 @@ describe( 'math_mean Node', function () {
 
   it('should have zeroIsZero', function (done) {
     const numbers = [10,10.1,10.1,10.2,10.2,10.1,10,0,5];
-    var flow = [{ id: "n1", type: "mean", zeroIsZero:true, decimals:"1", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", zeroIsZero:true, decimals:"1", topic:"FooBar", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -146,7 +148,7 @@ describe( 'math_mean Node', function () {
         //console.log(msg);
         try {
           s += numbers[c++];
-          msg.should.have.property('topic',"zero");
+          msg.should.have.property('topic',"FooBar");
           msg.should.have.property('payload',c===numbers.length-1?0:Math.round(s/c*10)/10);
           msg.should.have.property('count',c===numbers.length-1?1:c);
         }
@@ -155,6 +157,7 @@ describe( 'math_mean Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', 'FooBar');
         n1.should.have.a.property('zeroIsZero', true);
         n1.should.have.a.property('round', 10 );
         await delay(50);

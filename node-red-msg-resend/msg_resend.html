@@ -10,7 +10,8 @@
             clone: {value:false},
             firstDelayed: {value:false},
             addCounters: {value:false},
-            name: {value:""}
+            name: {value:""},
+            showState:{value:false}
         },
         inputs:1,
         outputs:1,
@@ -66,6 +67,11 @@
         <input type="checkbox" id="node-input-clone" style="display: inline-block; width: 20px; vertical-align: baseline;">
         <label for="node-input-clone" style="width:70%;">Force cloning</label>
     </div>
+    <div class="form-row">
+        <label><i class="fa fa-star-o"></i></label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+        <label for="node-input-showState" style="width:70%;">Status</label>
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="msg-resend2">
@@ -117,6 +123,8 @@
         <dd> shall a counter be added to the sent mesages</dd>
         <dt>clone <span class="property-type">boolean</span></dt>
         <dd> shall the messages be cloned</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
     </dl>
     
 </script>

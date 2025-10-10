@@ -10,6 +10,7 @@ module.exports = function(RED) {
         this.firstDelayed = Boolean( config.firstDelayed );
         this.byTopic      = Boolean( config.bytopic );
         this.addCounters  = Boolean( config.addCounters );
+        this.showState    = Boolean( config.showState );
         this.data         = {};
         switch( config.intervalUnit ?? "secs" )
         {
@@ -60,7 +61,10 @@ module.exports = function(RED) {
             }
 
             node.send( outputMsg );
-            node.status( {fill:statistic.counter!==statistic.maxCount?"green":"gray", shape:"dot", text: node.byTopic ? `${outputMsg.topic}: ${statistic.counter}` : statistic.counter } );
+            if( node.showState )
+            {
+                node.status( {fill:statistic.counter!==statistic.maxCount?"green":"gray", shape:"dot", text: node.byTopic ? `${outputMsg.topic}: ${statistic.counter}` : statistic.counter } );
+            }
 	}
 
         node.on('started', function() {

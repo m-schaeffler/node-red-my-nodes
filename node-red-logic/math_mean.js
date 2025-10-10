@@ -6,6 +6,7 @@ module.exports = function(RED) {
         //this.config = config;
         var node      = this;
         var context   = this.context();
+        this.topic        = config.topic || "";
         this.property     = config.property || "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.deltaTime    = Number( config.deltaTime ?? 60 )*1000;
@@ -90,6 +91,10 @@ module.exports = function(RED) {
 
                         function sendValue(value,count)
                         {
+                            if( node.topic )
+                            {
+                                msg.topic = node.topic;
+                            }
                             msg.payload = value;
                             msg.count   = count;
                             last[msg.topic] = {value:value,time:now};

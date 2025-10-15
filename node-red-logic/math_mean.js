@@ -91,14 +91,14 @@ module.exports = function(RED) {
 
                         function sendValue(value,count)
                         {
-                            if( node.topic )
-                            {
-                                msg.topic = node.topic;
-                            }
                             msg.payload = value;
                             msg.count   = count;
                             last[msg.topic] = {value:value,time:now};
                             context.set( "last", last );
+                            if( node.topic )
+                            {
+                                msg.topic = node.topic;
+                            }
                             node.status({fill:"green",shape:"dot",text:`${item.length} / ${tools.formatNumber(value)}`});
                             send( msg );
                         }

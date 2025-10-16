@@ -189,7 +189,7 @@ module.exports = function(RED) {
                             setData( "lux", rawdata.getUInt24() / 100 );
                             break;
                         case 0x08:
-                            setData( "dewpoint", rawdata.getInt16() /100 );
+                            setData( "dewpoint", rawdata.getInt16() / 100 );
                             break;
                         case 0x0C:
                             if( node.batteryState )
@@ -202,6 +202,9 @@ module.exports = function(RED) {
                                 item.voltage = rawdata.getUInt16() / 1000;
                                 delete item.data?.voltage;
                             }
+                            break;
+                        case 0x1E:
+                            setData( "light", rawdata.getUInt8() );
                             break;
                         case 0x20:
                             setData( "moisture", Boolean( rawdata.getUInt8() ) );

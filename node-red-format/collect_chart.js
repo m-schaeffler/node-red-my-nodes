@@ -142,7 +142,7 @@ module.exports = function(RED) {
                     const now = Date.now();
                     if( isStep( msg.topic ) )
                     {
-                        let last = context.get( "last", node.contextStore ) ?? {};
+                        let last = context.get( "last" ) ?? {};
                         const lv = last[msg.topic];
                         if( lv !== undefined && lv != number )
                         {
@@ -153,7 +153,7 @@ module.exports = function(RED) {
                             } );
                         }
                         last[msg.topic] = number;
-                        context.set( "last", last, node.contextStore );
+                        context.set( "last", last );
                     }
                     node.data.push( {
                         c: msg.topic,
@@ -229,6 +229,7 @@ module.exports = function(RED) {
                         //console.log( `delete data ${end-start}` );
                         node.data.splice( start, end - start );
                         node.newData = true;
+                        setData();
                     }
                 }
             }

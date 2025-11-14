@@ -138,7 +138,11 @@ module.exports = function(RED) {
                     }
                     else
                     {
-                        node.status({fill:"red",shape:"dot",text:"payload is NaN"});
+                        if( value !== undefined )
+                        {
+                            node.status({fill:"red",shape:"dot",text:"payload is NaN"});
+                            node.warn( `payload is NaN (${msg.topic}=${value})` );
+                        }
                     }
                     done();
                 } );

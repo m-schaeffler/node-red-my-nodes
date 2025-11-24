@@ -97,8 +97,8 @@ module.exports = function(RED) {
             if( msg.reset )
             {
                 node.data = createData();
-                setData();
                 node.newData = true;
+                setData();
                 setStatus();
                 done();
                 return;

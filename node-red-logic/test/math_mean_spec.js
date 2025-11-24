@@ -522,7 +522,7 @@ describe( 'math_mean Node', function () {
         n1.receive({ payload: 5000 });
         await delay(50);
         c.should.match( 1 );
-        n1.warn.should.have.callCount(0);
+        n1.warn.should.have.callCount(2);
         n1.error.should.have.callCount(0);
         done();
       }

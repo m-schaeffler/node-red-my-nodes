@@ -53,7 +53,7 @@ module.exports = function(RED) {
             {
                 for( const i in data )
                 {
-                    let help ={ topic: i, query: true };
+                    let help = { topic: node.topic || i, query: true };
                     msgSetEdge( help, data[i].edge );
                     send( help );
                 }

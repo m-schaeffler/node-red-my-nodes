@@ -6,6 +6,7 @@ module.exports = function(RED) {
         //this.config = config;
         var node    = this;
         var context = this.context();
+        this.topic          = config.topic || "";
         this.property       = config.property ?? "payload";
         this.propertyType   = config.propertyType ?? "msg";
         this.threshold_rise = Number( config.threshold_raise );
@@ -98,6 +99,10 @@ module.exports = function(RED) {
                             if( last !== undefined || ! node.noInit )
                             {
                                 msgSetEdge( msg, edge );
+                                if( node.topic )
+                                {
+                                    msg.topic = node.topic;
+                                }
                                 msg.init = last === undefined;
                                 send( msg );
                             }

@@ -27,6 +27,7 @@ describe( 'math_rising Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', '');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('threshold', NaN);
@@ -55,6 +56,7 @@ describe( 'math_rising Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
+          msg.should.have.property('topic','edge');
           msg.should.have.property('payload','Text');
           msg.should.have.property('value',100.1);
           msg.should.have.property('edge','rising');
@@ -69,7 +71,7 @@ describe( 'math_rising Node', function () {
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ payload: i });
+          n1.receive({ topic:"edge", payload: i });
           await delay(50);
         }
         c.should.match( 1 );
@@ -85,7 +87,7 @@ describe( 'math_rising Node', function () {
 
   it('should respect consecutive parameter', function (done) {
     const numbers = [1000,150,10,400,40,250,251,252];
-    var flow = [{ id: "n1", type: "raisingEdge", output: "42", outputType:"num", name: "test", threshold:"100", consecutive:"3", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "raisingEdge", output: "42", outputType:"num", topic:"newtopic", name: "test", threshold:"100", consecutive:"3", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -94,6 +96,7 @@ describe( 'math_rising Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
+          msg.should.have.property('topic','newtopic');
           msg.should.have.property('payload',42);
           msg.should.have.property('value',252);
           msg.should.have.property('edge','rising');
@@ -103,13 +106,14 @@ describe( 'math_rising Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', 'newtopic');
         n1.should.have.a.property('threshold', 100);
         n1.should.have.a.property('consecutive', 3);
         n1.should.have.a.property('output', 42);
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ payload: i });
+          n1.receive({ topic:"edge", payload: i });
           await delay(50);
         }
         c.should.match( 1 );

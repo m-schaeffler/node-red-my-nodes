@@ -27,6 +27,7 @@ describe( 'math_hysteresis Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', '');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('threshold_rise', NaN);
@@ -60,6 +61,7 @@ describe( 'math_hysteresis Node', function () {
         try {
           //console.log(msg)
           c++;
+          msg.should.have.property('topic','edge');
           switch( c )
           {
              case 1:
@@ -103,7 +105,7 @@ describe( 'math_hysteresis Node', function () {
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ payload: i });
+          n1.receive({ topic:"edge", payload: i });
           await delay(50);
         }
         n1.warn.should.have.callCount(0);
@@ -119,7 +121,7 @@ describe( 'math_hysteresis Node', function () {
 
   it('should check for edges, without init msg', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "hysteresisEdge", noInit:true, outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "hysteresisEdge", noInit:true, outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", topic:"newtopic", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -129,6 +131,7 @@ describe( 'math_hysteresis Node', function () {
         try {
           //console.log(msg)
           c++;
+          msg.should.have.property('topic','newtopic');
           switch( c )
           {
              case 1:
@@ -158,6 +161,7 @@ describe( 'math_hysteresis Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', 'newtopic');
         n1.should.have.a.property('threshold_rise', 200);
         n1.should.have.a.property('threshold_fall', 100);
         n1.should.have.a.property('outputRise', 'Text R');
@@ -166,7 +170,7 @@ describe( 'math_hysteresis Node', function () {
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ payload: i });
+          n1.receive({ topic:"edge", payload: i });
           await delay(50);
         }
         n1.warn.should.have.callCount(0);

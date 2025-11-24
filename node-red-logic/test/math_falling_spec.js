@@ -27,6 +27,7 @@ describe( 'math_falling Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', '');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('threshold', NaN);
@@ -55,6 +56,7 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
+          msg.should.have.property('topic','edge');
           msg.should.have.property('payload','Text');
           msg.should.have.property('value',99.9);
           msg.should.have.property('edge','falling');
@@ -69,7 +71,7 @@ describe( 'math_falling Node', function () {
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ payload: i });
+          n1.receive({ topic:"edge", payload: i });
           await delay(50);
         }
         c.should.match( 1 );
@@ -85,7 +87,7 @@ describe( 'math_falling Node', function () {
 
   it('should respect consecutive parameter', function (done) {
     const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
-    var flow = [{ id: "n1", type: "fallingEdge", output: "42", outputType:"num", name: "test", threshold:"100", consecutive:"3", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "fallingEdge", output: "42", outputType:"num", topic:"newtopic", name: "test", threshold:"100", consecutive:"3", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -94,6 +96,7 @@ describe( 'math_falling Node', function () {
       n2.on("input", function (msg) {
         try {
           c++;
+          msg.should.have.property('topic','newtopic');
           msg.should.have.property('payload',42);
           msg.should.have.property('value',2);
           msg.should.have.property('edge','falling');
@@ -103,13 +106,14 @@ describe( 'math_falling Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', 'newtopic');
         n1.should.have.a.property('threshold', 100);
         n1.should.have.a.property('consecutive', 3);
         n1.should.have.a.property('output', 42);
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ payload: i });
+          n1.receive({ topic:"edge", payload: i });
           await delay(50);
         }
         c.should.match( 1 );

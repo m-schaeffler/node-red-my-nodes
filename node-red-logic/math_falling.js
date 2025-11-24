@@ -6,6 +6,7 @@ module.exports = function(RED) {
         //this.config = config;
         var node    = this;
         var context = this.context();
+        this.topic        = config.topic || "";
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.threshold    = Number( config.threshold );
@@ -73,10 +74,14 @@ module.exports = function(RED) {
                             if( ++node.cntFall >= node.consecutive )
                             {
                                 status.fill = "green";
+                                data[msg.topic] = msg.value;
+                                if( node.topic )
+                                {
+                                    msg.topic = node.topic;
+                                }
                                 msg.payload = node.output;
                                 msg.edge    = "falling";
                                 send( msg );
-                                data[msg.topic] = msg.value;
                                 node.cntFall = 0;
                             }
                             else

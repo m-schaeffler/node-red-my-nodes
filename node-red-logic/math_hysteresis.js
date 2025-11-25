@@ -53,7 +53,7 @@ module.exports = function(RED) {
             {
                 for( const i in data )
                 {
-                    let help = { topic: node.topic || i, query: true };
+                    let help = { topic: i, query: true };
                     msgSetEdge( help, data[i].edge );
                     send( help );
                 }
@@ -85,6 +85,10 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.value  = Number( value );
+                    if( node.topic )
+                    {
+                        msg.topic = node.topic;
+                    }
                     let status = { fill:data[msg.topic]?.status??"gray", shape:"dot", text:tools.formatNumber( msg.value ) };
 
                     if( ! isNaN( msg.value ) )
@@ -99,10 +103,6 @@ module.exports = function(RED) {
                             if( last !== undefined || ! node.noInit )
                             {
                                 msgSetEdge( msg, edge );
-                                if( node.topic )
-                                {
-                                    msg.topic = node.topic;
-                                }
                                 msg.init = last === undefined;
                                 send( msg );
                             }

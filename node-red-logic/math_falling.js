@@ -67,6 +67,10 @@ module.exports = function(RED) {
 
                     if( ! isNaN( msg.value ) )
                     {
+                        if( node.topic )
+                        {
+                            msg.topic = node.topic;
+                        }
                         let   data = context.get( "data" ) ?? {};
                         const last = data[msg.topic] ?? Number.MIN_SAFE_INTEGER;
                         if( msg.value < node.threshold && node.threshold <= last )
@@ -75,10 +79,6 @@ module.exports = function(RED) {
                             {
                                 status.fill = "green";
                                 data[msg.topic] = msg.value;
-                                if( node.topic )
-                                {
-                                    msg.topic = node.topic;
-                                }
                                 msg.payload = node.output;
                                 msg.edge    = "falling";
                                 send( msg );

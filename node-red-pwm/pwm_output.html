@@ -1,0 +1,99 @@
+<script type="text/javascript">
+    RED.nodes.registerType('pmwOutput',{
+        category: "dashboard 2",
+        color: "#C7E9C0",
+        defaults: {
+            name:{value:""},
+            property:{value:"payload",required:true},
+            propertyType:{value:"msg"},
+            cycleTime:{value:60,validate:RED.validators.number(),required:true},
+            showState:{value:false}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-quote-right",
+        label: function() {
+            return this.name||"pwmOutput";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "pmwOutput",
+        inputLabels: 'input',
+        outputLabels: 'pwm signal',
+        oneditprepare: function() {
+            $("#node-input-property").typedInput({
+                type:"msg",
+                types:["msg","jsonata"],
+                typeField: "#node-input-propertyType"
+            })
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="pmwOutput">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
+        <input type="text" id="node-input-property">
+        <input type="hidden" id="node-input-propertyType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-cycleTime"><i class="fa fa-repeat"></i> Cycletime</label>
+        <input type="number" id="node-input-cycleTime">
+    </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="pwmOutput">
+    <p>Formats the payload as a number.</p>
+    <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
+
+    <h3>Input</h3>
+    
+    <p>The message property to be used as payload can be defined with the <code>Property</code> property.</p>
+    <p>This value is then</p>
+    <ul>
+        <li>if the value is a number: formated to a string according to the parameters and a unit is added</li>
+        <li>if the value is <code>null</code> or does not exist, <code>null</code> is sent</li>
+        <li>if a JSONata expression cannot be evaluated, <code>null</code> is sent</li>
+        <li>in other cases: been sent out unmodified</li>
+    </ul>
+    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type"></span></dt>
+        <dd> input value.</dd>
+    </dl>
+    
+    <h3>Output</h3>
+    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd> formated value of payload.</dd>
+    </dl>
+    
+    <h3>Parameter</h3>
+
+    <dl class="message-properties">
+        <dt>Property <span class="property-type">string</span></dt>
+        <dd> defines the message property to be used as payload.</dd>
+        <dt>Einheit <span class="property-type">string</span></dt>
+        <dd> unit of the value.</dd>
+        <dt>Tausender <span class="property-type">string</span></dt>
+        <dd> character to group the number in segments of 3 digits.</dd>
+        <dt>Dezimal <span class="property-type">string</span></dt>
+        <dd> character to decimal separation.</dd>
+        <dt>Stellen <span class="property-type">number</span></dt>
+        <dd> number of digits after the decimal point.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
+        <dt>Filter <span class="property-type">boolean</span></dt>
+        <dd> block sending of unchanged <code>payload</code>.</dd>
+    </dl>
+</script>

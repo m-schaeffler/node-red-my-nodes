@@ -1,0 +1,31 @@
+{
+  "name": "@mschaeffler/node-red-format",
+  "version": "0.0.1",
+  "description": "nodes for handling of PWM.",
+  "license": "LGPL-2.1",
+  "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-pwm",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "node-red"
+  ],
+  "node-red": {
+    "version": ">=3.1.0",
+    "nodes": {
+      "pwmInput": "pwm_input.js",
+      "pwmOutput": "pwm_output.js"
+    }
+  },
+  "author": {
+    "name": "Mathias Schäffler",
+    "url": "https://github.com/m-schaeffler"
+  },
+  "scripts": {
+    "test": "mocha \"test/*_spec.js\""
+  }
+}

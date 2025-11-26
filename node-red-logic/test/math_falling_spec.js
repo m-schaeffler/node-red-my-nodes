@@ -71,6 +71,7 @@ describe( 'math_falling Node', function () {
         await delay(50);
         for( const i of numbers )
         {
+          n1.receive({ topic:"const", payload: 50 });
           n1.receive({ topic:"edge", payload: i });
           await delay(50);
         }
@@ -111,9 +112,9 @@ describe( 'math_falling Node', function () {
         n1.should.have.a.property('consecutive', 3);
         n1.should.have.a.property('output', 42);
         await delay(50);
-        for( const i of numbers )
+        for( const i in numbers )
         {
-          n1.receive({ topic:"edge", payload: i });
+          n1.receive({ topic:i, payload: numbers[i] });
           await delay(50);
         }
         c.should.match( 1 );

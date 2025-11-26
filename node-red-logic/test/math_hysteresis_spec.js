@@ -61,28 +61,45 @@ describe( 'math_hysteresis Node', function () {
         try {
           //console.log(msg)
           c++;
-          msg.should.have.property('topic','edge');
           switch( c )
           {
-             case 1:
+            case 1:
+               msg.should.have.property('topic','const1');
+               msg.should.have.property('payload','Text F');
+               msg.should.have.property('value',50);
+               msg.should.have.property('edge','falling');
+               msg.should.have.property('init',true);
+               break;
+             case 2:
+               msg.should.have.property('topic','const2');
+               msg.should.have.property('payload','Text R');
+               msg.should.have.property('value',250);
+               msg.should.have.property('edge','rising');
+               msg.should.have.property('init',true);
+               break;
+             case 3:
+               msg.should.have.property('topic','edge');
                msg.should.have.property('payload','Text R');
                msg.should.have.property('value',1000);
                msg.should.have.property('edge','rising');
                msg.should.have.property('init',true);
                break;
-             case 2:
+             case 4:
+               msg.should.have.property('topic','edge');
                msg.should.have.property('payload','Text F');
                msg.should.have.property('value',10);
                msg.should.have.property('edge','falling');
                msg.should.have.property('init',false);
                break;
-             case 3:
+             case 5:
+               msg.should.have.property('topic','edge');
                msg.should.have.property('payload','Text R');
                msg.should.have.property('value',200.1);
                msg.should.have.property('edge','rising');
                msg.should.have.property('init',false);
                break;
-             case 4:
+             case 6:
+               msg.should.have.property('topic','edge');
                msg.should.have.property('payload','Text F');
                msg.should.have.property('value',99.9);
                msg.should.have.property('edge','falling');
@@ -105,12 +122,14 @@ describe( 'math_hysteresis Node', function () {
         await delay(50);
         for( const i of numbers )
         {
+          n1.receive({ topic:"const1", payload: 50 });
+          n1.receive({ topic:"const2", payload: 250 });
           n1.receive({ topic:"edge", payload: i });
           await delay(50);
         }
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( 4 );
+        c.should.match( 6 );
         done();
       }
       catch(err) {
@@ -168,9 +187,9 @@ describe( 'math_hysteresis Node', function () {
         n1.should.have.a.property('outputFall', 'Text F');
         n1.should.have.a.property('noInit', true);
         await delay(50);
-        for( const i of numbers )
+        for( const i in numbers )
         {
-          n1.receive({ topic:"edge", payload: i });
+          n1.receive({ topic:i, payload: numbers[i] });
           await delay(50);
         }
         n1.warn.should.have.callCount(0);

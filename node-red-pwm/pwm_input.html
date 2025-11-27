@@ -1,24 +1,24 @@
 <script type="text/javascript">
-    RED.nodes.registerType('pmwOutput',{
+    RED.nodes.registerType('pmwInput',{
         category: "dashboard 2",
         color: "#C7E9C0",
         defaults: {
             name:{value:""},
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
-            cycleTime:{value:60,validate:RED.validators.number(),required:true},
+            measureTime:{value:3600,validate:RED.validators.number(),required:true},
             showState:{value:false}
         },
         inputs:1,
         outputs:1,
         icon: "font-awesome/fa-quote-right",
         label: function() {
-            return this.name||"pwmOutput";
+            return this.name||"pwmInput";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "pmwOutput",
+        paletteLabel: "pmwInput",
         inputLabels: 'input',
         outputLabels: 'pwm signal',
         oneditprepare: function() {
@@ -31,7 +31,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="pmwOutput">
+<script type="text/html" data-template-name="pmwInput">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -42,8 +42,8 @@
         <input type="hidden" id="node-input-propertyType">
     </div>
     <div class="form-row">
-        <label for="node-input-cycleTime"><i class="fa fa-repeat"></i> Period</label>
-        <input type="number" id="node-input-cycleTime">
+        <label for="node-input-measureTime"><i class="fa fa-repeat"></i> measure time</label>
+        <input type="number" id="node-input-measureTime">
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
@@ -51,24 +51,31 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="pwmOutput">
-    <p>Generates a PWM signal.</p>
+<script type="text/html" data-help-name="pwmInput">
+    <p>Formats the payload as a number.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
 
     <h3>Input</h3>
     
     <p>The message property to be used as payload can be defined with the <code>Property</code> property.</p>
+    <p>This value is then</p>
+    <ul>
+        <li>if the value is a number: formated to a string according to the parameters and a unit is added</li>
+        <li>if the value is <code>null</code> or does not exist, <code>null</code> is sent</li>
+        <li>if a JSONata expression cannot be evaluated, <code>null</code> is sent</li>
+        <li>in other cases: been sent out unmodified</li>
+    </ul>
     
     <dl class="message-properties">
         <dt>payload <span class="property-type"></span></dt>
-        <dd> the duty cycle of the PWM between 0 and 1. o is off and 1 is continuously on.</dd>
+        <dd> input value.</dd>
     </dl>
     
     <h3>Output</h3>
     
     <dl class="message-properties">
         <dt>payload <span class="property-type">string</span></dt>
-        <dd> PWM signal of alternating <code>true</code> and <code>false</code>.</dd>
+        <dd> formated value of payload.</dd>
     </dl>
     
     <h3>Parameter</h3>
@@ -76,9 +83,17 @@
     <dl class="message-properties">
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
-        <dt>Period <span class="property-type">number</span></dt>
-        <dd> periodic time of the PWM.</dd>
+        <dt>Einheit <span class="property-type">string</span></dt>
+        <dd> unit of the value.</dd>
+        <dt>Tausender <span class="property-type">string</span></dt>
+        <dd> character to group the number in segments of 3 digits.</dd>
+        <dt>Dezimal <span class="property-type">string</span></dt>
+        <dd> character to decimal separation.</dd>
+        <dt>Stellen <span class="property-type">number</span></dt>
+        <dd> number of digits after the decimal point.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
+        <dt>Filter <span class="property-type">boolean</span></dt>
+        <dd> block sending of unchanged <code>payload</code>.</dd>
     </dl>
 </script>

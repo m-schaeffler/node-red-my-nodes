@@ -1,6 +1,6 @@
 module.exports = function(RED) {
 
-    function FormatPwmOutput(config) {
+    function PwmOutputNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
@@ -144,5 +144,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("pwmOutput",FormatPwmOutput);
+    RED.nodes.registerType("pwmOutput",PwmOutputNode);
 }

@@ -27,6 +27,7 @@ module.exports = function(RED) {
 
         function sendMsg(value)
         {
+            //console.log( "pwm output sendMsg "+value+" "+node.onTime+" "+Date.now() );
             node.send( { topic:node.topic, payload:value } );
             if( value && node.onTime )
             {
@@ -40,6 +41,7 @@ module.exports = function(RED) {
         }
 
         node.on('input', function(msg,send,done) {
+            //console.log( "pwm output input "+Date.now() );
             if( msg.invalid )
             {
                 done();
@@ -81,16 +83,17 @@ module.exports = function(RED) {
                 if( value == 0 || value == 1 )
                 {
                     node.onTime = null;
+                    clearInterval( node.timOn );
                     clearInterval( node.timCyclic );
                     node.timCyclic = null;
                     sendMsg( value == 1 );
                 }
                 else
                 {
-                    node.onTime = this.cyclic * value;
+                    node.onTime = node.cyclic * value;
                     if( ! node.timCyclic )
                     {
-                        node.timCyclic = setInterval( function() { node.emit("cyclic"); }, this.cyclic );
+                        node.timCyclic = setInterval( function() { node.emit("cyclic"); }, node.cyclic );
                         sendMsg( true );
                     }
                 }
@@ -126,7 +129,7 @@ module.exports = function(RED) {
         });
 
         node.on('cyclic', function() {
-            console.log( "pwm output cyclic" );
+            //console.log( "pwm output cyclic "+Date.now() );
             sendMsg( true );
         });
 

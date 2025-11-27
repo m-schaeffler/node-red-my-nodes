@@ -8,7 +8,7 @@ function delay(ms) {
   });
 }
 
-describe( 'format_number Node', function () {
+describe( 'pmw_output Node', function () {
     "use strict";
 
   beforeEach(function (done) {
@@ -42,7 +42,7 @@ describe( 'format_number Node', function () {
 
   it('should be switched on and off', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:"100", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:"0.1", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -60,6 +60,7 @@ describe( 'format_number Node', function () {
         }
       });
       try{
+        n1.should.have.a.property('cyclic', 100);
         await delay(50);
         n1.receive({ topic: "input1", payload: 0 });
         await delay(1000);
@@ -81,34 +82,54 @@ describe( 'format_number Node', function () {
       }
     });
   });
-/*
-  it('should forward numbers rounded to two digits', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
-    var flow = [{ id: "n1", type: "formatNumber", digits: "2", name: "test", wires: [["n2"]] },
+
+  it('should generate PWM 0.25, ends with 0', function (done) {
+    this.timeout( 8000 );
+    var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:"0.5", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
+      var start;
       n2.on("input", function (msg) {
-        //console.log(msg.payload);
+        console.log(msg);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(2));
-          ++c;
+          c++;
+          msg.should.have.property('topic','PWM');
+          msg.should.have.property('payload',Boolean(c%2));
+          if( msg.payload )
+          {
+              if( start )
+              {
+                  const delta = Date.now() - start;
+                  delta.should.be.approximately( 500, 10 );
+              }
+              start = Date.now();
+          }
+          else
+          {
+              const delta = Date.now() - start;
+              delta.should.be.approximately( c<6 ? 500*0.25 : 50, 10 );
+          }
         }
         catch(err) {
           done(err);
         }
       });
       try {
-        n1.should.have.a.property('digits', 2);
+        n1.should.have.a.property('cyclic', 500);
         await delay(50);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: i });
-          await delay(50);
-        }
-        c.should.match( numbers.length );
+        n1.receive({ topic:"PWM", payload: 0.25 });
+        await delay(50);
+        c.should.match( 1 );
+        await delay(1000);
+        c.should.match( 5 );
+        n1.receive({ topic:"PWM", payload: 0 });
+        await delay(50);
+        c.should.match( 6 );
+        await delay(1000);
+        c.should.match( 6 )
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -118,7 +139,7 @@ describe( 'format_number Node', function () {
       }
     });
   });
-
+/*
   it('should forward numbers rounded to two digits and changed decimal', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
     var flow = [{ id: "n1", type: "formatNumber", decimal: ",", digits: "2", name: "test", wires: [["n2"]] },
@@ -271,7 +292,7 @@ describe( 'format_number Node', function () {
   });
 */
   it('should not use invalid data', function (done) {
-    var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:100, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:"0.1", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -287,6 +308,7 @@ describe( 'format_number Node', function () {
         }
       });
       try{
+        n1.should.have.a.property('cyclic', 100);
         await delay(50);
         n1.receive({ invalid:true, payload: 0 });
         await delay(50);

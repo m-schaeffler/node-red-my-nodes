@@ -12,6 +12,7 @@ module.exports = function(RED) {
         this.onTime       = null;
         this.timOn        = null;
         this.timCyclic    = null;
+        this.last         = null;
         this.state        = { shape: "dot" };
         if( this.propertyType === "jsonata" )
         {
@@ -28,15 +29,19 @@ module.exports = function(RED) {
         function sendMsg(value)
         {
             //console.log( "pwm output sendMsg "+value+" "+node.onTime+" "+Date.now() );
-            node.send( { topic:node.topic, payload:value } );
-            if( value && node.onTime )
+            if( value !== node.last )
             {
-                node.timOn = setTimeout( function() { sendMsg(false); }, node.onTime );
-            }
-            if( node.showState )
-            {
-                node.state.fill = value ? "green" : "gray";
-                node.status( node.state );
+                node.last = value;
+                node.send( { topic:node.topic, payload:value } );
+                if( value && node.onTime )
+                {
+                    node.timOn = setTimeout( function() { sendMsg(false); }, node.onTime );
+                }
+                if( node.showState )
+                {
+                    node.state.fill = value ? "green" : "gray";
+                    node.status( node.state );
+                }
             }
         }
 

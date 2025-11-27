@@ -147,6 +147,138 @@ describe( 'pwm_input Node', function () {
     });
   });
 
+  it('should work with 0.25 pwm', function (done) {
+    this.timeout( 8000 );
+    var flow = [{ id: "n1", type: "pwmInput", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          msg.should.have.property('topic','pwm');
+          if( !( c%2 ) )
+          {
+              msg.should.have.property('payload').which.is.approximately(0.25,0.05);
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('measureTime', 3600000);
+        await delay(50);
+        for(let i = 0; i < 8; i++)
+        {
+            n1.receive({ topic: "pwm", payload: "on" });
+            await delay(50);
+            n1.receive({ topic: "pwm", payload: "off" });
+            await delay(150);
+            c.should.match( 2*i+1 );
+        }
+        c.should.match( 15 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should work with 0.5 pwm', function (done) {
+    this.timeout( 8000 );
+    var flow = [{ id: "n1", type: "pwmInput", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          msg.should.have.property('topic','pwm');
+          if( !( c%2 ) )
+          {
+              msg.should.have.property('payload').which.is.approximately(0.5,0.05);
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('measureTime', 3600000);
+        await delay(50);
+        for(let i = 0; i < 8; i++)
+        {
+            n1.receive({ topic: "pwm", payload: "on" });
+            await delay(100);
+            n1.receive({ topic: "pwm", payload: "off" });
+            await delay(100);
+            c.should.match( 2*i+1 );
+        }
+        c.should.match( 15 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should work with 0.75 pwm', function (done) {
+    this.timeout( 8000 );
+    var flow = [{ id: "n1", type: "pwmInput", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          msg.should.have.property('topic','pwm');
+          if( !( c%2 ) )
+          {
+              msg.should.have.property('payload').which.is.approximately(0.75,0.05);
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('measureTime', 3600000);
+        await delay(50);
+        for(let i = 0; i < 8; i++)
+        {
+            n1.receive({ topic: "pwm", payload: "on" });
+            await delay(150);
+            n1.receive({ topic: "pwm", payload: "off" });
+            await delay(50);
+            c.should.match( 2*i+1 );
+        }
+        c.should.match( 15 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should not use invalid data', function (done) {
     var flow = [{ id: "n1", type: "pwmInput", measureTime:"5", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

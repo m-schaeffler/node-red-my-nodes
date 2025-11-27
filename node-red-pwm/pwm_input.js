@@ -57,7 +57,7 @@ module.exports = function(RED) {
                 const now = Date.now();
                 node.data.push( { time: now, value: value } );
                 context.set( "data", node.data );
-                console.log( node.data );
+                //console.log( node.data );
                 const time_ges = now - node.data[0].time;
                 let   time_on  = 0;
                 let   last     = null;
@@ -69,7 +69,7 @@ module.exports = function(RED) {
                     }
                     last = i.value ? i.time : null;
                 }
-                console.log(time_on+" / "+time_ges)
+                //console.log(time_on+" / "+time_ges)
                 if( time_ges > 0 )
                 {
                     const payload = time_on / time_ges;

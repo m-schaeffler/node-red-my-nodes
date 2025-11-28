@@ -81,11 +81,12 @@ describe( 'pwm_input Node', function () {
       var c = 0;
       const start = Date.now();
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           msg.should.have.property('topic','single');
           msg.should.have.property('payload',0);
+          msg.should.have.property('cycles',0);
           const delta = Date.now() - start;
           delta.should.be.approximately( 1000, 20 );
         }
@@ -119,11 +120,12 @@ describe( 'pwm_input Node', function () {
       var c = 0;
       const start = Date.now();
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           msg.should.have.property('topic','single');
           msg.should.have.property('payload',1);
+          msg.should.have.property('cycles',1);
           const delta = Date.now() - start;
           delta.should.be.approximately( 1000, 20 );
         }
@@ -156,7 +158,7 @@ describe( 'pwm_input Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           msg.should.have.property('topic','pwm');
@@ -164,6 +166,7 @@ describe( 'pwm_input Node', function () {
           {
               msg.should.have.property('payload').which.is.approximately(0.25,0.05);
           }
+          msg.should.have.property('cycles',1+(c>>1));
         }
         catch(err) {
           done(err);
@@ -200,7 +203,7 @@ describe( 'pwm_input Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           msg.should.have.property('topic','pwm');
@@ -208,6 +211,7 @@ describe( 'pwm_input Node', function () {
           {
               msg.should.have.property('payload').which.is.approximately(0.5,0.05);
           }
+          msg.should.have.property('cycles',1+(c>>1));
         }
         catch(err) {
           done(err);
@@ -244,7 +248,7 @@ describe( 'pwm_input Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c++;
           msg.should.have.property('topic','pwm');
@@ -252,6 +256,7 @@ describe( 'pwm_input Node', function () {
           {
               msg.should.have.property('payload').which.is.approximately(0.75,0.05);
           }
+          msg.should.have.property('cycles',1+(c>>1));
         }
         catch(err) {
           done(err);
@@ -269,6 +274,59 @@ describe( 'pwm_input Node', function () {
             c.should.match( 2*i+1 );
         }
         c.should.match( 15 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should have quality indicator', function (done) {
+    this.timeout( 8000 );
+    var flow = [{ id: "n1", type: "pwmInput", measureTime:"4", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var last;
+      var quality = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          c++;
+          msg.should.have.property('topic','Quality');
+          msg.should.have.property('cycles');
+          msg.should.have.property('quality').which.is.within(0,1);
+          if( msg.cycles !== last )
+          {
+              if( msg.cycles > 1 )
+              {
+                  msg.should.have.property('payload').which.is.approximately(0.5,0.05);
+              }
+              msg.should.have.property('quality').which.is.above(quality);
+              last    = msg.cycles;
+              quality = msg.quality;
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('measureTime', 4000);
+        await delay(50);
+        for(let i = 0; i < 20; i++)
+        {
+            n1.receive({ topic: "Quality", payload: true });
+            await delay(100);
+            n1.receive({ topic: "Quality", payload: false });
+            await delay(100);
+        }
+        c.should.match( 43 );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

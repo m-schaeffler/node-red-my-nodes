@@ -60,12 +60,17 @@ module.exports = function(RED) {
                 //console.log( node.data );
                 const time_ges = now - node.data[0].time;
                 let   time_on  = 0;
+                let   count_on = 0;
                 let   last     = null;
                 for( const i of node.data )
                 {
                     if( last )
                     {
                         time_on += i.time - last;
+                    }
+                    if( i.value && last === null )
+                    {
+                        count_on++;
                     }
                     last = i.value ? i.time : null;
                 }
@@ -76,11 +81,16 @@ module.exports = function(RED) {
                     if( payload !== node.last )
                     {
                         node.last = payload
-                        node.send( { topic: node.topic, payload: payload } );
+                        node.send( {
+                            topic:   node.topic,
+                            payload: payload,
+                            cycles:  count_on,
+                            quality: time_ges/node.measureTime
+                        } );
                     }
                     setStatus( {
                         fill:  node.value ? "green" : "gray",
-                        shape: "ring",
+                        shape: "dot",
                         text:  (payload*100).toFixed(0) + "%"
                     } );
                 }
@@ -160,6 +170,7 @@ module.exports = function(RED) {
             const now = Date.now();
             while( node.data[0]?.time < now - node.measureTime )
             {
+                //console.log("   delete data point")
                 node.data.shift();
             }
             calcPwm( node.value );

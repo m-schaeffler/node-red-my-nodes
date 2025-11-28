@@ -37,11 +37,11 @@ module.exports = function(RED) {
                 {
                     node.timOn = setTimeout( function() { sendMsg(false); }, node.onTime );
                 }
-                if( node.showState )
-                {
-                    node.state.fill = value ? "green" : "gray";
-                    node.status( node.state );
-                }
+            }
+            if( node.showState )
+            {
+                node.state.fill = value ? "green" : "gray";
+                node.status( node.state );
             }
         }
 
@@ -106,7 +106,7 @@ module.exports = function(RED) {
             getPayload( function(value)
             {
                 const number = Number( value );
-                node.status.text = Math.round( number*100 ) + "%";
+                node.state.text = Math.round( number*100 ) + "%";
                 if( ! ( Number.isNaN( number ) ) )
                 {
                     node.topic = msg.topic;

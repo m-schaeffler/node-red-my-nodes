@@ -46,13 +46,11 @@ This value is then
 
 ### Example Flow
 
-Aggregates data series for a chart of dashboard 2.0.
-
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/format.json)
 
 ## collectChart
 
-Formats the payload as a number.
+Aggregates data series for a chart of dashboard 2.0.
 
 ![image of nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/collectChart.png)
 

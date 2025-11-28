@@ -1,0 +1,92 @@
+# @mschaeffler/node-red-pwm
+
+Nodes for PWM handling in Node-Red.
+
+If the msg property `invalid` is present in the message, all nodes ignore the message.
+
+![image of nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-pwm/examples/pwm.png)
+
+## Install
+
+```
+$ npm install @mschaeffler/node-red-pwm
+```
+
+## PWM input
+
+Formats the payload as a number.
+
+### Input
+
+The message property to be used as payload can be defined with the `Property` property.
+
+This value is then
+- if the value is a number: converted to a string according to the parameters and a unit is added
+- if the value is `null` or does not exist, `null` is sent
+- if a JSONata expression cannot be evaluated, `null` is sent
+- in other cases: been sent out unmodified
+
+### Output
+
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|payload | string | formated value|
+
+### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
+|Einheit|string|unit of the value.|
+|Tausender|string|character to group the number in segments of 3 digits.|
+|Dezimal|string|character to decimal separation.|
+|Stellen|number|number of digits after the decimal point.|
+|Status|boolean|shows the actual value as a node status.|
+|Filter|boolean|block sending of unchanged `payload`.|
+
+## PWM output
+
+Formats the payload as a number.
+
+### Input
+
+The message property to be used as payload can be defined with the `Property` property.
+
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|topic   | string | series of the input value.|
+|payload | string | input value.|
+|reset   | boolean| deletes all stored data from the node.|
+|remove  | boolean| deletes all data points of `topic` series.|
+
+### Output
+
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|payload | array | formated value for the dashboard 2.0 chart|
+
+### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Property| string | defines the message property to be used as payload.|
+|Contextstore|context store|context store for storing the values; `none` is no storage.|
+|Topics|JSON array|array of the serieses of the chart. They can be either a string with just the name or an object with values from the next chapter.|
+|Cyclic|number|cyclic time to send out the chart in seconds.|
+|Löschzyklen |number| every how many `cycles` old data is deleted from the chart.|
+|Hours|number|how many hours the chart should span over.|
+|Steps|boolean|make steps instead of linear chart.|
+|Erase only with data|boolean|do not delete outdated data, if there is no new data arriving at the input.|
+|Status|boolean|shows the actual value as a node status.|
+
+## Example Flow
+
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-pwm/examples/pwm.json)
+
+## Author
+
+[Mathias Schäffler](https://github.com/m-schaeffler)
+
+## License
+
+LGPL-2.1

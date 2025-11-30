@@ -49,7 +49,7 @@ describe( 'pmw_output Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         try {
           c++;
           msg.should.have.property('topic',"input"+c);
@@ -64,12 +64,16 @@ describe( 'pmw_output Node', function () {
         await delay(50);
         n1.receive({ topic: "input1", payload: 0 });
         await delay(1000);
+        c.should.match( 1 );
         n1.receive({ topic: "input2", payload: 1 });
         await delay(1000);
+        c.should.match( 2 );
         n1.receive({ topic: "input3", payload: 0 });
         await delay(1000);
+        c.should.match( 3 );
         n1.receive({ topic: "input4", payload: 100 });
         await delay(50);
+        c.should.match( 4 );
         n1.receive({ topic: "input5", payload: -100 });
         await delay(50);
         c.should.match( 5 );

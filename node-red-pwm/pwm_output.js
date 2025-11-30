@@ -26,13 +26,18 @@ module.exports = function(RED) {
         }
         node.status( "" );
 
-        function sendMsg(value)
+        function sendMsg(value,pwm=null)
         {
             //console.log( "pwm output sendMsg "+value+" "+node.onTime+" "+Date.now() );
             if( value !== node.last )
             {
                 node.last = value;
-                node.send( { topic:node.topic, payload:value } );
+                let help = { topic:node.topic, payload:value };
+                if( pwm !== null )
+                {
+                    help.pwm = pwm;
+                }
+                node.send( help );
                 if( value && node.onTime )
                 {
                     node.timOn = setTimeout( function() { sendMsg(false); }, node.onTime );
@@ -83,27 +88,6 @@ module.exports = function(RED) {
                     }
                 }
             }
-            function setPwm(value)
-            {
-                if( value == 0 || value == 1 )
-                {
-                    node.onTime = null;
-                    clearInterval( node.timOn );
-                    clearInterval( node.timCyclic );
-                    node.timCyclic = null;
-                    sendMsg( value == 1 );
-                }
-                else
-                {
-                    node.onTime = node.cyclic * value;
-                    if( ! node.timCyclic )
-                    {
-                        node.timCyclic = setInterval( function() { node.emit("cyclic"); }, node.cyclic );
-                        node.last      = null;
-                        sendMsg( true );
-                    }
-                }
-            }
             getPayload( function(value)
             {
                 const number = Number( value );
@@ -111,17 +95,24 @@ module.exports = function(RED) {
                 if( ! ( Number.isNaN( number ) ) )
                 {
                     node.topic = msg.topic;
-                    if( number <= 0 )
+                    if( number <= 0 || number >= 1 )
                     {
-                        setPwm( 0 );
-                    }
-                    else if( number >= 1 )
-                    {
-                        setPwm( 1 );
+                        clearInterval( node.timOn );
+                        clearInterval( node.timCyclic );
+                        node.onTime    = null;
+                        node.timCyclic = null;
+                        const help = number >= 1;
+                        sendMsg( help, Number( help ) );
                     }
                     else
                     {
-                        setPwm( number );
+                        node.onTime = node.cyclic * number;
+                        if( ! node.timCyclic )
+                        {
+                            node.timCyclic = setInterval( function() { node.emit("cyclic"); }, node.cyclic );
+                            node.last      = null;
+                            sendMsg( true, number );
+                        }
                     }
                 }
                 else

@@ -99,6 +99,7 @@ module.exports = function(RED) {
                     if( ! node.timCyclic )
                     {
                         node.timCyclic = setInterval( function() { node.emit("cyclic"); }, node.cyclic );
+                        node.last      = null;
                         sendMsg( true );
                     }
                 }

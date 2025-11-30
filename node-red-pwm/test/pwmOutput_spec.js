@@ -197,6 +197,68 @@ describe( 'pmw_output Node', function () {
     });
   });
 
+  it('should generate PWM 0.25 after on', function (done) {
+    this.timeout( 8000 );
+    var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:"0.5", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var start;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c++;
+          msg.should.have.property('topic','PWM');
+          msg.should.have.property('payload', c==1?true:Boolean((c-1)%2) );
+          if( msg.payload )
+          {
+              if( start )
+              {
+                  const delta = Date.now() - start;
+                  delta.should.be.approximately( c==2?750:500, 10 );
+              }
+              start = Date.now();
+          }
+          else
+          {
+              const delta = Date.now() - start;
+              delta.should.be.approximately( 500*0.25, 10 );
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('cyclic', 500);
+        await delay(50);
+        n1.receive({ topic:"PWM", payload: 1 });
+        await delay(50);
+        c.should.match( 1 );
+        await delay(700);
+        c.should.match( 1 );
+        n1.receive({ topic:"PWM", payload: 0.25 });
+        await delay(50);
+        c.should.match( 2 );
+        await delay(1100);
+        c.should.match( 7 );
+        n1.receive({ topic:"PWM", payload: 0 });
+        await delay(50);
+        c.should.match( 7 );
+        await delay(1000);
+        c.should.match( 7 )
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should generate PWM 0.5, ends with 0', function (done) {
     this.timeout( 8000 );
     var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:"0.5", name: "test", wires: [["n2"]] },

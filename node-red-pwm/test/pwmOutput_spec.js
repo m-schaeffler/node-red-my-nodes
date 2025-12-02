@@ -548,6 +548,74 @@ describe( 'pmw_output Node', function () {
     });
   });
 
+  it('should change PWM', function (done) {
+    this.timeout( 8000 );
+    var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:"0.5", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var start;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          c++;
+          msg.should.have.property('topic','PWM');
+          msg.should.have.property('payload',Boolean(c%2));
+          if( msg.payload )
+          {
+              if( start )
+              {
+                  const delta = Date.now() - start;
+                  delta.should.be.approximately( 500, 10 );
+              }
+              start = Date.now();
+          }
+          else
+          {
+              const delta = Date.now() - start;
+              delta.should.be.approximately( c<10 ? 500*(c<=6?0.25:0.75) : 100, 10 );
+          }
+          if( c == 1 || c == 10 )
+          {
+               msg.should.have.property('pwm');
+          }
+          else
+          {
+               msg.should.not.have.property('pwm');
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+     try {
+        n1.should.have.a.property('cyclic', 500);
+        await delay(50);
+        n1.receive({ topic:"PWM", payload: 0.25 });
+        await delay(50);
+        c.should.match( 1 );
+        await delay(1000);
+        c.should.match( 5 );
+        n1.receive({ topic:"PWM", payload: 0.75 });
+        await delay(50);
+        c.should.match( 5 );
+        await delay(1000);
+        c.should.match( 9 )
+        n1.receive({ topic:"PWM", payload: 0 });
+        await delay(50);
+        c.should.match( 10 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should not use invalid data', function (done) {
     var flow = [{ id: "n1", type: "pwmOutput", cyclicTime:"0.1", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

@@ -28,8 +28,10 @@ describe( 'pwm_input Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('measureTime', 3600000);
+        n1.should.have.a.property('contextStore', 'none');
         n1.should.have.a.property('showState', false);
         await delay(50);
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -61,6 +63,7 @@ describe( 'pwm_input Node', function () {
         n1.should.have.a.property('measureTime', 5000);
         await delay(6000);
         c.should.match( 0 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -100,6 +103,7 @@ describe( 'pwm_input Node', function () {
         n1.receive({ topic: "single", payload: false });
         await delay(6000);
         c.should.match( 1 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -139,6 +143,7 @@ describe( 'pwm_input Node', function () {
         n1.receive({ topic: "single", payload: true });
         await delay(6000);
         c.should.match( 1 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -184,6 +189,7 @@ describe( 'pwm_input Node', function () {
             c.should.match( 2*i+1 );
         }
         c.should.match( 15 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -194,9 +200,9 @@ describe( 'pwm_input Node', function () {
     });
   });
 
-  it('should work with 0.5 pwm', function (done) {
+  it('should work with 0.5 pwm and store data in memory context', function (done) {
     this.timeout( 8000 );
-    var flow = [{ id: "n1", type: "pwmInput", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "pwmInput", contextStore:"memoryOnly", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -219,6 +225,7 @@ describe( 'pwm_input Node', function () {
       });
       try {
         n1.should.have.a.property('measureTime', 3600000);
+        n1.should.have.a.property('contextStore', 'memoryOnly');
         await delay(50);
         for(let i = 0; i < 8; i++)
         {
@@ -229,6 +236,7 @@ describe( 'pwm_input Node', function () {
             c.should.match( 2*i+1 );
         }
         c.should.match( 15 );
+        should.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -274,6 +282,7 @@ describe( 'pwm_input Node', function () {
             c.should.match( 2*i+1 );
         }
         c.should.match( 15 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -327,6 +336,7 @@ describe( 'pwm_input Node', function () {
             await delay(100);
         }
         c.should.match( 43 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -372,6 +382,7 @@ describe( 'pwm_input Node', function () {
         n1.receive({ topic:"Valid", payload: 0 });
         await delay(1000);
         c.should.match( 1 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(4);
         n1.error.should.have.callCount(0);
         done();
@@ -405,6 +416,7 @@ describe( 'pwm_input Node', function () {
         n1.receive({ topic:"object", payload: {a:1,value:0,b:1} });
         await delay(1000);
         c.should.match( 1 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -438,6 +450,7 @@ describe( 'pwm_input Node', function () {
         n1.receive({ topic:"JSONata", payload: 0 });
         await delay(1000);
         c.should.match( 1 );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

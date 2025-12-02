@@ -8,6 +8,7 @@ module.exports = function(RED) {
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.measureTime  = Number( config.measureTime ?? 3600 ) * 1000;
+        this.contextStore = config.contextStore ?? "none";
         this.showState    = Boolean( config.showState );
         this.data         = [];
         this.topic        = null;
@@ -26,21 +27,24 @@ module.exports = function(RED) {
         }
         node.status( "" );
 
-        context.get( "data", function(err,value)
+        if( node.contextStore != "none" )
         {
-            if( err )
+            context.get( "data", node.contextStore, function(err,value)
             {
-                node.error( err );
-            }
-            else
-            {
-                console.log( "context.get", value );
-                if( value !== undefined )
+                if( err )
                 {
-                    node.data = value;
+                    node.error( err );
                 }
-            }
-        } );
+                else
+                {
+                    console.log( "context.get", value );
+                    if( value !== undefined )
+                    {
+                        node.data = value;
+                    }
+                }
+            } );
+        }
 
         function setStatus(status)
         {
@@ -56,7 +60,10 @@ module.exports = function(RED) {
             {
                 const now = Date.now();
                 node.data.push( { time: now, value: value } );
-                context.set( "data", node.data );
+                if( node.contextStore != "none" )
+                {
+                    context.set( "data", node.data, node.contextStore );
+                }
                 //console.log( node.data );
                 const time_ges = now - node.data[0].time;
                 let   time_on  = 0;

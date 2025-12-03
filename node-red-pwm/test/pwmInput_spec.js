@@ -1,4 +1,5 @@
 var should = require("should");
+var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../pwm_input.js");
 
@@ -15,8 +16,28 @@ describe( 'pwm_input Node', function () {
       helper.startServer(done);
   });
 
+  function initContext(done) {
+    Context.init({
+      contextStorage: {
+        memoryOnly: {
+          module: "memory"
+        },
+        storeInFile: {
+          module: "memory"
+        }
+      }
+    });
+    Context.load().then(function () {
+      done();
+    });
+  }
+
   afterEach(function(done) {
       helper.unload().then(function() {
+          return Context.clean({allNodes: {}});
+      }).then(function () {
+          return Context.close();
+      }).then(function () {
           helper.stopServer(done);
       });
   });
@@ -204,7 +225,8 @@ describe( 'pwm_input Node', function () {
     this.timeout( 8000 );
     var flow = [{ id: "n1", type: "pwmInput", contextStore:"memoryOnly", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
+    helper.load(node, flow, function () {
+     initContext(async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
@@ -237,6 +259,38 @@ describe( 'pwm_input Node', function () {
         }
         c.should.match( 15 );
         should.exist( n1.context().get("data") );
+        n1.context().get("data").should.be.an.Array().of.length( 16 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n2 = helper.getNode("n2");
+        n1 = helper.getNode("n1");
+        n2.on("input", function (msg) {
+          //console.log(msg);
+          try {
+            c++;
+            msg.should.have.property('topic','pwm');
+            if( !( c%2 ) )
+            {
+              msg.should.have.property('payload').which.is.approximately(0.5,0.05);
+            }
+            msg.should.have.property('cycles',1+(c>>1));
+          }
+          catch(err) {
+            done(err);
+          }
+        });
+        await delay(50);
+        should.exist( n1.context().get("data") );
+        n1.context().get("data").should.be.an.Array().of.length( 16 );
+        n1.receive({ topic: "pwm", payload: "on" });
+        await delay(100);
+        n1.receive({ topic: "pwm", payload: "off" });
+        await delay(100);
+        c.should.match( 17 );
+        n1.context().get("data").should.be.an.Array().of.length( 18 );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -245,6 +299,7 @@ describe( 'pwm_input Node', function () {
         done(err);
       }
     });
+   });
   });
 
   it('should work with 0.75 pwm', function (done) {

@@ -23,6 +23,7 @@
         inputLabels: 'input',
         outputLabels: 'pwm signal',
         oneditprepare: function() {
+            const node = this;
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],

@@ -37,7 +37,7 @@ module.exports = function(RED) {
                 }
                 else
                 {
-                    console.log( "context.get", value );
+                    //console.log( "context.get", value );
                     if( value !== undefined )
                     {
                         node.data = value;

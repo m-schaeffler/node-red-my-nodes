@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-bthome",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "description": "A Node Red node to decrypt and decode BT-Home frames",
     "author": {
         "name": "Mathias Schäffler",
@@ -12,7 +12,8 @@
         "BT-Home",
         "bthome",
         "Shelly BLU",
-        "BLE"
+        "BLE",
+        "WS90"
     ],
     "bugs": {
         "url": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-bthome/issues"
@@ -25,7 +26,8 @@
     "node-red": {
         "version": ">=4.0.0",
         "nodes": {
-            "bthome": "bthome.js"
+            "bthome": "bthome.js",
+            "ws90": "ws90.js"
         }
     },
     "engines": {

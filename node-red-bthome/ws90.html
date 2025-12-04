@@ -1,0 +1,90 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ws90',{
+        category: 'input',
+        color: '#DEB887',
+        defaults: {
+            name: {value:""},
+            contextStore:{value:"none",required:true},
+            refheight:{value:0,validate:RED.validators.number(),required:true}
+        },
+        inputs:1,
+        outputs:12,
+        icon: "font-awesome/fa-sun-o",
+        label: function() {
+            return this.name||"WS 90";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "ws 90",
+        inputLabels: 'decoded bthome frame from ws90',
+        outputLabels: ['temperature','dew point','humidity','raining','rain yesterday','rain today','uv','air pressure','direction','wind','wind max','illumination'],
+        oneditprepare: function() {
+            const node = this;
+            // populate store names
+            $("#node-input-contextStore").empty();
+            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : '';
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                   $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="ws90">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-refheight"><i class="fa fa-"></i> reference height</label>
+        <input type="text" id="node-input-refheight">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="ws90">
+
+    <p>A Node Red node .</p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> data from Shelly script</dd>
+    </dl>
+    
+    <p>This is an example of such a message payload:</p>
+    <code>{<br>
+    "addr":    "11:22:33:44:55:66",<br>
+    "rssi":    -85,<br>
+    "time":    1745395033113,<br>
+    "gateway": "Shelly Gateway",<br>
+    "data":    [68,0,164,1,100,46,56,69,43,255]<br>
+}</code>
+    
+    <h3>Outputs</h3>
+    <p>There are 12 output ports:</p>
+    <ol>
+      <li>one for meassurement values (states)</li>
+      <li>one for actions done with the devices (events)</li>
+    </ol>
+    
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>Contextstore <span class="property-type">string</span></dt>
+        <dd>  context store to be used.</dd>
+        <dt>battery is state <span class="property-type">Boolean</span></dt>
+        <dd> battery level is included in state mesage.</dt>
+    </dl>
+    
+</script>

@@ -87,18 +87,18 @@ module.exports = function(RED) {
 
                 node.status( Math.round( normdruck ) );
                 send( [
-                    genMessage( "Aussentemperatur", msg.payload.temperature ),
-                    genMessage( "Taupunkt",         msg.payload.dewpoint ),
-                    genMessage( "Luftfeuchtigkeit", msg.payload.humidity ),
-                    genMessage( "Raining",          raining ),
-                    genMessage( "Regen_gestern",    storage.RegenGestern ),
-                    genMessage( "Regen_heute",      storage.RegenHeute, msg.payload.moisture ? "blueValue" : "" ),
-                    genMessage( "UV-Index",         msg.payload.uv, ampel( msg.payload.uv, 2, 5, "greenValue" ) ),
-                    genMessage( "Luftdruck",        normdruck ),
-                    genMessage( "Windrichtung",     msg.payload.direction ),
-                    genMessage( "Wind",             wind, ampel( wind, 25, 50 ) ),
-                    genMessage( "Wind_max",         storage.WindMax ),
-                    genMessage( "Helligkeit",       msg.payload.lux )
+                    genMessage( "outside temperature", msg.payload.temperature ),
+                    genMessage( "dew point",           msg.payload.dewpoint ),
+                    genMessage( "humidity",            msg.payload.humidity ),
+                    genMessage( "raining",             raining ),
+                    genMessage( "rain yesterday",      storage.RegenGestern ),
+                    genMessage( "rain today",          storage.RegenHeute, msg.payload.moisture ? "blueValue" : "" ),
+                    genMessage( "uv index",            msg.payload.uv, ampel( msg.payload.uv, 2, 5, "greenValue" ) ),
+                    genMessage( "air pressure",        normdruck ),
+                    genMessage( "wind direction",      msg.payload.direction ),
+                    genMessage( "wind",                wind, ampel( wind, 25, 50 ) ),
+                    genMessage( "wind_max",            storage.WindMax ),
+                    genMessage( "illumination",        msg.payload.lux )
                 ] );
             }
             done();

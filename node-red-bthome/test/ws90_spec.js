@@ -134,6 +134,117 @@ describe( 'bthome Node', function () {
       }
     });
   });
+
+  it('should process data', function (done) {
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "n4", type: "helper", z: "flow" },
+                { id: "n5", type: "helper", z: "flow" },
+                { id: "n6", type: "helper", z: "flow" },
+                { id: "n7", type: "helper", z: "flow" },
+                { id: "n8", type: "helper", z: "flow" },
+                { id: "n9", type: "helper", z: "flow" },
+                { id: "n10", type: "helper", z: "flow" },
+                { id: "n11", type: "helper", z: "flow" },
+                { id: "n12", type: "helper", z: "flow" },
+                { id: "n13", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let n4 = helper.getNode("n4");
+      let n5 = helper.getNode("n5");
+      let n6 = helper.getNode("n6");
+      let n7 = helper.getNode("n7");
+      let n8 = helper.getNode("n8");
+      let n9 = helper.getNode("n9");
+      let n10 = helper.getNode("n10");
+      let n11 = helper.getNode("n11");
+      let n12 = helper.getNode("n12");
+      let n13 = helper.getNode("n13");
+      let c = [0,0,0,0,0,0,0,0,0,0,0,0];
+      n2.on("input", function (msg) {
+        c[0]++;
+        msg.should.have.a.property('topic','outside temperature');
+        msg.should.have.a.property('payload',11.425);
+      });
+      n3.on("input", function (msg) {
+        c[1]++;
+        msg.should.have.a.property('topic','dew point');
+        msg.should.have.a.property('payload',20);
+      });
+      n4.on("input", function (msg) {
+        c[2]++;
+        msg.should.have.a.property('topic','humidity');
+        msg.should.have.a.property('payload',20);
+      });
+      n5.on("input", function (msg) {
+        c[3]++;
+        msg.should.have.a.property('topic','raining');
+        msg.should.have.a.property('payload',20);
+      });
+      n6.on("input", function (msg) {
+        c[4]++;
+        msg.should.have.a.property('topic','rain yesterday');
+        msg.should.have.a.property('payload',20);
+      });
+      n7.on("input", function (msg) {
+        c[5]++;
+        msg.should.have.a.property('topic','rain today');
+        msg.should.have.a.property('payload',20);
+      });
+      n8.on("input", function (msg) {
+        c[6]++;
+        msg.should.have.a.property('topic','uv index');
+        msg.should.have.a.property('payload',20);
+      });
+      n9.on("input", function (msg) {
+        c[7]++;
+        msg.should.have.a.property('topic','air pressure');
+        msg.should.have.a.property('payload',20);
+      });
+      n10.on("input", function (msg) {
+        c[8]++;
+        msg.should.have.a.property('topic','wind direction');
+        msg.should.have.a.property('payload',20);
+      });
+      n11.on("input", function (msg) {
+        c[9]++;
+        msg.should.have.a.property('topic','wind');
+        msg.should.have.a.property('payload',20);
+      });
+      n12.on("input", function (msg) {
+        c[10]++;
+        msg.should.have.a.property('topic','wind_max');
+        msg.should.have.a.property('payload',20);
+      });
+      n13.on("input", function (msg) {
+        c[11]++;
+        msg.should.have.a.property('topic','illumination');
+        msg.should.have.a.property('payload',20);
+      });
+      try {
+        n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('refheight', 500);
+        await delay(50);
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[2.8,2.8],uv:0,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:135.2} } );
+        await delay(50);
+        for( const i of c )
+        {
+            i.should.match( 1 );
+        }
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('storage', {} );
+        should.exist( n1.context().get("storage") );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
 /*
   const testDevices = '{ \
     "11:22:33:44:55:66": { "topic": "dev_unencrypted_1" }, \

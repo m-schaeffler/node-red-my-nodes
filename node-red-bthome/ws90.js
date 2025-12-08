@@ -7,7 +7,7 @@ module.exports = function(RED) {
         this.contextStore = config.contextStore ?? "none";
         this.refheight    = Number( config.refheight ?? 0 );
         this.last         = {};
-        this.storage      = {};
+        this.storage      = {RegenHeute:0,RegenGestern:0,WindMax:0};
         node.status( "" );
         if( node.contextStore !== "none" )
         {
@@ -36,7 +36,10 @@ module.exports = function(RED) {
         function setStorage(topic,value)
         {
             node.storage[topic] = value;
-            context.set( "storage", node.storage, node.contextStore );
+            if( node.contextStore !== "none" )
+            {
+                context.set( "storage", node.storage, node.contextStore );
+            }
         }
 
         function genMessage(name,value,style=null)
@@ -85,19 +88,60 @@ module.exports = function(RED) {
                 const h = node.refheight; // Ortshöhe
                 const normdruck = msg.payload.pressure * Math.exp( 9.80665 / ( 287.05 * ( 273.15 + msg.payload.temperature + 0.12 * p_H2O + 0.0065 * h / 2 ) ) * h );
 
+                // Regen
+                let raining = node.storage.Raining;
+                function setRaining(value,timeout)
+                {
+                    raining = value;
+                    setStorage( "rainingDate", value ? now + timeout*60*1000 : 8640000000000000 );
+                    if( node.storage.Raining !== value )
+                    {
+                        setStorage( "Raining", value );
+                    }
+                }
+                if( msg.payload.moisture && ! node.storage.moisture )
+                {
+                    setRaining( true, 15 );
+                }
+                else if( now >= node.storage.rainingDate )
+                {
+                    setRaining( false, 0 );
+                }
+                setStorage( "moisture", msg.payload.moisture );
+
+                // Regenmenge
+                if( msg.payload.precipitation > node.storage.Regen )
+                {
+                    setStorage( "RegenHeute", storage.RegenHeute + msg.payload.precipitation - node.storage.Regen );
+                    setRaining( true, 20 );
+                }
+                else if( msg.payload.precipitation < node.storage.Regen && msg.payload.precipitation <= 10 )
+                {
+                    setStorage( "RegenHeute", node.storage.RegenHeute + msg.payload.precipitation );
+                    setRaining( true, 20 );
+                }
+                setStorage( "Regen", msg.payload.precipitation );
+
+                // Wind
+                const wind = msg.payload.wind[1] * 3.6;
+                if( wind > node.storage.WindMax )
+                {
+                    setStorage( "WindMax", wind );
+                }
+
                 node.status( Math.round( normdruck ) );
                 send( [
                     genMessage( "outside temperature", msg.payload.temperature ),
                     genMessage( "dew point",           msg.payload.dewpoint ),
                     genMessage( "humidity",            msg.payload.humidity ),
                     genMessage( "raining",             raining ),
-                    genMessage( "rain yesterday",      storage.RegenGestern ),
-                    genMessage( "rain today",          storage.RegenHeute, msg.payload.moisture ? "blueValue" : "" ),
+                    genMessage( "rain yesterday",      node.storage.RegenGestern ),
+                    genMessage( "rain today",          node.storage.RegenHeute, msg.payload.moisture ? "blueValue" : "" ),
                     genMessage( "uv index",            msg.payload.uv, ampel( msg.payload.uv, 2, 5, "greenValue" ) ),
                     genMessage( "air pressure",        normdruck ),
                     genMessage( "wind direction",      msg.payload.direction ),
                     genMessage( "wind",                wind, ampel( wind, 25, 50 ) ),
-                    genMessage( "wind_max",            storage.WindMax ),
+                    genMessage( "wind_max",            node.storage.WindMax ),
                     genMessage( "illumination",        msg.payload.lux )
                 ] );
             }

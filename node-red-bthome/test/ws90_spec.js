@@ -34,6 +34,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 0);
+        n1.should.have.a.property('timebase', 60000);
         await delay(50);
         n1.should.have.a.property('storage', {RegenHeute: 0, RegenGestern: 0, WindMax: 0} );
         should.not.exist( n1.context().get("storage") );
@@ -113,6 +114,7 @@ describe( 'bthome Node', function () {
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
+        n1.should.have.a.property('timebase', 60000);
         await delay(50);
         n1.receive( { topic:"WS90", invalid:true, payload:{ temperature:20} });
         n1.receive( { topic:"WS90" });
@@ -136,7 +138,19 @@ describe( 'bthome Node', function () {
   });
 
   it('should process data', function (done) {
-    let flow = [{ id: "n1", type: "ws90", refheight:"500", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+    this.timeout( 5000 );
+    const temp      = [11.425, 24];
+    const dewPoint  = [10.24, 15];
+    const humidity  = [92, 40];
+    const rainToday = [0, 1.2, 1.2];
+    const uv        = [2, 6];
+    const uvClass   = ["greenValue", "redValue"];
+    const air       = [1016.1804342610798, 1037.379594212174];
+    const windDir   = [167, 0];
+    const wind      = [10.08, 0, 11.16];
+    const windMax   = [10.08, 11.16];
+    const illuminat = [8920, 0];
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", timebase:"0.1", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -167,25 +181,25 @@ describe( 'bthome Node', function () {
       n2.on("input", function (msg) {
         c[0]++;
         msg.should.have.a.property('topic','outside temperature');
-        msg.should.have.a.property('payload',11.425);
+        msg.should.have.a.property('payload',temp[c[0]-1]);
         msg.should.not.have.a.property('ui_update');
       });
       n3.on("input", function (msg) {
         c[1]++;
         msg.should.have.a.property('topic','dew point');
-        msg.should.have.a.property('payload',10.24);
+        msg.should.have.a.property('payload',dewPoint[c[1]-1]);
         msg.should.not.have.a.property('ui_update');
       });
       n4.on("input", function (msg) {
         c[2]++;
         msg.should.have.a.property('topic','humidity');
-        msg.should.have.a.property('payload',92);
+        msg.should.have.a.property('payload',humidity[c[2]-1]);
         msg.should.not.have.a.property('ui_update');
       });
       n5.on("input", function (msg) {
         c[3]++;
         msg.should.have.a.property('topic','raining');
-        msg.should.have.a.property('payload',true);
+        msg.should.have.a.property('payload',c[3]==1);
         msg.should.not.have.a.property('ui_update');
       });
       n6.on("input", function (msg) {
@@ -197,59 +211,99 @@ describe( 'bthome Node', function () {
       n7.on("input", function (msg) {
         c[5]++;
         msg.should.have.a.property('topic','rain today');
-        msg.should.have.a.property('payload',0);
-        msg.should.have.a.property('ui_update', { class: 'blueValue' } );
+        msg.should.have.a.property('payload').which.is.approximately(rainToday[c[5]-1],0.00001);
+        msg.should.have.a.property('ui_update', { class: c[5]<=2?'blueValue':'' } );
       });
       n8.on("input", function (msg) {
         c[6]++;
         msg.should.have.a.property('topic','uv index');
-        msg.should.have.a.property('payload',0);
-        msg.should.have.a.property('ui_update', { class: 'greenValue' } );
+        msg.should.have.a.property('payload',uv[c[6]-1]);
+        msg.should.have.a.property('ui_update', { class: uvClass[c[6]-1] } );
       });
       n9.on("input", function (msg) {
         c[7]++;
         msg.should.have.a.property('topic','air pressure');
-        msg.should.have.a.property('payload',1016.1804342610798);
+        msg.should.have.a.property('payload',air[c[7]-1]);
         msg.should.not.have.a.property('ui_update');
       });
       n10.on("input", function (msg) {
         c[8]++;
         msg.should.have.a.property('topic','wind direction');
-        msg.should.have.a.property('payload',167);
+        msg.should.have.a.property('payload',windDir[c[8]-1]);
         msg.should.not.have.a.property('ui_update');
       });
       n11.on("input", function (msg) {
         c[9]++;
         msg.should.have.a.property('topic','wind');
-        msg.should.have.a.property('payload',10.08);
+        msg.should.have.a.property('payload',wind[c[9]-1]);
         msg.should.have.a.property('ui_update', { class: '' } );
       });
       n12.on("input", function (msg) {
         c[10]++;
         msg.should.have.a.property('topic','wind_max');
-        msg.should.have.a.property('payload',10.08);
+        msg.should.have.a.property('payload',windMax[c[10]-1]);
         msg.should.not.have.a.property('ui_update');
       });
       n13.on("input", function (msg) {
         c[11]++;
         msg.should.have.a.property('topic','illumination');
-        msg.should.have.a.property('payload',8920);
+        msg.should.have.a.property('payload',illuminat[c[11]-1]);
         msg.should.not.have.a.property('ui_update');
       });
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
+        n1.should.have.a.property('timebase', 100);
         await delay(50);
         // first message
-        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[2.8,2.8],uv:0,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        for( const i of c )
-        {
-            i.should.match( 1 );
-        }
+        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
         // second message with some rain
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1] );
+        // dry
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1] );
+        // not raining
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
+        await delay(1750);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1] );
+        await delay(200);
+        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1] );
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,2,1,3,1,1,1,1,1,1] );
+        // no wind
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,0],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,2,1,3,1,1,1,2,1,1] );
+        // more wind
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,3.1],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,2,1,3,1,1,1,3,2,1] );
+        // others different
+        n1.receive( { topic:"WS90", payload:{lux:0,moisture:false,wind:[2.8,3.1],uv:6,direction:0,pressure:980,dewpoint:15,humidity:40,temperature:24,precipitation:1235.2} } );
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [2,2,2,2,1,3,2,2,2,3,2,2] );
         n1.should.have.a.property('storage');
         should.not.exist( n1.context().get("storage") );
         done();

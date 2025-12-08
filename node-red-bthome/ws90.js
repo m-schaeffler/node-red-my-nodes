@@ -6,6 +6,7 @@ module.exports = function(RED) {
         var context = this.context();
         this.contextStore = config.contextStore ?? "none";
         this.refheight    = Number( config.refheight ?? 0 );
+        this.timebase     = Number( config.timebase ?? 60 ) * 1000;
         this.last         = {};
         this.storage      = {RegenHeute:0,RegenGestern:0,WindMax:0};
         node.status( "" );
@@ -93,7 +94,7 @@ module.exports = function(RED) {
                 function setRaining(value,timeout)
                 {
                     raining = value;
-                    setStorage( "rainingDate", value ? now + timeout*60*1000 : 8640000000000000 );
+                    setStorage( "rainingDate", value ? now + timeout*node.timebase : 8640000000000000 );
                     if( node.storage.Raining !== value )
                     {
                         setStorage( "Raining", value );
@@ -112,7 +113,7 @@ module.exports = function(RED) {
                 // Regenmenge
                 if( msg.payload.precipitation > node.storage.Regen )
                 {
-                    setStorage( "RegenHeute", storage.RegenHeute + msg.payload.precipitation - node.storage.Regen );
+                    setStorage( "RegenHeute", node.storage.RegenHeute + msg.payload.precipitation - node.storage.Regen );
                     setRaining( true, 20 );
                 }
                 else if( msg.payload.precipitation < node.storage.Regen && msg.payload.precipitation <= 10 )

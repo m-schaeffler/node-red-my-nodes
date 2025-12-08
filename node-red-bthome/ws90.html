@@ -55,36 +55,52 @@
 
 <script type="text/x-red" data-help-name="ws90">
 
-    <p>A Node Red node .</p>
+    <p>A Node Red node to work with data from the WS90 weather station.</p>
     
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
-        <dd> data from Shelly script</dd>
+        <dd> data from <code>bthome</code> node.</dd>
     </dl>
     
     <p>This is an example of such a message payload:</p>
     <code>{<br>
-    "addr":    "11:22:33:44:55:66",<br>
-    "rssi":    -85,<br>
-    "time":    1745395033113,<br>
-    "gateway": "Shelly Gateway",<br>
-    "data":    [68,0,164,1,100,46,56,69,43,255]<br>
+    "lux":           3630,<br>
+    "moisture":      false,<br>
+    "wind":          [1.5,1.5],<br>
+    "uv":            0,<br>
+    "direction":     174,<br>
+    "pressure":      948.2,<br>
+    "dewpoint":      -0.43,<br>
+    "humidity":      99,<br>
+    "temperature":   -0.3,<br>
+    "precipitation": 121.5<br>
 }</code>
     
     <h3>Outputs</h3>
     <p>There are 12 output ports:</p>
     <ol>
-      <li>one for meassurement values (states)</li>
-      <li>one for actions done with the devices (events)</li>
+      <li>temperature</li>
+      <li>dew point</li>
+      <li>humidity</li>
+      <li>raining</li>
+      <li>rain yesterday</li>
+      <li>rain today</li>
+      <li>uv</li>
+      <li>air pressure</li>
+      <li>direction</li>
+      <li>wind</li>
+      <li>wind max</li>
+      <li>illumination</li>
     </ol>
+    <p>Some of the values have style classes for the <code>dashboard 2</code> attached.</p>
     
     <h3>Parameters</h3>
     <dl class="message-properties">
         <dt>Contextstore <span class="property-type">string</span></dt>
         <dd>  context store to be used.</dd>
-        <dt>battery is state <span class="property-type">Boolean</span></dt>
-        <dd> battery level is included in state mesage.</dt>
+        <dt>reference height <span class="property-type">number</span></dt>
+        <dd> height of the installation over the sea level, to caculate the absolute air pressure.</dt>
     </dl>
     
 </script>

@@ -12,6 +12,9 @@ At the moment these sensors are implemented and tested:
 - Shelly BLU RC Button 4
 - Shelly BLU Wall Switch 4
 - Shelly BLU Motion
+- Shelly BLU Distance
+- Shelly BLU Remote
+- Ecowitt WS90
 
 ## Capture of Raw Frames
 
@@ -29,14 +32,18 @@ This node can decrypt [encrypted messages](https://bthome.io/encryption/), if th
 $ npm install @mschaeffler/node-red-bthome
 ```
 
-## Input
+## bthome Node
+
+This node decodes the raw frames.
+
+### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | object | data from Shelly script|
 |resync  | boolean| if set to yes, allow all packed ids; to resync after some issue|
 
-### msg.payload
+#### msg.payload
 
 Only the first two values are needed, the others are optional.
 
@@ -59,27 +66,27 @@ This is an example of such a message payload:
 }
 ```
 
-## Outputs
+### Outputs
 
 There are two output ports:
 1. one for meassurement values (states)
 2. one for actions done with the devices (events)
 
-### State
+#### State
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |topic   | string | `State-Prefix` + name of the device|
 |payload | object | decoded state data|
 
-### Events
+#### Events
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |topic   | string | `Event-Prefix` + name of the device|
 |payload | object | data of the decoded event|
 
-## Parameters
+### Parameters
 
 |config       | type   | description                       |
 |:------------|:-------|:----------------------------------|
@@ -90,7 +97,7 @@ There are two output ports:
 |Context-Variable| string | name of the variable in flow context storage |
 |Contextstore | string | context store to be used |
 
-### Device-Configuration
+#### Device-Configuration
 
 With this JSON string the installed [BT-Home](https://bthome.io) devices are configured:
 ```
@@ -109,7 +116,7 @@ An example for such a config from the unit tests:
 }
 ```
 
-### Context storage
+#### Context storage
 
 All recorded data can be stored in a flow context variable for
 - initialisation
@@ -135,6 +142,12 @@ If content storage is active, statistical data is also stored in a variable with
 ```
 { ok:0, err:0, old:0, dup:0 }
 ```
+
+## ws90 Node
+
+This node does so0me additional calculations to get more usefull data from the WS90 weather station.
+
+Similar calculations are done by the Ecowitt base stations.
 
 ## Example Flow
 

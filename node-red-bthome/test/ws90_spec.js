@@ -16,6 +16,22 @@ describe( 'ws90 Node', function () {
       helper.startServer(done);
   });
 
+  function initContext(done) {
+    Context.init({
+      contextStorage: {
+        memoryOnly: {
+          module: "memory"
+        },
+        storeInFile: {
+          module: "memory"
+        }
+      }
+    });
+    Context.load().then(function () {
+      done();
+    });
+  }
+
   afterEach(function(done) {
       helper.unload().then(function() {
           return Context.clean({allNodes: {}});
@@ -900,7 +916,8 @@ describe( 'ws90 Node', function () {
                 { id: "n11", type: "helper", z: "flow" },
                 { id: "n12", type: "helper", z: "flow" },
                 { id: "n13", type: "helper", z: "flow" }];
-    helper.load(node, flow, async function () {
+    helper.load(node, flow, function () {
+     initContext(async function () {
       let n1 = helper.getNode("n1");
       let n2 = helper.getNode("n2");
       let n3 = helper.getNode("n3");
@@ -989,26 +1006,63 @@ describe( 'ws90 Node', function () {
         msg.should.not.have.a.property('ui_update');
       });
       try {
-        n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('refheight', 500);
         n1.should.have.a.property('contextStore', "memory");
+        n1.should.have.a.property('refheight', 500);
         await delay(50);
         n1.should.have.a.property('storage');
         should.not.exist( n1.context().get("storage") );
         // first message
-        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[10,10],uv:3,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[5,5],uv:3,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
         n1.should.have.a.property('storage');
-        should.not.exist( n1.context().get("storage") );
+        let help = n1.context().get("storage");
+        should.exist( help );
+        help.should.be.deepEqual( { Raining: false, RegenHeute: 0, RegenGestern: 0, WindMax: 36, moisture: false, Regen: 1234 } );
+        // reload node
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n2 = helper.getNode("n2");
+        n3 = helper.getNode("n3");
+        n4 = helper.getNode("n4");
+        n5 = helper.getNode("n5");
+        n6 = helper.getNode("n6");
+        n7 = helper.getNode("n7");
+        n8 = helper.getNode("n8");
+        n9 = helper.getNode("n9");
+        n10 = helper.getNode("n10");
+        n11 = helper.getNode("n11");
+        n12 = helper.getNode("n12");
+        n13 = helper.getNode("n13");
+
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        n1.should.have.a.property('storage');
+        help = n1.context().get("storage");
+        should.exist( help );
+        help.should.be.deepEqual( { Raining: false, RegenHeute: 0, RegenGestern: 0, WindMax: 36, moisture: false, Regen: 1234 } );
+        // again same message with changes
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[10,10],uv:3,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        n1.should.have.a.property('storage');
+        help = n1.context().get("storage");
+        should.exist( help );
+        help.should.be.deepEqual( { Raining: false, RegenHeute: 0, RegenGestern: 0, WindMax: 36, moisture: false, Regen: 1234 } );
         done();
       }
       catch(err) {
         done(err);
       }
     });
+   });
   });
 
 });

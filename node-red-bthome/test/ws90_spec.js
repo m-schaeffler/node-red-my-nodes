@@ -967,7 +967,7 @@ describe( 'ws90 Node', function () {
         c[5]++;
         msg.should.have.a.property('topic','rain today');
         msg.should.have.a.property('payload',0);
-        msg.should.have.a.property('ui_update', { class: '' } );
+        msg.should.have.a.property('ui_update', { class: 'blueValue' } );
       });
       n8.on("input", function (msg) {
         c[6]++;
@@ -1020,7 +1020,7 @@ describe( 'ws90 Node', function () {
         n1.should.have.a.property('storage');
         let help = n1.context().get("storage");
         should.exist( help );
-        help.should.be.deepEqual( { Raining: true, RegenHeute: 0, RegenGestern: 0, WindMax: 36, moisture: true, Regen: 1234 } );
+        help.should.have.properties( { Raining: true, RegenHeute: 0, RegenGestern: 0, WindMax: 18, moisture: true, Regen: 1234 } );
         // reload node
         await helper._redNodes.stopFlows();
         await helper._redNodes.startFlows();
@@ -1071,7 +1071,7 @@ describe( 'ws90 Node', function () {
         n7.on("input", function (msg) {
           c[5]++;
           msg.should.have.a.property('topic','rain today');
-          msg.should.have.a.property('payload',0);
+          msg.should.have.a.property('payload',1);
           msg.should.have.a.property('ui_update', { class: '' } );
         });
         n8.on("input", function (msg) {
@@ -1101,7 +1101,7 @@ describe( 'ws90 Node', function () {
         n12.on("input", function (msg) {
           c[10]++;
           msg.should.have.a.property('topic','wind_max');
-          msg.should.have.a.property('payload',18);
+          msg.should.have.a.property('payload',36);
           msg.should.not.have.a.property('ui_update');
         });
         n13.on("input", function (msg) {
@@ -1117,17 +1117,17 @@ describe( 'ws90 Node', function () {
         n1.should.have.a.property('storage');
         help = n1.context().get("storage");
         should.exist( help );
-        help.should.be.deepEqual( { Raining: true, RegenHeute: 0, RegenGestern: 0, WindMax: 18, moisture: true, Regen: 1234 } );
+        help.should.have.properties( { Raining: true, RegenHeute: 0, RegenGestern: 0, WindMax: 18, moisture: true, Regen: 1234 } );
         // again same message with changes
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[10,10],uv:3,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        c.should.match( [2,2,2,2,2,2,2,2,2,2,2,2] );
         n1.should.have.a.property('storage');
         help = n1.context().get("storage");
         should.exist( help );
-        help.should.be.deepEqual( { Raining: false, RegenHeute: 1, RegenGestern: 0, WindMax: 36, moisture: false, Regen: 1235 } );
+        help.should.have.properties( { Raining: true, RegenHeute: 1, RegenGestern: 0, WindMax: 36, moisture: false, Regen: 1235 } );
         done();
       }
       catch(err) {

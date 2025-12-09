@@ -8,7 +8,7 @@ module.exports = function(RED) {
         this.refheight    = Number( config.refheight ?? 0 );
         this.timebase     = Number( config.timebase ?? 60 ) * 1000;
         this.last         = {};
-        this.storage      = {RegenHeute:0,RegenGestern:0,WindMax:0};
+        this.storage      = {Raining:false,RegenHeute:0,RegenGestern:0,WindMax:0};
         node.status( "" );
         if( node.contextStore !== "none" )
         {

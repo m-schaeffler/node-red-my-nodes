@@ -36,7 +36,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('refheight', 0);
         n1.should.have.a.property('timebase', 60000);
         await delay(50);
-        n1.should.have.a.property('storage', {RegenHeute: 0, RegenGestern: 0, WindMax: 0} );
+        n1.should.have.a.property('storage', {Raining:false, RegenHeute: 0, RegenGestern: 0, WindMax: 0} );
         should.not.exist( n1.context().get("storage") );
         done();
       }
@@ -127,7 +127,7 @@ describe( 'bthome Node', function () {
         }
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(3);
-        n1.should.have.a.property('storage', {RegenHeute: 0, RegenGestern: 0, WindMax: 0} );
+        n1.should.have.a.property('storage', {Raining:false, RegenHeute: 0, RegenGestern: 0, WindMax: 0} );
         should.not.exist( n1.context().get("storage") );
         done();
       }
@@ -313,9 +313,7 @@ describe( 'bthome Node', function () {
       }
     });
   });
-  
-  
-  
+
   it('should process raining without rain', function (done) {
     this.timeout( 5000 );
     let flow = [{ id: "n1", type: "ws90", refheight:"500", timebase:"0.1", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
@@ -380,7 +378,7 @@ describe( 'bthome Node', function () {
         c[5]++;
         msg.should.have.a.property('topic','rain today');
         msg.should.have.a.property('payload',0);
-        msg.should.have.a.property('ui_update', { class: c[5]<=2?'blueValue':'' } );
+        msg.should.have.a.property('ui_update', { class: c[5]<=1?'blueValue':'' } );
       });
       n8.on("input", function (msg) {
         c[6]++;
@@ -409,7 +407,7 @@ describe( 'bthome Node', function () {
       n12.on("input", function (msg) {
         c[10]++;
         msg.should.have.a.property('topic','wind_max');
-        msg.should.have.a.property('payload',72;
+        msg.should.have.a.property('payload',72);
         msg.should.not.have.a.property('ui_update');
       });
       n13.on("input", function (msg) {
@@ -434,19 +432,19 @@ describe( 'bthome Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1] );
         await delay(1250);
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[20,20],uv:5,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1] );
         await delay(200);
-        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1] );
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[20,20],uv:5,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,2,1,1,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,2,1,2,1,1,1,1,1,1] );
         n1.should.have.a.property('storage');
         should.not.exist( n1.context().get("storage") );
         done();
@@ -456,7 +454,7 @@ describe( 'bthome Node', function () {
       }
     });
   });
-  
+
   it('should have reset command', function (done) {
     let flow = [{ id: "n1", type: "ws90", refheight:"500", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
@@ -506,6 +504,7 @@ describe( 'bthome Node', function () {
       });
       n5.on("input", function (msg) {
         c[3]++;
+        //console.log(msg);
         msg.should.have.a.property('topic','raining');
         msg.should.have.a.property('payload',false);
         msg.should.not.have.a.property('ui_update');

@@ -885,85 +885,124 @@ describe( 'ws90 Node', function () {
       }
     });
   });
-/*
-  it('should not store into a context variable', function (done) {
-    let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", contextVar:"shellyBlu", contextStore:"none", devices:testDevices, batteryState:true, wires: [["n2"],["n3"]], z:"flow" },
+
+  it('should store into a context variable', function (done) {
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", contextStore:"memory", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
-                { id: "n3", type: "helper", z: "flow" }];
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "n4", type: "helper", z: "flow" },
+                { id: "n5", type: "helper", z: "flow" },
+                { id: "n6", type: "helper", z: "flow" },
+                { id: "n7", type: "helper", z: "flow" },
+                { id: "n8", type: "helper", z: "flow" },
+                { id: "n9", type: "helper", z: "flow" },
+                { id: "n10", type: "helper", z: "flow" },
+                { id: "n11", type: "helper", z: "flow" },
+                { id: "n12", type: "helper", z: "flow" },
+                { id: "n13", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
       let n1 = helper.getNode("n1");
       let n2 = helper.getNode("n2");
       let n3 = helper.getNode("n3");
-      let c1 = 0;
-      let c2 = 0;
+      let n4 = helper.getNode("n4");
+      let n5 = helper.getNode("n5");
+      let n6 = helper.getNode("n6");
+      let n7 = helper.getNode("n7");
+      let n8 = helper.getNode("n8");
+      let n9 = helper.getNode("n9");
+      let n10 = helper.getNode("n10");
+      let n11 = helper.getNode("n11");
+      let n12 = helper.getNode("n12");
+      let n13 = helper.getNode("n13");
+      let c = [0,0,0,0,0,0,0,0,0,0,0,0];
       n2.on("input", function (msg) {
-        c1++;
+        c[0]++;
+        msg.should.have.a.property('topic','outside temperature');
+        msg.should.have.a.property('payload',11.425);
+        msg.should.not.have.a.property('ui_update');
       });
       n3.on("input", function (msg) {
-        c2++;
+        c[1]++;
+        msg.should.have.a.property('topic','dew point');
+        msg.should.have.a.property('payload',10.24);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n4.on("input", function (msg) {
+        c[2]++;
+        msg.should.have.a.property('topic','humidity');
+        msg.should.have.a.property('payload',92);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n5.on("input", function (msg) {
+        c[3]++;
+        //console.log(msg);
+        msg.should.have.a.property('topic','raining');
+        msg.should.have.a.property('payload',false);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n6.on("input", function (msg) {
+        c[4]++;
+        msg.should.have.a.property('topic','rain yesterday');
+        msg.should.have.a.property('payload',0);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n7.on("input", function (msg) {
+        c[5]++;
+        msg.should.have.a.property('topic','rain today');
+        msg.should.have.a.property('payload',0);
+        msg.should.have.a.property('ui_update', { class: '' } );
+      });
+      n8.on("input", function (msg) {
+        c[6]++;
+        msg.should.have.a.property('topic','uv index');
+        msg.should.have.a.property('payload',3);
+        msg.should.have.a.property('ui_update', { class: "yellowValue" } );
+      });
+      n9.on("input", function (msg) {
+        c[7]++;
+        msg.should.have.a.property('topic','air pressure');
+        msg.should.have.a.property('payload',1016.1804342610798);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n10.on("input", function (msg) {
+        c[8]++;
+        msg.should.have.a.property('topic','wind direction');
+        msg.should.have.a.property('payload',167);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n11.on("input", function (msg) {
+        c[9]++;
+        msg.should.have.a.property('topic','wind');
+        msg.should.have.a.property('payload',36);
+        msg.should.have.a.property('ui_update', { class: 'yellowValue' } );
+      });
+      n12.on("input", function (msg) {
+        c[10]++;
+        msg.should.have.a.property('topic','wind_max');
+        msg.should.have.a.property('payload',36);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n13.on("input", function (msg) {
+        c[11]++;
+        msg.should.have.a.property('topic','illumination');
+        msg.should.have.a.property('payload',8920);
+        msg.should.not.have.a.property('ui_update');
       });
       try {
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('statusPrefix', "");
-        n1.should.have.a.property('devices');
-        n1.should.have.a.property('contextVar', "shellyBlu");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('batteryState', true);
+        n1.should.have.a.property('refheight', 500);
+        n1.should.have.a.property('contextStore', "memory");
         await delay(50);
-        n1.should.have.a.property('data', {} );
-        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
-          gateway: "UnitTest",
-          addr:    "11:22:33:44:55:66",
-          rssi:    -50,
-          time:    Date.now(),
-          data:    [68,0,54,1,94,46,57,69,125,0]
-        } });
+        n1.should.have.a.property('storage');
+        should.not.exist( n1.context().get("storage") );
+        // first message
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[10,10],uv:3,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:54,encrypted:false},"UnitTest",{temperature:12.5,humidity:57,battery:94});
-        n1.should.have.a.property('statistics',{ok:1,err:0,old:0,dup:0});
-        should.not.exist( n1.context().flow.get("shellyBlu") );
-        c1.should.match( 1 );
-        c2.should.match( 0 );
-        await helper._redNodes.stopFlows();
-        await helper._redNodes.startFlows();
-        n1 = helper.getNode("n1");
-        n2 = helper.getNode("n2");
-        n3 = helper.getNode("n3");
-        n2.on("input", function (msg) {
-          c1++;
-        });
-        n3.on("input", function (msg) {
-          c2++;
-        });
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('statusPrefix', "");
-        n1.should.have.a.property('devices');
-        n1.should.have.a.property('contextVar', "shellyBlu");
-        n1.should.have.a.property('contextStore', "none");
-        await delay(50);
-        n1.should.have.a.property('data', {} );
-        should.not.exist( n1.context().flow.get("shellyBlu") );
-        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
-          gateway: "UnitTest",
-          addr:    "11:22:33:44:55:66",
-          rssi:    -50,
-          time:    Date.now(),
-          data:    [68,0,54,1,90,46,57,69,125,0]
-        } });
-        await delay(50);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:54,encrypted:false},"UnitTest",{temperature:12.5,humidity:57,battery:90});
-        n1.should.have.a.property('statistics',{ok:1,err:0,old:0,dup:0});
-        should.not.exist( n1.context().flow.get("shellyBlu") );
-        should.not.exist( n1.context().flow.get("shellyBlu-stat") );
-        c1.should.match( 2 );
-        c2.should.match( 0 );
+        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        n1.should.have.a.property('storage');
+        should.not.exist( n1.context().get("storage") );
         done();
       }
       catch(err) {
@@ -972,91 +1011,4 @@ describe( 'ws90 Node', function () {
     });
   });
 
-  it('should store into a context variable', function (done) {
-    let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", contextVar:"shellyBlu", contextStore:"memory", batteryState:false, devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
-                { id: "n2", type: "helper", z: "flow" },
-                { id: "n3", type: "helper", z: "flow" }];
-    helper.load(node, flow, async function () {
-      let n1 = helper.getNode("n1");
-      let n2 = helper.getNode("n2");
-      let n3 = helper.getNode("n3");
-      let c1 = 0;
-      let c2 = 0;
-      n2.on("input", function (msg) {
-        c1++;
-      });
-      n3.on("input", function (msg) {
-        c2++;
-      });
-      try {
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('statusPrefix', "");
-        n1.should.have.a.property('devices');
-        n1.should.have.a.property('contextVar', "shellyBlu");
-        n1.should.have.a.property('contextStore', "memory");
-        n1.should.have.a.property('batteryState', false);
-        await delay(50);
-        n1.should.have.a.property('data', {} );
-        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
-          gateway: "UnitTest",
-          addr:    "11:22:33:44:55:66",
-          rssi:    -50,
-          time:    Date.now(),
-          data:    [68,0,54,1,94,46,57,69,125,0]
-        } });
-        await delay(50);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:54,encrypted:false,battery:94},"UnitTest",{temperature:12.5,humidity:57});
-        n1.context().flow.get("shellyBlu").should.have.ValidData("dev_unencrypted_1",{pid:54,encrypted:false,battery:94},"UnitTest",{temperature:12.5,humidity:57});
-        n1.should.have.a.property('statistics',{ok:1,err:0,old:0,dup:0});
-        c1.should.match( 1 );
-        c2.should.match( 0 );
-        await helper._redNodes.stopFlows();
-        await helper._redNodes.startFlows();
-        n1 = helper.getNode("n1");
-        n1 = helper.getNode("n1");
-        n2 = helper.getNode("n2");
-        n3 = helper.getNode("n3");
-        n2.on("input", function (msg) {
-          c1++;
-        });
-        n3.on("input", function (msg) {
-          c2++;
-        });
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('statusPrefix', "");
-        n1.should.have.a.property('devices');
-        n1.should.have.a.property('contextVar', "shellyBlu");
-        n1.should.have.a.property('contextStore', "memory");
-        await delay(50);
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:54,encrypted:false,battery:94},null,{temperature:12.5,humidity:57});
-        n1.context().flow.get("shellyBlu").should.have.ValidData("dev_unencrypted_1",{pid:54,encrypted:false,battery:94},null,{temperature:12.5,humidity:57});
-        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
-          gateway: "UnitTest",
-          addr:    "11:22:33:44:55:66",
-          rssi:    -50,
-          time:    Date.now(),
-          data:    [68,0,54,1,90,46,57,69,125,0]
-        } });
-        await delay(50);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:54,encrypted:false,battery:90},null,{temperature:12.5,humidity:57});
-        n1.context().flow.get("shellyBlu").should.have.ValidData("dev_unencrypted_1",{pid:54,encrypted:false,battery:90},null,{temperature:12.5,humidity:57});
-        n1.should.have.a.property('statistics',{ok:0,err:0,old:0,dup:1});
-        n1.context().flow.get("shellyBlu-stat").should.match( n1.statistics );
-        c1.should.match( 1 );
-        c2.should.match( 0 );
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-*/
 });

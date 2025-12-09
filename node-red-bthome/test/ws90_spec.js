@@ -9,7 +9,7 @@ function delay(ms) {
   });
 }
 
-describe( 'bthome Node', function () {
+describe( 'ws90 Node', function () {
   "use strict";
 
   beforeEach(function (done) {
@@ -456,7 +456,7 @@ describe( 'bthome Node', function () {
   });
 
   it('should process rain overflow', function (done) {
-    const rainToday = [0, 0.2, 1.2];
+    const rainToday = [0, 0.2, 1];
     let flow = [{ id: "n1", type: "ws90", refheight:"500", timebase:"0.1", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
@@ -574,9 +574,9 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1] );
-        await delay(50);
         // more rain
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[20,20],uv:6,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1} } );
+        await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1] );

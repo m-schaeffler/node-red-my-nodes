@@ -732,10 +732,10 @@ describe( 'ws90 Node', function () {
   });
 
   it('should have newday command', function (done) {
-    const rainYester= [0, 1];
-    const rainToday = [0, 0.2, 1];
-    const wind      = [18, 7,2];
-    const windMax   = [18, 7,2];
+    const rainYester= [0, 6.5];
+    const rainToday = [0, 6.5, 3.5];
+    const wind      = [18, 7.2];
+    const windMax   = [18, 7.2];
     let flow = [{ id: "n1", type: "ws90", refheight:"500", timebase:"0.1", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
@@ -804,7 +804,7 @@ describe( 'ws90 Node', function () {
         c[6]++;
         msg.should.have.a.property('topic','uv index');
         msg.should.have.a.property('payload',0);
-        msg.should.have.a.property('ui_update', { class: "" } );
+        msg.should.have.a.property('ui_update', { class: "greenValue" } );
       });
       n9.on("input", function (msg) {
         c[7]++;
@@ -821,7 +821,7 @@ describe( 'ws90 Node', function () {
       n11.on("input", function (msg) {
         c[9]++;
         msg.should.have.a.property('topic','wind');
-        msg.should.have.a.property('payload',wind[c[5]-1]);
+        msg.should.have.a.property('payload',wind[c[9]-1]);
         msg.should.have.a.property('ui_update', { class: '' } );
       });
       n12.on("input", function (msg) {
@@ -852,20 +852,31 @@ describe( 'ws90 Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,2,1,1,1,2,1,1] );
+        n1.should.have.a.property('storage').which.is.an.Object();
+        n1.storage.should.have.a.property('RegenGestern',0);
+        n1.storage.should.have.a.property('RegenHeute',6.5);
+        n1.storage.should.have.a.property('WindMax',18);
         // newday
         n1.receive( { newday: true } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,2,1,1,1,2,1,1] );
+        n1.should.have.a.property('storage').which.is.an.Object();
+        n1.storage.should.have.a.property('RegenGestern',6.5);
+        n1.storage.should.have.a.property('RegenHeute',0);
+        n1.storage.should.have.a.property('WindMax',0);
         // more rain
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[2,2],uv:0,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1244} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,3,2,1,1,1,1,1] );
-        n1.should.have.a.property('storage');
+        c.should.match( [1,1,1,1,2,3,1,1,1,2,2,1] );
+        n1.should.have.a.property('storage').which.is.an.Object();
+        n1.storage.should.have.a.property('RegenGestern',6.5);
+        n1.storage.should.have.a.property('RegenHeute',3.5);
+        n1.storage.should.have.a.property('WindMax',7.2);
         should.not.exist( n1.context().get("storage") );
         done();
       }

@@ -20,7 +20,7 @@ module.exports = function(RED) {
                 }
                 else
                 {
-                    console.log( "context read", value );
+                    //console.log( "context read", value );
                     if( value !== undefined )
                     {
                         node.storage = value;

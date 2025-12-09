@@ -145,7 +145,7 @@ If content storage is active, statistical data is also stored in a variable with
 
 ## ws90 Node
 
-This node does so0me additional calculations to get more usefull data from the WS90 weather station.
+This node does some additional calculations to get more usefull data from the WS90 weather station.
 
 Similar calculations are done by the Ecowitt base stations.
 

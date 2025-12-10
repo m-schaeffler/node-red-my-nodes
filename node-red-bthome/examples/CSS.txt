@@ -1,0 +1,54 @@
+[
+    {
+        "id": "fb58dd887406a7d3",
+        "type": "ui-template",
+        "z": "bf934c281a6f35c0",
+        "group": "",
+        "page": "",
+        "ui": "fd06eabec55c4e5d",
+        "name": "CSS classes 2.0",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "head": "",
+        "format": ".red label.nrdb-ui-text-label, .red span, .redValue span.nrdb-ui-text-value, span.red {\n  color: red !important;\n}\n.green label.nrdb-ui-text-label, .green span, .greenValue span.nrdb-ui-text-value, span.green {\n  color: LimeGreen !important;\n}\n.darkgreen label.nrdb-ui-text-label, .darkgreen span, span.darkgreen {\n  color: green !important;\n}\n.blue label.nrdb-ui-text-label, .blue span, .blueValue span.nrdb-ui-text-value, span.blue {\n  color: aqua !important;\n}\n.yellow label.nrdb-ui-text-label, .yellow span, .yellowValue span.nrdb-ui-text-value, span.yellow {\n  color: yellow !important;\n}\n.gray label.nrdb-ui-text-label, .gray span, .grayValue span.nrdb-ui-text-value, span.gray {\n  color: gray !important;\n}\n.silver label.nrdb-ui-text-label, .silver span, .silverValue span.nrdb-ui-text-value, span.silver {\n  color: #b0b0b0 !important;\n}",
+        "storeOutMessages": true,
+        "passthru": false,
+        "resendOnRefresh": true,
+        "templateScope": "site:style",
+        "className": "",
+        "x": 440,
+        "y": 640,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fd06eabec55c4e5d",
+        "type": "ui-base",
+        "name": "Dashboard 2.0",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": false,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "fixed",
+        "showReconnectNotification": false,
+        "notificationDisplayTime": "5",
+        "showDisconnectNotification": false,
+        "allowInstall": true
+    },
+    {
+        "id": "7d327676499cd8a2",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@flowfuse/node-red-dashboard": "1.29.0"
+        }
+    }
+]

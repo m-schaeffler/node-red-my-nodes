@@ -186,6 +186,7 @@ There are 12 output ports:
 - wind²
 - wind max
 - illumination
+
 ²: this values have style classes for the `dashboard 2` attached.
 
 #### style classes
@@ -201,6 +202,7 @@ This classes should be defined (for an example check the `ui-template` in the
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/bthome.json)
+
 [CSS template](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/CSS.json)
 
 ## Author

@@ -199,6 +199,11 @@ This classes should be defined (for an example check the `ui-template` in the
 
 ### Parameters
 
+|config       | type   | description                       |
+|:------------|:-------|:----------------------------------|
+|Contextstore | string | context store to be used. |
+|reference height|number| height of the installation over the sea level, to caculate the absolute air pressure. |
+
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/bthome.json)

@@ -1,8 +1,8 @@
 [
     {
-        "id": "3a9fcdbd98993dbc",
+        "id": "da2333b077f13c53",
         "type": "mqtt in",
-        "z": "8e0e9a167c607864",
+        "z": "1607080a6a66359a",
         "name": "",
         "topic": "node-red/bleraw",
         "qos": "0",
@@ -12,39 +12,42 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 140,
-        "y": 1460,
+        "x": 260,
+        "y": 560,
         "wires": [
             [
-                "c4df490573c18fc4"
+                "da23792a27f30483"
             ]
         ]
     },
     {
-        "id": "c4df490573c18fc4",
+        "id": "da23792a27f30483",
         "type": "bthome",
-        "z": "8e0e9a167c607864",
+        "z": "1607080a6a66359a",
         "name": "",
         "devices": "{\"11:22:33:44:55:66\":{\"topic\":\"dev_unencrypted_1\"},\"00:01:02:03:04:05\":{\"topic\":\"dev_unencrypted_2\"},\"00:10:20:30:40:50\":{\"topic\":\"dev_encrypted_1\",\"key\":\"00112233445566778899AABBCCDDEEFF\"},\"00:00:00:00:00:00\":{\"topic\":\"dev_encrypted_2\",\"key\":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]}}",
+        "counterMode": "none",
         "statusPrefix": "Status",
         "eventPrefix": "Event",
         "contextVar": "bt-home",
         "contextStore": "memoryOnly",
-        "x": 340,
-        "y": 1440,
+        "batteryState": false,
+        "x": 460,
+        "y": 540,
         "wires": [
             [
-                "3c9fee837ed43fc0"
+                "45cc12931b5a0b52",
+                "02887e37eebfaae5"
             ],
             [
-                "26ebe1833f97c4d4"
+                "347a2db3d0351824"
             ]
         ]
     },
     {
-        "id": "3c9fee837ed43fc0",
+        "id": "45cc12931b5a0b52",
         "type": "debug",
-        "z": "8e0e9a167c607864",
+        "z": "1607080a6a66359a",
         "name": "debug 9",
         "active": true,
         "tosidebar": true,
@@ -53,14 +56,14 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 520,
-        "y": 1420,
+        "x": 640,
+        "y": 520,
         "wires": []
     },
     {
-        "id": "26ebe1833f97c4d4",
+        "id": "347a2db3d0351824",
         "type": "debug",
-        "z": "8e0e9a167c607864",
+        "z": "1607080a6a66359a",
         "name": "debug 10",
         "active": true,
         "tosidebar": true,
@@ -69,14 +72,14 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 520,
-        "y": 1460,
+        "x": 640,
+        "y": 560,
         "wires": []
     },
     {
-        "id": "e3ad83be53fa3fe3",
+        "id": "5ba4c641b627284d",
         "type": "inject",
-        "z": "8e0e9a167c607864",
+        "z": "1607080a6a66359a",
         "name": "",
         "props": [
             {
@@ -94,12 +97,61 @@
         "topic": "",
         "payload": "{\"addr\":\"11:22:33:44:55:66\",\"rssi\":-85,\"time\":1745395033113,\"gateway\":\"Shelly Gateway\",\"data\":[68,0,164,1,100,46,56,69,43,255]}",
         "payloadType": "json",
-        "x": 170,
-        "y": 1420,
+        "x": 290,
+        "y": 520,
         "wires": [
             [
-                "c4df490573c18fc4"
+                "da23792a27f30483"
             ]
+        ]
+    },
+    {
+        "id": "02887e37eebfaae5",
+        "type": "switch",
+        "z": "1607080a6a66359a",
+        "name": "is WS90",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "hask",
+                "v": "dewpoint",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "repair": false,
+        "outputs": 1,
+        "x": 480,
+        "y": 360,
+        "wires": [
+            [
+                "57b7cd4b7d2e6f25"
+            ]
+        ]
+    },
+    {
+        "id": "57b7cd4b7d2e6f25",
+        "type": "ws90",
+        "z": "1607080a6a66359a",
+        "name": "",
+        "contextStore": "memoryOnly",
+        "refheight": "500",
+        "x": 630,
+        "y": 360,
+        "wires": [
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []
         ]
     },
     {
@@ -133,5 +185,13 @@
         "willMsg": {},
         "userProps": "",
         "sessionExpiry": ""
+    },
+    {
+        "id": "888386dbbbc56d84",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@mschaeffler/node-red-bthome": "1.6.0"
+        }
     }
 ]

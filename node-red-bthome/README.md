@@ -149,9 +149,59 @@ This node does some additional calculations to get more usefull data from the WS
 
 Similar calculations are done by the Ecowitt base stations.
 
+### Input
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|payload |object  |data from `bthome` node.           |
+
+This is an example of such a message payload:
+```
+{
+    "lux":           3630,
+    "moisture":      false,
+    "wind":          [1.5,1.5],
+    "uv":            0,
+    "direction":     174,
+    "pressure":      948.2,
+    "dewpoint":      -0.43,
+    "humidity":      99,
+    "temperature":   -0.3,
+    "precipitation": 121.5
+}
+```
+    
+### Outputs
+
+There are 12 output ports:
+- temperature
+- dew point
+- humidity
+- raining²
+- rain yesterday
+- rain today
+- uv²
+- air pressure
+- direction
+- wind²
+- wind max
+- illumination
+²: this values have style classes for the `dashboard 2` attached.
+
+#### style classes
+This classes should be defined (for an example check the `ui-template` in the 
+[examples](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/CSS.json)):
+- greenValue
+- yellowValue
+- redValue
+- blueValue
+
+### Parameters
+
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/bthome.json)
+[CSS template](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/CSS.json)
 
 ## Author
 

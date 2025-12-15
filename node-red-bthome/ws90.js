@@ -84,10 +84,14 @@ module.exports = function(RED) {
                 const now = Date.now();
 
                 // Luftdruck https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henformel
-                //const E = temperature >= 9.1 ? 18.219 * ( 1.0463 - Math.exp( -0.0666 * temperature ) ) : 5.6402 * ( Math.exp( 0.06 * temperature ) - 0.0916 );
-                const p_H2O = ( 6.112 * Math.exp((17.62 * msg.payload.temperature) / ( msg.payload.temperature + 243.12)) * msg.payload.humidity) / 100; // Partialdruck Wasserdampf https://www.schweizer-fn.de/lueftung/feuchte/feuchte.php
-                const h = node.refheight; // Ortshöhe
-                const normdruck = msg.payload.pressure * Math.exp( 9.80665 / ( 287.05 * ( 273.15 + msg.payload.temperature + 0.12 * p_H2O + 0.0065 * h / 2 ) ) * h );
+                let luftdruck = msg.payload.pressure;
+                if( node.refheight != 0 )
+                {
+                    //const E = temperature >= 9.1 ? 18.219 * ( 1.0463 - Math.exp( -0.0666 * temperature ) ) : 5.6402 * ( Math.exp( 0.06 * temperature ) - 0.0916 );
+                    const p_H2O = ( 6.112 * Math.exp((17.62 * msg.payload.temperature) / ( msg.payload.temperature + 243.12)) * msg.payload.humidity) / 100; // Partialdruck Wasserdampf https://www.schweizer-fn.de/lueftung/feuchte/feuchte.php
+                    const h = node.refheight; // Ortshöhe
+                    luftdruck *= Math.exp( 9.80665 / ( 287.05 * ( 273.15 + msg.payload.temperature + 0.12 * p_H2O + 0.0065 * h / 2 ) ) * h );
+                }
 
                 // Regen
                 let raining = node.storage.Raining;
@@ -130,7 +134,7 @@ module.exports = function(RED) {
                     setStorage( "WindMax", wind );
                 }
 
-                node.status( Math.round( normdruck ) );
+                node.status( Math.round( luftdruck ) );
                 send( [
                     genMessage( "outside temperature", msg.payload.temperature ),
                     genMessage( "dew point",           msg.payload.dewpoint ),
@@ -139,7 +143,7 @@ module.exports = function(RED) {
                     genMessage( "rain yesterday",      node.storage.RegenGestern ),
                     genMessage( "rain today",          node.storage.RegenHeute, msg.payload.moisture ? "blueValue" : "" ),
                     genMessage( "uv index",            msg.payload.uv, ampel( msg.payload.uv, 2, 5, "greenValue" ) ),
-                    genMessage( "air pressure",        normdruck ),
+                    genMessage( "air pressure",        luftdruck ),
                     genMessage( "wind direction",      msg.payload.direction ),
                     genMessage( "wind",                wind, ampel( wind, 25, 50 ) ),
                     genMessage( "wind_max",            node.storage.WindMax ),

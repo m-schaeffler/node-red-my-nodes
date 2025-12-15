@@ -55,12 +55,17 @@
 
 <script type="text/x-red" data-help-name="ws90">
 
-    <p>A Node Red node to work with data from the WS90 weather station.</p>
+    <p>A Node Red node to perform additional calulations with the data from an &ldquo;<em>Ecowitt WS90 powered by Shelly</em>&rdquo; weather station.</p>
+    <p>Normally this data is decoded by the <code>bthome</code> node.
 
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>payload <span class="property-type">object</span></dt>
-        <dd> data from <code>bthome</code> node.</dd>
+        <dd> raw data from <code>bthome</code> node.</dd>
+        <dt>reset <span class="property-type">boolean</span></dt>
+        <dd> if set to <code>true</code>, the output filter is reseted and unchanged values will been sent with the next raw data.</dd>
+        <dt>newday <span class="property-type">boolean</span></dt>
+        <dd> if set to <code>true</code>, a new day is started (rain today, rain yesterday and wind max).</dd>
     </dl>
 
     <p>This is an example of such a message payload:</p>
@@ -78,24 +83,41 @@
 }</code>
 
     <h3>Outputs</h3>
-    <p>There are 12 output ports:</p>
-    <ol>
-      <li>temperature</li>
-      <li>dew point</li>
-      <li>humidity</li>
-      <li>raining²</li>
-      <li>rain yesterday</li>
-      <li>rain today</li>
-      <li>uv²</li>
-      <li>air pressure</li>
-      <li>direction</li>
-      <li>wind²</li>
-      <li>wind max</li>
-      <li>illumination</li>
-    </ol>
-    <p>²: this values have style classes for the <code>dashboard 2</code> attached.</p>
+    <p>There are 12 output ports; values are only sent out, if they are changed:</p>
+    <dl>
+      <dt>temperature</dt>
+      <dd>no calculation, value directly from the input data</dd>
+      <dt>dew point</dt>
+      <dd>no calculation, value directly from the input data</dd>
+      <dt>humidity</dt>
+      <dd>no calculation, value directly from the input data</dd>
+      <dt>raining</dt>
+      <dd>Is it raining at the moment?<br>
+          It is set to <code>true</code>, if <code>moisture==true</code> or a delta in <code>precipitation</code> is received.<br>
+          It is set to <code>false</code> after a timeout of 15min or 20min without any of the above events.<br>
+          If <code>true</code> the class is set to <code>blueValue</code>.</dd>
+      <dt>rain yesterday</dt>
+      <dd>rain from yesterday, at <code>newday==true</code> it is taken from <code>rain today</code></dd>
+      <dt>rain today</dt>
+      <dd>accumulated rain today, so since the last <code>newday==true</code> received</dd>
+      <dt>uv</dt>
+      <dd>no calculation, directly from the input data<br>
+          between 0 and 2 the class is set to <code>greenValue</code>, up to 5 to <code>yellowValue</code> and above to <code>redValue</code></dd>
+      <dt>air pressure</dt>
+      <dd>can be either the measured air pressure (QFE) without any further calculation or the air pressure at sea level (QFF) (<a htref="https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henformel">for the calculation</a>)</dd>
+      <dt>direction</dt>
+      <dd>no calculation, value directly from the input data</dd>
+      <dt>wind</dt>
+      <dd>no calculation, value directly from the input data<br>
+          between 0 and 25 the class is set to default, up to 50 to <code>yellowValue</code> and above to <code>redValue</code></dd>
+      <dt>wind max</dt>
+      <dd>maximal wind speed today, so since the last <code>newday==true</code> received</dd>
+      <dt>illumination</dt>
+      <dd>no calculation, directly from the input data</dd>
+    </dl>
 
     <h4>style classes</h4>
+    <p>Some values have style classes for the <code>dashboard 2</code> attached.<p>
     <p>This classes should be defined (for an example check the <code>ui-template</code> in the <a href="https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/CSS.json">examples</a>):<p>
     <ul>
       <li>greenValue</li>
@@ -109,7 +131,8 @@
         <dt>Contextstore <span class="property-type">string</span></dt>
         <dd> context store to be used.</dd>
         <dt>reference height <span class="property-type">number</span></dt>
-        <dd> height of the installation over the sea level, to caculate the absolute air pressure.</dt>
+        <dd> height of the installation over the sea level, to caculate the relative air pressure (QFF). 
+             If set to <code>0</code> no caclulation is done and the absolute air pressure (QFE) is outputed.</dt>
     </dl>
     
 </script>

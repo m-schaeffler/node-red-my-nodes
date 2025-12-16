@@ -190,7 +190,7 @@ values are only sent out, if they are changed
 |rain yesterday|rain from yesterday, at `newday==true` it is taken from `rain today`|
 |rain today|accumulated rain today, so since the last `newday==true` received|
 |uv|no calculation, value directly from the input data<br>between 0 and 2 the class is set to `greenValue`, up to 5 to `yellowValue` and above to `redValue`|
-|air pressure|can be either the measured air pressure (QFE) without any further calculation or the air pressure at sea level (QFF) [for the calculation](https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henformel)|
+|air pressure|can be either the measured air pressure (QFE) without any further calculation<br>or the air pressure at sea level (QFF) [for the calculation](https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henformel)|
 |direction|no calculation, value directly from the input data|
 |wind|no calculation, value directly from the input data<br>between 0 and 25 the class is set to default, up to 50 to `yellowValue` and above to `redValue`|
 |wind max|maximal wind speed today, so since the last `newday==true` received|

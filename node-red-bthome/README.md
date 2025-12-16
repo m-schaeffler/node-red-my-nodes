@@ -189,12 +189,10 @@ values are only sent out, if they are changed
 |raining||
 |rain yesterday||
 |rain today||
-|uv|no calculation, value directly from the input data  
-between 0 and 2 the class is set to `greenValue`, up to 5 to `yellowValue` and above to `redValue`|
+|uv|no calculation, value directly from the input data<br>between 0 and 2 the class is set to `greenValue`, up to 5 to `yellowValue` and above to `redValue`|
 |air pressure||
 |direction|no calculation, value directly from the input data|
-|wind|no calculation, value directly from the input data  
-|
+|wind|no calculation, value directly from the input data<br>|
 |wind max||
 |illumination|no calculation, value directly from the input data|
 
@@ -214,8 +212,7 @@ This classes should be defined (for an example check the `ui-template` in the
 |config       | type   | description                       |
 |:------------|:-------|:----------------------------------|
 |Contextstore | string | context store to be used. |
-|reference height|number| height of the installation over the sea level, to caculate the relative air pressure (QFF). 
-   If set to `0` no caclulation is done and the absolute air pressure (QFE) is outputed.|
+|reference height|number| height of the installation over the sea level, to caculate the relative air pressure (QFF).<br>If set to `0` no caclulation is done and the absolute air pressure (QFE) is outputed.|
 
 ## Example Flow
 

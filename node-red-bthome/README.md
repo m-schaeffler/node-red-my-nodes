@@ -186,10 +186,7 @@ values are only sent out, if they are changed
 |temperature|no calculation, value directly from the input data|
 |dew point|no calculation, value directly from the input data|
 |humidity|no calculation, value directly from the input data|
-|raining|Is it raining at the moment?<br>
-          It is set to `true`, if `moisture==true` or a delta in `precipitation` is received.<br>
-          It is set to `false` after a timeout of 15min or 20min without any of the above events.<br>
-          If `true` the class is set to `blueValue`.|
+|raining|Is it raining at the moment?<br>It is set to `true`, if `moisture==true` or a delta in `precipitation` is received.<br>It is set to `false` after a timeout of 15min or 20min without any of the above events.<br>If `true` the class is set to `blueValue`.|
 |rain yesterday|rain from yesterday, at `newday==true` it is taken from `rain today`|
 |rain today|accumulated rain today, so since the last `newday==true` received|
 |uv|no calculation, value directly from the input data<br>between 0 and 2 the class is set to `greenValue`, up to 5 to `yellowValue` and above to `redValue`|

@@ -14,7 +14,7 @@ At the moment these sensors are implemented and tested:
 - Shelly BLU Motion
 - Shelly BLU Distance
 - Shelly BLU Remote
-- Ecowitt WS90
+- Ecowitt WS90 powered by Shelly
 
 ## Capture of Raw Frames
 
@@ -145,7 +145,9 @@ If content storage is active, statistical data is also stored in a variable with
 
 ## ws90 Node
 
-This node does some additional calculations to get more usefull data from the WS90 weather station.
+This node does additional calulations with the data from an "*Ecowitt WS90 powered by Shelly*" weather station.
+
+Normally this data is decoded by the `bthome` node.
 
 Similar calculations are done by the Ecowitt base stations.
 
@@ -154,6 +156,8 @@ Similar calculations are done by the Ecowitt base stations.
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload |object  |data from `bthome` node.           |
+|reset   |boolean |if set to `true`, the output filter is reset and unchanged values will been sent with the next raw data.|
+|newday  |boolean |if set to `true`, a new day is started (rain today, rain yesterday and wind max).|
 
 This is an example of such a message payload:
 ```
@@ -174,22 +178,30 @@ This is an example of such a message payload:
 ### Outputs
 
 There are 12 output ports:
-- temperature
-- dew point
-- humidity
-- raining²
-- rain yesterday
-- rain today
-- uv²
-- air pressure
-- direction
-- wind²
-- wind max
-- illumination
 
-²: this values have style classes for the `dashboard 2` attached.
+values are only sent out, if they are changed
+
+| topic | explanation |
+|:------|:------------|
+|temperature|no calculation, value directly from the input data|
+|dew point|no calculation, value directly from the input data|
+|humidity|no calculation, value directly from the input data|
+|raining||
+|rain yesterday||
+|rain today||
+|uv|no calculation, value directly from the input data  
+between 0 and 2 the class is set to `greenValue`, up to 5 to `yellowValue` and above to `redValue`|
+|air pressure||
+|direction|no calculation, value directly from the input data|
+|wind|no calculation, value directly from the input data  
+|
+|wind max||
+|illumination|no calculation, value directly from the input data|
 
 #### style classes
+
+Some values have style classes for the `dashboard 2` attached.
+
 This classes should be defined (for an example check the `ui-template` in the 
 [examples](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/CSS.json)):
 - greenValue
@@ -202,7 +214,8 @@ This classes should be defined (for an example check the `ui-template` in the
 |config       | type   | description                       |
 |:------------|:-------|:----------------------------------|
 |Contextstore | string | context store to be used. |
-|reference height|number| height of the installation over the sea level, to caculate the absolute air pressure. |
+|reference height|number| height of the installation over the sea level, to caculate the relative air pressure (QFF). 
+   If set to `0` no caclulation is done and the absolute air pressure (QFE) is outputed.|
 
 ## Example Flow
 

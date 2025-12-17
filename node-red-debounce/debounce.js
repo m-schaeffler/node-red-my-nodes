@@ -139,10 +139,10 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
-                    const debounceTime = msg.debounceMs ?? node.time;
                     msg.payload = value;
                     if( msg.payload !== undefined && ( ! node.filter || msg.payload !== statistic.last )  )
                     {
+                        const debounceTime = msg.debounceMs ?? node.time;
                         statistic.last = msg.payload;
                         if( ! node.block )
                         {

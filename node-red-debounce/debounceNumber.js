@@ -134,15 +134,17 @@ module.exports = function(RED) {
                     msg.payload = Number( value );
                     if( ! isNaN( msg.payload ) && testGap( msg.payload, statistic.last ) )
                     {
+                        const debounceTime = msg.debounceMs ?? node.time;
                         statistic.message = msg;
                         statistic.last    = msg.payload;
                         if( ! statistic.timer )
                         {
-                            statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, node.time, statistic );
+                            statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
                         }
                         else if( node.restart )
                         {
-                            statistic.timer.refresh();
+                            clearTimeout( statistic.timer );
+                            statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
                         }
                         node.state && ( node.state.fill = "yellow" );
                     }

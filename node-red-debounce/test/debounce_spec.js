@@ -439,4 +439,104 @@ describe( 'debounce Node', function () {
     });
   });
 
+  it('should use debounceMs override', function (done) {
+    var flow = [{ id: "n1", type: "debounce", name: "test", time:200, timeUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var timestamps = [];
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        timestamps.push( Date.now() );
+        try {
+          msg.should.have.a.property('topic',"t");
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('block', false);
+        n1.should.have.a.property('time', 200);
+        n1.should.have.a.property('byTopic', false);
+        await delay(500);
+        c.should.match(0);
+        // Send with debounceMs override of 50ms
+        var start1 = Date.now();
+        n1.receive({ topic: "t", payload: 1, debounceMs: 50 });
+        await delay(100);
+        c.should.match(1);
+        // Should have fired after ~50ms, not 200ms
+        (timestamps[0] - start1).should.be.within(40, 80);
+        // Send without debounceMs, should use configured 200ms
+        var start2 = Date.now();
+        n1.receive({ topic: "t", payload: 2 });
+        await delay(100);
+        c.should.match(1); // Should not have fired yet
+        await delay(150);
+        c.should.match(2); // Should have fired now after ~200ms
+        (timestamps[1] - start2).should.be.within(180, 280);
+        n1.context().get("data").should.have.ValidData("all_topics");
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should use debounceMs override with restart', function (done) {
+    var flow = [{ id: "n1", type: "debounce", name: "test", restart:true, time:200, timeUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      var startTime;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          var elapsed = Date.now() - startTime;
+          msg.should.have.a.property('topic',"t");
+          msg.should.have.a.property('payload',2);
+          // First message at 100ms, second at 25ms with debounceMs:50
+          // Timer should restart with 50ms, so total ~75ms from start
+          elapsed.should.be.within(60, 100);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('block', false);
+        n1.should.have.a.property('time', 200);
+        n1.should.have.a.property('restart', true);
+        n1.should.have.a.property('byTopic', false);
+        await delay(500);
+        c.should.match(0);
+        // Send first message with debounceMs:100
+        startTime = Date.now();
+        n1.receive({ topic: "t", payload: 1, debounceMs: 100 });
+        await delay(25);
+        // Send second message with debounceMs:50, should restart timer with new duration
+        n1.receive({ topic: "t", payload: 2, debounceMs: 50 });
+        await delay(100);
+        c.should.match(1);
+        n1.context().get("data").should.have.ValidData("all_topics");
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });

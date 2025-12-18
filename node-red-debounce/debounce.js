@@ -142,6 +142,7 @@ module.exports = function(RED) {
                     msg.payload = value;
                     if( msg.payload !== undefined && ( ! node.filter || msg.payload !== statistic.last )  )
                     {
+                        const debounceTime = msg.debounceMs ?? node.time;
                         statistic.last = msg.payload;
                         if( ! node.block )
                         {
@@ -157,13 +158,14 @@ module.exports = function(RED) {
                             {
                                 statusColor( "yellow" );
                             }
-                            statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, node.time, statistic );
+                            statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
                         }
                         else
                         {
                             if( node.restart )
                             {
-                                statistic.timer.refresh();
+                                clearTimeout( statistic.timer );
+                                statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
                             }
                             if( node.block )
                             {

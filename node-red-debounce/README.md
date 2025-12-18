@@ -25,6 +25,7 @@ The `debounce` node is for a general purpose debouncing of any data (`string`, `
 |:-------|:-------|:----------------------------------|
 |topic   | string | name of the input channel. |
 |payload |        | input value for `topic`. |
+|debounceMs|number| if set, this is the debounce time for this message.|
 |invalid |boolean | if true, this message is ignored. |
 |reset   |boolean | if true, resets the node; if combined with a `topic`, only this topic is reseted.|
 
@@ -62,6 +63,7 @@ The `debounce N` node is for debouncing of numerical values:
 |:-------|:-------|:----------------------------------|
 |topic   | string | name of the input channel. |
 |payload |        | input value for `topic`. |
+|debounceMs|number| if set, this is the debounce time for this message.|
 |invalid |boolean | if true, this message is ignored. |
 |reset   |boolean | if true, resets the node; if combined with a `topic`, only this topic is reseted.|
 

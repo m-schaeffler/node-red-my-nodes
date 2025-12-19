@@ -44,6 +44,11 @@ should.Assertion.add(
     if( gw )
     {
       v.should.have.a.property("time").which.is.approximately(Date.now()-50,20);
+      v.should.have.a.property("typeId");
+      if( v.typeId )
+      {
+        v.should.have.a.property("model").which.is.a.String();
+      }
       v.gw.should.have.a.property(gw).which.is.an.Object();
       v.gw[gw].should.have.a.property("time").which.is.approximately(Date.now()-50,20);
       v.gw[gw].should.have.a.property("rssi").which.is.within(-100,-40);

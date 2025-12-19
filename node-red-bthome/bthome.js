@@ -4,10 +4,42 @@ const Rawdata = require( "./rawdata.js" );
 const BtEvent = require( "./btevent.js" );
 
 class TypeIds {
+    static bluButton = 1;
     static bluDW     = 2;
     static bluRemote = 9;
 }
+class DeviceNames {
+    static 0x01 = "SBBT-002C";
+    static 0x02 = "SBDW-002C";
+    static 0x03 = "SBHT-003C";
+    static 0x05 = "SBHT-003C";
+    static 0x06 = "SBBT-004CEU";
+    static 0x07 = "SBBT-004CUS";
+    static 0x08 = "SBTR-001AEU";
+    static 0x09 = "SBRC-005B";
+    //static 0x = "SBDI-003E";
+    static 0x0B = "SBWS-90CM";
+    static 0x0C = "SBHT-103C";
+    static 0x11 = "SBHT-203C";
+    static 0x14 = "SBDW-103C";
+    static 0x15 = "SBBT-104CEU"
+    static 0x16 = "SBBT-104CUS";
+    static 0x17 = "SBBT-102C";
+    static 0x201A = "SBCB-01PXNEUB6";
+    static 0x201B = "SBCB-01PXNEUB10";
+    static 0x201C = "SBCB-01PXNEUB13";
+    static 0x201D = "SBCB-01PXNEUB16";
+    static 0x201E = "SBCB-01PXNEUB20";
+    static 0x201F = "SBCB-01PXNEUB25";
+    static 0x203A = "SBCB-01PXNEUC6";
+    static 0x203B = "SBCB-01PXNEUC10";
+    static 0x203C = "SBCB-01PXNEUC13";
+    static 0x203D = "SBCB-01PXNEUC16";
+    static 0x203E = "SBCB-01PXNEUC20";
+    static 0x203F = "SBCB-01PXNEUC25";
+}
 Object.freeze( TypeIds );
+Object.freeze( DeviceNames );
 
 module.exports = function(RED) {
 
@@ -269,7 +301,8 @@ module.exports = function(RED) {
                             setData( "channel", rawdata.getUInt8() + 1 );
                             break;
                         case 0xF0:
-                            item.typeId = rawdata.getUInt16() & 0xFF;
+                            item.typeId = rawdata.getUInt16() & 0xF0FF;
+                            item.model  = DeviceNames[item.typeId] ?? null;
                             break;
                         case 0xF1:
                             item.version = {

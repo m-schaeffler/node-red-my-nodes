@@ -650,7 +650,7 @@ describe( 'bthome Node', function () {
           addr:    "11:22:33:44:55:66",
           rssi:    -50,
           time:    Date.now(),
-          data:    [68,0,1,0xF0,255,2] // tbds
+          data:    [68,0,1,0xF0,0x0b,0] // tbds
         } });
         await delay(50);
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {

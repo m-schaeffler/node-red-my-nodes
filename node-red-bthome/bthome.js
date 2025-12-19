@@ -17,7 +17,7 @@ class DeviceNames {
     static 0x07 = "SBBT-004CUS";
     static 0x08 = "SBTR-001AEU";
     static 0x09 = "SBRC-005B";
-    //static 0x = "SBDI-003E";
+    static 0x0A = "SBDI-003E";
     static 0x0B = "SBWS-90CM";
     static 0x0C = "SBHT-103C";
     static 0x11 = "SBHT-203C";

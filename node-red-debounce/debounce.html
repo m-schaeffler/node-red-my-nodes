@@ -10,6 +10,7 @@
             timeUnit:{value:"secs"},
             block:{value:false},
             filter:{value:false},
+            filterOut:{value:false},
             restart:{value:false},
             bytopic:{value:false},
             showState:{value:false}
@@ -63,8 +64,12 @@
         <input type="checkbox" id="node-input-block" style="display: inline-block; width: 20px; vertical-align: baseline;">
     </div>
     <div class="form-row">
-        <label for="node-input-filter"><i class="fa fa-filter"></i> Filter</label>
+        <label for="node-input-filter"><i class="fa fa-filter"></i> Filter in</label>
         <input type="checkbox" id="node-input-filter" style="display: inline-block; width: 20px; vertical-align: baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filterOut"><i class="fa fa-filter"></i> Filter out</label>
+        <input type="checkbox" id="node-input-filterOut" style="display: inline-block; width: 20px; vertical-align: baseline;">
     </div>
     <div class="form-row">
         <label for="node-input-restart"><i class="fa fa-refresh"></i> Restart</label>
@@ -122,8 +127,10 @@
         <dd> debouncing time.</dd>
         <dt>Block <span class="property-type">boolean</span></dt>
         <dd> block instead of decounce. this means that an incoming message is sent out immediately and afterwards for <code>time</code> all following messages are blocked.</dd>
-        <dt>Filter <span class="property-type">boolean</span></dt>
+        <dt>Filter in<span class="property-type">boolean</span></dt>
         <dd> shall messages received with unchanged data be ignored.</dd>
+        <dt>Filter out<span class="property-type">boolean</span></dt>
+        <dd> shall messages with unchanged data not been sent.</dd>
         <dt>Restart <span class="property-type">boolean</span></dt>
         <dd> shall the debouncing time be restarted with every received message.</dd>
         <dt>byTopic <span class="property-type">boolean</span></dt>

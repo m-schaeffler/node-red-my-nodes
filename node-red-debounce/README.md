@@ -80,7 +80,8 @@ The `debounce N` node is for debouncing of numerical values:
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
 |Time    | number | debouncing time.|
-|Filter  | number | data must differ at least by this value; it can be an absolute number or a percentage.|
+|Filter in |boolean| data must differ at least by this value; it can be an absolute number or a percentage.|
+|Filter out|boolean| shall messages with unchanged data not been sent.|
 |Restart |boolean | shall the debouncing time be restarted with every received message.|
 |byTopic |boolean | shall resending be done on a topic base.|
 |Status  |boolean | shows the actual value as a node status.|

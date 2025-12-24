@@ -154,7 +154,8 @@ describe( 'block Node, byTopic', function () {
         n1.should.have.a.property('block', true);
         n1.should.have.a.property('time', 20);
         n1.should.have.a.property('byTopic', true);
-        n1.should.have.a.property('filter', true);
+        n1.should.have.a.property('filterIn', true);
+        n1.should.have.a.property('filterOut', false);
         await delay(500);
         c.should.match(0);
         for( const i in numbersIn )

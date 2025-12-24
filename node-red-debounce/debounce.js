@@ -8,7 +8,8 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.time         = Number( config.time ?? 1 );
         this.block        = Boolean( config.block );
-        this.filter       = Boolean( config.filter );
+        this.filterIn     = Boolean( config.filter );
+        this.filterOut    = Boolean( config.filterOut );
         this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
         this.state        = config.showState ? { fill:"gray", shape:"ring", text:"-" } : null;
@@ -47,7 +48,12 @@ module.exports = function(RED) {
 
         function sendMsg(msg,shape)
         {
-            node.send( msg );
+            let statistic = node.data[node.byTopic ? msg.topic : "all_topics"];
+            if( ! node.filterOut || msg.payload !== statistic.lastOut )
+            {
+                statistic.lastOut = msg.payload;
+                node.send( msg );
+            }
             if( node.state )
             {
                 node.state.fill  = "green";
@@ -140,10 +146,10 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.payload = value;
-                    if( msg.payload !== undefined && ( ! node.filter || msg.payload !== statistic.last )  )
+                    if( msg.payload !== undefined && ( ! node.filterIn || msg.payload !== statistic.lastIn ) )
                     {
                         const debounceTime = msg.debounceMs ?? node.time;
-                        statistic.last = msg.payload;
+                        statistic.lastIn = msg.payload;
                         if( ! node.block )
                         {
                             statistic.message = msg;

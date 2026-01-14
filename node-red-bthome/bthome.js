@@ -88,6 +88,11 @@ module.exports = function(RED) {
                 node.log( mac + e.message );
                 device.key = null;
             }
+            if( mac !== mac.toLowerCase() )
+            {
+                console.log( `BT addresses must be lower case: ${mac}` );
+                node.error( `BT addresses must be lower case: ${mac}` );
+            }
         }
 
         node.on('input', function(msg,send,done) {
@@ -109,6 +114,10 @@ module.exports = function(RED) {
                 node.statistics.err++;
                 done( "msg.payload.data must be an Array!" );
                 return;
+            }
+            if( msg.payload.addr )
+            {
+                msg.payload.addr = msg.payload.addr.toLowerCase();
             }
 
             function checkMsg()

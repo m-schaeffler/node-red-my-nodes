@@ -142,7 +142,7 @@ describe( 'bthome Node', function () {
         } }); // empty payload
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
           gateway: "UnitTest",
-          addr:    "11:22:33:44:55:FF",
+          addr:    "11:22:33:44:55:ff",
           rssi:    -50,
           time:    Date.now(),
         } }); // no data
@@ -162,7 +162,7 @@ describe( 'bthome Node', function () {
         await delay(50);
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
           gateway: "UnitTest",
-          addr:    "11:22:33:44:55:FF",
+          addr:    "11:22:33:44:55:ff",
           rssi:    -50,
           time:    Date.now(),
           data:    [68,0,54,1,94,46,57,69,125,0]
@@ -1766,6 +1766,67 @@ describe( 'bthome Node', function () {
         n1.data.should.have.ValidData("dev_encrypted_1",{pid:130,encrypted:true,lastCounter:513},"",{lux:660.51,state:1,tilt:6});
         n1.should.have.a.property('statistics',{ok:2,err:2,old:0,dup:0});
         c1.should.match( 2 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should force lowercase mac addresses', function (done) {
+    const devicesJson = '{ \
+        "aa:bb:cc:dd:ee:ff": { "topic": "device1" }, \
+        "0a:0b:0c:0d:0e:0f": { "topic": "device2" }, \
+        "00:00:00:00:00:1A": { "topic": "device3" } }';
+    let flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "bthome", name: "test", devices:devicesJson, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        c1++;
+      });
+      n3.on("input", function (msg) {
+        c2++;
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('devices');
+        n1.should.have.a.property('contextVar', "bthome");
+        n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('batteryState', false);
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        n1.should.have.a.property('data', {} );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "aa:bb:cc:dd:ee:ff",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,1,1,94,0xF0,1,2,0xF1,1,2,3,4]
+        } });
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest2",
+          addr:    "0A:0B:0C:0D:0E:0F",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,2,1,94,0xF0,3,2,0xF1,1,2,3,4]
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        n1.data.should.have.ValidData("device1",{pid:1,encrypted:false,typeId:0x01,version:{sub: 1, patch: 2, minor: 3, major: 4}},"UnitTest");
+        n1.data.should.have.ValidData("device2",{pid:2,encrypted:false,typeId:0x03,version:{sub: 1, patch: 2, minor: 3, major: 4}},"UnitTest2");
+        n1.should.have.a.property('statistics',{ok:2,err:0,old:0,dup:0});
+        c1.should.match( 0 );
         c2.should.match( 0 );
         done();
       }

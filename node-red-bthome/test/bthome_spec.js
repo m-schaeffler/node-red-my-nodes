@@ -1836,4 +1836,61 @@ describe( 'bthome Node', function () {
     });
   });
 
+  it('should decode messages with raw and text data points (aquara trv)', function (done) {
+    let flow = [{ id:'flow', type:'tab' },
+                { id: "n1", type: "bthome", name: "test", devices:testDevices, batteryState:true, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let c1 = 0;
+      let c2 = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          c1++;
+          msg.should.have.a.property('topic','dev_unencrypted_1');
+          //msg.should.have.a.property('payload',{ humidity: 57, temperature: 12.5, battery: 94 });
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        c2++;
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('devices');
+        n1.should.have.a.property('contextVar', "bthome");
+        n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('batteryState', true);
+        await delay(50);
+        n1.should.have.a.property('data', {} );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,167,1,100,69,230,0,69,222,0,84,1,20]
+        } });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:1},null,{});
+        n1.should.have.a.property('statistics',{ok:1,err:0,old:0,dup:0});
+        c1.should.match( 1 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });

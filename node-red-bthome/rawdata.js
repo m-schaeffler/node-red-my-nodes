@@ -61,6 +61,16 @@ class Rawdata {
     {
         return values[this.getUInt8()] ?? "";
     }
+    getBuffer()
+    {
+        const size = this.getUInt8();
+        let   buf  = Buffer.alloc( size );
+        for( let i = 0; i < size; i++ )
+        {
+            buf[i] = this.getUInt8();
+        }
+        return buf;
+    }
 }
 
 module.exports = Rawdata;

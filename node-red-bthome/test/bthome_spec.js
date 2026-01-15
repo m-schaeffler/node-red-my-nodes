@@ -1855,11 +1855,11 @@ describe( 'bthome Node', function () {
           {
             case 1:
               msg.should.have.a.property('topic','dev_unencrypted_1');
-              msg.should.have.a.property('payload',{ temperature: [ 23, 22.2 ] });
+              msg.should.have.a.property('payload',{ temperature: [ 23, 22.2 ], raw: Buffer.from([20]) });
               break;
             case 2:
               msg.should.have.a.property('topic','dev_unencrypted_2');
-              msg.should.have.a.property('payload',{ raw: 23, text: "" });
+              msg.should.have.a.property('payload',{ raw: Buffer.from([0x48,0x65,0x6C,0x6C,0x6F,0x20,0x57,0x6F,0x72,0x6C,0x64,0x21])/*, text: "Hello World!"*/ });
               break;
           }
         }
@@ -1885,14 +1885,16 @@ describe( 'bthome Node', function () {
           rssi:    -50,
           time:    Date.now(),
           data:    [68,0,167,1,100,69,230,0,69,222,0,84,1,20]
-        } });
+        } }); // message from trv
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
           gateway: "UnitTest",
           addr:    "00:01:02:03:04:05",
           rssi:    -50,
           time:    Date.now(),
-          data:    [68,0,67, 0x54,0x0C,0x48,0x65,0x6C,0x6C,0x6F, 0x20,0x57,0x6F,0x72,0x6C,0x64,0x21]
-        } });
+          data:    [68,0,67,
+                    0x54,0x0C,0x48,0x65,0x6C,0x6C,0x6F,0x20,0x57,0x6F,0x72,0x6C,0x64,0x21,
+                    0x53,0x0C,0x48,0x65,0x6C,0x6C,0x6F,0x20,0x57,0x6F,0x72,0x6C,0x64,0x21]
+        } }); // message with raw and text from spec
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

@@ -1848,7 +1848,7 @@ describe( 'bthome Node', function () {
       let c1 = 0;
       let c2 = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c1++;
           switch( c1 )
@@ -1859,7 +1859,7 @@ describe( 'bthome Node', function () {
               break;
             case 2:
               msg.should.have.a.property('topic','dev_unencrypted_2');
-              msg.should.have.a.property('payload',{ raw: Buffer.from([0x48,0x65,0x6C,0x6C,0x6F,0x20,0x57,0x6F,0x72,0x6C,0x64,0x21])/*, text: "Hello World!"*/ });
+              msg.should.have.a.property('payload',{ raw: Buffer.from([0x48,0x65,0x6C,0x6C,0x6F,0x20,0x57,0x6F,0x72,0x6C,0x64,0x21]), text: "Hello World!" });
               break;
           }
         }

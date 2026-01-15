@@ -297,6 +297,9 @@ module.exports = function(RED) {
                         case 0x46:
                             setData( "uv", rawdata.getUInt8() / 10 );
                             break;
+                        case 0x53:
+                            setData( "text", rawdata.getBuffer().toString() );
+                            break;
                         case 0x54:
                             setData( "raw", rawdata.getBuffer() );
                             break;

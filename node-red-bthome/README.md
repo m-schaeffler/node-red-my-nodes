@@ -102,7 +102,7 @@ There are two output ports:
 With this JSON string the installed [BT-Home](https://bthome.io) devices are configured:
 ```
 {
-    "<mac address of the device>": { "topic": "<name of the device>", "key": "<encryption key, if device is encrypted>" }
+    "<mac address of the device in lower case>": { "topic": "<name of the device>", "key": "<encryption key, if device is encrypted>" }
 }
 ```
 

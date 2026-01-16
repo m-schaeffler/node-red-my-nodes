@@ -1836,7 +1836,7 @@ describe( 'bthome Node', function () {
     });
   });
 
-  it('should decode messages with raw and text data points (aquara trv)', function (done) {
+  it('should decode messages with raw and text data points (blu trv)', function (done) {
     let flow = [{ id:'flow', type:'tab' },
                 { id: "n1", type: "bthome", name: "test", devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },

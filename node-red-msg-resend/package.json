@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-msg-resend",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "description": "A Node Red node to resend flow messages",
     "author": {
         "name": "Mathias Schäffler",

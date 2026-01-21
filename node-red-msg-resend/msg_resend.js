@@ -88,7 +88,10 @@ module.exports = function(RED) {
             if( statistic === undefined )
             {
                 statistic = defaultStat();
-                node.data[topic] = statistic;
+                if( topic )
+                {
+                    node.data[topic] = statistic;
+                }
             }
 
             if( msg.reset )

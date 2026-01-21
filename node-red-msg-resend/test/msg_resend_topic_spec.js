@@ -583,6 +583,7 @@ describe( 'msg-resend Node, byTopic', function () {
         phase++;
         c=0;
         await delay(500);
+        n1.context().get("data").should.not.have.a.property("undefined");
         checkDataWithoutCounter( n1.context().get("data"), "t" );
         checkDataWithoutCounter( n1.context().get("data"), "u" );
         checkDataWithoutCounter( n1.context().get("data"), "v" );

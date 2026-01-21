@@ -1,4 +1,5 @@
 var should = require("should");
+var assertions = require('./asserts.js');
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../hourmeter.js");
@@ -55,6 +56,7 @@ describe( 'hourmeter Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        should.not.exist( n1.context().get("data") );
         done();
       }
       catch(err) {
@@ -65,7 +67,7 @@ describe( 'hourmeter Node', function () {
 
   it('should work with cycle activated', function (done) {
     this.timeout( 5000 );
-    const reasons = ['query','query','on','query','query','off'];
+    const reasons = ['query','query','on','query','query','off','query','query'];
     var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:1/120, name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -130,17 +132,21 @@ describe( 'hourmeter Node', function () {
         await delay(50);
         c1.should.match( 0 );
         c2.should.match( 0 );
+        should.not.exist( n1.context().get("data") );
         await delay(1000);
         c1.should.match( 2 );
         c2.should.match( 2 );
+        should.not.exist( n1.context().get("data") );
         n1.receive({ topic:"test", payload: false });
         await delay(50);
         c1.should.match( 2 );
         c2.should.match( 2 );
+        n1.context().get("data").should.have.ValidData();
         n1.receive({ topic:"test", payload: true });
         await delay(50);
         c1.should.match( 3 );
         c2.should.match( 3 );
+        should.exist( n1.context().get("data") );
         await delay(900);
         c1.should.match( 5 );
         c2.should.match( 5 );
@@ -152,8 +158,13 @@ describe( 'hourmeter Node', function () {
         await delay(50);
         c1.should.match( 6 );
         c2.should.match( 6 );
+        await delay(900);
+        c1.should.match( 8 );
+        c2.should.match( 8 )
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        const q = n1.context().get("data");
+        q.should.be.an.Object();
         done();
       }
       catch(err) {

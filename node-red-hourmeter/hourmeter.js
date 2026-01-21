@@ -43,7 +43,7 @@ module.exports = function(RED)
                 const now    = Date.now();
                 let   data   = context.get( "data", node.contextStore ) ?? { counter:0 };
                 let   output = false;
-                if( ( !msg.query ) && ( msg.payload!==undefined ) )
+                if( ( !msg.query ) && ( msg.payload !== undefined ) )
                 {
                     if( msg.payload !== data.state )
                     {
@@ -77,8 +77,8 @@ module.exports = function(RED)
                                 break;
                         }
                         data.state = msg.payload;
+                        context.set( "data", data, node.contextStore );
                     }
-                    context.set( "data", data, node.contextStore );
                 }
                 else
                 {

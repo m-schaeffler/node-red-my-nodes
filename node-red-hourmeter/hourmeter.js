@@ -12,6 +12,7 @@ module.exports = function(RED)
         this.interval_id  = null;
         var node    = this;
         var context = this.context();
+        node.status( "" );
 
         if( this.cycle > 0 )
         {
@@ -21,18 +22,27 @@ module.exports = function(RED)
             }, this.cycle*60*1000 );
         }
 
+        function nodeStatus(str)
+        {
+            if( node.showState )
+            {
+                node.status( str );
+            }
+        }
+
         node.on( 'input', function(msg,send,done)
         {
             if( msg.reset )
             {
-                context.set( "data", undefined, "storeInFile" );
-                node.status( "-" );
+                context.set( "data", null, node.contextStore );
+                nodeStatus( "-" );
                 send( [ { topic:this.topic, payload:false }, { topic:this.topic, payload:0 } ] );
             }
             else
             {
-                const now  = Date.now();
-                let   data = context.get( "data", "storeInFile" ) ?? { counter:0 };
+                const now    = Date.now();
+                let   data   = context.get( "data", node.contextStore ) ?? { counter:0 };
+                let   output = false;
                 if( ( !msg.query ) && ( msg.payload!==undefined ) )
                 {
                     if( msg.payload !== data.state )
@@ -48,6 +58,7 @@ module.exports = function(RED)
                                 if( data.switchOn === undefined )
                                 {
                                     data.switchOn = now;
+                                    output = "on";
                                 }
                                 break;
                             case false:
@@ -61,12 +72,13 @@ module.exports = function(RED)
                                 {
                                     data.counter += (now - data.switchOn)/1000;
                                     delete data.switchOn;
+                                    output = "off";
                                 }
                                 break;
                         }
                         data.state = msg.payload;
                     }
-                    context.set( "data", data, "storeInFile" );
+                    context.set( "data", data, node.contextStore );
                 }
                 else
                 {
@@ -75,22 +87,25 @@ module.exports = function(RED)
                         data.counter += (now - data.switchOn)/1000;
                         data.switchOn = now;
                     }
+                    output = "query";
                 }
                 const out = data.counter/3600;
-                node.status( `${data.state} / ${out.toFixed(1)}` );
-                send( [ { topic:this.topic, payload:data.switchOn!==undefined }, { topic:this.topic, payload:out } ] );
+                nodeStatus( `${data.state} / ${out.toFixed(1)}` );
+                if( output )
+                {
+                    send( [
+                        { topic:this.topic, payload:data.switchOn!==undefined, reason:output },
+                        { topic:this.topic, payload:out, reason:output }
+                    ] );
+                }
             }
             done();
         } );
+
+        node.on('close', function() {
+            clearInterval( node.interval_id );
+        });
     }
 
     RED.nodes.registerType("hourmeter",HourMeterNode);
-
-    HourMeterNode.prototype.close = function()
-    {
-        if( this.interval_id != null )
-        {
-            clearInterval( this.interval_id );
-        }
-    }
 }

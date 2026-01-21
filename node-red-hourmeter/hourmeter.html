@@ -25,7 +25,7 @@
             const node = this
             // populate store names
             $("#node-input-contextStore").empty();
-            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            //$("#node-input-contextStore").append(`<option value="none">None</option>`);
             const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : ''
             RED.settings.context.stores.forEach(function(item){
                 if( item ) {

@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-hourmeter",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "A working hour meter for NodeRed.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-hourmeter",
@@ -23,5 +23,8 @@
   "author": {
     "name": "Mathias Schäffler",
     "url": "https://github.com/m-schaeffler"
+  },
+  "scripts": {
+    "test": "mocha \"test/*_spec.js\""
   }
 }

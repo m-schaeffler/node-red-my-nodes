@@ -4,10 +4,12 @@ module.exports = function(RED)
     function HourMeterNode(config)
     {
         RED.nodes.createNode(this,config);
-        this.config = config;
-        this.topic  = config.topic;
-        this.cycle  = config.cycle;
-        this.interval_id = null;
+        this.config       = config;
+        this.topic        = config.topic ?? "";
+        this.cycle        = Number( config.cycle ?? 0 );
+        this.contextStore = config.contextStore ?? "none";
+        this.showState    = Boolean( config.showState );
+        this.interval_id  = null;
         var node    = this;
         var context = this.context();
 
@@ -15,7 +17,7 @@ module.exports = function(RED)
         {
             this.interval_id = setInterval( function()
             {
-                node.emit( "input", {querry:true} );
+                node.emit( "input", {query:true} );
             }, this.cycle*60*1000 );
         }
 
@@ -31,7 +33,7 @@ module.exports = function(RED)
             {
                 const now  = Date.now();
                 let   data = context.get( "data", "storeInFile" ) ?? { counter:0 };
-                if( ( !msg.querry ) && ( msg.payload!==undefined ) )
+                if( ( !msg.query ) && ( msg.payload!==undefined ) )
                 {
                     if( msg.payload !== data.state )
                     {

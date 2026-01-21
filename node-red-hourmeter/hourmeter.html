@@ -5,7 +5,9 @@
         defaults: {
             name: {value:""},
             topic:{value:""},
-            cycle:{value:"0", required:true, validate:RED.validators.number()}
+            cycle:{value:"0", required:true, validate:RED.validators.number()},
+            contextStore:{value:"",required:true},
+            showState:{value:false}
         },
         inputs:1,
         outputs:2,
@@ -18,7 +20,23 @@
         },
         inputLabels: 'on/off message',
         outputLabels: ['boolean value','hour counter'],
-        paletteLabel: "hour meter"
+        paletteLabel: "hour meter",
+        oneditprepare: function() {
+            const node = this
+            // populate store names
+            $("#node-input-contextStore").empty();
+            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : ''
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                   $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
+        }
     });
 </script>
 
@@ -34,6 +52,14 @@
     <div class="form-row">
         <label for="node-input-cycle"><i class="fa fa-hourglass-o"></i> Cycle [min]</label>
         <input type="text" id="node-input-cycle">
+    </div>
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
 </script>
 
@@ -64,7 +90,7 @@
         <dd> Starts or stopps the counting.</dd>
         <dt>reset <span class="property-type">boolean</span></dt>
         <dd> If true, resets the counter to 0.</dd>
-        <dt>querry <span class="property-type">boolean</span></dt>
+        <dt>query <span class="property-type">boolean</span></dt>
         <dd> If true, just querries the state of the counter.</dd>
     </dl>
 
@@ -88,6 +114,10 @@
         <dd> Topic to send output values with.</dd>
         <dt>cycle <span class="property-type">number</span></dt>
         <dd> Cyclic time of output; 0 is only at state change.</dd>
+        <dt>Contextstore <span class="property-type">context store</span></dt>
+        <dd> context store for storing the values; <code>none</code> is no storage.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
     </dl>
 
 </script>

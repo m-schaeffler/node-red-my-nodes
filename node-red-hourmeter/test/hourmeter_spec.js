@@ -91,7 +91,7 @@ describe( 'hourmeter Node', function () {
           {
             const delta = Date.now()-start;
             q1++;
-            delta.should.be.approximately( q1==1 ? 75 : (q1-1)*60000/120,50 );
+            delta.should.be.approximately( q1==1 ? 75 : (q1-1)*60000/120, 50 );
           }
         }
         catch(err) {
@@ -108,7 +108,7 @@ describe( 'hourmeter Node', function () {
           {
             const delta = Date.now()-start;
             q2++;
-            delta.should.be.approximately( q2==1 ? 75 : (q2-1)*60000/120,50 );
+            delta.should.be.approximately( q2==1 ? 75 : (q2-1)*60000/120, 50 );
           }
           if( c2 <= 4 || c2 == 10 )
           {
@@ -190,7 +190,7 @@ describe( 'hourmeter Node', function () {
 
   it('should work with cycle deactivated', function (done) {
     this.timeout( 5000 );
-    const reasons = ['on','off','reset'];
+    const reasons = ['on','off','query','reset'];
     var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:0, name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -200,8 +200,6 @@ describe( 'hourmeter Node', function () {
       var n1 = helper.getNode("n1");
       var c1 = 0;
       var c2 = 0;
-      var q1 = 0;
-      var q2 = 0;
       var start;
       n2.on("input", function (msg) {
         //console.log(msg);
@@ -213,8 +211,7 @@ describe( 'hourmeter Node', function () {
           if( msg.reason == "query" )
           {
             const delta = Date.now()-start;
-            q1++;
-            delta.should.be.approximately( q1==1 ? 75 : (q1-1)*60000/120,50 );
+            delta.should.be.approximately( 3050, 50 );
           }
         }
         catch(err) {
@@ -230,10 +227,9 @@ describe( 'hourmeter Node', function () {
           if( msg.reason == "query" )
           {
             const delta = Date.now()-start;
-            q2++;
-            delta.should.be.approximately( q2==1 ? 75 : (q2-1)*60000/120,50 );
+            delta.should.be.approximately( 3050, 50 );
           }
-          if( c2 != 2 )
+          if( c2 == 1 || c2 == 4 )
           {
             msg.should.have.property('payload',0);
           }
@@ -292,10 +288,15 @@ describe( 'hourmeter Node', function () {
         c1.should.match( 2 );
         c2.should.match( 2 )
         n1.context().get("data").should.have.ValidData(false);
-        n1.receive({ reset:true });
+        n1.receive({ query:true });
         await delay(50);
         c1.should.match( 3 );
         c2.should.match( 3 );
+        n1.context().get("data").should.have.ValidData(false);
+        n1.receive({ reset:true });
+        await delay(50);
+        c1.should.match( 4 );
+        c2.should.match( 4 );
         n1.context().get("data").should.have.ValidData("reset");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

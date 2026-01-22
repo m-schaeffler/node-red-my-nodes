@@ -29,7 +29,7 @@ The counter is started / stopped according to the value of the payload:
 ||on|started|
 ||start|started|
 
-A [local filesystem context store](https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system) called `storeInFile` is needed to store the internal data.
+A [local filesystem context store](https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system) is needed to store the internal data.
 
 ### Input
 
@@ -45,13 +45,15 @@ A [local filesystem context store](https://nodered.org/docs/user-guide/context#s
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|payload | boolean | Is counting active?|
+|payload | boolean| Is counting active?|
+|reason  | string | Reason of the message output.|
 
 #### hour counter
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |payload | number | Value of the hour counter.|
+|reason  | string | Reason of the message output.|
 
 ### Parameters
 
@@ -59,6 +61,8 @@ A [local filesystem context store](https://nodered.org/docs/user-guide/context#s
 |:-----|:-------|:----------------------------------|
 |topic| string | Topic to send output values with.|
 |cycle| number |Cyclic time of output; 0 is only at state change.|
+|Contextstore|context store| context store for storing the values.|
+|Status|boolean| the actual value as a node status.|
 
 ## Example Flow
 

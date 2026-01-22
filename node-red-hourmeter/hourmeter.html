@@ -82,7 +82,7 @@
     </table>
     
     <p>A <a href="https://nodered.org/docs/user-guide/context#saving-context-data-to-the-file-system">local filesystem context store</a> 
-    called <code>storeInFile</code> is needed to store the internal data.</p>
+    is needed to store the internal data.</p>
     
     <h3>Input</h3>
     <dl class="message-properties">
@@ -100,12 +100,16 @@
     <dl class="message-properties">
         <dt>payload <span class="property-type">boolean</span></dt>
         <dd> Is counting active?</dd>
+        <dt>reason <span class="property-type">string</span></dt>
+        <dd> Reason of the message output.</dd>
     </dl>
     
     <h4>hour counter</h4>
     <dl class="message-properties">
         <dt>payload <span class="property-type">number</span></dt>
         <dd> Value of the hour counter.</dd>
+        <dt>reason <span class="property-type">string</span></dt>
+        <dd> Reason of the message output.</dd>
     </dl>
     
     <h3>Parameters</h3>

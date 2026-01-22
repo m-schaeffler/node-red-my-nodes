@@ -10,6 +10,7 @@ The node red node packages are released in this repository:
 - [@mschaeffler/node-red-bthome](node-red-bthome/README.md)
 - [@mschaeffler/node-red-debounce](node-red-debounce/README.md)
 - [@mschaeffler/node-red-format](node-red-format/README.md)
+- [@mschaeffler/node-red-hourmeter](node-red-hourmeter/README.md)
 - [@mschaeffler/node-red-init](node-red-init/README.md)
 - [@mschaeffler/node-red-logic](node-red-logic/README.md)
 - [@mschaeffler/node-red-msg-resend](node-red-msg-resend/README.md)
@@ -18,7 +19,6 @@ The node red node packages are released in this repository:
 This nodes are no longer used by me, so they will probably not get any further updates:
 
 - [@mschaeffler/node-red-dualled](node-red-dualled/README.md)
-- [@mschaeffler/node-red-hourmeter](node-red-hourmeter/README.md)
 - [@mschaeffler/node-red-lora](node-red-lora/README.md)
 
 ## License

@@ -208,7 +208,7 @@ describe( 'hourmeter Node', function () {
         try {
           c1++;
           msg.should.have.property('topic','zaehler');
-          msg.should.have.property('payload',c1>=4&&c1<7);
+          msg.should.have.property('payload',c1==1);
           msg.should.have.property('reason',reasons[c1-1]);
           if( msg.reason == "query" )
           {
@@ -233,13 +233,9 @@ describe( 'hourmeter Node', function () {
             q2++;
             delta.should.be.approximately( q2==1 ? 75 : (q2-1)*60000/120,50 );
           }
-          if( c2 <= 4 || c2 == 10 )
+          if( c2 != 2 )
           {
             msg.should.have.property('payload',0);
-          }
-          else if( c2 < 7 )
-          {
-            msg.should.have.property('payload').which.is.approximately(((q2-3)*60000/120-100)/3600000,50/3600000);
           }
           else
           {
@@ -259,47 +255,47 @@ describe( 'hourmeter Node', function () {
         c2.should.match( 0 );
         should.not.exist( n1.context().get("data") );
         await delay(50);
-        c1.should.match( 1 );
-        c2.should.match( 1 );
+        c1.should.match( 0 );
+        c2.should.match( 0 );
         should.not.exist( n1.context().get("data") );
         await delay(950);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c1.should.match( 3 );
-        c2.should.match( 3 );
+        c1.should.match( 0);
+        c2.should.match( 0 );
         should.not.exist( n1.context().get("data") );
         n1.receive({ topic:"test", payload: false });
         await delay(50);
-        c1.should.match( 3 );
-        c2.should.match( 3 );
+        c1.should.match( 0 );
+        c2.should.match( 0 );
         n1.context().get("data").should.have.ValidData(false);
         n1.receive({ topic:"test", payload: true });
         await delay(50);
-        c1.should.match( 4 );
-        c2.should.match( 4 );
+        c1.should.match( 1 );
+        c2.should.match( 1 );
         n1.context().get("data").should.have.ValidData(true);
         await delay(900);
-        c1.should.match( 6 );
-        c2.should.match( 6 );
+        c1.should.match( 1 );
+        c2.should.match( 1 );
         n1.context().get("data").should.have.ValidData(true);
         n1.receive({ topic:"test", payload: true });
         await delay(50);
-        c1.should.match( 6 );
-        c2.should.match( 6 );
+        c1.should.match( 1 );
+        c2.should.match( 1 );
         n1.context().get("data").should.have.ValidData(true);
         n1.receive({ topic:"test", payload: false });
         await delay(50);
-        c1.should.match( 7 );
-        c2.should.match( 7 );
+        c1.should.match( 2 );
+        c2.should.match( 2 );
         n1.context().get("data").should.have.ValidData(false);
         await delay(900);
-        c1.should.match( 9 );
-        c2.should.match( 9 )
+        c1.should.match( 2 );
+        c2.should.match( 2 )
         n1.context().get("data").should.have.ValidData(false);
         n1.receive({ reset:true });
         await delay(50);
-        c1.should.match( 10 );
-        c2.should.match( 10 );
+        c1.should.match( 3 );
+        c2.should.match( 3 );
         n1.context().get("data").should.have.ValidData("reset");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

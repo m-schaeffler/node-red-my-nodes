@@ -67,7 +67,7 @@ describe( 'hourmeter Node', function () {
 
   it('should work with cycle activated', function (done) {
     this.timeout( 5000 );
-    const reasons = ['query','query','query','on','query','query','off','query','query'];
+    const reasons = ['query','query','query','on','query','query','off','query','query','reset'];
     var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:1/120, name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -110,7 +110,7 @@ describe( 'hourmeter Node', function () {
             q2++;
             delta.should.be.approximately( q2==1 ? 75 : (q2-1)*60000/120,50 );
           }
-          if( c2 <= 4 )
+          if( c2 <= 4 || c2 == 10 )
           {
             msg.should.have.property('payload',0);
           }
@@ -173,6 +173,11 @@ describe( 'hourmeter Node', function () {
         c1.should.match( 9 );
         c2.should.match( 9 )
         n1.context().get("data").should.have.ValidData(false);
+        n1.receive({ reset:true });
+        await delay(50);
+        c1.should.match( 10 );
+        c2.should.match( 10 );
+        n1.context().get("data").should.have.ValidData("reset");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

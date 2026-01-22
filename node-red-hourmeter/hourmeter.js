@@ -45,7 +45,6 @@ module.exports = function(RED)
             {
                 data = { counter:0 }
                 context.set( "data", data, node.contextStore );
-                //send( [ { topic:node.topic, payload:false }, { topic:node.topic, payload:0 } ] );
                 sendOutput( "reset" );
             }
             else

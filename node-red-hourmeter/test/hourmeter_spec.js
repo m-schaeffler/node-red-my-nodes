@@ -67,7 +67,7 @@ describe( 'hourmeter Node', function () {
 
   it('should work with cycle activated', function (done) {
     this.timeout( 5000 );
-    const reasons = ['query','query','on','query','query','off','query','query'];
+    const reasons = ['query','query','query','on','query','query','off','query','query'];
     var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:1/120, name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -81,16 +81,17 @@ describe( 'hourmeter Node', function () {
       var q2 = 0;
       var start;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c1++;
           msg.should.have.property('topic','zaehler');
-          msg.should.have.property('payload',c1>=3&&c1<6);
+          msg.should.have.property('payload',c1>=4&&c1<7);
           msg.should.have.property('reason',reasons[c1-1]);
           if( msg.reason == "query" )
           {
             const delta = Date.now()-start;
-            delta.should.be.approximately(++q1*60000/120,50);
+            q1++;
+            delta.should.be.approximately( q1==1 ? 75 : (q1-1)*60000/120,50 );
           }
         }
         catch(err) {
@@ -98,7 +99,7 @@ describe( 'hourmeter Node', function () {
         }
       });
       n3.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c2++;
           msg.should.have.property('topic','zaehler');
@@ -106,15 +107,16 @@ describe( 'hourmeter Node', function () {
           if( msg.reason == "query" )
           {
             const delta = Date.now()-start;
-            delta.should.be.approximately(++q2*60000/120,50);
+            q2++;
+            delta.should.be.approximately( q2==1 ? 75 : (q2-1)*60000/120,50 );
           }
-          if( c2 <= 3 )
+          if( c2 <= 4 )
           {
             msg.should.have.property('payload',0);
           }
-          else if( c2 < 6)
+          else if( c2 < 7 )
           {
-            msg.should.have.property('payload').which.is.approximately(((q2-2)*60000/120-100)/3600000,50/3600000);
+            msg.should.have.property('payload').which.is.approximately(((q2-3)*60000/120-100)/3600000,50/3600000);
           }
           else
           {
@@ -133,38 +135,46 @@ describe( 'hourmeter Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         should.not.exist( n1.context().get("data") );
-        await delay(1000);
-        c1.should.match( 2 );
-        c2.should.match( 2 );
+        await delay(50);
+        c1.should.match( 1 );
+        c2.should.match( 1 );
+        should.not.exist( n1.context().get("data") );
+        await delay(950);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 3 );
+        c2.should.match( 3 );
         should.not.exist( n1.context().get("data") );
         n1.receive({ topic:"test", payload: false });
         await delay(50);
-        c1.should.match( 2 );
-        c2.should.match( 2 );
-        n1.context().get("data").should.have.ValidData();
-        n1.receive({ topic:"test", payload: true });
-        await delay(50);
         c1.should.match( 3 );
         c2.should.match( 3 );
-        should.exist( n1.context().get("data") );
-        await delay(900);
-        c1.should.match( 5 );
-        c2.should.match( 5 );
+        n1.context().get("data").should.have.ValidData(false);
         n1.receive({ topic:"test", payload: true });
         await delay(50);
-        c1.should.match( 5 );
-        c2.should.match( 5 );
-        n1.receive({ topic:"test", payload: false });
+        c1.should.match( 4 );
+        c2.should.match( 4 );
+        n1.context().get("data").should.have.ValidData(true);
+        await delay(900);
+        c1.should.match( 6 );
+        c2.should.match( 6 );
+        n1.context().get("data").should.have.ValidData(true);
+        n1.receive({ topic:"test", payload: true });
         await delay(50);
         c1.should.match( 6 );
         c2.should.match( 6 );
+        n1.context().get("data").should.have.ValidData(true);
+        n1.receive({ topic:"test", payload: false });
+        await delay(50);
+        c1.should.match( 7 );
+        c2.should.match( 7 );
+        n1.context().get("data").should.have.ValidData(false);
         await delay(900);
-        c1.should.match( 8 );
-        c2.should.match( 8 )
+        c1.should.match( 9 );
+        c2.should.match( 9 )
+        n1.context().get("data").should.have.ValidData(false);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        const q = n1.context().get("data");
-        q.should.be.an.Object();
         done();
       }
       catch(err) {

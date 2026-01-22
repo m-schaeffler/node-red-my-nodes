@@ -16,33 +16,43 @@ module.exports = function(RED)
 
         if( this.cycle > 0 )
         {
-            this.interval_id = setInterval( function()
+            function emitQuery()
             {
                 node.emit( "input", {query:true} );
-            }, this.cycle*60*1000 );
-        }
-
-        function nodeStatus(str)
-        {
-            if( node.showState )
-            {
-                node.status( str );
             }
+            setTimeout( emitQuery, 75 );
+            this.interval_id = setInterval( emitQuery, this.cycle*60*1000 );
         }
 
         node.on( 'input', function(msg,send,done)
         {
+            let data;
+
+            function sendOutput(reason)
+            {
+                const out = data.counter/3600;
+                if( node.showState )
+                {
+                    node.status( `${data.state} / ${out.toFixed(1)}` );
+                }
+                send( [
+                    { topic:node.topic, payload:data.switchOn!==undefined, reason:reason },
+                    { topic:node.topic, payload:out,                       reason:reason }
+                ] );
+            }
+
             if( msg.reset )
             {
-                context.set( "data", null, node.contextStore );
-                nodeStatus( "-" );
-                send( [ { topic:this.topic, payload:false }, { topic:this.topic, payload:0 } ] );
+                data = { counter:0 }
+                context.set( "data", data, node.contextStore );
+                //send( [ { topic:node.topic, payload:false }, { topic:node.topic, payload:0 } ] );
+                sendOutput( "reset" );
             }
             else
             {
-                const now    = Date.now();
-                let   data   = context.get( "data", node.contextStore ) ?? { counter:0 };
-                let   output = false;
+                const now = Date.now();
+                data = context.get( "data", node.contextStore ) ?? { counter:0 };
+
                 if( ( !msg.query ) && ( msg.payload !== undefined ) )
                 {
                     if( msg.payload !== data.state )
@@ -58,7 +68,7 @@ module.exports = function(RED)
                                 if( data.switchOn === undefined )
                                 {
                                     data.switchOn = now;
-                                    output = "on";
+                                    sendOutput( "on" );
                                 }
                                 break;
                             case false:
@@ -72,7 +82,7 @@ module.exports = function(RED)
                                 {
                                     data.counter += (now - data.switchOn)/1000;
                                     delete data.switchOn;
-                                    output = "off";
+                                    sendOutput( "off" );
                                 }
                                 break;
                         }
@@ -87,16 +97,7 @@ module.exports = function(RED)
                         data.counter += (now - data.switchOn)/1000;
                         data.switchOn = now;
                     }
-                    output = "query";
-                }
-                const out = data.counter/3600;
-                nodeStatus( `${data.state} / ${out.toFixed(1)}` );
-                if( output )
-                {
-                    send( [
-                        { topic:this.topic, payload:data.switchOn!==undefined, reason:output },
-                        { topic:this.topic, payload:out, reason:output }
-                    ] );
+                    sendOutput( "query" );
                 }
             }
             done();

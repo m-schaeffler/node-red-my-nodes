@@ -26,6 +26,10 @@ should.Assertion.add(
         data.should.not.have.a.property('state');
         data.should.not.have.a.property('switchOn');
         break;
+      case "invalid":
+        data.should.have.a.property('state');
+        data.should.not.have.a.property('switchOn');
+        break;
     }
     data.should.have.a.property('counter').which.is.aboveOrEqual(cnt);
     cnt = data.counter;

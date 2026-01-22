@@ -26,7 +26,8 @@ module.exports = function(RED)
 
         node.on( 'input', function(msg,send,done)
         {
-            let data;
+            let   data;
+            const now = Date.now();
 
             function sendOutput(reason)
             {
@@ -47,49 +48,30 @@ module.exports = function(RED)
                 context.set( "data", data, node.contextStore );
                 sendOutput( "reset" );
             }
-            else
+            else if( msg.topic == "set" || msg.set )
             {
-                const now = Date.now();
-                data = context.get( "data", node.contextStore ) ?? { counter:0 };
-
-                if( ( !msg.query ) && ( msg.payload !== undefined ) )
+                const value = Number( msg.payload );
+                if( value >= 0 )
                 {
-                    if( msg.payload !== data.state )
+                    data.counter = msg.payload;
+                    if( data.switchOn !== undefined )
                     {
-                        switch( msg.payload )
-                        {
-                            case true:
-                            case 1:
-                            case "1":
-                            case "true":
-                            case "on":
-                            case "start":
-                                if( data.switchOn === undefined )
-                                {
-                                    data.switchOn = now;
-                                    sendOutput( "on" );
-                                }
-                                break;
-                            case false:
-                            case 0:
-                            case "0":
-                            case "false":
-                            case "off":
-                            case "stop":
-                            case "disabled":
-                                if( data.switchOn !== undefined )
-                                {
-                                    data.counter += (now - data.switchOn)/1000;
-                                    delete data.switchOn;
-                                    sendOutput( "off" );
-                                }
-                                break;
-                        }
-                        data.state = msg.payload;
-                        context.set( "data", data, node.contextStore );
+                        data.switchOn = now;
                     }
+                    context.set( "data", data, node.contextStore );
+                    sendOutput( "set" );
                 }
                 else
+                {
+                    done( `invalid set value: ${msg.payload}` )
+                    return;
+                }
+            }
+            else
+            {
+                data = context.get( "data", node.contextStore ) ?? { counter:0 };
+
+                if( msg.query )
                 {
                     if( data.switchOn !== undefined )
                     {
@@ -97,6 +79,42 @@ module.exports = function(RED)
                         data.switchOn = now;
                     }
                     sendOutput( "query" );
+                }
+                else
+                {
+                    switch( msg.payload )
+                    {
+                        case true:
+                        case 1:
+                        case "1":
+                        case "true":
+                        case "on":
+                        case "start":
+                            if( data.switchOn === undefined )
+                            {
+                                data.switchOn = now;
+                                sendOutput( "on" );
+                            }
+                            break;
+                        case false:
+                        case 0:
+                        case "0":
+                        case "false":
+                        case "off":
+                        case "stop":
+                        case "disabled":
+                            if( data.switchOn !== undefined )
+                            {
+                                data.counter += (now - data.switchOn)/1000;
+                                delete data.switchOn;
+                                sendOutput( "off" );
+                            }
+                            break;
+                        default:
+                            node.warn( `invalid payload: ${msg.payload}` );
+                    }
+                    data.state = msg.payload;
+                    context.set( "data", data, node.contextStore );
                 }
             }
             done();

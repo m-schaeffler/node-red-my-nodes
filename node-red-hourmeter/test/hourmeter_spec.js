@@ -149,7 +149,7 @@ describe( 'hourmeter Node', function () {
         await delay(50);
         c1.should.match( 3 );
         c2.should.match( 3 );
-        n1.context().get("data").should.have.ValidData(false);
+        n1.context().get("data").should.have.ValidData(false,true);
         n1.receive({ topic:"test", payload: true });
         await delay(50);
         c1.should.match( 4 );
@@ -264,7 +264,7 @@ describe( 'hourmeter Node', function () {
         await delay(50);
         c1.should.match( 0 );
         c2.should.match( 0 );
-        n1.context().get("data").should.have.ValidData(false);
+        n1.context().get("data").should.have.ValidData(false,true);
         n1.receive({ topic:"test", payload: true });
         await delay(50);
         c1.should.match( 1 );
@@ -378,7 +378,7 @@ describe( 'hourmeter Node', function () {
         await delay(100);
         c1.should.match( 0 );
         c2.should.match( 0 );
-        n1.context().get("data").should.have.ValidData("invalid");
+        n1.context().get("data").should.have.ValidData("invalid",true);
         n1.warn.should.have.callCount(6);
         n1.error.should.have.callCount(0);
         done();
@@ -444,12 +444,12 @@ describe( 'hourmeter Node', function () {
         n1.error.should.have.callCount(0);
         c1.should.match( 2 );
         c2.should.match( 2 );
-        n1.context().get("data").should.have.ValidData(false);
+        n1.context().get("data").should.have.ValidData("set",true);
         n1.receive({ query:true });
         await delay(100);
         c1.should.match( 3 );
         c2.should.match( 3 );
-        n1.context().get("data").should.have.ValidData(false);
+        n1.context().get("data").should.have.ValidData("set");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -461,7 +461,8 @@ describe( 'hourmeter Node', function () {
   });
 
   it('should have a set the counter value feature, on phase', function (done) {
-    const reasons = ['query','set','query'];
+    this.timeout( 5000 );
+    const reasons = ['on','set','off'];
     var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:0, name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
@@ -477,7 +478,7 @@ describe( 'hourmeter Node', function () {
         try {
           c1++;
           msg.should.have.property('topic','zaehler');
-          msg.should.have.property('payload',false);
+          msg.should.have.property('payload',c1<=2);
           msg.should.have.property('reason',reasons[c1-1]);
         }
         catch(err) {
@@ -490,7 +491,18 @@ describe( 'hourmeter Node', function () {
           c2++;
           msg.should.have.property('topic','zaehler');
           msg.should.have.property('reason',reasons[c2-1]);
-          msg.should.have.property('payload',c2==1?0:12);
+          switch( c2 )
+          {
+            case 1:
+              msg.should.have.property('payload',0);
+              break;
+            case 2:
+              msg.should.have.property('payload',12);
+              break;
+            case 3:
+              msg.should.have.property('payload').which.is.within(12.0002,12.0003);
+              break;
+          }
         }
         catch(err) {
           done(err);
@@ -508,8 +520,8 @@ describe( 'hourmeter Node', function () {
         await delay(50);
         c1.should.match( 1 );
         c2.should.match( 1 );
-        n1.context().get("data").should.have.ValidData(true);
-        await delay(9050);
+        n1.context().get("data").should.have.ValidData(true,true);
+        await delay(950);
         c1.should.match( 1 );
         c2.should.match( 1 );
         n1.context().get("data").should.have.ValidData(true);
@@ -520,7 +532,7 @@ describe( 'hourmeter Node', function () {
         n1.context().get("data").should.have.ValidData(true);
         c1.should.match( 2 );
         c2.should.match( 2 );
-        await delay(9050);
+        await delay(950);
         c1.should.match( 2 );
         c2.should.match( 2 );
         n1.context().get("data").should.have.ValidData(true);

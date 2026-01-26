@@ -48,73 +48,75 @@ module.exports = function(RED)
                 context.set( "data", data, node.contextStore );
                 sendOutput( "reset" );
             }
-            else if( msg.set )
-            {
-                const value = Number( msg.payload );
-                if( value >= 0 )
-                {
-                    data.counter = msg.payload;
-                    if( data.switchOn !== undefined )
-                    {
-                        data.switchOn = now;
-                    }
-                    context.set( "data", data, node.contextStore );
-                    sendOutput( "set" );
-                }
-                else
-                {
-                    done( `invalid set value: ${msg.payload}` )
-                    return;
-                }
-            }
             else
             {
                 data = context.get( "data", node.contextStore ) ?? { counter:0 };
-
-                if( msg.query )
+                if( msg.set )
                 {
-                    if( data.switchOn !== undefined )
+                    const value = Number( msg.payload );
+                    if( value >= 0 )
                     {
-                        data.counter += (now - data.switchOn)/1000;
-                        data.switchOn = now;
+                        data.counter = msg.payload;
+                        if( data.switchOn !== undefined )
+                        {
+                            data.switchOn = now;
+                        }
+                        context.set( "data", data, node.contextStore );
+                        sendOutput( "set" );
                     }
-                    sendOutput( "query" );
+                    else
+                    {
+                        done( `invalid set value: ${msg.payload}` )
+                        return;
+                    }
                 }
                 else
                 {
-                    switch( msg.payload )
+                    if( msg.query )
                     {
-                        case true:
-                        case 1:
-                        case "1":
-                        case "true":
-                        case "on":
-                        case "start":
-                            if( data.switchOn === undefined )
-                            {
-                                data.switchOn = now;
-                                sendOutput( "on" );
-                            }
-                            break;
-                        case false:
-                        case 0:
-                        case "0":
-                        case "false":
-                        case "off":
-                        case "stop":
-                        case "disabled":
-                            if( data.switchOn !== undefined )
-                            {
-                                data.counter += (now - data.switchOn)/1000;
-                                delete data.switchOn;
-                                sendOutput( "off" );
-                            }
-                            break;
-                        default:
-                            node.warn( `invalid payload: ${msg.payload}` );
+                        if( data.switchOn !== undefined )
+                        {
+                            data.counter += (now - data.switchOn)/1000;
+                            data.switchOn = now;
+                        }
+                        sendOutput( "query" );
                     }
-                    data.state = msg.payload;
-                    context.set( "data", data, node.contextStore );
+                    else
+                    {
+                        switch( msg.payload )
+                        {
+                            case true:
+                            case 1:
+                            case "1":
+                            case "true":
+                            case "on":
+                            case "start":
+                                if( data.switchOn === undefined )
+                                {
+                                    data.switchOn = now;
+                                    sendOutput( "on" );
+                                }
+                                break;
+                            case false:
+                            case 0:
+                            case "0":
+                            case "false":
+                            case "off":
+                            case "stop":
+                            case "disabled":
+                                if( data.switchOn !== undefined )
+                                {
+                                    data.counter += (now - data.switchOn)/1000;
+                                    delete data.switchOn;
+                                    sendOutput( "off" );
+                                }
+                                break;
+                            default:
+                                node.warn( `invalid payload: ${msg.payload}` );
+                        }
+                        data.state = msg.payload;
+                        context.set( "data", data, node.contextStore );
+                    }
                 }
             }
             done();

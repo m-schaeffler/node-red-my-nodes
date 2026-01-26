@@ -48,7 +48,7 @@ module.exports = function(RED)
                 context.set( "data", data, node.contextStore );
                 sendOutput( "reset" );
             }
-            else if( msg.topic == "set" || msg.set )
+            else if( msg.set )
             {
                 const value = Number( msg.payload );
                 if( value >= 0 )

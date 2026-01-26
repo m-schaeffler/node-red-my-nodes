@@ -83,6 +83,7 @@ module.exports = function(RED)
                     }
                     else
                     {
+                        data.state = msg.payload;
                         switch( msg.payload )
                         {
                             case true:
@@ -114,7 +115,6 @@ module.exports = function(RED)
                             default:
                                 node.warn( `invalid payload: ${msg.payload}` );
                         }
-                        data.state = msg.payload;
                         context.set( "data", data, node.contextStore );
                     }
                 }

@@ -389,7 +389,7 @@ describe( 'hourmeter Node', function () {
     });
   });
 
-  it('should have a set the counter value feature', function (done) {
+  it('should have a set the counter value feature, off phase', function (done) {
     const reasons = ['query','set','query'];
     var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:0, name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
@@ -444,10 +444,91 @@ describe( 'hourmeter Node', function () {
         n1.error.should.have.callCount(0);
         c1.should.match( 2 );
         c2.should.match( 2 );
+        n1.context().get("data").should.have.ValidData(false);
         n1.receive({ query:true });
         await delay(100);
         c1.should.match( 3 );
         c2.should.match( 3 );
+        n1.context().get("data").should.have.ValidData(false);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should have a set the counter value feature, on phase', function (done) {
+    const reasons = ['query','set','query'];
+    var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:0, name: "test", wires: [["n2"],["n3"]] },
+                { id: "n2", type: "helper" },
+                { id: "n3", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n3 = helper.getNode("n3");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c1 = 0;
+      var c2 = 0;
+      var start;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          c1++;
+          msg.should.have.property('topic','zaehler');
+          msg.should.have.property('payload',false);
+          msg.should.have.property('reason',reasons[c1-1]);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          c2++;
+          msg.should.have.property('topic','zaehler');
+          msg.should.have.property('reason',reasons[c2-1]);
+          msg.should.have.property('payload',c2==1?0:12);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('topic', 'zaehler');
+        n1.should.have.a.property('cycle', 0);
+        start = Date.now();
+        await delay(50);
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        should.not.exist( n1.context().get("data") );
+        n1.receive({ topic:"foobar", payload:true });
+        await delay(50);
+        c1.should.match( 1 );
+        c2.should.match( 1 );
+        n1.context().get("data").should.have.ValidData(true);
+        await delay(9050);
+        c1.should.match( 1 );
+        c2.should.match( 1 );
+        n1.context().get("data").should.have.ValidData(true);
+        n1.receive({ set:true, payload:12 });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.context().get("data").should.have.ValidData(true);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        await delay(9050);
+        c1.should.match( 2 );
+        c2.should.match( 2 );
+        n1.context().get("data").should.have.ValidData(true);
+        n1.receive({ topic:"foobar", payload:false });
+        await delay(100);
+        c1.should.match( 3 );
+        c2.should.match( 3 );
+        n1.context().get("data").should.have.ValidData(false);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

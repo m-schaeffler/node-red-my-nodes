@@ -37,6 +37,7 @@ A [local filesystem context store](https://nodered.org/docs/user-guide/context#s
 |:-------|:-------|:----------------------------------|
 |payload | | Starts or stopps the counting. |
 |reset   |boolean |If true, resets the counter to 0.|
+|set     |boolean |If true, sets the counter to `payload`.|
 |query   |boolean |If true, just querries the state of the counter.|
 
 ### Outputs

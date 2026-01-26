@@ -56,7 +56,7 @@ module.exports = function(RED)
                     const value = Number( msg.payload );
                     if( value >= 0 )
                     {
-                        data.counter = msg.payload;
+                        data.counter = msg.payload * 3600;
                         if( data.switchOn !== undefined )
                         {
                             data.switchOn = now;

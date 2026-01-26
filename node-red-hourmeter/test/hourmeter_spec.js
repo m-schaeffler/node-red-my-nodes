@@ -402,41 +402,24 @@ describe( 'hourmeter Node', function () {
       var c2 = 0;
       var start;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c1++;
           msg.should.have.property('topic','zaehler');
-          //msg.should.have.property('payload',c1==1);
+          msg.should.have.property('payload',false);
           msg.should.have.property('reason',reasons[c1-1]);
-          /*if( msg.reason == "query" )
-          {
-            const delta = Date.now()-start;
-            delta.should.be.approximately( 3050, 50 );
-          }*/
         }
         catch(err) {
           done(err);
         }
       });
       n3.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           c2++;
           msg.should.have.property('topic','zaehler');
           msg.should.have.property('reason',reasons[c2-1]);
-          /*if( msg.reason == "query" )
-          {
-            const delta = Date.now()-start;
-            delta.should.be.approximately( 3050, 50 );
-          }
-          if( c2 == 1 || c2 == 4 )
-          {
-            msg.should.have.property('payload',0);
-          }
-          else
-          {
-            msg.should.have.property('payload').which.is.approximately(1000/3600000,50/3600000);
-          }*/
+          msg.should.have.property('payload',c2==1?0:12);
         }
         catch(err) {
           done(err);
@@ -455,7 +438,7 @@ describe( 'hourmeter Node', function () {
         c1.should.match( 1 );
         c2.should.match( 1 );
         should.not.exist( n1.context().get("data") );
-        n1.receive({ set:true, payload:12.34 });
+        n1.receive({ set:true, payload:12 });
         await delay(100);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

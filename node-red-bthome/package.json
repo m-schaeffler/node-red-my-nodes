@@ -24,7 +24,7 @@
         "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
     },
     "node-red": {
-        "version": ">=4.0.0",
+        "version": ">=3.1.0",
         "nodes": {
             "bthome": "bthome.js",
             "ws90": "ws90.js"

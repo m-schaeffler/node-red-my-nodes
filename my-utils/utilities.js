@@ -44,13 +44,14 @@ exports.iconStr = function(icon)
 
 exports.formatNumber = function(number,limit,unit="")
 {
-    if( number !== undefined )
+    switch( number )
     {
-        return number.toFixed( number>limit ? 0 : 1 ) + exports.unitStr(unit);
-    }
-    else
-    {
-        return "";
+        case undefined:
+            return "";
+        case null:
+            return "\u2014";
+        default:
+            return number.toFixed( number>limit ? 0 : 1 ) + exports.unitStr(unit);
     }
 }
 

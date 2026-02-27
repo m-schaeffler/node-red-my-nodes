@@ -387,7 +387,7 @@ module.exports = function(RED) {
                 node.status( name );
                 send( [
                     item.data ? { topic:node.statusPrefix+name, payload:item.data } : null,
-                    events.eventMessages( name, item.data?.channel ?? null )
+                    events.eventMessages( name, item.data )
                 ] );
             }
 

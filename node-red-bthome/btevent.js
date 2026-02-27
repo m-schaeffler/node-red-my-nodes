@@ -18,19 +18,18 @@ class BtEvent {
         }
         this._events[type].push( { event:event, data:data } );
     }
-    eventMessages(name,channel)
+    eventMessages(name,data)
     {
         function pushResult(type,event,index=null)
         {
             if( event.event && event.data !== 0 )
             {
-                let payload  = { type: type, event: event.event };
+                let payload  = { ...data, type: type, event: event.event };
                 let indexStr = "";;
-                if( channel !== null )
+                if( data?.channel !== undefined )
                 {
-                    indexStr += "/"
-                    indexStr += channel;
-                    payload.channel = channel;
+                    indexStr += "/";
+                    indexStr += data.channel;
                 }
                 if( index !== null )
                 {

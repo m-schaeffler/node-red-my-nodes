@@ -1,0 +1,37 @@
+{
+    "name": "@mschaeffler/node-red-fececon",
+    "version": "0.0.1",
+    "description": "Node Red nodes to communicate with a Fenecon FEMS",
+    "author": {
+        "name": "Mathias Schäffler",
+        "url": "https://github.com/m-schaeffler"
+    },
+    "license": "LGPL-2.1",
+    "keywords": [
+        "node-red",
+        "Fenecon",
+        "FEMS",
+        "OpenEMS"
+    ],
+    "bugs": {
+        "url": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-fenecon/issues"
+    },
+    "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-fenecon",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+    },
+    "node-red": {
+        "version": ">=3.1.0",
+        "nodes": {
+            "feneconFems":   "fenecon_fems.js",
+            "feneconHttpGet": "fenecon_http_get.js"
+        }
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "test": "mocha \"test/*_spec.js\""
+    }
+}

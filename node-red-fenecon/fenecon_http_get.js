@@ -11,10 +11,7 @@ module.exports = function(RED) {
             //console.log(url);
             try
             {
-                const response = await fetch( url, {
-                    headers: { Authorization: node.fems.auth },
-                    signal:  AbortSignal.timeout( 1000 )
-                } );
+                const response = await fetch( url, node.fems.options() );
                 //console.log(response);
                 if( response.ok )
                 {

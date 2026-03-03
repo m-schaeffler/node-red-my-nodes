@@ -25,7 +25,8 @@
         "version": ">=3.1.0",
         "nodes": {
             "feneconFems":   "fenecon_fems.js",
-            "feneconHttpGet": "fenecon_http_get.js"
+            "feneconHttpGet": "fenecon_http_get.js",
+            "feneconHttpPut": "fenecon_http_put.js"
         }
     },
     "engines": {

@@ -46,6 +46,7 @@ describe( 'fenecon_fems Node', function () {
       try{
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('hostname', "fems.lan");
+        n1.should.have.a.property('auth').which.is.a.String();
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

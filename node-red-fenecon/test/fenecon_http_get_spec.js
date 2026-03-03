@@ -41,7 +41,7 @@ describe( 'fenecon_http_get Node', function () {
     });
   });
 
-  it('should make a request', function (done) {
+  it('should make a simple request', function (done) {
     var flow = [{ id: 'flow', type: 'tab' },
                 { id: "n1", type: "feneconHttpGet", fems: "nf", name: "test", wires: [["n2"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
@@ -54,7 +54,8 @@ describe( 'fenecon_http_get Node', function () {
       n2.on("input", function (msg) {
         console.log(msg);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          msg.should.have.property('topic',"_meta/Version");
+          msg.should.have.property('payload').which.is.a.String();
           ++c;
         }
         catch(err) {
@@ -65,8 +66,49 @@ describe( 'fenecon_http_get Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems').which.is.an.Object();
         await delay(50);
+        n1.receive({ topic:"_meta/Version" });
+        await delay(200);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        c.should.match( 1 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should make a wildcard request', function (done) {
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconHttpGet", fems: "nf", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          msg.should.have.property('topic',"_meta/.*");
+          msg.should.have.property('payload').which.is.an.Object();
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        await delay(50);
+        n1.receive({ topic:"_meta/.*" });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 1 );
         done();
       }
       catch(err) {

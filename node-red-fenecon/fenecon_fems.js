@@ -3,6 +3,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         var node = this;
         this.hostname = config.hostname ?? "";
+        this.auth     = `Basic ${Buffer.from( "owner:owner", "utf-8" ).toString( "base64" )}`;
     }
     RED.nodes.registerType( "feneconFems", femsNode );
 }

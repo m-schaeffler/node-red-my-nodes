@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-fececon",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "Node Red nodes to communicate with a Fenecon FEMS",
     "author": {
         "name": "Mathias Schäffler",
@@ -24,9 +24,10 @@
     "node-red": {
         "version": ">=3.1.0",
         "nodes": {
-            "feneconFems":   "fenecon_fems.js",
+            "feneconFems": "fenecon_fems.js",
             "feneconHttpGet": "fenecon_http_get.js",
-            "feneconHttpPut": "fenecon_http_put.js"
+            "feneconHttpPost": "fenecon_http_post.js",
+            "feneconWebsocket": "fenecon_websocket.js"
         }
     },
     "engines": {

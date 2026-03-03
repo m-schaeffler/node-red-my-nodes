@@ -1,0 +1,73 @@
+<script type="text/javascript">
+    RED.nodes.registerType('feneconWebsocket',{
+        category: 'input',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            fems: {value:"",type:"feneconFems",required:true}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-plug",
+        label: function() {
+            return this.name||"Fenecon http.put";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "Fenecon put",
+        inputLabels: 'request',
+        outputLabels: 'subscribed data'
+    });
+</script>
+
+<script type="text/x-red" data-template-name="feneconWebsocket">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-fems"><i class="fa fa-server"></i> FEMS</label>
+        <input type="text" id="node-input-fems">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="feneconWebsocket">
+
+    <p>A Node Red node to decrypt and decode raw data frames from <a href="https://bthome.io">BT-Home</a> sensors.</p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> data from Shelly script</dd>
+        <dt>resync <span class="property-type">boolean</span></dt>
+        <dd> if set to yes, allow all packed ids; to resync after some issue</dd>
+    </dl>
+    
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>State-Prefix</code> + name of the device</dd>
+        <dt>payload <span class="property-type"></span></dt>
+        <dd> decoded state data</dd>
+    </dl>
+    
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>Devices <span class="property-type">JSON</span></dt>
+        <dd> configuration of the BT-Home devices.</dd>
+        <dt>counter is times <span class="property-type">Boolean</span></dt>
+        <dd> the counter in encrypted messages is checked again the actual time.</dd>
+        <dt>Status-Prefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for state output.</dd>
+        <dt>Event-Prefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for event output.</dd>
+        <dt>Context-Variable <span class="property-type">string</span></dt>
+        <dd> name of the variable in flow context storage.</dd>
+        <dt>Contextstore <span class="property-type">string</span></dt>
+        <dd>  context store to be used.</dd>
+        <dt>battery is state <span class="property-type">Boolean</span></dt>
+        <dd> battery level is included in state mesage.</dt>
+    </dl>
+    
+</script>

@@ -1,6 +1,6 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
-var node   = require("../fenecon_http_put.js");
+var node   = require("../fenecon_websocket.js");
 var nodeFems = require("../fenecon_fems.js");
 require("./fenecon_fems_spec.js");
 
@@ -10,7 +10,7 @@ function delay(ms) {
   });
 }
 
-describe( 'fenecon_http_put Node', function () {
+describe( 'fenecon_websocket Node', function () {
     "use strict";
 
   beforeEach(function (done) {
@@ -24,7 +24,7 @@ describe( 'fenecon_http_put Node', function () {
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "feneconHttpPut", name: "test" }];
+    var flow = [{ id: "n1", type: "feneconWebsocket", name: "test" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
@@ -43,7 +43,7 @@ describe( 'fenecon_http_put Node', function () {
 
   it('should make a request', function (done) {
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpPut", fems: "nf", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", name: "test", wires: [["n2"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {

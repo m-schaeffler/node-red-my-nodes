@@ -1,6 +1,6 @@
 module.exports = function(RED) {
 
-    function FeneconHttpPutNode(config) {
+    function FeneconWebsocketNode(config) {
         RED.nodes.createNode(this,config);
         var node = this;
         this.fems = RED.nodes.getNode( config.fems );
@@ -10,5 +10,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType( "feneconHttpPut", FeneconHttpPutNode );
+    RED.nodes.registerType( "feneconWebsocket", FeneconWebsocketNode );
 }

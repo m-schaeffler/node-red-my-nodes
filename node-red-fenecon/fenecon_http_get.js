@@ -7,11 +7,12 @@ module.exports = function(RED) {
         node.status( "" );
 
         node.on('input', async function(msg,send,done) {
-            const url = `http://${node.fems.hostname}:80/rest/channel/${msg.topic}`;
-            //console.log(url);
             try
             {
-                const response = await fetch( url, node.fems.options() );
+                const response = await fetch(
+                    node.fems.httpUrl( msg.topic ),
+                    node.fems.httpOptions()
+                );
                 //console.log(response);
                 if( response.ok )
                 {

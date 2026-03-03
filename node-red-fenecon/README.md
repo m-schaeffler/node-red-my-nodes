@@ -30,13 +30,8 @@ A Node Red node to request one ore more data points from a Fenecon FEMS.
 |:-------|:-------|:----------------------------------|
 |topic   |string  |data point to be requested         |
 
-### Outputs
+#### Data Points
 
-| topic | explanation |
-|:------|:------------|
-|temperature|no calculation, value directly from the input data|
-
-####Data Points
 The data points of the FEMS are always named as `group/name`.
 You can get all possible data points with the request `.*/.*`.
 
@@ -45,6 +40,13 @@ Examples:
 - `_meta/V.*`
 - `_meta/Version`
 - `ctrlGridOptimizedCharge0/(DelayChargeMaximumChargeLimit|_PropertyManualTargetTime)`
+
+### Outputs
+
+|msg.   | type   | description |
+|:------|:-------|-------------|
+|topic  | string | same as in input.|
+|payload| value or object | received data points. If more than one data point is returned, it is an object with key/value pairs.|
 
 ### Parameters
 

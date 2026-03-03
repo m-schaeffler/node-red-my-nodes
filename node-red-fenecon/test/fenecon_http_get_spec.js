@@ -52,7 +52,7 @@ describe( 'fenecon_http_get Node', function () {
       var nf = helper.getNode("nf");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.property('topic',"_meta/Version");
           msg.should.have.property('payload').which.is.a.String();
@@ -90,7 +90,7 @@ describe( 'fenecon_http_get Node', function () {
       var nf = helper.getNode("nf");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.property('topic',"_meta/.*");
           msg.should.have.property('payload').which.is.an.Object();
@@ -109,6 +109,96 @@ describe( 'fenecon_http_get Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 1 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should handle invalid requests', function (done) {
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconHttpGet", fems: "nf", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        await delay(50);
+        n1.receive({ topic:"foo/bar" });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        c.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should handle invalid addresses', function (done) {
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconHttpGet", fems: "nf", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"foobar.lan", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        await delay(50);
+        n1.receive({ topic:"foo/bar" });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        c.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should handle invalid IPs', function (done) {
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconHttpGet", fems: "nf", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"192.168.254.254", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        await delay(50);
+        n1.receive({ topic:"foo/bar" });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        c.should.match( 0 );
         done();
       }
       catch(err) {

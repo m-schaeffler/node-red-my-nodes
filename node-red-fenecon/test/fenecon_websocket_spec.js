@@ -45,7 +45,7 @@ describe( 'fenecon_websocket Node', function () {
 
   const inlist = ["_sum/State","_sum/ProductionActivePower","meter0/CurrentL1","batteryInverter0/AirTemperature"];
 
-  it('should make a request', function (done) {
+  it('should subscribe data', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
                 { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"]], z: "flow" },
@@ -57,7 +57,7 @@ describe( 'fenecon_websocket Node', function () {
       var nf = helper.getNode("nf");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         try {
           msg.should.have.property('topic','currentData');
           msg.should.have.property('payload').which.is.an.Object();
@@ -77,6 +77,66 @@ describe( 'fenecon_websocket Node', function () {
         n1.should.have.a.property('edge', '0');
         n1.should.have.a.property('inlist', inlist);
         n1.should.have.a.property('state','closed');
+        n1.should.have.a.property('config',null);
+        await delay(50);
+        n1.receive({ topic:"open" });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('state','connected');
+        n1.should.have.a.property('config').which.is.an.Object();
+        n1.config.should.have.a.property('ctrlGridOptimizedCharge0').which.is.an.Object();
+        n1.config.ctrlGridOptimizedCharge0.should.have.a.property('properties').which.is.an.Object();
+        n1.config.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime').which.is.a.String();
+        c.should.match( 0 );
+        await delay(2000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('state','connected');
+        c.should.match( 2 );
+        n1.receive({ topic:"close" });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('state','closed');
+        c.should.match( 2 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should set values', function (done) {
+    this.timeout( 5000 );
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:'[]', name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          msg.should.have.property('topic','currentData');
+          msg.should.have.property('payload').which.is.an.Object();
+          msg.payload.should.have.property('ctrlGridOptimizedCharge0/manualTargetTime')/*.which.is.a.Number()*/;
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        n1.should.have.a.property('edge', '0');
+        n1.should.have.a.property('inlist');
+        n1.should.have.a.property('state','closed');
         await delay(50);
         n1.receive({ topic:"open" });
         await delay(200);
@@ -84,6 +144,7 @@ describe( 'fenecon_websocket Node', function () {
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
         c.should.match( 0 );
+        n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
         await delay(2000);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

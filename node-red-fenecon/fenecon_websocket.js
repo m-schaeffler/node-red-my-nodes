@@ -3,12 +3,12 @@ module.exports = function(RED) {
     function FeneconWebsocketNode(config) {
         RED.nodes.createNode(this,config);
         var node = this;
-        this.fems   = RED.nodes.getNode( config.fems );
-        this.edge   = config.edge ?? "0";
-        this.inlist = JSON.parse( config.inlist ?? "[]" );
-        this.state  = "closed";
-        this.socket = null;
-        //this.config = null;
+        this.fems    = RED.nodes.getNode( config.fems );
+        this.edge    = config.edge ?? "0";
+        this.inlist  = JSON.parse( config.inlist ?? "[]" );
+        this.state   = "closed";
+        this.config  = null;
+        this.socket  = null;
         this.timeout = null;
         node.status( "" );
 
@@ -92,8 +92,21 @@ module.exports = function(RED) {
                     node.timeout = null;
                     node.socket.close();
                     node.socket = null;
-                    setStatus( "closed" );
+                    setStatus( "closing" );
                     break;
+                default:
+                  {
+                    console.log(msg.topic,msg.payload)
+                    const help = msg.topic.split( '/' );
+                    const payload = {
+                       componentId: help[0],
+                       properties: [{
+                           name:  help[1],
+                           value: msg.payload
+                       }]
+                    };
+                    console.log("updateComponentConfig",payload);
+                  }
             }
             done();
         });
@@ -118,7 +131,7 @@ module.exports = function(RED) {
                     sendEdgeRequest( "getEdgeConfig", {} );
                     break;
                 case "getEdgeConfig":
-                    //node.config = data.result.payload.result.components;
+                    node.config = data.result.payload.result.components;
                     //console.log(node.config)
                     setStatus( "subscribeChannels" );
                     sendEdgeRequest( "subscribeChannels", { count:0, channels: node.inlist } );
@@ -138,6 +151,7 @@ module.exports = function(RED) {
                                 node.send( { topic:data.params.payload.method, payload:data.params.payload.params } );
                                 break;
                             case "edgeConfig":
+                                console.log(data)
                                 break;
                             default:
                                 node.warn( "unknown method " + data.params.payload.method );

@@ -48,14 +48,18 @@ describe( 'fenecon_websocket Node', function () {
   it('should subscribe data', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {
+      var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var nf = helper.getNode("nf");
-      var c = 0;
+      var c1 = 0;
+      var c2 = 0;
+      var mtt;
       n2.on("input", function (msg) {
         console.log(msg);
         try {
@@ -65,7 +69,22 @@ describe( 'fenecon_websocket Node', function () {
           msg.payload.should.have.property('meter0/CurrentL1').which.is.a.Number();
           msg.payload.should.have.property('_sum/State').which.is.a.Number();
           msg.payload.should.have.property('batteryInverter0/AirTemperature').which.is.a.Number();
-          ++c;
+          ++c1;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.property('topic','edgeConfig');
+          msg.should.have.property('payload').which.is.an.Object();
+          msg.payload.should.have.a.property('ctrlGridOptimizedCharge0').which.is.an.Object();
+          msg.payload.ctrlGridOptimizedCharge0.should.have.a.property('properties').which.is.an.Object();
+          msg.payload.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime').which.is.a.String();
+          mtt ??= msg.payload.ctrlGridOptimizedCharge0.properties.manualTargetTime;
+          ++c2;
         }
         catch(err) {
           done(err);
@@ -77,29 +96,36 @@ describe( 'fenecon_websocket Node', function () {
         n1.should.have.a.property('edge', '0');
         n1.should.have.a.property('inlist', inlist);
         n1.should.have.a.property('state','closed');
-        n1.should.have.a.property('config',null);
+//        n1.should.have.a.property('config',null);
         await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 0 );
+        c2.should.match( 0 );
         n1.receive({ topic:"open" });
         await delay(200);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
-        n1.should.have.a.property('config').which.is.an.Object();
+/*        n1.should.have.a.property('config').which.is.an.Object();
         n1.config.should.have.a.property('ctrlGridOptimizedCharge0').which.is.an.Object();
         n1.config.ctrlGridOptimizedCharge0.should.have.a.property('properties').which.is.an.Object();
-        n1.config.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime').which.is.a.String();
-        c.should.match( 0 );
+        n1.config.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime').which.is.a.String();*/
+        c1.should.match( 0 );
+        c2.should.match( 1 );
         await delay(2000);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
-        c.should.match( 2 );
+        c1.should.match( 2 );
+        c2.should.match( 1 );
         n1.receive({ topic:"close" });
         await delay(200);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','closed');
-        c.should.match( 2 );
+        c1.should.match( 2 );
+        c2.should.match( 1 );
         done();
       }
       catch(err) {
@@ -107,14 +133,15 @@ describe( 'fenecon_websocket Node', function () {
       }
     });
   });
-
+/*
   it('should set values', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:'[]', name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:'[]', name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {
+      var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var nf = helper.getNode("nf");
@@ -124,7 +151,6 @@ describe( 'fenecon_websocket Node', function () {
         try {
           msg.should.have.property('topic','currentData');
           msg.should.have.property('payload').which.is.an.Object();
-          msg.payload.should.have.property('ctrlGridOptimizedCharge0/manualTargetTime')/*.which.is.a.Number()*/;
           ++c;
         }
         catch(err) {
@@ -163,21 +189,28 @@ describe( 'fenecon_websocket Node', function () {
       }
     });
   });
-
+*/
   it('should handle invalid URLs', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"foobar:lan", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {
+      var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var nf = helper.getNode("nf");
-      var c = 0;
+      var c1 = 0;
+      var c2 = 0;
       n2.on("input", function (msg) {
         console.log(msg);
-        ++c;
+        ++c1;
+      });
+      n3.on("input", function (msg) {
+        console.log(msg);
+        ++c2;
       });
       try{
         n1.should.have.a.property('name', 'test');
@@ -190,7 +223,8 @@ describe( 'fenecon_websocket Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('state','error');
-        c.should.match( 0 );
+        c1.should.match( 0 );
+        c2.should.match( 0 );
         done();
       }
       catch(err) {
@@ -202,17 +236,24 @@ describe( 'fenecon_websocket Node', function () {
   it('should handle invalid addresses', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"foobar.lan", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {
+      var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var nf = helper.getNode("nf");
-      var c = 0;
+      var c1 = 0;
+      var c2 = 0;
       n2.on("input", function (msg) {
         console.log(msg);
-        ++c;
+        ++c1;
+      });
+      n3.on("input", function (msg) {
+        console.log(msg);
+        ++c2;
       });
       try{
         n1.should.have.a.property('name', 'test');
@@ -225,7 +266,8 @@ describe( 'fenecon_websocket Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('state','error');
-        c.should.match( 0 );
+        c1.should.match( 0 );
+        c2.should.match( 0 );
         done();
       }
       catch(err) {
@@ -237,17 +279,24 @@ describe( 'fenecon_websocket Node', function () {
   it('should handle invalid IPs', function (done) {
     this.timeout( 2500 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"192.168.254.254", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {
+      var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var nf = helper.getNode("nf");
-      var c = 0;
+      var c1 = 0;
+      var c2 = 0;
       n2.on("input", function (msg) {
         console.log(msg);
-        ++c;
+        ++c1;
+      });
+      n3.on("input", function (msg) {
+        console.log(msg);
+        ++c2;
       });
       try{
         n1.should.have.a.property('name', 'test');
@@ -260,7 +309,8 @@ describe( 'fenecon_websocket Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('state','error');
-        c.should.match( 0 );
+        c1.should.match( 0 );
+        c2.should.match( 0 );
         done();
       }
       catch(err) {

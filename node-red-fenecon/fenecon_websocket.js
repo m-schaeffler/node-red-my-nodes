@@ -7,7 +7,6 @@ module.exports = function(RED) {
         this.edge    = config.edge ?? "0";
         this.inlist  = JSON.parse( config.inlist ?? "[]" );
         this.state   = "closed";
-        this.config  = null;
         this.socket  = null;
         this.timeout = null;
         node.status( "" );
@@ -131,8 +130,10 @@ module.exports = function(RED) {
                     sendEdgeRequest( "getEdgeConfig", {} );
                     break;
                 case "getEdgeConfig":
-                    node.config = data.result.payload.result.components;
-                    //console.log(node.config)
+                    node.send( [
+                        null,
+                        { topic:"edgeConfig", payload:data.result.payload.result.components }
+                    ] );
                     setStatus( "subscribeChannels" );
                     sendEdgeRequest( "subscribeChannels", { count:0, channels: node.inlist } );
                     break;
@@ -148,10 +149,17 @@ module.exports = function(RED) {
                         {
                             case 'currentData':
                                 //console.log(data.params.payload.params)
-                                node.send( { topic:data.params.payload.method, payload:data.params.payload.params } );
+                                node.send( [
+                                    { topic:data.params.payload.method, payload:data.params.payload.params },
+                                    null
+                                ] );
                                 break;
                             case "edgeConfig":
                                 console.log(data)
+                                node.send( [
+                                    null,
+                                    { topic:"edgeConfig", payload:data.params.payload.params }
+                                ] );
                                 break;
                             default:
                                 node.warn( "unknown method " + data.params.payload.method );

@@ -4,15 +4,19 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         var node = this;
         this.fems   = RED.nodes.getNode( config.fems );
+        this.edge   = config.edge ?? "0";
+        this.inlist = JSON.parse( config.inlist ?? "[]" );
         this.state  = "closed";
         this.socket = null;
+        this.config = null;
         node.status( "" );
 
         function setStatus(state)
         {
+            console.log(state)
             node.state = state;
             node.status( {
-                fill:  node.socket ? "green" : "gray",
+                fill:  node.socket ? ( state == "connected" ? "green" : "yellow" ) : "gray",
                 shape: "dot",
                 text:  state
             } );
@@ -25,6 +29,7 @@ module.exports = function(RED) {
                 shape: "dot",
                 text:  error
             } );
+            node.error( error );
         }
 
         function doSend(payload)
@@ -41,19 +46,28 @@ module.exports = function(RED) {
 
         function sendEmsRequest(method,params)
         {
-            const uuid = crypto.randomUUID();
             const payload = {
                 jsonrpc: "2.0",
                 method:  method,
                 params:  params,
-                id:      uuid
+                id:      crypto.randomUUID()
             };
             console.log(payload)
             doSend( payload );
         }
 
-        function sendEdgeRequest()
-        {}
+        function sendEdgeRequest(method,params)
+        {
+            sendEmsRequest( "edgeRpc", {
+                edgeId:  node.edge,
+                payload: {
+                    jsonrpc: "2.0",
+                    method:  method,
+                    params:  params,
+                    id:      crypto.randomUUID()
+                }
+            } );
+        }
 
         node.on('input', function(msg,send,done) {
             switch( msg.topic )
@@ -77,17 +91,42 @@ module.exports = function(RED) {
 
         node.on('wsConnected', function(event) {
             console.log('WebSocket connection established!',event);
-            setStatus( "connected" );
+            setStatus( "authenticate" );
             sendEmsRequest( "authenticateWithPassword", { password: node.fems.password } );
         });
 
         node.on('wsReceived', function(event) {
             console.log('Message from server: ', event.data);
+            const data = JSON.parse( event.data );
+            switch( node.state )
+            {
+                case "authenticate":
+                    setStatus( "subscribeEdges" );
+                    sendEmsRequest( "subscribeEdges", { edges: [node.edge] } );
+                    break;
+                case "subscribeEdges":
+                    setStatus( "getEdgeConfig" );
+                    sendEdgeRequest( "getEdgeConfig", {} );
+                    break;
+                case "getEdgeConfig":
+                    node.config = data.result.payload.result.components;
+                    //console.log(node.config)
+                    setStatus( "subscribeChannels" );
+                    sendEdgeRequest( "subscribeChannels", { count:0, channels: node.inlist } );
+                    break;
+                case "subscribeChannels":
+                    setStatus( "connected" );
+                    break;
+                case "connected":
+                    break;
+                default:
+                    node.error( "wsReceived: unkown state " + node.state );
+            }
         });
 
         node.on('wsError', function(event) {
             console.error('WebSocket error:', event);
-            setError( event.message );
+            setError( "websocket error" );
         });
 
         node.on('wsClosed', function(event) {

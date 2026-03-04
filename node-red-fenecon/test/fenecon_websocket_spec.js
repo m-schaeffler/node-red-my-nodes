@@ -30,6 +30,8 @@ describe( 'fenecon_websocket Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems', null);
+        n1.should.have.a.property('edge', '0');
+        n1.should.have.a.property('inlist', []);
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -41,9 +43,11 @@ describe( 'fenecon_websocket Node', function () {
     });
   });
 
+  const inlist = ["_sum/State","_sum/ProductionActivePower","meter0/CurrentL1","batteryInverter0/AirTemperature"];
+
   it('should make a request', function (done) {
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {
@@ -64,6 +68,8 @@ describe( 'fenecon_websocket Node', function () {
       try{
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems').which.is.an.Object();
+        n1.should.have.a.property('edge', '0');
+        n1.should.have.a.property('inlist', inlist);
         await delay(50);
         n1.receive({ topic:"open" });
         await delay(1000);

@@ -3,8 +3,10 @@
         category: 'input',
         color: '#a6bbcf',
         defaults: {
-            name: {value:""},
-            fems: {value:"",type:"feneconFems",required:true}
+            name:  {value:""},
+            fems:  {value:"",type:"feneconFems",required:true},
+            edge:  {value:"0",required:true},
+            inlist:{value:"[]",required:true}
         },
         inputs:1,
         outputs:1,
@@ -17,7 +19,14 @@
         },
         paletteLabel: "Fenecon websocket",
         inputLabels: 'request',
-        outputLabels: 'subscribed data'
+        outputLabels: 'subscribed data',
+        oneditprepare: function() {
+            const node = this;
+            $("#node-input-inlist").typedInput({ 
+                type:"json", 
+                types:["json"]
+            });
+        }
     });
 </script>
 
@@ -29,6 +38,14 @@
     <div class="form-row">
         <label for="node-input-fems"><i class="fa fa-server"></i> FEMS</label>
         <input type="text" id="node-input-fems">
+    </div>
+    <div class="form-row">
+        <label for="node-input-edge"><i class="fa fa-list"></i> Edge</label>
+        <input type="text" id="node-input-edge"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-inlist"><i class="fa fa-arrow-right"></i> Inlist</label>
+        <input type="text" id="node-input-inlist">
     </div>
 </script>
 

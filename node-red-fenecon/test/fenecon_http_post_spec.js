@@ -87,6 +87,29 @@ describe( 'fenecon_http_post Node', function () {
     });
   });
 
+  it('should not write invalid URLs', function (done) {
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconHttpPost", fems: "nf", name: "test", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"foobar:lan", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        await delay(50);
+        n1.receive({ topic:"foo/bar", payload:0 });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should not write invalid addresses', function (done) {
     var flow = [{ id: 'flow', type: 'tab' },
                 { id: "n1", type: "feneconHttpPost", fems: "nf", name: "test", z: "flow" },

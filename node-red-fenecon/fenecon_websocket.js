@@ -8,7 +8,8 @@ module.exports = function(RED) {
         this.inlist = JSON.parse( config.inlist ?? "[]" );
         this.state  = "closed";
         this.socket = null;
-        this.config = null;
+        //this.config = null;
+        this.timeout = null;
         node.status( "" );
 
         function setStatus(state)
@@ -24,24 +25,14 @@ module.exports = function(RED) {
 
         function setError(error)
         {
+            console.log("error "+error)
+            node.state = "error";
             node.status( {
                 fill:  "red",
                 shape: "dot",
                 text:  error
             } );
             node.error( error );
-        }
-
-        function doSend(payload)
-        {
-            if( node.socket )
-            {
-                node.socket.send( JSON.stringify( payload ) );
-            }
-            else
-            {
-                node.error( "websocket is closed" );
-            }
         }
 
         function sendEmsRequest(method,params)
@@ -52,8 +43,15 @@ module.exports = function(RED) {
                 params:  params,
                 id:      crypto.randomUUID()
             };
-            console.log(payload)
-            doSend( payload );
+            //console.log(payload)
+            if( node.socket )
+            {
+                node.socket.send( JSON.stringify( payload ) );
+            }
+            else
+            {
+                node.error( "websocket is closed" );
+            }
         }
 
         function sendEdgeRequest(method,params)
@@ -73,14 +71,25 @@ module.exports = function(RED) {
             switch( msg.topic )
             {
                 case "open":
-                    node.socket = new WebSocket( `ws://${node.fems.hostname}:8085` );
-                    node.socket.addEventListener( 'open',    function(event) { node.emit("wsConnected",event); } );
-                    node.socket.addEventListener( 'message', function(event) { node.emit("wsReceived", event); } );
-                    node.socket.addEventListener( 'close',   function(event) { node.emit("wsClosed",   event); } );
-                    node.socket.addEventListener( 'error',   function(event) { node.emit("wsError",    event); } );
-                    setStatus( "opening" );
+                    try
+                    {
+                        node.socket = new WebSocket( `ws://${node.fems.hostname}:8085` );
+                        node.socket.addEventListener( 'open',    function(event) { node.emit("wsConnected",event); } );
+                        node.socket.addEventListener( 'message', function(event) { node.emit("wsReceived", event); } );
+                        node.socket.addEventListener( 'close',   function(event) { node.emit("wsClosed",   event); } );
+                        node.socket.addEventListener( 'error',   function(event) { node.emit("wsError",    event); } );
+                        setStatus( "opening" );
+                        node.timeout = setTimeout( function(){ node.emit("wsTimeout") }, 1000 );
+                    }
+                    catch( e )
+                    {
+                        //console.log(e)
+                        setError( e.message );
+                    }
                     break;
                 case "close":
+                    clearTimeout( node.timeout );
+                    node.timeout = null;
                     node.socket.close();
                     node.socket = null;
                     setStatus( "closed" );
@@ -90,13 +99,13 @@ module.exports = function(RED) {
         });
 
         node.on('wsConnected', function(event) {
-            console.log('WebSocket connection established!',event);
+            //console.log('WebSocket connection established!',event);
             setStatus( "authenticate" );
             sendEmsRequest( "authenticateWithPassword", { password: node.fems.password } );
         });
 
         node.on('wsReceived', function(event) {
-            console.log('Message from server: ', event.data);
+            //console.log('Message from server: ', event.data);
             const data = JSON.parse( event.data );
             switch( node.state )
             {
@@ -109,15 +118,31 @@ module.exports = function(RED) {
                     sendEdgeRequest( "getEdgeConfig", {} );
                     break;
                 case "getEdgeConfig":
-                    node.config = data.result.payload.result.components;
+                    //node.config = data.result.payload.result.components;
                     //console.log(node.config)
                     setStatus( "subscribeChannels" );
                     sendEdgeRequest( "subscribeChannels", { count:0, channels: node.inlist } );
                     break;
                 case "subscribeChannels":
+                    clearTimeout( node.timeout );
+                    node.timeout = null;
                     setStatus( "connected" );
                     break;
                 case "connected":
+                    if( data.params )
+                    {
+                        switch( data.params.payload.method )
+                        {
+                            case 'currentData':
+                                //console.log(data.params.payload.params)
+                                node.send( { topic:data.params.payload.method, payload:data.params.payload.params } );
+                                break;
+                            case "edgeConfig":
+                                break;
+                            default:
+                                node.warn( "unknown method " + data.params.payload.method );
+                        }
+                    }
                     break;
                 default:
                     node.error( "wsReceived: unkown state " + node.state );
@@ -125,14 +150,31 @@ module.exports = function(RED) {
         });
 
         node.on('wsError', function(event) {
-            console.error('WebSocket error:', event);
-            setError( "websocket error" );
+            //console.error('WebSocket error:', event);
+            if( node.socket )
+            {
+                setError( "websocket error" );
+                clearTimeout( node.timeout );
+                node.timeout = null;
+                node.socket  = null;
+            }
         });
 
         node.on('wsClosed', function(event) {
-            console.log('WebSocket connection closed:', event.code, event.reason);
+            //console.log('WebSocket connection closed:', event.code, event.reason);
             node.socket = null;
             setStatus( "closed" );
+            clearTimeout( node.timeout );
+            node.timeout = null;
+        });
+
+        node.on('wsTimeout', function() {
+            //console.log('WebSocket timeout');
+            setError( "websocket timeout" );
+            const help = node.socket;
+            node.socket  = null;
+            node.timeout = null;
+            help.close();
         });
 
         node.on('close', function() {
@@ -140,6 +182,7 @@ module.exports = function(RED) {
             {
                 node.socket.close();
             }
+            clearTimeout( node.timeout );
         });
     }
 

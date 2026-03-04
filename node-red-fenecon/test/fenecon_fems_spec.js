@@ -28,6 +28,8 @@ describe( 'fenecon_fems Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('hostname', "");
+        n1.should.have.a.property('user', "owner");
+        n1.should.have.a.property('password', "owner");
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -46,25 +48,10 @@ describe( 'fenecon_fems Node', function () {
       try{
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('hostname', "fems.lan");
-        n1.should.have.a.property('auth').which.is.a.String();
+        n1.should.have.a.property('user', "owner");
+        n1.should.have.a.property('password', "owner");
+        n1.should.have.a.property('httpRequest');
         await delay(50);
-        var r = n1.httpUrl("Foo/Bar");
-        r.should.be.a.String();
-        await delay(50);
-        r = n1.httpOptions();
-        r.should.be.an.Object();
-        r.should.have.a.property('headers');
-        r.should.have.a.property('method','GET');
-        r.should.have.a.property('signal');
-        r.headers.should.have.a.property('Authorization');
-        await delay(50);
-        r = n1.httpOptions( "Test" );
-        r.should.be.an.Object();
-        r.should.have.a.property('headers');
-        r.should.have.a.property('method','POST');
-        r.should.have.a.property('body','{"value":"Test"}');
-        r.should.have.a.property('signal');
-        r.headers.should.have.a.property('Authorization');
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

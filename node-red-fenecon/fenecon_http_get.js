@@ -9,10 +9,7 @@ module.exports = function(RED) {
         node.on('input', async function(msg,send,done) {
             try
             {
-                const response = await fetch(
-                    node.fems.httpUrl( msg.topic ),
-                    node.fems.httpOptions()
-                );
+                const response = await node.fems.httpRequest( msg.topic );
                 //console.log(response);
                 if( response.ok )
                 {

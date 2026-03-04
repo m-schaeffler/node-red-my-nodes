@@ -54,6 +54,10 @@ Examples:
 |:-------|:------------|:----------------------------------|
 |Fems    | feneconFems | configuration of the FEMS. |
 
+## feneconHttpPost node
+
+## feneconWebsocket node
+
 ## Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon.json)

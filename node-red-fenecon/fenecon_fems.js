@@ -3,27 +3,25 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         var node = this;
         this.hostname = config.hostname ?? "";
-        this.auth     = `Basic ${Buffer.from( "owner:owner", "utf-8" ).toString( "base64" )}`;
+        this.user     = "owner";
+        this.password = "owner";
+        const auth    = "Basic " + Buffer.from( `${this.user}:${this.password}`, "utf-8" ).toString( "base64" );
 
-        this.httpUrl = function(topic) {
-            return `http://${node.hostname}:80/rest/channel/${topic}`;
-        }
-
-        this.httpOptions = function(payload=null) {
-            let result = {
+        this.httpRequest = function(topic,payload=undefined) {
+            let options = {
                 headers: {
-                    Authorization: node.auth
+                    Authorization: auth
                 },
-                method: payload ? "POST" : "GET",
                 signal: AbortSignal.timeout( 1000 )
             };
-            if( payload )
+            if( payload !== undefined )
             {
-                result.body = JSON.stringify( { value: payload } );
+                options.method = "POST";
+                options.body   = JSON.stringify( { value: payload } );
             }
-            return result;
+            //console.log(options)
+            return fetch( `http://${node.hostname}:80/rest/channel/${topic}`, options );
         }
-
     }
     RED.nodes.registerType( "feneconFems", femsNode );
 }

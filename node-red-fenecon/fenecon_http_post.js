@@ -9,11 +9,8 @@ module.exports = function(RED) {
         node.on('input', async function(msg,send,done) {
             try
             {
-                const response = await fetch(
-                    node.fems.httpUrl( msg.topic ),
-                    node.fems.httpOptions( msg.payload )
-                );
-                console.log(response);
+                const response = await node.fems.httpRequest( msg.topic, msg.payload );
+                //console.log(response);
                 if( response.ok )
                 {
                     node.status( {
@@ -25,8 +22,8 @@ module.exports = function(RED) {
                 }
                 else
                 {
-                    const result = await response.text();
-                    console.log(result);
+                    //const result = await response.text();
+                    //console.log(result);
                     node.status( {
                         fill:  "red",
                         shape: "dot",
@@ -37,7 +34,7 @@ module.exports = function(RED) {
             }
             catch( e )
             {
-                console.log(e);
+                //console.log(e);
                 node.status( {
                     fill:  "red",
                     shape: "dot",

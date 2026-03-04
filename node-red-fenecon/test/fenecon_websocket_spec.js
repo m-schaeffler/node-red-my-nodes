@@ -65,6 +65,8 @@ describe( 'fenecon_websocket Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems').which.is.an.Object();
         await delay(50);
+        n1.receive({ topic:"open" });
+        await delay(1000);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

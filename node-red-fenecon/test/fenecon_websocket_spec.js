@@ -114,35 +114,42 @@ describe( 'fenecon_websocket Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         n1.receive({ topic:"open" });
-        await delay(200);
+        await delay(150);
         n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('state','connected');
+        c1.should.match( 0 );
+        c2.should.match( 1 );
+        n1.receive({ topic:"open" }); // 2nd
+        await delay(50);
+        n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
         c1.should.match( 0 );
         c2.should.match( 1 );
         n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
         await delay(1000);
-        n1.warn.should.have.callCount(0);
+        n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
         c1.should.match( 1 );
         c2.should.match( 2 );
         n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:mtt });
         await delay(1000);
-        n1.warn.should.have.callCount(0);
+        n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
         c1.should.match( 2 );
         c2.should.match( 3 );
         await delay(1000);
-        n1.warn.should.have.callCount(0);
+        n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
         c1.should.match( 3 );
         c2.should.match( 3 );
         n1.receive({ topic:"close" });
         await delay(200);
-        n1.warn.should.have.callCount(0);
+        n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','closed');
         c1.should.match( 3 );
@@ -274,6 +281,101 @@ describe( 'fenecon_websocket Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('state','error');
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should handle other requests without open', function (done) {
+    this.timeout( 2500 );
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n3 = helper.getNode("n3");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      var c1 = 0;
+      var c2 = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        ++c1;
+      });
+      n3.on("input", function (msg) {
+        console.log(msg);
+        ++c2;
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        n1.should.have.a.property('edge', '0');
+        n1.should.have.a.property('inlist', inlist);
+        await delay(50);
+        n1.receive({ topic:"close" });
+        await delay(50);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('state','closed');
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
+        await delay(50);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(1);
+        n1.should.have.a.property('state','closed');
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should not write config without risk accepted', function (done) {
+    this.timeout( 2500 );
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n3 = helper.getNode("n3");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      var c1 = 0;
+      var c2 = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        ++c1;
+      });
+      n3.on("input", function (msg) {
+        console.log(msg);
+        ++c2;
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        n1.should.have.a.property('edge', '0');
+        n1.should.have.a.property('inlist', inlist);
+        n1.should.have.a.property('risk', false);
+        await delay(50);
+        n1.state = "connected";
+        n1.should.have.a.property('state','connected');
+        n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
+        await delay(50);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
         c1.should.match( 0 );
         c2.should.match( 0 );
         done();

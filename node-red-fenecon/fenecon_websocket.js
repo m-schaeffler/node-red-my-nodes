@@ -95,7 +95,7 @@ module.exports = function(RED) {
                     break;
                 default:
                   {
-                    console.log(msg.topic,msg.payload)
+                    //console.log(msg.topic,msg.payload)
                     const help = msg.topic.split( '/' );
                     const payload = {
                        componentId: help[0],
@@ -104,7 +104,8 @@ module.exports = function(RED) {
                            value: msg.payload
                        }]
                     };
-                    console.log("updateComponentConfig",payload);
+                    //console.log("updateComponentConfig",payload);
+                    sendEdgeRequest( "updateComponentConfig", payload );
                   }
             }
             done();
@@ -155,10 +156,10 @@ module.exports = function(RED) {
                                 ] );
                                 break;
                             case "edgeConfig":
-                                console.log(data)
+                                //console.log(data.params.payload.params.components)
                                 node.send( [
                                     null,
-                                    { topic:"edgeConfig", payload:data.params.payload.params }
+                                    { topic:"edgeConfig", payload:data.params.payload.params.components }
                                 ] );
                                 break;
                             default:

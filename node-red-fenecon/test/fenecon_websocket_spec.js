@@ -61,7 +61,7 @@ describe( 'fenecon_websocket Node', function () {
       var c2 = 0;
       var mtt;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.property('topic','currentData');
           msg.should.have.property('payload').which.is.an.Object();
@@ -82,10 +82,19 @@ describe( 'fenecon_websocket Node', function () {
           msg.should.have.property('payload').which.is.an.Object();
           msg.payload.should.have.a.property('ctrlGridOptimizedCharge0').which.is.an.Object();
           msg.payload.ctrlGridOptimizedCharge0.should.have.a.property('properties').which.is.an.Object();
-          msg.payload.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime').which.is.a.String();
+          switch( ++c2 )
+          {
+              case 2:
+                  msg.payload.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime','11:30');
+                  break;
+              case 3:
+                  msg.payload.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime',mtt);
+                  break;
+              default:
+                  msg.payload.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime').which.is.a.String();
+          }
           mtt ??= msg.payload.ctrlGridOptimizedCharge0.properties.manualTargetTime;
-          console.log(mtt);
-          ++c2;
+          //console.log(mtt,msg.payload.ctrlGridOptimizedCharge0.properties.manualTargetTime);
         }
         catch(err) {
           done(err);
@@ -110,26 +119,32 @@ describe( 'fenecon_websocket Node', function () {
         c1.should.match( 0 );
         c2.should.match( 1 );
         n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
-        await delay(200);
+        await delay(1000);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
-        c1.should.match( 0 );
-        c2.should.match( 1 );
+        c1.should.match( 1 );
+        c2.should.match( 2 );
         n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:mtt });
-        await delay(1800);
+        await delay(1000);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','connected');
         c1.should.match( 2 );
-        c2.should.match( 1 );
+        c2.should.match( 3 );
+        await delay(1000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('state','connected');
+        c1.should.match( 3 );
+        c2.should.match( 3 );
         n1.receive({ topic:"close" });
         await delay(200);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('state','closed');
-        c1.should.match( 2 );
-        c2.should.match( 1 );
+        c1.should.match( 3 );
+        c2.should.match( 3 );
         done();
       }
       catch(err) {

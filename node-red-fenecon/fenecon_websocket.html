@@ -18,7 +18,7 @@
             return this.name?"node_label_italic":"";
         },
         paletteLabel: "Fenecon WS",
-        inputLabels: 'request',
+        inputLabels: 'command / request',
         outputLabels: ['subscribed data','config data'],
         oneditprepare: function() {
             const node = this;
@@ -51,40 +51,74 @@
 
 <script type="text/x-red" data-help-name="feneconWebsocket">
 
-    <p>A Node Red node to decrypt and decode raw data frames from <a href="https://bthome.io">BT-Home</a> sensors.</p>
+    <p>A Node Red node to subscribe data points and configuration data at a Fenecon FEMS via the WebSocket interface similar to the web UI.</p>
+    
+    <p>It is also possible to write config data.<br>
+    <strong>This can be dangerous and damage your FEMS! This is done at your own risk! Please be careful and we accept no responsibility whatsoever for a damaged FEMS!</strong></p>
     
     <h3>Input</h3>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">object</span></dt>
-        <dd> data from Shelly script</dd>
-        <dt>resync <span class="property-type">boolean</span></dt>
-        <dd> if set to yes, allow all packed ids; to resync after some issue</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> </dd>
+        <dt>payload <span class="property-type">number / string</span></dt>
+        <dd> </dd>
     </dl>
     
     <h3>Outputs</h3>
+    
+    <h4>subscribed data</h4>
+    <p>Cyclic output of the subscribed data points.</p>
+    
     <dl class="message-properties">
-        <dt>topic <span class="property-type">string</span></dt>
-        <dd> <code>State-Prefix</code> + name of the device</dd>
-        <dt>payload <span class="property-type"></span></dt>
-        <dd> decoded state data</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> received data points. It is an object with key/value pairs.</dd>
+    </dl>
+    
+    <h4>config data</h4>
+    <p>Config data of the FEMS.</p>
+    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> received config data.</dd>
     </dl>
     
     <h3>Parameters</h3>
     <dl class="message-properties">
-        <dt>Devices <span class="property-type">JSON</span></dt>
-        <dd> configuration of the BT-Home devices.</dd>
-        <dt>counter is times <span class="property-type">Boolean</span></dt>
-        <dd> the counter in encrypted messages is checked again the actual time.</dd>
-        <dt>Status-Prefix <span class="property-type">string</span></dt>
-        <dd> prefix for the topic for state output.</dd>
-        <dt>Event-Prefix <span class="property-type">string</span></dt>
-        <dd> prefix for the topic for event output.</dd>
-        <dt>Context-Variable <span class="property-type">string</span></dt>
-        <dd> name of the variable in flow context storage.</dd>
-        <dt>Contextstore <span class="property-type">string</span></dt>
-        <dd>  context store to be used.</dd>
-        <dt>battery is state <span class="property-type">Boolean</span></dt>
-        <dd> battery level is included in state mesage.</dt>
+        <dt>fems <span class="property-type">feneconFems</span></dt>
+        <dd> configuration of the FEMS.</dd>
+        <dt>Edge <span class="property-type">string</span></dt>
+        <dd> id of the edge; normally <code>"0"</code>.</dd>
+        <dt>Inlist <span class="property-type">array</span></dt>
+        <dd> list of subscribed data points.</dd>
     </dl>
     
+    <h4>Data Points</h4>
+    
+    <p>The data points of the FEMS are always named as <code>group/name</code>.
+    You can find possible data points at <a href="https://docs.fenecon.de/de/fems/glossar.html#_liste_der_komponenten_und_kan%C3%A4le">FEMS documentation</a>.</p>
+
+    <p>Example inlist:</p>
+<code>[<br>
+    "_sum/State",<br>
+    "_sum/GridMode",<br>
+    "_sum/EssSoc",<br>
+    "_sum/ProductionActivePower",<br>
+    "_sum/EssDischargePower",<br>
+    "_sum/GridActivePower",<br>
+    "_sum/GridSellActiveEnergy",<br>
+    "_sum/GridBuyActiveEnergy",<br>
+    "_sum/ProductionActiveEnergy",<br>
+    "_sum/EssDcDischargeEnergy",<br>
+    "_sum/EssDcChargeEnergy",<br>
+    "batteryInverter0/AirTemperature",<br>
+    "batteryInverter0/RadiatorTemperature",<br>
+    "ctrlIoHeatPump0/Status",<br>
+    "charger0/ActualPower",<br>
+    "charger1/ActualPower",<br>
+    "ctrlGridOptimizedCharge0/DelayChargeState",<br>
+    "meter0/CurrentL1",<br>
+    "meter0/CurrentL2",<br>
+    "meter0/CurrentL3"<br>
+]</code>
+ 
 </script>

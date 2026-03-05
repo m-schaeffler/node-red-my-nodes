@@ -41,10 +41,10 @@ Examples:
 - `_meta/Version`
 - `ctrlGridOptimizedCharge0/(DelayChargeMaximumChargeLimit|_PropertyManualTargetTime)`
 
-### Outputs
+### Output
 
 |msg.   | type   | description |
-|:------|:-------|-------------|
+|:------|:-------|:------------|
 |topic  | string | same as in input.|
 |payload| value or object | received data points. If more than one data point is returned, it is an object with key/value pairs.|
 
@@ -64,7 +64,7 @@ A Node Red node to set data points at a Fenecon FEMS with the App "Schreibzugrif
 |:-------|:-------|:----------------------------------|
 |topic   |string  |data point to be written |
 |payload |number  |value to be written |
-    
+
 #### Data Points
 
 The data points of the FEMS are always named as `group/name`.
@@ -74,14 +74,83 @@ Examples:
 - `ess0/SetActivePowerEquals`
 - `ess0/SetActivePowerLessOrEquals`
 - `ess0/SetActivePowerGreaterOrEquals`
-    
+
 ### Parameters
 
 |config  | type        | description                       |
 |:-------|:------------|:----------------------------------|
 |Fems    | feneconFems | configuration of the FEMS. |
- 
+
 ## feneconWebsocket node
+
+A Node Red node to subscribe data points and configuration data at a Fenecon FEMS via the WebSocket interface similar to the web UI.
+
+It is also possible to write config data.
+__This can be dangerous and damage your FEMS! This is done at your own risk! Please be careful and we accept no responsibility whatsoever for a damaged FEMS!__
+
+### Input
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   |string  | |
+|payload |number  | |
+
+### Outputs
+
+#### subscribed data
+
+Cyclic output of the subscribed data points.
+
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|payload| object | received data points. It is an object with key/value pairs.|
+
+#### config data
+
+Config data of the FEMS.
+
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|payload| object | received config data.|
+
+### Parameters
+
+|config  | type        | description                       |
+|:-------|:------------|:----------------------------------|
+|Fems    | feneconFems | configuration of the FEMS. |
+|Edge    | string      | id of the edge; normally `"0"`. |
+|Inlist  | array       | list of subscribed data points. |
+
+#### Data Points
+
+The data points of the FEMS are always named as `group/name`.
+You can find possible data points at [FEMS documentation](https://docs.fenecon.de/de/fems/glossar.html#_liste_der_komponenten_und_kan%C3%A4le).
+
+Example inlist:
+```
+[
+    "_sum/State",
+    "_sum/GridMode",
+    "_sum/EssSoc",
+    "_sum/ProductionActivePower",
+    "_sum/EssDischargePower",
+    "_sum/GridActivePower",
+    "_sum/GridSellActiveEnergy",
+    "_sum/GridBuyActiveEnergy",
+    "_sum/ProductionActiveEnergy",
+    "_sum/EssDcDischargeEnergy",
+    "_sum/EssDcChargeEnergy",
+    "batteryInverter0/AirTemperature",
+    "batteryInverter0/RadiatorTemperature",
+    "ctrlIoHeatPump0/Status",
+    "charger0/ActualPower",
+    "charger1/ActualPower",
+    "ctrlGridOptimizedCharge0/DelayChargeState",
+    "meter0/CurrentL1",
+    "meter0/CurrentL2",
+    "meter0/CurrentL3"
+]
+```
 
 ## Example Flow
 

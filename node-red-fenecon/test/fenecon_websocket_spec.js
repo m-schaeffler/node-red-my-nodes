@@ -32,6 +32,7 @@ describe( 'fenecon_websocket Node', function () {
         n1.should.have.a.property('fems', null);
         n1.should.have.a.property('edge', '0');
         n1.should.have.a.property('inlist', []);
+        n1.should.have.a.property('risk', false);
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -48,7 +49,7 @@ describe( 'fenecon_websocket Node', function () {
   it('should subscribe data, get and set config data', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"]], z: "flow" },
+                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), risk:true, name: "test", wires: [["n2"],["n3"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
@@ -105,6 +106,7 @@ describe( 'fenecon_websocket Node', function () {
         n1.should.have.a.property('fems').which.is.an.Object();
         n1.should.have.a.property('edge', '0');
         n1.should.have.a.property('inlist', inlist);
+        n1.should.have.a.property('risk', true);
         n1.should.have.a.property('state','closed');
         await delay(50);
         n1.warn.should.have.callCount(0);

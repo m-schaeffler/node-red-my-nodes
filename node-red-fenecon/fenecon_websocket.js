@@ -6,6 +6,7 @@ module.exports = function(RED) {
         this.fems    = RED.nodes.getNode( config.fems );
         this.edge    = config.edge ?? "0";
         this.inlist  = JSON.parse( config.inlist ?? "[]" );
+        this.risk    = Boolean( config.risk );
         this.state   = "closed";
         this.socket  = null;
         this.timeout = null;
@@ -20,11 +21,12 @@ module.exports = function(RED) {
                 shape: "dot",
                 text:  state
             } );
+            node.log( `new state: ${state}` );
         }
 
         function setError(error)
         {
-            console.log("error "+error)
+            //console.log("error "+error)
             node.state = "error";
             node.status( {
                 fill:  "red",
@@ -70,43 +72,63 @@ module.exports = function(RED) {
             switch( msg.topic )
             {
                 case "open":
-                    try
+                    if( node.state != "connected" )
                     {
-                        node.socket = new WebSocket( `ws://${node.fems.hostname}:8085` );
-                        node.socket.addEventListener( 'open',    function(event) { node.emit("wsConnected",event); } );
-                        node.socket.addEventListener( 'message', function(event) { node.emit("wsReceived", event); } );
-                        node.socket.addEventListener( 'close',   function(event) { node.emit("wsClosed",   event); } );
-                        node.socket.addEventListener( 'error',   function(event) { node.emit("wsError",    event); } );
-                        setStatus( "opening" );
-                        node.timeout = setTimeout( function(){ node.emit("wsTimeout") }, 1000 );
-                    }
-                    catch( e )
-                    {
-                        //console.log(e)
-                        setError( e.message );
+                        try
+                        {
+                            if( node.socket )
+                            {
+                                clearTimeout( node.timeout );
+                                node.socket.close();
+                            }
+                            node.socket = new WebSocket( `ws://${node.fems.hostname}:8085` );
+                            node.socket.addEventListener( 'open',    function(event) { node.emit("wsConnected",event); } );
+                            node.socket.addEventListener( 'message', function(event) { node.emit("wsReceived", event); } );
+                            node.socket.addEventListener( 'close',   function(event) { node.emit("wsClosed",   event); } );
+                            node.socket.addEventListener( 'error',   function(event) { node.emit("wsError",    event); } );
+                            setStatus( "opening" );
+                            node.timeout = setTimeout( function(){ node.emit("wsTimeout") }, 1000 );
+                        }
+                        catch( e )
+                        {
+                            //console.log(e)
+                            setError( e.message );
+                        }
                     }
                     break;
                 case "close":
-                    clearTimeout( node.timeout );
-                    node.timeout = null;
-                    node.socket.close();
-                    node.socket = null;
-                    setStatus( "closing" );
+                    if( node.socket )
+                    {
+                        clearTimeout( node.timeout );
+                        node.timeout = null;
+                        node.socket.close();
+                        node.socket = null;
+                        setStatus( "closing" );
+                    }
                     break;
                 default:
-                  {
-                    //console.log(msg.topic,msg.payload)
-                    const help = msg.topic.split( '/' );
-                    const payload = {
-                       componentId: help[0],
-                       properties: [{
-                           name:  help[1],
-                           value: msg.payload
-                       }]
-                    };
-                    //console.log("updateComponentConfig",payload);
-                    sendEdgeRequest( "updateComponentConfig", payload );
-                  }
+                    if( node.state != "connected" )
+                    {
+                        node.error( `cannot send in ${node.state} state` );
+                    }
+                    else if( node.risk !== true )
+                    {
+                        node.warn( 'cannot send without accepting the risk' );
+                    }
+                    else
+                    {
+                        //console.log(msg.topic,msg.payload)
+                        const help = msg.topic.split( '/' );
+                        const payload = {
+                            componentId: help[0],
+                            properties: [{
+                                name:  help[1],
+                                value: msg.payload
+                            }]
+                        };
+                        //console.log("updateComponentConfig",payload);
+                        sendEdgeRequest( "updateComponentConfig", payload );
+                    }
             }
             done();
         });

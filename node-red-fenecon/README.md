@@ -92,8 +92,8 @@ __This can be dangerous and damage your FEMS! This is done at your own risk! Ple
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic   |string  | |
-|payload |number  | |
+|topic   |string  |`open`, `close` or name of the config parameter to be written |
+|payload |number  |value of the config parameter to be written |
 
 ### Outputs
 
@@ -120,6 +120,7 @@ Config data of the FEMS.
 |Fems    | feneconFems | configuration of the FEMS. |
 |Edge    | string      | id of the edge; normally `"0"`. |
 |Inlist  | array       | list of subscribed data points. |
+|Risk    | boolean     | risk accepted, enables writing. |
 
 #### Data Points
 

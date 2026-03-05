@@ -6,7 +6,8 @@
             name:  {value:""},
             fems:  {value:"",type:"feneconFems",required:true},
             edge:  {value:"0",required:true},
-            inlist:{value:"[]",required:true}
+            inlist:{value:"[]",required:true},
+            risk:  {value:false}
         },
         inputs:1,
         outputs:2,
@@ -47,6 +48,10 @@
         <label for="node-input-inlist"><i class="fa fa-arrow-right"></i> Inlist</label>
         <input type="text" id="node-input-inlist">
     </div>
+    <div class="form-row">
+        <label for="node-input-risk"><i class="fa fa-filter"></i> Risk accepted</label>
+        <input type="checkbox" id="node-input-risk" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="feneconWebsocket">
@@ -59,9 +64,9 @@
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
-        <dd> </dd>
+        <dd> <code>open</code>, <code>close</code> or name of the config parameter to be written</dd>
         <dt>payload <span class="property-type">number / string</span></dt>
-        <dd> </dd>
+        <dd> value of the config parameter to be written</dd>
     </dl>
     
     <h3>Outputs</h3>
@@ -90,6 +95,8 @@
         <dd> id of the edge; normally <code>"0"</code>.</dd>
         <dt>Inlist <span class="property-type">array</span></dt>
         <dd> list of subscribed data points.</dd>
+        <dt>Risk <span class="property-type">boolean</span></dt>
+        <dd> risk accepted, enables writing.</dd>
     </dl>
     
     <h4>Data Points</h4>

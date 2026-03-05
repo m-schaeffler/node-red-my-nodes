@@ -192,6 +192,7 @@ module.exports = function(RED) {
                                 }
                                 node.send( [
                                     { topic:data.params.payload.method, payload:data.params.payload.params },
+                                    null,
                                     null
                                 ] );
                                 break;
@@ -199,7 +200,8 @@ module.exports = function(RED) {
                                 //console.log(data.params.payload.params.components)
                                 node.send( [
                                     null,
-                                    { topic:"edgeConfig", payload:data.params.payload.params.components }
+                                    { topic:"edgeConfig", payload:data.params.payload.params.components },
+                                    null
                                 ] );
                                 break;
                             default:

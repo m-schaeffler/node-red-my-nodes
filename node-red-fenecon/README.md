@@ -113,6 +113,8 @@ Config data of the FEMS.
 |:------|:-------|:------------|
 |payload| object | received config data.|
 
+#### state
+
 ### Parameters
 
 |config  | type        | description                       |

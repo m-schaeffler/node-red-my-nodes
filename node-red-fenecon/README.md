@@ -56,6 +56,31 @@ Examples:
 
 ## feneconHttpPost node
 
+A Node Red node to set data points at a Fenecon FEMS with the App "Schreibzugriff".
+
+### Input
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   |string  |data point to be written |
+|payload |number  |value to be written |
+    
+#### Data Points
+
+The data points of the FEMS are always named as `group/name`.
+You can find the writable data points at the [FEMS documentation](https://docs.fenecon.de/de/fems/fems-app/App_REST-JSON_Schreibzugriff.html).
+
+Examples:
+- `ess0/SetActivePowerEquals`
+- `ess0/SetActivePowerLessOrEquals`
+- `ess0/SetActivePowerGreaterOrEquals`
+    
+### Parameters
+
+|config  | type        | description                       |
+|:-------|:------------|:----------------------------------|
+|Fems    | feneconFems | configuration of the FEMS. |
+ 
 ## feneconWebsocket node
 
 ## Example Flow

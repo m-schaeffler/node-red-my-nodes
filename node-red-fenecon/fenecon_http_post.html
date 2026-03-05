@@ -33,40 +33,31 @@
 
 <script type="text/x-red" data-help-name="feneconHttpPost">
 
-    <p>A Node Red node to decrypt and decode raw data frames from <a href="https://bthome.io">BT-Home</a> sensors.</p>
+    <p>A Node Red node to set data points at a Fenecon FEMS with the App "Schreibzugriff".</p>
     
     <h3>Input</h3>
     <dl class="message-properties">
-        <dt>payload <span class="property-type">object</span></dt>
-        <dd> data from Shelly script</dd>
-        <dt>resync <span class="property-type">boolean</span></dt>
-        <dd> if set to yes, allow all packed ids; to resync after some issue</dd>
-    </dl>
-    
-    <h3>Outputs</h3>
-    <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
-        <dd> <code>State-Prefix</code> + name of the device</dd>
-        <dt>payload <span class="property-type"></span></dt>
-        <dd> decoded state data</dd>
+        <dd> data point to be written</dd>
+        <dt>payload <span class="property-type">number</span></dt>
+        <dd> value to be written</dd>
     </dl>
     
+    <h4>Data Points</h4>
+    The data points of the FEMS are always named as <code>group/name</code>.
+    You can find the writable data points at the <a href="https://docs.fenecon.de/de/fems/fems-app/App_REST-JSON_Schreibzugriff.html">FEMS documentation</a>.
+
+    Examples:
+    <ul>
+      <li><code>ess0/SetActivePowerEquals</code>
+      <li><code>ess0/SetActivePowerLessOrEquals</code>
+      <li><code>ess0/SetActivePowerGreaterOrEquals</code>
+    </ul>
+
     <h3>Parameters</h3>
     <dl class="message-properties">
-        <dt>Devices <span class="property-type">JSON</span></dt>
-        <dd> configuration of the BT-Home devices.</dd>
-        <dt>counter is times <span class="property-type">Boolean</span></dt>
-        <dd> the counter in encrypted messages is checked again the actual time.</dd>
-        <dt>Status-Prefix <span class="property-type">string</span></dt>
-        <dd> prefix for the topic for state output.</dd>
-        <dt>Event-Prefix <span class="property-type">string</span></dt>
-        <dd> prefix for the topic for event output.</dd>
-        <dt>Context-Variable <span class="property-type">string</span></dt>
-        <dd> name of the variable in flow context storage.</dd>
-        <dt>Contextstore <span class="property-type">string</span></dt>
-        <dd>  context store to be used.</dd>
-        <dt>battery is state <span class="property-type">Boolean</span></dt>
-        <dd> battery level is included in state mesage.</dt>
+        <dt>fems <span class="property-type">feneconFems</span></dt>
+        <dd> configuration of the FEMS.</dd>
     </dl>
-    
+
 </script>

@@ -1,14 +1,14 @@
 <script type="text/javascript">
     RED.nodes.registerType('feneconHttpGet',{
         category: 'input',
-        color: '#a6bbcf',
+        color: '#0fcdf8',
         defaults: {
             name: {value:""},
             fems:{value:"",type:"feneconFems",required:true}
         },
         inputs:1,
         outputs:1,
-        icon: "font-awesome/fa-plug",
+        icon: "solar.png",
         label: function() {
             return this.name||"Fenecon get";
         },

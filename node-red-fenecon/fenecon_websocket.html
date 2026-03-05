@@ -7,7 +7,8 @@
             fems:  {value:"",type:"feneconFems",required:true},
             edge:  {value:"0",required:true},
             inlist:{value:"[]",required:true},
-            risk:  {value:false}
+            risk:  {value:false},
+            timeout:{value:false}
         },
         inputs:1,
         outputs:2,
@@ -49,8 +50,12 @@
         <input type="text" id="node-input-inlist">
     </div>
     <div class="form-row">
-        <label for="node-input-risk"><i class="fa fa-filter"></i> Risk accepted</label>
+        <label for="node-input-risk"><i class="fa fa-bolt"></i> Risk accepted</label>
         <input type="checkbox" id="node-input-risk" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-timeout"><i class="fa fa-hourglass-start"></i> Timeout</label>
+        <input type="checkbox" id="node-input-timeout" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
 </script>
 
@@ -97,6 +102,8 @@
         <dd> list of subscribed data points.</dd>
         <dt>Risk <span class="property-type">boolean</span></dt>
         <dd> risk accepted, enables writing.</dd>
+        <dt>Timeout <span class="property-type">boolean</span></dt>
+        <dd> close the websocket, if 10s no subscribed message arrives.</dd>
     </dl>
     
     <h4>Data Points</h4>

@@ -7,9 +7,11 @@ module.exports = function(RED) {
         this.edge    = config.edge ?? "0";
         this.inlist  = JSON.parse( config.inlist ?? "[]" );
         this.risk    = Boolean( config.risk );
-        this.state   = "closed";
-        this.socket  = null;
-        this.timeout = null;
+        this.timeout = Boolean( config.timeout );
+        this.state      = "closed";
+        this.socket     = null;
+        this.timStartup = null;
+        this.timRecv    = null;
         node.status( "" );
 
         function setStatus(state)
@@ -78,7 +80,7 @@ module.exports = function(RED) {
                         {
                             if( node.socket )
                             {
-                                clearTimeout( node.timeout );
+                                clearTimeout( node.timStartup );
                                 node.socket.close();
                             }
                             node.socket = new WebSocket( `ws://${node.fems.hostname}:8085` );
@@ -87,7 +89,7 @@ module.exports = function(RED) {
                             node.socket.addEventListener( 'close',   function(event) { node.emit("wsClosed",   event); } );
                             node.socket.addEventListener( 'error',   function(event) { node.emit("wsError",    event); } );
                             setStatus( "opening" );
-                            node.timeout = setTimeout( function(){ node.emit("wsTimeout") }, 1000 );
+                            node.timStartup = setTimeout( function(){ node.emit("wsTimeout") }, 1000 );
                         }
                         catch( e )
                         {
@@ -103,8 +105,8 @@ module.exports = function(RED) {
                 case "close":
                     if( node.socket )
                     {
-                        clearTimeout( node.timeout );
-                        node.timeout = null;
+                        clearTimeout( node.timStartup );
+                        node.timStartup = null;
                         node.socket.close();
                         node.socket = null;
                         setStatus( "closing" );
@@ -169,8 +171,12 @@ module.exports = function(RED) {
                     sendEdgeRequest( "subscribeChannels", { count:0, channels: node.inlist } );
                     break;
                 case "subscribeChannels":
-                    clearTimeout( node.timeout );
-                    node.timeout = null;
+                    clearTimeout( node.timStartup );
+                    node.timStartup = null;
+                    if( node.timeout )
+                    {
+                        node.timRecv = setTimeout( function(){ node.emit("wsTimeoutReceive") }, 10000 );
+                    }
                     setStatus( "connected" );
                     break;
                 case "connected":
@@ -180,6 +186,10 @@ module.exports = function(RED) {
                         {
                             case 'currentData':
                                 //console.log(data.params.payload.params)
+                                if( node.timRecv )
+                                {
+                                    node.timRecv.refresh();
+                                }
                                 node.send( [
                                     { topic:data.params.payload.method, payload:data.params.payload.params },
                                     null
@@ -207,9 +217,11 @@ module.exports = function(RED) {
             if( node.socket )
             {
                 setError( "websocket error" );
-                clearTimeout( node.timeout );
-                node.timeout = null;
-                node.socket  = null;
+                clearTimeout( node.timStartup );
+                clearTimeout( node.timRecv );
+                node.timStartup = null;
+                node.timRecv    = null;
+                node.socket     = null;
             }
         });
 
@@ -217,17 +229,31 @@ module.exports = function(RED) {
             //console.log('WebSocket connection closed:', event.code, event.reason);
             node.socket = null;
             setStatus( "closed" );
-            clearTimeout( node.timeout );
-            node.timeout = null;
+            clearTimeout( node.timStartup );
+            clearTimeout( node.timRecv );
+            node.timStartup = null;
+            node.timRecv    = null;
         });
 
         node.on('wsTimeout', function() {
-            //console.log('WebSocket timeout');
-            setError( "websocket timeout" );
+            //console.log('WebSocket startup timeout');
+            setError( "websocket startup timeout" );
             const help = node.socket;
-            node.socket  = null;
-            node.timeout = null;
+            node.socket     = null;
+            node.timStartup = null;
             help.close();
+        });
+
+        node.on('wsTimeoutReceive', function() {
+            console.log('WebSocket receive timeout');
+            //setError( "websocket receive timeout" );
+            /*
+            const help = node.socket;
+            node.socket     = null;
+            node.timStartup = null;
+            help.close();
+            */
+            node.warn("websocket receive timeout");
         });
 
         node.on('close', function() {
@@ -235,7 +261,8 @@ module.exports = function(RED) {
             {
                 node.socket.close();
             }
-            clearTimeout( node.timeout );
+            clearTimeout( node.timStartup );
+            clearTimeout( node.timRecv );
         });
     }
 

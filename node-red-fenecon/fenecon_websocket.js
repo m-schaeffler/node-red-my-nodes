@@ -95,6 +95,10 @@ module.exports = function(RED) {
                             setError( e.message );
                         }
                     }
+                    else
+                    {
+                        node.warn( 'already connected' );
+                    }
                     break;
                 case "close":
                     if( node.socket )
@@ -104,6 +108,10 @@ module.exports = function(RED) {
                         node.socket.close();
                         node.socket = null;
                         setStatus( "closing" );
+                    }
+                    else
+                    {
+                        node.warn( 'already closed' );
                     }
                     break;
                 default:

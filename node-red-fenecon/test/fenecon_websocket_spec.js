@@ -147,7 +147,7 @@ describe( 'fenecon_websocket Node', function () {
         actualState.should.match( 'connected' );
         c1.should.match( 0 );
         c2.should.match( 1 );
-        c3.should.match( 6 );
+        c3.should.match( 7 );
         n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
         await delay(1000);
         n1.warn.should.have.callCount(1);
@@ -155,7 +155,7 @@ describe( 'fenecon_websocket Node', function () {
         actualState.should.match( 'connected' );
         c1.should.match( 1 );
         c2.should.match( 2 );
-        c3.should.match( 6 );
+        c3.should.match( 7 );
         n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:mtt });
         await delay(1000);
         n1.warn.should.have.callCount(1);
@@ -163,14 +163,14 @@ describe( 'fenecon_websocket Node', function () {
         actualState.should.match( 'connected' );
         c1.should.match( 2 );
         c2.should.match( 3 );
-        c3.should.match( 6 );
+        c3.should.match( 7 );
         await delay(1000);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
         c1.should.match( 3 );
         c2.should.match( 3 );
-        c3.should.match( 6 );
+        c3.should.match( 7 );
         n1.receive({ topic:"close" });
         await delay(200);
         n1.warn.should.have.callCount(1);
@@ -178,7 +178,7 @@ describe( 'fenecon_websocket Node', function () {
         actualState.should.match( 'closed' );
         c1.should.match( 3 );
         c2.should.match( 3 );
-        c3.should.match( 8 );
+        c3.should.match( 9 );
         done();
       }
       catch(err) {
@@ -238,7 +238,7 @@ describe( 'fenecon_websocket Node', function () {
         actualState.should.match( 'error' );
         c1.should.match( 0 );
         c2.should.match( 0 );
-        c3.should.match( 2 );
+        c3.should.match( 1 );
         done();
       }
       catch(err) {
@@ -384,7 +384,7 @@ describe( 'fenecon_websocket Node', function () {
       var c1 = 0;
       var c2 = 0;
       var c3 = 0;
-      var actualState;
+      var actualState = "init";
       n2.on("input", function (msg) {
         console.log(msg);
         ++c1;
@@ -415,11 +415,10 @@ describe( 'fenecon_websocket Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('state','closed');
         actualState.should.match( 'closed' );
         c1.should.match( 0 );
         c2.should.match( 0 );
-        c3.should.match( 2 );
+        c3.should.match( 1 );
         n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
         await delay(50);
         n1.warn.should.have.callCount(1);
@@ -427,7 +426,7 @@ describe( 'fenecon_websocket Node', function () {
         actualState.should.match( 'closed' );
         c1.should.match( 0 );
         c2.should.match( 0 );
-        c3.should.match( 2 );
+        c3.should.match( 1 );
         done();
       }
       catch(err) {

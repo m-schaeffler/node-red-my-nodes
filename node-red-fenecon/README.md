@@ -115,6 +115,12 @@ Config data of the FEMS.
 
 #### state
 
+Actual state of the websocket connection.
+
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|payload| string | state.|
+
 ### Parameters
 
 |config  | type        | description                       |

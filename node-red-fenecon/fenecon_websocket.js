@@ -105,6 +105,7 @@ module.exports = function(RED) {
                     else
                     {
                         node.warn( 'already connected' );
+                        setStatus( "connected" );
                     }
                     break;
                 case "close":
@@ -119,6 +120,7 @@ module.exports = function(RED) {
                     else
                     {
                         node.warn( 'already closed' );
+                        setStatus( "closed" );
                     }
                     break;
                 default:

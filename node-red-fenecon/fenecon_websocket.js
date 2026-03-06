@@ -38,7 +38,12 @@ module.exports = function(RED) {
 
         function setError(error)
         {
-            //console.log("error "+error)
+            console.log("error "+error)
+            clearTimeout( node.timStartup );
+            clearTimeout( node.timRecv );
+            node.timStartup = null;
+            node.timRecv    = null;
+            node.socket     = null;
             doSetState( "error", "red", error );
             node.error( error );
         }
@@ -54,7 +59,14 @@ module.exports = function(RED) {
             //console.log(payload)
             if( node.socket )
             {
-                node.socket.send( JSON.stringify( payload ) );
+                try
+                {
+                    node.socket.send( JSON.stringify( payload ) );
+                }
+                catch( e )
+                {
+                    setError( "e.message" );
+                }
             }
             else
             {
@@ -170,11 +182,18 @@ module.exports = function(RED) {
                     sendEdgeRequest( "getEdgeConfig", {} );
                     break;
                 case "getEdgeConfig":
-                    node.send( [
-                        null,
-                        { topic:"edgeConfig", payload:data.result.payload.result.components },
-                        null
-                    ] );
+                    if( data?.result?.payload?.result?.components )
+                    {
+                        node.send( [
+                            null,
+                            { topic:"edgeConfig", payload:data.result.payload.result.components },
+                            null
+                        ] );
+                    }
+                    else
+                    {
+                        node.warn( data );
+                    }
                     setStatus( "subscribeChannels" );
                     sendEdgeRequest( "subscribeChannels", { count:0, channels: node.inlist } );
                     break;
@@ -217,6 +236,9 @@ module.exports = function(RED) {
                         }
                     }
                     break;
+                case "closed":
+                    node.warn( "wsReceived: invalid closed state" );
+                    break;
                 default:
                     node.error( "wsReceived: unkown state " + node.state );
             }
@@ -227,11 +249,6 @@ module.exports = function(RED) {
             if( node.socket )
             {
                 setError( "websocket error" );
-                clearTimeout( node.timStartup );
-                clearTimeout( node.timRecv );
-                node.timStartup = null;
-                node.timRecv    = null;
-                node.socket     = null;
             }
         });
 
@@ -247,20 +264,16 @@ module.exports = function(RED) {
 
         node.on('wsTimeout', function() {
             //console.log('WebSocket startup timeout');
-            setError( "websocket startup timeout" );
             const help = node.socket;
-            node.socket     = null;
-            node.timStartup = null;
+            setError( "websocket startup timeout" );
             help.close();
         });
 
         node.on('wsTimeoutReceive', function() {
             console.log('WebSocket receive timeout');
+            const help = node.socket;
             //setError( "websocket receive timeout" );
             /*
-            const help = node.socket;
-            node.socket     = null;
-            node.timStartup = null;
             help.close();
             */
             node.warn("websocket receive timeout");

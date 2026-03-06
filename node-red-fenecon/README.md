@@ -166,9 +166,9 @@ Example inlist:
 
 ## Example Flow
 
-[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_http.json)
+[HTTP API](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_http.json)
 
-[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_websocket.json)
+[WebSocket API](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_websocket.json)
 
 ## Author
 

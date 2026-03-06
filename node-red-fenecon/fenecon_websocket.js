@@ -101,12 +101,12 @@ module.exports = function(RED) {
                                 node.socket.close();
                             }
                             node.socket = new WebSocket( `ws://${node.fems.hostname}:8085` );
-                            node.socket.addEventListener( 'open',    function(event) { node.emit("wsConnected",event); } );
-                            node.socket.addEventListener( 'message', function(event) { node.emit("wsReceived", event); } );
-                            node.socket.addEventListener( 'close',   function(event) { node.emit("wsClosed",   event); } );
-                            node.socket.addEventListener( 'error',   function(event) { node.emit("wsError",    event); } );
+                            node.socket.addEventListener( 'open',    wsConnected );
+                            node.socket.addEventListener( 'message', wsReceived  );
+                            node.socket.addEventListener( 'close',   wsClosed    );
+                            node.socket.addEventListener( 'error',   wsError     );
                             setStatus( "opening" );
-                            node.timStartup = setTimeout( function(){ node.emit("wsTimeout") }, 1000 );
+                            node.timStartup = setTimeout( wsTimeout, 1000 );
                         }
                         catch( e )
                         {
@@ -162,13 +162,15 @@ module.exports = function(RED) {
             done();
         });
 
-        node.on('wsConnected', function(event) {
+        function wsConnected(event)
+        {
             //console.log('WebSocket connection established!',event);
             setStatus( "authenticate" );
             sendEmsRequest( "authenticateWithPassword", { password: node.fems.password } );
-        });
+        }
 
-        node.on('wsReceived', function(event) {
+        function wsReceived(event)
+        {
             //console.log('Message from server: ', event.data);
             const data = JSON.parse( event.data );
             switch( node.state )
@@ -202,7 +204,7 @@ module.exports = function(RED) {
                     node.timStartup = null;
                     if( node.timeout )
                     {
-                        node.timRecv = setTimeout( function(){ node.emit("wsTimeoutReceive") }, 10000 );
+                        node.timRecv = setTimeout( wsTimeoutReceive, 10000 );
                     }
                     setStatus( "connected" );
                     break;
@@ -236,23 +238,22 @@ module.exports = function(RED) {
                         }
                     }
                     break;
-                case "closed":
-                    node.warn( "wsReceived: invalid closed state" );
-                    break;
                 default:
                     node.error( "wsReceived: unkown state " + node.state );
             }
-        });
+        }
 
-        node.on('wsError', function(event) {
+        function wsError(event)
+        {
             //console.error('WebSocket error:', event);
             if( node.socket )
             {
                 setError( "websocket error" );
             }
-        });
+        }
 
-        node.on('wsClosed', function(event) {
+        function wsClosed(event)
+        {
             //console.log('WebSocket connection closed:', event.code, event.reason);
             node.socket = null;
             setStatus( "closed" );
@@ -260,16 +261,18 @@ module.exports = function(RED) {
             clearTimeout( node.timRecv );
             node.timStartup = null;
             node.timRecv    = null;
-        });
+        }
 
-        node.on('wsTimeout', function() {
+        function wsTimeout()
+        {
             //console.log('WebSocket startup timeout');
             const help = node.socket;
             setError( "websocket startup timeout" );
             help.close();
-        });
+        }
 
-        node.on('wsTimeoutReceive', function() {
+        function wsTimeoutReceive()
+        {
             console.log('WebSocket receive timeout');
             const help = node.socket;
             //setError( "websocket receive timeout" );
@@ -277,11 +280,15 @@ module.exports = function(RED) {
             help.close();
             */
             node.warn("websocket receive timeout");
-        });
+        }
 
         node.on('close', function() {
             if( node.socket )
             {
+                node.socket.removeEventListener( 'open',    wsConnected );
+                node.socket.removeEventListener( 'message', wsReceived  );
+                node.socket.removeEventListener( 'close',   wsClosed    );
+                node.socket.removeEventListener( 'error',   wsError     );
                 node.socket.close();
             }
             clearTimeout( node.timStartup );

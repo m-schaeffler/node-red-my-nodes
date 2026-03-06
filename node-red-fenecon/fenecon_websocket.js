@@ -14,27 +14,32 @@ module.exports = function(RED) {
         this.timRecv    = null;
         node.status( "" );
 
-        function setStatus(state)
+        function doSetState(state,color,text)
         {
-            console.log(state)
             node.state = state;
             node.status( {
-                fill:  node.socket ? ( state == "connected" ? "green" : "yellow" ) : "gray",
+                fill:  color,
                 shape: "dot",
-                text:  state
+                text:  text
             } );
             node.log( `new state: ${state}` );
+            node.send( [
+                null,
+                null,
+                { topic:"websocket", payload:state }
+            ] );
+        }
+
+        function setStatus(state)
+        {
+            //console.log(state)
+            doSetState( state, node.socket ? ( state == "connected" ? "green" : "yellow" ) : "gray", state );
         }
 
         function setError(error)
         {
             //console.log("error "+error)
-            node.state = "error";
-            node.status( {
-                fill:  "red",
-                shape: "dot",
-                text:  error
-            } );
+            doSetState( "error", "red", error );
             node.error( error );
         }
 
@@ -165,7 +170,8 @@ module.exports = function(RED) {
                 case "getEdgeConfig":
                     node.send( [
                         null,
-                        { topic:"edgeConfig", payload:data.result.payload.result.components }
+                        { topic:"edgeConfig", payload:data.result.payload.result.components },
+                        null
                     ] );
                     setStatus( "subscribeChannels" );
                     sendEdgeRequest( "subscribeChannels", { count:0, channels: node.inlist } );

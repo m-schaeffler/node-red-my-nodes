@@ -1,0 +1,139 @@
+[
+    {
+        "id": "fbe497bbd8364d89",
+        "type": "inject",
+        "z": "f80ca3ef307042a9",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "15",
+        "topic": ".*/.*",
+        "x": 150,
+        "y": 1020,
+        "wires": [
+            [
+                "fed376e4f9228b20"
+            ]
+        ]
+    },
+    {
+        "id": "39e5a76995b585aa",
+        "type": "debug",
+        "z": "f80ca3ef307042a9",
+        "name": "Test-Output",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 530,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "9ad43cc184de91fb",
+        "type": "inject",
+        "z": "f80ca3ef307042a9",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "ess0/SetActivePowerEquals",
+        "payload": "-1000",
+        "payloadType": "num",
+        "x": 240,
+        "y": 1080,
+        "wires": [
+            [
+                "6fa6b9969e20e3a9"
+            ]
+        ]
+    },
+    {
+        "id": "fed376e4f9228b20",
+        "type": "feneconHttpGet",
+        "z": "f80ca3ef307042a9",
+        "name": "",
+        "fems": "9ab88896494c1444",
+        "x": 330,
+        "y": 1020,
+        "wires": [
+            [
+                "39e5a76995b585aa"
+            ]
+        ]
+    },
+    {
+        "id": "6fa6b9969e20e3a9",
+        "type": "feneconHttpPost",
+        "z": "f80ca3ef307042a9",
+        "name": "",
+        "fems": "9ab88896494c1444",
+        "x": 540,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "b74c75b980d307ae",
+        "type": "inject",
+        "z": "f80ca3ef307042a9",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "ess0/SetActivePowerEquals",
+        "payload": "null",
+        "payloadType": "json",
+        "x": 230,
+        "y": 1120,
+        "wires": [
+            [
+                "6fa6b9969e20e3a9"
+            ]
+        ]
+    },
+    {
+        "id": "9ab88896494c1444",
+        "type": "feneconFems",
+        "name": "",
+        "hostname": "fems.lan"
+    },
+    {
+        "id": "4d43a7890ddb43a6",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@mschaeffler/node-red-fececon": "0.1.0"
+        }
+    }
+]

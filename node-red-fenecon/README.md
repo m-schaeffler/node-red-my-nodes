@@ -2,7 +2,9 @@
 
 Node Red nodes to communicate with a Fenecon FEMS.
 
-![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon.png)
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_http.png)
+
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_websocket.png)
 
 ## Install
 
@@ -119,7 +121,7 @@ Actual state of the websocket connection.
 
 |msg.   | type   | description |
 |:------|:-------|:------------|
-|payload| string | state.|
+|payload| string | state of the websocket.|
 
 ### Parameters
 
@@ -164,7 +166,9 @@ Example inlist:
 
 ## Example Flow
 
-[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon.json)
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_http.json)
+
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_websocket.json)
 
 ## Author
 

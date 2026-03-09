@@ -110,7 +110,7 @@ describe( 'fenecon_websocket Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','websocket');
+          msg.should.have.property('topic','fems');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -217,7 +217,7 @@ describe( 'fenecon_websocket Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','websocket');
+          msg.should.have.property('topic','fems');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -277,7 +277,7 @@ describe( 'fenecon_websocket Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','websocket');
+          msg.should.have.property('topic','fems');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -337,7 +337,7 @@ describe( 'fenecon_websocket Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','websocket');
+          msg.should.have.property('topic','fems');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -397,7 +397,7 @@ describe( 'fenecon_websocket Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','websocket');
+          msg.should.have.property('topic','fems');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -465,7 +465,7 @@ describe( 'fenecon_websocket Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','websocket');
+          msg.should.have.property('topic','fems');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }

@@ -26,7 +26,7 @@ module.exports = function(RED) {
             node.send( [
                 null,
                 null,
-                { topic:"websocket", payload:state }
+                { topic:"fems", payload:state }
             ] );
         }
 
@@ -38,7 +38,7 @@ module.exports = function(RED) {
 
         function setError(error)
         {
-            console.log("error "+error)
+            //console.log("error "+error)
             clearTimeout( node.timStartup );
             clearTimeout( node.timRecv );
             node.timStartup = null;
@@ -273,13 +273,13 @@ module.exports = function(RED) {
 
         function wsTimeoutReceive()
         {
-            console.log('WebSocket receive timeout');
-            const help = node.socket;
-            //setError( "websocket receive timeout" );
-            /*
-            help.close();
-            */
+            //console.log('WebSocket receive timeout');
             node.warn("websocket receive timeout");
+            node.send( [
+                null,
+                null,
+                { topic:"fems", payload:"timeout" }
+            ] );
         }
 
         node.on('close', function() {

@@ -55,6 +55,7 @@ Examples:
 |config  | type        | description                       |
 |:-------|:------------|:----------------------------------|
 |Fems    | feneconFems | configuration of the FEMS. |
+|Topic   | string      | the data point to request; if empty, `msg.topic` will be used. |
 
 ## feneconHttpPost node
 

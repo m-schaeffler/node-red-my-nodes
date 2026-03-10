@@ -4,12 +4,13 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         var node = this;
         this.fems = RED.nodes.getNode( config.fems );
+        this.topic = config.topic ?? "";
         node.status( "" );
 
         node.on('input', async function(msg,send,done) {
             try
             {
-                const response = await node.fems.httpRequest( msg.topic );
+                const response = await node.fems.httpRequest( node.topic || msg.topic );
                 //console.log(response);
                 if( response.ok )
                 {

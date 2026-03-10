@@ -1,0 +1,197 @@
+[
+    {
+        "id": "6fe7bc57efc5fe53",
+        "type": "inject",
+        "z": "f80ca3ef307042a9",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "15",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "topic": "cyclic",
+        "x": 200,
+        "y": 480,
+        "wires": [
+            [
+                "1dc4634e9c43aae6"
+            ]
+        ]
+    },
+    {
+        "id": "23fc1db9f9247c1e",
+        "type": "feneconWebsocket",
+        "z": "f80ca3ef307042a9",
+        "name": "",
+        "fems": "9ab88896494c1444",
+        "edge": "0",
+        "inlist": "[\"_sum/State\",\"_sum/GridMode\",\"_sum/EssSoc\",\"_sum/ProductionActivePower\",\"_sum/EssDischargePower\",\"_sum/GridActivePower\",\"_sum/GridSellActiveEnergy\",\"_sum/GridBuyActiveEnergy\",\"_sum/ProductionActiveEnergy\",\"_sum/EssDcDischargeEnergy\",\"_sum/EssDcChargeEnergy\",\"batteryInverter0/AirTemperature\",\"batteryInverter0/RadiatorTemperature\",\"batteryInverter0/TotalBackUpLoadPower\",\"ctrlIoHeatPump0/Status\",\"charger0/ActualPower\",\"charger1/ActualPower\",\"ctrlGridOptimizedCharge0/DelayChargeState\",\"meter0/CurrentL1\",\"meter0/CurrentL2\",\"meter0/CurrentL3\"]",
+        "risk": true,
+        "timeout": false,
+        "x": 480,
+        "y": 380,
+        "wires": [
+            [
+                "1de9fc425bb4f658"
+            ],
+            [
+                "cf907c418e27a306"
+            ],
+            [
+                "7da23ac575f00c6a",
+                "1dc4634e9c43aae6"
+            ]
+        ]
+    },
+    {
+        "id": "7da23ac575f00c6a",
+        "type": "debug",
+        "z": "f80ca3ef307042a9",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 770,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "1dc4634e9c43aae6",
+        "type": "function",
+        "z": "f80ca3ef307042a9",
+        "name": "connection manager",
+        "func": "const now    = Date.now();\nlet   data   = flow.get( \"state\" );\nlet   outMsg = null;\nlet   color;\n\nif( msg.payload )\n{\n    data.state = msg.payload;\n    data.alive = now;\n}\n\nconst delta = now - data.alive;\n\nswitch( data.state )\n{\n    case \"connected\":\n        color = \"green\";\n        break;\n    case \"init\":\n        outMsg = { topic: \"open\" };\n        color = \"gray\";\n        break;\n    case \"closed\":\n    case \"error\":\n        if( delta > 60000 )\n        {\n            outMsg = { topic: \"open\" };\n        }\n        color = \"red\";\n        break;\n    default:\n        color = \"yellow\";\n}\n\nif( delta > 120000 )\n{\n    node.error( \"Fenecon timeout\" );\n    outMsg = { topic: \"open\" };\n    color = \"red\";\n}\nelse if( delta > 10000 )\n{\n    node.warn( \"Fenecon timeout\" );\n    color = \"yellow\";\n}\n\nnode.status({ fill: color, shape: \"dot\", text: delta });\nreturn outMsg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "// Der Code hier wird ausgeführt,\n// wenn der Node gestartet wird\n\nflow.set( \"state\", {\n    state: \"init\",\n    alive: Date.now()\n} );",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 480,
+        "wires": [
+            [
+                "23fc1db9f9247c1e",
+                "166added1c90f18d"
+            ]
+        ]
+    },
+    {
+        "id": "166added1c90f18d",
+        "type": "debug",
+        "z": "f80ca3ef307042a9",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "topic",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 770,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "1de9fc425bb4f658",
+        "type": "change",
+        "z": "f80ca3ef307042a9",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "state.alive",
+                "pt": "flow",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 480,
+        "y": 300,
+        "wires": [
+            [
+                "f5a6fa9111359081",
+                "74e376dea1a522c8"
+            ]
+        ]
+    },
+    {
+        "id": "68964dbea78594b1",
+        "type": "link in",
+        "z": "f80ca3ef307042a9",
+        "name": "FEMS config",
+        "links": [
+            "1e73e22277619799"
+        ],
+        "x": 190,
+        "y": 380,
+        "wires": [
+            [
+                "23fc1db9f9247c1e"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "74e376dea1a522c8",
+        "type": "debug",
+        "z": "f80ca3ef307042a9",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "cf907c418e27a306",
+        "type": "debug",
+        "z": "f80ca3ef307042a9",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "9ab88896494c1444",
+        "type": "feneconFems",
+        "name": "",
+        "hostname": "fems.lan"
+    },
+    {
+        "id": "779d1657643e1f6a",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@mschaeffler/node-red-fececon": "0.2.0"
+        }
+    }
+]

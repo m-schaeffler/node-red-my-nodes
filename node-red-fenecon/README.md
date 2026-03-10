@@ -131,7 +131,7 @@ Actual state of the websocket connection.
 |Edge    | string      | id of the edge; normally `"0"`. |
 |Inlist  | array       | list of subscribed data points. |
 |Risk    | boolean     | risk accepted, enables writing. |
-|Timeout | boolean     | close the websocket, if 10s no subscribed message arrives. |
+|Timeout | boolean     | send `"timeout"` as state, if 10s no subscribed message arrives. |
 
 #### Data Points
 

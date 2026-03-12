@@ -31,6 +31,7 @@ describe( 'fenecon_http_get Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems', null);
         n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('complete', false);
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -67,6 +68,7 @@ describe( 'fenecon_http_get Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems').which.is.an.Object();
         n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('complete', false);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
         await delay(50);
         n1.receive({ topic:"_meta/Version" });
@@ -108,6 +110,7 @@ describe( 'fenecon_http_get Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems').which.is.an.Object();
         n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('complete', false);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
         await delay(50);
         n1.receive({ topic:"_meta/.*" });
@@ -124,9 +127,9 @@ describe( 'fenecon_http_get Node', function () {
     });
   });
 
-  it('should make a predefined request', function (done) {
+  it('should make a predefined request with complete option', function (done) {
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpGet", fems: "nf", topic: "_meta/Version", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "feneconHttpGet", fems: "nf", topic: "_meta/Version", complete:true, name: "test", wires: [["n2"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {
@@ -138,7 +141,13 @@ describe( 'fenecon_http_get Node', function () {
         //console.log(msg);
         try {
           msg.should.have.property('topic',"foo/bar");
-          msg.should.have.property('payload').which.is.a.String();
+          msg.should.have.property('payload').which.is.an.Object();
+          msg.payload.should.have.property('address','_meta/Version');
+          msg.payload.should.have.property('type','STRING');
+          msg.payload.should.have.property('accessMode','RO');
+          msg.payload.should.have.property('text');
+          msg.payload.should.have.property('unit','');
+          msg.payload.should.have.property('value');
           ++c;
         }
         catch(err) {
@@ -149,6 +158,7 @@ describe( 'fenecon_http_get Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems').which.is.an.Object();
         n1.should.have.a.property('topic', '_meta/Version');
+        n1.should.have.a.property('complete', true);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
         await delay(50);
         n1.receive({ topic:"foo/bar" });

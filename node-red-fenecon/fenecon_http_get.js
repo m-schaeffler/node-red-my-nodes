@@ -5,6 +5,7 @@ module.exports = function(RED) {
         var node = this;
         this.fems  = RED.nodes.getNode( config.fems );
         this.topic = config.topic ?? "";
+        this.complete = Boolean( config.complete );
         this.stats = { ok:0, error:0, exception:0 };
         node.status( "" );
 
@@ -18,7 +19,11 @@ module.exports = function(RED) {
                     const result = await response.json();
                     node.stats.ok++;
                     //console.log(result);
-                    if( Array.isArray( result ) )
+                    if( node.complete )
+                    {
+                        msg.payload = result;
+                    }
+                    else if( Array.isArray( result ) )
                     {
                         msg.payload = {};
                         for( const i of result )

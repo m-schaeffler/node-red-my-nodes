@@ -56,6 +56,7 @@ Examples:
 |:-------|:------------|:----------------------------------|
 |Fems    | feneconFems | configuration of the FEMS. |
 |Topic   | string      | the data point to request; if empty, `msg.topic` will be used. |
+|Complete| boolean     | sending out the complete response data or just the value. |
 
 ## feneconHttpPost node
 

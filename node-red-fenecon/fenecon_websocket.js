@@ -12,6 +12,7 @@ module.exports = function(RED) {
         this.socket     = null;
         this.timStartup = null;
         this.timRecv    = null;
+        this.flow       = this.context().flow;
         node.status( "" );
 
         function doSetState(state,color,text)
@@ -219,6 +220,7 @@ module.exports = function(RED) {
                                 {
                                     node.timRecv.refresh();
                                 }
+                                node.flow.set( "wsAlive", Date.now() );
                                 node.send( [
                                     { topic:data.params.payload.method, payload:data.params.payload.params },
                                     null,

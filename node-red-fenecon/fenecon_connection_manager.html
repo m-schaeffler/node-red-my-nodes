@@ -1,0 +1,54 @@
+<script type="text/javascript">
+    RED.nodes.registerType('feneconConnMan',{
+        category: 'input',
+        color: '#0fcdf8',
+        defaults: {
+            name:  {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "solar.png",
+        label: function() {
+            return this.name||"Connection Manager";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "Fenecon CM",
+        inputLabels: 'WS state',
+        outputLabels: 'WS command'
+    });
+</script>
+
+<script type="text/x-red" data-template-name="feneconConnMan">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="feneconConnMan">
+    <p>A Node Red node to .</p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>open</code>, <code>close</code> or name of the config parameter to be written</dd>
+        <dt>payload <span class="property-type">number / string</span></dt>
+        <dd> value of the config parameter to be written</dd>
+    </dl>
+    
+    <h3>Output</h3>
+    <p>.</p>
+    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> received data points. It is an object with key/value pairs.</dd>
+    </dl>
+    
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>fems <span class="property-type">feneconFems</span></dt>
+        <dd> configuration of the FEMS.</dd>
+    </dl>
+</script>

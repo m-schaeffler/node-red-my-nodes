@@ -1,4 +1,5 @@
 var should = require("should");
+var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../fenecon_connection_manager.js");
 
@@ -17,19 +18,26 @@ describe( 'fenecon_connection_manager Node', function () {
 
   afterEach(function(done) {
       helper.unload().then(function() {
+          return Context.clean({allNodes: {}});
+      }).then(function () {
+          return Context.close();
+      }).then(function () {
           helper.stopServer(done);
       });
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "feneconConnMan", name: "test" }];
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconConnMan", name: "test", z:"flow" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
-        await delay(750);
+        n1.should.have.a.property('cyclic', 15000);
+        await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        n1.context().flow.get("wsAlive_2").should.be.approximately( Date.now()-50, 5 );
         done();
       }
       catch(err) {

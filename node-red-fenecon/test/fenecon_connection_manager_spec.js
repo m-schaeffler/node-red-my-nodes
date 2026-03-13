@@ -46,29 +46,45 @@ describe( 'fenecon_connection_manager Node', function () {
     });
   });
 
-/*
-  it('should write one value', function (done) {
+  it('should start the connection', function (done) {
+    this.timeout( 10000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpPost", fems: "nf", name: "test", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
+                { id: "n1", type: "feneconConnMan", cyclic: "0.5", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var nf = helper.getNode("nf");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          msg.should.have.property('topic',"open");
+          msg.should.not.have.property('payload');
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
       try{
         n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
-        await delay(50);
-        n1.receive({ topic:"ess0/SetActivePowerLessOrEquals", payload:1000 });
-        await delay(200);
+        n1.should.have.a.property('cyclic', 500);
+        await delay(600);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.receive({ topic:"ess0/SetActivePowerLessOrEquals", payload:null });
-        await delay(200);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        n1.should.have.a.property('stats',{ok:2,error:0,exception:0});
+        c.should.match( 1 );
+        n1.receive({ topic:"fems", payload:"connected" });
+        await delay(50);
+        n1.context().flow.get("wsAlive_2").should.be.approximately( Date.now()-50, 25 );
+        for( let i=0; i<10; i++)
+        {
+            await delay(500);
+            n1.context().flow.set( "wsAlive_2", Date.now() );
+            n1.warn.should.have.callCount(0);
+            n1.error.should.have.callCount(0);
+            c.should.match( 1 );
+        }
         done();
       }
       catch(err) {
@@ -77,138 +93,4 @@ describe( 'fenecon_connection_manager Node', function () {
     });
   });
 
-  it('should write one predefined value', function (done) {
-    var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpPost", topic:"ess0/SetActivePowerLessOrEquals", fems: "nf", name: "test", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
-      var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
-      try{
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('topic', 'ess0/SetActivePowerLessOrEquals');
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
-        await delay(50);
-        n1.receive({ topic:"foo/bar", payload:1000 });
-        await delay(200);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        n1.receive({ topic:"foo/bar", payload:null });
-        await delay(200);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        n1.should.have.a.property('stats',{ok:2,error:0,exception:0});
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should not write invalid requests', function (done) {
-    var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpPost", fems: "nf", name: "test", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
-      var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
-      try{
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
-        await delay(50);
-        n1.receive({ topic:"foo/bar", payload:0 });
-        await delay(200);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(1);
-        n1.should.have.a.property('stats',{ok:0,error:1,exception:0});
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should not write invalid URLs', function (done) {
-    var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpPost", fems: "nf", name: "test", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"foobar:lan", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
-      var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
-      try{
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
-        await delay(50);
-        n1.receive({ topic:"foo/bar", payload:0 });
-        await delay(200);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(1);
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:1});
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should not write invalid addresses', function (done) {
-    var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpPost", fems: "nf", name: "test", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"foobar.lan", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
-      var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
-      try{
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
-        await delay(50);
-        n1.receive({ topic:"foo/bar", payload:0 });
-        await delay(200);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(1);
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:1});
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should not write invalid IP', function (done) {
-    var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpPost", fems: "nf", name: "test", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"192.168.254.254", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
-      var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
-      try{
-        n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
-        await delay(50);
-        n1.receive({ topic:"foo/bar", payload:0 });
-        await delay(200);
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(1);
-        n1.should.have.a.property('stats',{ok:0,error:0,exception:1});
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-*/
 });

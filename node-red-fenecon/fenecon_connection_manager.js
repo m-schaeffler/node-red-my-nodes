@@ -4,7 +4,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         var node = this;
         this.cyclic    = Number( config.cyclic ?? 15 ) * 1000;
-        this.state     = "closed";
+        this.state     = "init";
         this.timStart  = null;
         this.timCyclic = null;
         this.flow      = this.context().flow;
@@ -22,8 +22,51 @@ module.exports = function(RED) {
         } );
         node.timStart = setTimeout( function() { node.emit("started"); }, 500 );
 
+        function openConnection()
+        {
+            console.log("    openConnecton")
+            node.send( { topic: "open" } );
+        }
+
         function checkState()
         {
+            let color;
+            const delta = Date.now() - node.flow.get( "wsAlive_2" );
+            console.log("  checkState",node.state,delta)
+            switch( node.state )
+            {
+                case "connected":
+                    color = "green";
+                    break;
+                case "init":
+                    openConnection();
+                    color = "gray";
+                    break;
+                case "closed":
+                case "error":
+                    if( delta > 4*node.cyclic )
+                    {
+                        openConnection();
+                    }
+                    color = "red";
+                    break;
+                default:
+                    color = "yellow";
+            }
+
+            if( delta > 8*node.cyclic )
+            {
+                node.error( "Fenecon timeout" );
+                openConnection();
+                color = "red";
+            }
+            else if( delta > node.cyclic )
+            {
+                node.warn( "Fenecon timeout" );
+                color = "yellow";
+            }
+
+            node.status({ fill: color, shape: "dot", text: delta });
         }
 
         node.on('input', function(msg,send,done) {
@@ -39,6 +82,7 @@ module.exports = function(RED) {
             console.log("started")
             node.timStart  = null;
             node.timCyclic = setInterval( function() { node.emit("cyclic"); }, node.cyclic );
+            node.flow.set( "wsAlive_2", Date.now() );
             checkState();
         });
 
@@ -48,8 +92,8 @@ module.exports = function(RED) {
         });
 
         node.on('close', function() {
-            clearTimeout( node.timStart );
-            clearTimeout( node.timCyclic );
+            clearTimeout ( node.timStart );
+            clearInterval( node.timCyclic );
         });
     }
 

@@ -31,7 +31,7 @@ module.exports = function(RED) {
         function checkState()
         {
             let color;
-            const delta = Date.now() - node.flow.get( "wsAlive_2" );
+            let delta = Date.now() - node.flow.get( "wsAlive_2" );
             console.log("  checkState",node.state,delta)
             switch( node.state )
             {
@@ -41,6 +41,7 @@ module.exports = function(RED) {
                 case "init":
                     openConnection();
                     color = "gray";
+                    delta = 0;
                     break;
                 case "closed":
                 case "error":
@@ -49,6 +50,7 @@ module.exports = function(RED) {
                         openConnection();
                     }
                     color = "red";
+                    delta = 0;
                     break;
                 default:
                     color = "yellow";
@@ -82,7 +84,6 @@ module.exports = function(RED) {
             console.log("started")
             node.timStart  = null;
             node.timCyclic = setInterval( function() { node.emit("cyclic"); }, node.cyclic );
-            node.flow.set( "wsAlive_2", Date.now() );
             checkState();
         });
 

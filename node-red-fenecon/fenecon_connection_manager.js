@@ -9,29 +9,31 @@ module.exports = function(RED) {
         this.timCyclic = null;
         this.flow      = this.context().flow;
         node.status( "" );
-        node.flow.set( "wsAlive_2", Date.now(), function(err)
+        node.flow.set( "wsAlive", Date.now(), function(err)
         {
             if( err )
             {
                 node.error( err );
             }
+            /*
             else
             {
                 console.log( "flow.set sucessfull" );
             }
+            */
         } );
-        node.timStart = setTimeout( function() { node.emit("started"); }, 500 );
+        node.timStart = setTimeout( started, 500 );
 
         function openConnection()
         {
-            console.log("    openConnecton")
+            console.log("    openConnection")
             node.send( { topic: "open" } );
         }
 
         function checkState()
         {
+            let delta = Date.now() - node.flow.get( "wsAlive" );
             let color;
-            let delta = Date.now() - node.flow.get( "wsAlive_2" );
             console.log("  checkState",node.state,delta)
             switch( node.state )
             {
@@ -72,25 +74,25 @@ module.exports = function(RED) {
         }
 
         node.on('input', function(msg,send,done) {
-            console.log("input", msg.payload)
+            //console.log("input", msg.payload)
             node.log( msg.payload );
             node.state =  msg.payload;
-            node.flow.set( "wsAlive_2", Date.now() );
+            node.flow.set( "wsAlive", Date.now() );
             checkState();
             done();
         });
 
-        node.on('started', function() {
-            console.log("started")
+        function started() {
+            //console.log("started")
             node.timStart  = null;
-            node.timCyclic = setInterval( function() { node.emit("cyclic"); }, node.cyclic );
+            node.timCyclic = setInterval( cyclic, node.cyclic );
             checkState();
-        });
+        }
 
-        node.on('cyclic', function() {
-            console.log("cyclic")
+        function cyclic() {
+            //console.log("cyclic")
             checkState();
-        });
+        };
 
         node.on('close', function() {
             clearTimeout ( node.timStart );

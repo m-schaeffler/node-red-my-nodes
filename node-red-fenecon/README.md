@@ -167,6 +167,28 @@ Example inlist:
 ]
 ```
 
+## feneconConnMan node
+
+A Node Red node to manage the state of a `feneconWebsocket` node.
+
+### Input
+
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|payload|string  | state message from `feneconWebsocket` node. |
+
+### Output
+
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|topic  |string  | `open` command for a `feneconWebsocket` node. |
+
+### Parameters
+
+|config  | type  | description                       |
+|:-------|:------|:----------------------------------|
+|cyclic  |number | cyclic time of the manager in s; 15s is here the recommended value. |
+
 ## Example Flow
 
 [HTTP API](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-fenecon/examples/fenecon_http.json)

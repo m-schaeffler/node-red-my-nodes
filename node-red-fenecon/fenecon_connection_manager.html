@@ -3,7 +3,8 @@
         category: 'input',
         color: '#0fcdf8',
         defaults: {
-            name:  {value:""}
+            name:  {value:""},
+            cyclic:{value:15,required:true,validate:RED.validators.number()}
         },
         inputs:1,
         outputs:1,
@@ -25,30 +26,30 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
+    <div class="form-row">
+        <label for="node-input-cyclic"><i class="fa fa-refresh"></i> Cyclic</label>
+        <input type="number" id="node-input-cyclic">
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="feneconConnMan">
-    <p>A Node Red node to .</p>
+    <p>A Node Red node to manage the state of a <code>feneconWebsocket</code> node.</p>
     
     <h3>Input</h3>
     <dl class="message-properties">
-        <dt>topic <span class="property-type">string</span></dt>
-        <dd> <code>open</code>, <code>close</code> or name of the config parameter to be written</dd>
-        <dt>payload <span class="property-type">number / string</span></dt>
-        <dd> value of the config parameter to be written</dd>
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd> state message from <code>feneconWebsocket</code> node.</dd>
     </dl>
     
     <h3>Output</h3>
-    <p>.</p>
-    
     <dl class="message-properties">
-        <dt>payload <span class="property-type">object</span></dt>
-        <dd> received data points. It is an object with key/value pairs.</dd>
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>open</code> command for a <code>feneconWebsocket</code> node.</dd>
     </dl>
     
     <h3>Parameters</h3>
     <dl class="message-properties">
-        <dt>fems <span class="property-type">feneconFems</span></dt>
-        <dd> configuration of the FEMS.</dd>
+        <dt>cyclic <span class="property-type">number</span></dt>
+        <dd> cyclic time of the manager in s; 15s is here the recommended value.</dd>
     </dl>
 </script>

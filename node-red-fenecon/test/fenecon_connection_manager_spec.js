@@ -37,7 +37,7 @@ describe( 'fenecon_connection_manager Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.context().flow.get("wsAlive_2").should.be.approximately( Date.now()-50, 5 );
+        n1.context().flow.get("wsAlive").should.be.approximately( Date.now()-50, 5 );
         done();
       }
       catch(err) {
@@ -57,7 +57,7 @@ describe( 'fenecon_connection_manager Node', function () {
       var nf = helper.getNode("nf");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        console.log(msg.topic);
         try {
           msg.should.have.property('topic',"open");
           msg.should.not.have.property('payload');
@@ -79,11 +79,11 @@ describe( 'fenecon_connection_manager Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 1 );
-        n1.context().flow.get("wsAlive_2").should.be.approximately( Date.now()-50, 25 );
+        n1.context().flow.get("wsAlive").should.be.approximately( Date.now()-50, 25 );
         for( let i=0; i<10; i++)
         {
             await delay(500);
-            n1.context().flow.set( "wsAlive_2", Date.now() );
+            n1.context().flow.set( "wsAlive", Date.now() );
             n1.warn.should.have.callCount(0);
             n1.error.should.have.callCount(0);
             c.should.match( 1 );
@@ -94,7 +94,7 @@ describe( 'fenecon_connection_manager Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 1 );
-        n1.context().flow.get("wsAlive_2").should.be.approximately( Date.now()-50, 25 );
+        n1.context().flow.get("wsAlive").should.be.approximately( Date.now()-50, 25 );
         for( let i=0; i<4; i++)
         {
             await delay(500);
@@ -111,14 +111,14 @@ describe( 'fenecon_connection_manager Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 2 );
-        n1.context().flow.get("wsAlive_2").should.be.approximately( Date.now()-50, 25 );
+        n1.context().flow.get("wsAlive").should.be.approximately( Date.now()-50, 25 );
         // error state
         n1.receive({ topic:"fems", payload:"error" });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 2 );
-        n1.context().flow.get("wsAlive_2").should.be.approximately( Date.now()-50, 25 );
+        n1.context().flow.get("wsAlive").should.be.approximately( Date.now()-50, 25 );
         for( let i=0; i<4; i++)
         {
             await delay(500);
@@ -149,7 +149,7 @@ describe( 'fenecon_connection_manager Node', function () {
       var nf = helper.getNode("nf");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        console.log(msg.topic);
         try {
           msg.should.have.property('topic',"open");
           msg.should.not.have.property('payload');
@@ -171,8 +171,11 @@ describe( 'fenecon_connection_manager Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 1 );
-        n1.context().flow.get("wsAlive_2").should.be.approximately( Date.now()-50, 25 );
-        
+        n1.context().flow.get("wsAlive").should.be.approximately( Date.now()-50, 25 );
+        await delay(9*500);
+        n1.warn.should.have.callCount(7);
+        n1.error.should.have.callCount(1);
+        c.should.match( 2 );
         done();
       }
       catch(err) {

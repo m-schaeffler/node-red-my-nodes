@@ -15,18 +15,13 @@ module.exports = function(RED) {
             {
                 node.error( err );
             }
-            /*
-            else
-            {
-                console.log( "flow.set sucessfull" );
-            }
-            */
         } );
         node.timStart = setTimeout( started, 500 );
 
         function openConnection()
         {
-            console.log("    openConnection")
+            //console.log("    openConnection")
+            node.log("    openConnection");
             node.send( { topic: "open" } );
         }
 
@@ -34,7 +29,7 @@ module.exports = function(RED) {
         {
             let delta = Date.now() - node.flow.get( "wsAlive" );
             let color;
-            console.log("  checkState",node.state,delta)
+            //console.log("  checkState",node.state,delta)
             switch( node.state )
             {
                 case "connected":

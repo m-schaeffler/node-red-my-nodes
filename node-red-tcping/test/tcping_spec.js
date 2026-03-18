@@ -253,7 +253,7 @@ describe( 'tcPing Node', function () {
 
   it('should ping with object payload', function (done) {
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "tcPing", family: "0", family: "4", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n1", type: "tcPing", family: "4", name: "test", wires: [["n2"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -279,6 +279,84 @@ describe( 'tcPing Node', function () {
       try{
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('host','');
+        n1.should.have.a.property('port', 80);
+        n1.should.have.a.property('family', 4);
+        await delay(50);
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org"} });
+        await delay(300);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 1 );
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",port:443,family:6} });
+        await delay(300);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 2 );
+        n1.receive({ topic:"foobar", payload:{} });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        c.should.match( 2 );
+        n1.receive({ topic:"foobar", payload:{host:""} });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(2);
+        c.should.match( 2 );
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",port:0} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",port:-1} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",port:0x10000} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",port:"foobar"} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",port:80.5} });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(7);
+        c.should.match( 2 );
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",family:"foobar"} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",family:-1} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",family:1} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",family:3} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",family:5} });
+        n1.receive({ topic:"foobar", payload:{host:"www.nodejs.org",family:7} });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(13);
+        c.should.match( 2 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should ping with fixed URL and object payload', function (done) {
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "tcPing", host:"www.nodered.org", family: "4", name: "test", wires: [["n2"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          msg.should.have.property('topic',"foobar");
+          msg.should.have.property('payload').which.is.within(1,150);
+          msg.should.have.property('ping').which.is.an.Object();
+          msg.ping.should.have.property('host','www.nodejs.org');
+          msg.ping.should.have.property('port',c==1?443:80);
+          msg.ping.should.have.property('family',c==1?6:4);
+          msg.ping.should.have.property('ip').which.is.a.String();
+          msg.ping.should.not.have.property('error');
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('host','www.nodered.org');
         n1.should.have.a.property('port', 80);
         n1.should.have.a.property('family', 4);
         await delay(50);

@@ -96,14 +96,15 @@ module.exports = function(RED) {
                 let color;
                 console.log("socketError",event.code)
                 msg.ping.error = event.message || `${msg.ping.host}: errno ${event.code}`;
-                if( event.errno === -113 )
+                switch( event.errno )
                 {
-                    color = "gray";
-                }
-                else
-                {
-                    node.error( msg.ping.error );
-                    color = "red";
+                    case -110:
+                    case -113:
+                        color = "gray";
+                        break;
+                    default:
+                        node.error( msg.ping.error );
+                        color = "red";
                 }
                 sendResult( false, color );
             }

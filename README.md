@@ -21,6 +21,7 @@ This nodes are no longer used by me, so they will probably not get any further u
 
 - [@mschaeffler/node-red-dualled](node-red-dualled/README.md)
 - [@mschaeffler/node-red-lora](node-red-lora/README.md)
+- [@mschaeffler/node-red-tcping](node-red-tcping/README.md)
 
 ## License
 

@@ -1,6 +1,6 @@
 # @mschaeffler/node-red-fenecon
 
-A Node Red nodes to .
+A Node Red nodes to ping host via TCP.
 
 ![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-tcping/examples/tcping.png)
 
@@ -12,26 +12,44 @@ $ npm install @mschaeffler/node-red-tcping
 
 ## tcPing Node
 
+The node test the ability to communicate with a host at a specific TCP port.
+It just tries to establish the communication and just closes it again without sending anything.
+
 ### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 |topic   |string  | .|
+|payload |undefined, string or object| host to ping.|
+
+#### payload is undefined
+
+Host and Port must be set in the node parameters.
+
+#### payload is a string
+
+Payload defines the Host.
+If no port is set with a speration by `:`, the Port parameter is used.
+
+#### payload is an object
+
+Host, Port and Family can be set by corresponding attributes; all missing ones are taken from the parameters.
 
 ### Output
 
 |msg.   | type   | description |
 |:------|:-------|:------------|
-|topic  | string | .|
-|payload| value or object | .|
+|topic  | string | same as in input message.|
+|payload| number | time of the communication startup or `false`; so it can be used like a Boolean value.|
+|ping   | object | detailed data of the ping.|
 
 ### Parameters
 
-|config  | type        | description                       |
-|:-------|:------------|:----------------------------------|
-|Fems    | feneconFems | configuration of the FEMS. |
-|Topic   | string      | the data point to request; if empty, `msg.topic` will be used. |
-|Complete| boolean     | sending out the complete response data or just the value. |
+|config  | type    | description                       |
+|:-------|:--------|:----------------------------------|
+|Host    | string  | Host to be pinged. |
+|Port    | number  | TCP port to be used. |
+|Family  | number  | Automatic, IPv4 or IPv6. |
 
 ## Example Flow
 

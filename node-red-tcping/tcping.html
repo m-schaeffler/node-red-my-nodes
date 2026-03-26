@@ -48,30 +48,41 @@
 
 <script type="text/x-red" data-help-name="tcPing">
 
-    <p>A Node Red node to .</p>
+    <p>A Node Red node to ping a host via TCP.</p>
+
+    <p>The node tests the ability to communicate with a host at a specific TCP port. 
+    It just tries to establish the communication and closes it again without sending or receiving anything.</p>
     
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
-        <dd> </dd>
+        <dd> topic.</dd>
+        <dt>payload <span class="property-type">undefined</span></dt>
+        <dd> Host and Port must be set in the node parameters.</dt>
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd> defines the Host. If no Port is set with a speration by <code>:</code>, the Port parameter is used.</dt>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> Host, Port and Family can be set by corresponding attributes; all missing ones are taken from the parameters.</dt>
     </dl>
 
     <h3>Output</h3>
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
         <dd> same as in input</dd>
-        <dt>payload <span class="property-type">object</span></dt>
-        <dd> .</dd>
+        <dt>payload <span class="property-type">number or <code>false</code></span></dt>
+        <dd> time of the communication startup or <code>false</code>; so it can be used like a Boolean value.</dd>
+        <dt>ping <span class="property-type">object</span></dt>
+        <dd> detailed data of the ping.</dd>
     </dl>
     
     <h3>Parameters</h3>
     <dl class="message-properties">
-        <dt>fems <span class="property-type">feneconFems</span></dt>
-        <dd> configuration of the FEMS.</dd>
-        <dt>Topic <span class="property-type">string</span></dt>
-        <dd> the data point to request; if empty, <code>msg.topic</code> will be used.</dd>
-        <dt>Complete <span class="property-type">boolean</span></dt>
-        <dd> sending out the complete response data or just the value.</dd>
+        <dt>Host <span class="property-type">string</span></dt>
+        <dd> Host to be pinged.</dd>
+        <dt>Port <span class="property-type">number</span></dt>
+        <dd> TCP port to be used.</dd>
+        <dt>Family <span class="property-type">number</span></dt>
+        <dd> Automatic, IPv4 or IPv6.</dd>
     </dl>
     
 </script>

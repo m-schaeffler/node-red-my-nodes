@@ -17,23 +17,12 @@ It just tries to establish the communication and closes it again without sending
 
 ### Input
 
-|msg.    | type   | description                       |
-|:-------|:-------|:----------------------------------|
-|topic   |string  | topic.|
-|payload |undefined, string or object| host and port to ping.|
-
-#### payload is undefined
-
-Host and Port must be set in the node parameters.
-
-#### payload is a string
-
-Payload defines the Host.
-If no Port is set with a speration by `:`, the Port parameter is used.
-
-#### payload is an object
-
-Host, Port and Family can be set by corresponding attributes; all missing ones are taken from the parameters.
+|msg.    | type    | description                       |
+|:-------|:--------|:----------------------------------|
+|topic   |string   | topic.|
+|payload |undefined| Host and Port must be set in the node parameters.|
+|payload |string   | defines the Host. If no Port is set with a speration by `:`, the Port parameter is used.|
+|payload |object   | Host, Port and Family can be set by corresponding attributes; all missing ones are taken from the parameters.|
 
 ### Output
 

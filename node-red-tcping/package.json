@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-tcping",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "Node Red nodes to ",
     "author": {
         "name": "Mathias Schäffler",

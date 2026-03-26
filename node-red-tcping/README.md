@@ -1,6 +1,6 @@
 # @mschaeffler/node-red-fenecon
 
-A Node Red nodes to ping host via TCP.
+A Node Red nodes to ping a host via TCP.
 
 ![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-tcping/examples/tcping.png)
 
@@ -12,15 +12,15 @@ $ npm install @mschaeffler/node-red-tcping
 
 ## tcPing Node
 
-The node test the ability to communicate with a host at a specific TCP port.
-It just tries to establish the communication and just closes it again without sending anything.
+The node tests the ability to communicate with a host at a specific TCP port.
+It just tries to establish the communication and closes it again without sending or receiving anything.
 
 ### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic   |string  | .|
-|payload |undefined, string or object| host to ping.|
+|topic   |string  | topic.|
+|payload |undefined, string or object| host and port to ping.|
 
 #### payload is undefined
 
@@ -29,7 +29,7 @@ Host and Port must be set in the node parameters.
 #### payload is a string
 
 Payload defines the Host.
-If no port is set with a speration by `:`, the Port parameter is used.
+If no Port is set with a speration by `:`, the Port parameter is used.
 
 #### payload is an object
 
@@ -40,7 +40,7 @@ Host, Port and Family can be set by corresponding attributes; all missing ones a
 |msg.   | type   | description |
 |:------|:-------|:------------|
 |topic  | string | same as in input message.|
-|payload| number | time of the communication startup or `false`; so it can be used like a Boolean value.|
+|payload| number or `false` | time of the communication startup or `false`; so it can be used like a Boolean value.|
 |ping   | object | detailed data of the ping.|
 
 ### Parameters

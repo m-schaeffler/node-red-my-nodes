@@ -1,7 +1,7 @@
 {
     "name": "@mschaeffler/node-red-tcping",
-    "version": "0.2.2",
-    "description": "Node Red nodes to ",
+    "version": "0.2.3",
+    "description": "Node Red nodes to ping a host via TCP.",
     "author": {
         "name": "Mathias Schäffler",
         "url": "https://github.com/m-schaeffler"

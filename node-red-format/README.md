@@ -81,7 +81,6 @@ The message property to be used as payload can be defined with the `Property` pr
 |Cyclic|number|cyclic time to send out the chart in seconds.|
 |Löschzyklen |number| every how many `cycles` old data is deleted from the chart.|
 |Hours|number|how many hours the chart should span over.|
-|Steps|boolean|make steps instead of linear chart.|
 |Erase only with data|boolean|do not delete outdated data, if there is no new data arriving at the input.|
 |Status|boolean|shows the actual value as a node status.|
 

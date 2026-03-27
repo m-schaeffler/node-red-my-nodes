@@ -56,7 +56,6 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('cyclic', 60);
         n1.should.have.a.property('eraseCycles',10);
         n1.should.have.a.property('hours', 24);
-        n1.should.have.a.property('steps', false);
         n1.should.have.a.property('eraseAlways', true);
         n1.should.have.a.property('showState', false);
         n1.should.have.a.property('cycleJitter', 2000);
@@ -263,68 +262,6 @@ describe( 'collect_chart Node', function () {
     });
   });
 
-  it('should collect data with steps', function (done) {
-    this.timeout( 10000 );
-    const numbers1 = [0,0,0,10,10,5];
-    const numbers2 = [0,0,0,0,10,10,10,5];
-    const time = [0,200,400,570,600,800,970,1000];
-    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "2", steps: true, name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg);
-        try {
-          c++;
-          switch( c )
-          {
-            case 1:
-              msg.should.have.property('init',true);
-              msg.should.have.property('payload',[]);
-              break;
-            case 2:
-              msg.should.not.have.property('init');
-              msg.should.have.property('payload').which.is.an.Array().of.length(numbers2.length);
-              for(const i in msg.payload)
-              {
-                msg.payload[i].should.be.a.ValidItem(
-                  'steps',
-                  1250-time[i],
-                  numbers2[i] );
-              }
-              break;
-            default:
-              done("too much output messages");
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('steps', true);
-        await delay(750);
-        c.should.match(1);
-        for( const i of numbers1 )
-        {
-          n1.receive({ topic:"steps", payload: i });
-          await delay(200);
-        }
-        await delay(3750);
-        c.should.match(2);
-        should.exist( n1.context().get("last") );
-        n1.warn.should.have.callCount(1);
-        n1.error.should.have.callCount(0);
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
   it('should collect data with partial steps', function (done) {
     this.timeout( 10000 );
     const numbers1 = [0,0,0,10,10,5];
@@ -389,7 +326,6 @@ describe( 'collect_chart Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('steps', false);
         n1.should.have.a.property('topics', topics);
         await delay(750);
         c.should.match(1);

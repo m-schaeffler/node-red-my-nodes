@@ -12,7 +12,6 @@ module.exports = function(RED) {
         this.cyclic       = Number( config.cyclic ?? 60 );
         this.eraseCycles  = Number( config.eraseCycles ?? 10 );
         this.hours        = Number( config.hours ?? 24 );
-        this.steps        = Boolean( config.steps );
         this.eraseAlways  = ! config.eraseWithData;
         this.showState    = Boolean( config.showState );
         this.cycleJitter  = Number( config.cycleJitter ?? 2000 );
@@ -38,10 +37,6 @@ module.exports = function(RED) {
         };
         function isStep(topic)
         {
-            if( node.steps )
-            {
-                return true;
-            }
             for( const t of node.topics )
             {
                 if( t?.topic === topic )

@@ -26,10 +26,6 @@
         outputLabels: ['state output','event output'],
         oneditprepare: function() {
             const node = this;
-            $("#node-input-devices").typedInput({ 
-                type:"json", 
-                types:["json"]
-            });
             // populate store names
             $("#node-input-contextStore").empty();
             $("#node-input-contextStore").append(`<option value="none">None</option>`);
@@ -54,6 +50,72 @@
             });
             // select the current option
             $("#node-input-contextStore").val(currentStore);
+            // Devices-List
+            const devicesList = $("#node-input-devices-container").css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,device) {
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    const row1 = $('<div/>').appendTo(container);
+                    const row2 = $('<div/>').appendTo(container);
+                    $('<div/>',{style: 'display:inline-block; width:8%;'})
+                        .text('mac')
+                        .appendTo(row1);
+                    const propertyMac = $('<input/>',{class:"node-input-device-mac",type:"text"})
+                        .css("width","40%")
+                        .appendTo(row1)
+                        .typedInput({types:['str']});
+                    $('<div/>',{style: 'display:inline-block; padding:0px 6px;'})
+                        .text('=')
+                        .appendTo(row1);
+                    const propertyTopic = $('<input/>',{class:"node-input-device-topic",type:"text"})
+                        .css("width","45%")
+                        .appendTo(row1)
+                        .typedInput({types:['str']});
+                    $('<div/>',{style: 'display:inline-block; width: 8%;'})
+                        .text('key')
+                        .appendTo(row2);
+                    const propertyKey = $('<input/>',{class:"node-input-device-key",type:"text"})
+                        .css("width","89%")
+                        .appendTo(row2)
+                        .typedInput({types:['str']});
+                    propertyMac  .typedInput('value',device.mac   ?? "");
+                    propertyTopic.typedInput('value',device.topic ?? "");
+                    propertyKey  .typedInput('value',device.key   ?? "");
+                },
+                //sortable: true,
+                removable: true
+            });
+            console.log(this.devices)
+            const help = JSON.parse( this.devices ?? "[]" );
+            for( const i in help ) {
+                const v = help[i];
+                devicesList.editableList('addItem',typeof v == "string" ? {name:v} : {mac:i,topic:v.topic,key:v.key});
+            }
+        },
+        oneditresize: function(size) {
+            const rows = $("#dialog-form>div:not(.node-input-devices-container-row)");
+            let height = size.height;
+            for(let i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            const editorRow = $("#dialog-form>div.node-input-devices-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            $("#node-input-devices-container").editableList('height',height);
+        },
+        oneditsave: function() {
+            const devices = $("#node-input-devices-container").editableList('items');
+            let help = {};
+            devices.each(function(i) {
+                const device = $(this);
+                const mac   = device.find(".node-input-device-mac")  .typedInput('value');
+                const topic = device.find(".node-input-device-topic").typedInput('value');
+                const key   = device.find(".node-input-device-key")  .typedInput('value');
+                help[mac] = key==="" ? { topic:topic } : { topic:topic, key:key };
+            });
+            console.log(JSON.stringify( help ))
+            this.devices = JSON.stringify( help );
         }
     });
 </script>
@@ -62,10 +124,6 @@
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
-    </div>
-    <div class="form-row">
-        <label for="node-input-devices"><i class="fa fa-bluetooth-b"></i> Devices</label>
-        <input type="text" id="node-input-devices">
     </div>
     <div class="form-row">
         <label for="node-input-counterMode"><i class="fa fa-clock-o"></i> Countermode</label>
@@ -94,6 +152,10 @@
     <div class="form-row">
         <label for="node-input-batteryState"><i class="fa fa-"></i> battery is state</label>
         <input type="checkbox" id="node-input-batteryState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row node-input-devices-container-row">
+        <label for="node-input-devices"><i class="fa fa-bluetooth-b"></i> Devices</label>
+        <ol id="node-input-devices-container"></ol>
     </div>
 </script>
 

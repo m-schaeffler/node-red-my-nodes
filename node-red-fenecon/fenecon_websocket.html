@@ -24,10 +24,47 @@
         outputLabels: ['subscribed data','config data','state'],
         oneditprepare: function() {
             const node = this;
-            $("#node-input-inlist").typedInput({ 
-                type:"json", 
-                types:["json"]
+            const inlistList = $("#node-input-inlist-container").css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,item) {
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    const row = $('<div/>').appendTo(container);
+                    const propertyName = $('<input/>',{class:"node-input-inlist-name",type:"text"})
+                        .css("width","100%")
+                        .appendTo(row)
+                        .typedInput({types:['str']});
+                    propertyName.typedInput('value',item.name ?? "");
+                },
+                removable: true
             });
+            console.log(this.inlist)
+            const help = JSON.parse( this.inlist ?? "[]" );
+            for( const v of help ) {
+                inlistList.editableList('addItem',{name:v});
+            }
+        },
+        oneditresize: function(size) {
+            const rows = $("#dialog-form>div:not(.node-input-inlist-container-row)");
+            let height = size.height;
+            for(let i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            const editorRow = $("#dialog-form>div.node-input-inlist-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            $("#node-input-inlist-container").editableList('height',height);
+        },
+        oneditsave: function() {
+            const inlist = $("#node-input-inlist-container").editableList('items');
+            let help = [];
+            inlist.each(function(i) {
+                const topic = $(this);
+                const name  = topic.find(".node-input-inlist-name").typedInput('value');
+                help.push( name );
+            });
+            console.log(JSON.stringify( help ))
+            this.topics = JSON.stringify( help );
         }
     });
 </script>
@@ -46,16 +83,16 @@
         <input type="text" id="node-input-edge"></input>
     </div>
     <div class="form-row">
-        <label for="node-input-inlist"><i class="fa fa-arrow-right"></i> Inlist</label>
-        <input type="text" id="node-input-inlist">
-    </div>
-    <div class="form-row">
         <label for="node-input-risk"><i class="fa fa-bolt"></i> Risk accepted</label>
         <input type="checkbox" id="node-input-risk" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
     <div class="form-row">
         <label for="node-input-timeout"><i class="fa fa-hourglass-start"></i> Timeout</label>
         <input type="checkbox" id="node-input-timeout" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row node-input-inlist-container-row">
+        <label for="node-input-inlist"><i class="fa fa-arrow-right"></i> Inlist</label>
+        <ol id="node-input-inlist-container"></ol>
     </div>
 </script>
 

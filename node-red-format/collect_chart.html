@@ -11,7 +11,6 @@
             cyclic:{value:60,validate:RED.validators.number(),required:true},
             eraseCycles:{value:10,validate:RED.validators.number(),required:true},
             hours:{value:24,validate:RED.validators.number(),required:true},
-            steps:{value:false},
             eraseWithData:{value:false},
             showState:{value:false}
         },
@@ -28,20 +27,16 @@
         inputLabels: 'input',
         outputLabels: 'complete chart',
         oneditprepare: function() {
-            const node = this
+            const node = this;
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
                 typeField: "#node-input-propertyType"
             });
-            $("#node-input-topics").typedInput({ 
-                type:"json", 
-                types:["json"]
-            });
             // populate store names
             $("#node-input-contextStore").empty();
             $("#node-input-contextStore").append(`<option value="none">None</option>`);
-            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : ''
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : '';
             RED.settings.context.stores.forEach(function(item){
                 if( item ) {
                    const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
@@ -51,6 +46,58 @@
             const currentStore = node.contextStore || '';
             // select the current option
             $("#node-input-contextStore").val(currentStore);
+            // Topics-List
+            const topicsList = $("#node-input-topics-container").css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,topic) {
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    const row = $('<div/>').appendTo(container);
+                    const propertyName = $('<input/>',{class:"node-input-topic-name",type:"text"})
+                        .css("width","calc(70% - 30px)")
+                        .appendTo(row)
+                        .typedInput({types:['str']});
+                    $('<div/>',{style: 'display:inline-block; padding:0px 6px;'})
+                        .text('step')
+                        .appendTo(row);
+                    const propertyStep = $('<input/>',{class:"node-input-topic-step",type:"text"})
+                        .css("width","25%")
+                        .appendTo(row)
+                        .typedInput({types:['bool']});
+                    propertyName.typedInput('value',topic.name ?? "");
+                    propertyStep.typedInput('value',Boolean(topic.step));
+                },
+                sortable: true,
+                removable: true
+            });
+            console.log(this.topics)
+            const help = JSON.parse( this.topics ?? "[]" );
+            for( const v of help ) {
+                topicsList.editableList('addItem',typeof v == "string" ? {name:v} : {name:v.topic,step:v.step});
+            }
+        },
+        oneditresize: function(size) {
+            const rows = $("#dialog-form>div:not(.node-input-topics-container-row)");
+            let height = size.height;
+            for(let i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            const editorRow = $("#dialog-form>div.node-input-topics-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            $("#node-input-topics-container").editableList('height',height);
+        },
+        oneditsave: function() {
+            const topics = $("#node-input-topics-container").editableList('items');
+            let help = [];
+            topics.each(function(i) {
+                const topic = $(this);
+                const name  = topic.find(".node-input-topic-name").typedInput('value');
+                const step  = topic.find(".node-input-topic-step").typedInput('value') == "true";
+                help.push( { topic:name, step:step } );
+            });
+            console.log(JSON.stringify( help ))
+            this.topics = JSON.stringify( help );
         }
     });
 </script>
@@ -70,10 +117,6 @@
         <select type="text" id="node-input-contextStore"></select>
     </div>
     <div class="form-row">
-        <label for="node-input-topics"><i class="fa fa-tags"></i> Topics</label>
-        <input type="text" id="node-input-topics">
-    </div>
-    <div class="form-row">
         <label for="node-input-cyclic"><i class="fa fa-refresh"></i> Zykluszeit</label>
         <input type="number" id="node-input-cyclic">
     </div>
@@ -90,12 +133,12 @@
         <input type="checkbox" id="node-input-eraseWithData" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
     <div class="form-row">
-        <label for="node-input-steps"><i class="fa fa-angle-up"></i> Steps</label>
-        <input type="checkbox" id="node-input-steps" style="display:inline-block; width:20px; vertical-align:baseline;">
-    </div>
-    <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
         <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row node-input-topics-container-row">
+        <label for="node-input-topics"><i class="fa fa-tags"></i> Topics</label>
+        <ol id="node-input-topics-container"></ol>
     </div>
 </script>
 
@@ -140,8 +183,6 @@
         <dd> every how many <code>cycles</code> old data is deleted from the chart.</dd>
         <dt>Hours <span class="property-type">number</span></dt>
         <dd> how many hours the chart should span over.</dd>
-        <dt>Steps <span class="property-type">boolean</span></dt>
-        <dd> make steps instead of linear chart.</dd>
         <dt>Erase only with datas <span class="property-type">boolean</span></dt>
         <dd> do not delete outdated data, if there is no new data arriving at the input.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

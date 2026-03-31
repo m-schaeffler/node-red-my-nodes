@@ -77,7 +77,7 @@ The message property to be used as payload can be defined with the `Property` pr
 |:-----|:-------|:----------------------------------|
 |Property| string | defines the message property to be used as payload.|
 |Contextstore|context store|context store for storing the values; `none` is no storage.|
-|Topics|JSON array|array of the serieses of the chart. They can be either a string with just the name or an object with values from the next chapter.|
+|Topics|array|array of the series of the chart: they have a name and a flag for steps instead of linear chart.|
 |Cyclic|number|cyclic time to send out the chart in seconds.|
 |Löschzyklen |number| every how many `cycles` old data is deleted from the chart.|
 |Hours|number|how many hours the chart should span over.|

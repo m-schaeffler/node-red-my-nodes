@@ -205,13 +205,13 @@
     </dl>
 
     <p>This is an example of such a message payload:</p>
-    <code>{<br>
-    "addr":    "11:22:33:44:55:66",<br>
-    "rssi":    -85,<br>
-    "time":    1745395033113,<br>
-    "gateway": "Shelly Gateway",<br>
-    "data":    [68,0,164,1,100,46,56,69,43,255]<br>
-}</code>
+    <pre><code>{
+    "addr":    "11:22:33:44:55:66",
+    "rssi":    -85,
+    "time":    1745395033113,
+    "gateway": "Shelly Gateway",
+    "data":    [68,0,164,1,100,46,56,69,43,255]
+}</code></pre>
     
     <h3>Outputs</h3>
     <p>There are two output ports:</p>
@@ -255,7 +255,7 @@
     </dl>
     
     <h4>Device-Configuration</h4>
-    <p>The installed <a href="https://bthome.io">BT-Home</a> devices are configured:</p>
+    <p>The installed <a href="https://bthome.io">BT-Home</a> devices are configured with:</p>
     <dl class="message-properties">
         <dt>mac <span class="property-type">hex string</span></dt>
         <dd> mac address of the device in lower case.</dd>
@@ -282,7 +282,7 @@
     </ul>
 
     <p>Example:</p>
-    <pre><code>{<br>
+    <pre><code>{
     "dev_unencrypted_1":
     {
         "pid":       164,

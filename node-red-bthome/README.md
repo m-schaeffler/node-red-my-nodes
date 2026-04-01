@@ -99,7 +99,7 @@ There are two output ports:
 
 #### Device-Configuration
 
-The installed [BT-Home](https://bthome.io) devices are configured:
+The installed [BT-Home](https://bthome.io) devices are configured with:
 |config   | type     | description                       |
 |:--------|:---------|:----------------------------------|
 |mac      |hex string| mac address of the device in lower case.|

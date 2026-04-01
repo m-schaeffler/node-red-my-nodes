@@ -90,7 +90,7 @@ There are two output ports:
 
 |config       | type   | description                       |
 |:------------|:-------|:----------------------------------|
-|Devices      | JSON   | configuration of the BT-Home devices |
+|Devices      | object | configuration of the BT-Home devices |
 |counter is time|Boolean| the counter in encrypted messages is checked again the actual time |
 |Status-Prefix| string | prefix for the topic for state output |
 |Event-Prefix | string | prefix for the topic for event output |
@@ -99,12 +99,12 @@ There are two output ports:
 
 #### Device-Configuration
 
-With this JSON string the installed [BT-Home](https://bthome.io) devices are configured:
-```
-{
-    "<mac address of the device in lower case>": { "topic": "<name of the device>", "key": "<encryption key, if device is encrypted>" }
-}
-```
+The installed [BT-Home](https://bthome.io) devices are configured:
+|config   | type     | description                       |
+|:--------|:---------|:----------------------------------|
+|mac      |hex string| mac address of the device in lower case.|
+|name     |string    | name of the device.|
+|key      |hex string| encryption key, if device is encrypted.|
 
 An example for such a config from the unit tests:
 ```
@@ -174,7 +174,7 @@ This is an example of such a message payload:
     "precipitation": 121.5
 }
 ```
-    
+
 ### Outputs
 
 There are 12 output ports:

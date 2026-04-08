@@ -3,13 +3,18 @@ module.exports = function(RED) {
     function FeneconHttpGetNode(config) {
         RED.nodes.createNode(this,config);
         var node = this;
-        this.fems  = RED.nodes.getNode( config.fems );
-        this.topic = config.topic ?? "";
+        this.fems     = RED.nodes.getNode( config.fems );
+        this.topic    = config.topic ?? "";
         this.complete = Boolean( config.complete );
-        this.stats = { ok:0, error:0, exception:0 };
+        this.retries  = Number( config.retries ?? 1 );
+        this.counter = 0;
+        this.stats    = { ok:0, error:0, exception:0 };
         node.status( "" );
 
-        node.on('input', async function(msg,send,done) {
+        async function doGetRequest(msg,send,done)
+        {
+            node.counter++;
+            console.log(node.counter);
             try
             {
                 const response = await node.fems.httpRequest( node.topic || msg.topic );
@@ -63,7 +68,7 @@ module.exports = function(RED) {
             }
             catch( e )
             {
-                //console.log(e);
+                console.log(e);
                 node.stats.exception++;
                 node.status( {
                     fill:  "red",
@@ -72,6 +77,11 @@ module.exports = function(RED) {
                 } );
                 done( e );
             }
+        }
+
+        node.on('input', function(msg,send,done) {
+            node.counter = 0;
+            doGetRequest( msg, send, done );
         });
     }
 

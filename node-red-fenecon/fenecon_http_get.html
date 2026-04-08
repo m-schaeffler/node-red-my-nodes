@@ -6,7 +6,8 @@
             name: {value:""},
             fems: {value:"",type:"feneconFems",required:true},
             topic:{value:""},
-            complete:{value:false}
+            complete:{value:false},
+            retries:{value:1,validate:RED.validators.number(),required:true}
         },
         inputs:1,
         outputs:1,
@@ -39,6 +40,10 @@
     <div class="form-row">
         <label for="node-input-complete"><i class="fa fa-filter"></i> Complete</label>
         <input type="checkbox" id="node-input-complete" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-retries"><i class="fa fa-repeat"></i> Retries</label>
+        <input type="number" id="node-input-retries">
     </div>
 </script>
 

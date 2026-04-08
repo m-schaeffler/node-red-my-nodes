@@ -31,6 +31,7 @@ describe( 'fenecon_http_post Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems', null);
         n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('retries', 1);
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -195,6 +196,36 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });
         await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        n1.should.have.a.property('stats',{ok:0,error:0,exception:1});
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should time out', function (done) {
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "feneconHttpPost", fems: "nf", name: "test", z: "flow" },
+                { id: "nf", type: "feneconFems", hostname:"192.168.3.254", name:"TestFems", z: "flow" }];
+    helper.load([node,nodeFems], flow, async function () {
+      var n1 = helper.getNode("n1");
+      var nf = helper.getNode("nf");
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('fems').which.is.an.Object();
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('retries', 1);
+        n1.should.have.a.property('stats',{ok:0,error:0,exception:0});
+        await delay(50);
+        n1.receive({ topic:"foo/bar", payload:0 });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        await delay(1000);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:1});

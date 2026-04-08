@@ -7,7 +7,7 @@ module.exports = function(RED) {
         this.topic   = config.topic ?? "";
         this.retries = Number( config.retries ?? 1 );
         this.counter = 0;
-        this.stats   = { ok:0, error:0, exception:0 };
+        this.stats   = { ok:0, error:0, exception:0, retries:0 };
         node.status( "" );
 
         async function doPostRequest(msg,send,done)
@@ -43,14 +43,28 @@ module.exports = function(RED) {
             }
             catch( e )
             {
-                console.log(e);
-                node.stats.exception++;
-                node.status( {
-                    fill:  "red",
-                    shape: "dot",
-                    text:  e.name
-                } );
-                done( e );
+                //console.log(e);
+                if( e.name === "TimeoutError" && node.counter < node.retries )
+                {
+                    console.log( "Timeout-Error", node.counter );
+                    node.stats.retries++;
+                    node.status( {
+                        fill:  "yellow",
+                        shape: "dot",
+                        text:  e.name
+                    } );
+                    doPostRequest( msg, send, done );
+                }
+                else
+                {
+                    node.stats.exception++;
+                    node.status( {
+                        fill:  "red",
+                        shape: "dot",
+                        text:  e.name
+                    } );
+                    done( e );
+                }
             }
         }
 

@@ -31,7 +31,7 @@ describe( 'fenecon_http_post Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems', null);
         n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('retries', 1);
+        n1.should.have.a.property('retries', 0);
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -218,7 +218,7 @@ describe( 'fenecon_http_post Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems').which.is.an.Object();
         n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('retries', 1);
+        n1.should.have.a.property('retries', 0);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:0,retries:0});
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });
@@ -240,7 +240,7 @@ describe( 'fenecon_http_post Node', function () {
   it('should time out after retry', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconHttpPost", retries:2, fems: "nf", name: "test", z: "flow" },
+                { id: "n1", type: "feneconHttpPost", retries:1, fems: "nf", name: "test", z: "flow" },
                 { id: "nf", type: "feneconFems", hostname:"192.168.3.254", name:"TestFems", z: "flow" }];
     helper.load([node,nodeFems], flow, async function () {
       var n1 = helper.getNode("n1");
@@ -249,7 +249,7 @@ describe( 'fenecon_http_post Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('fems').which.is.an.Object();
         n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('retries', 2);
+        n1.should.have.a.property('retries', 1);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:0,retries:0});
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });

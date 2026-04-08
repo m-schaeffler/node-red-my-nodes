@@ -5,7 +5,7 @@ module.exports = function(RED) {
         var node = this;
         this.fems    = RED.nodes.getNode( config.fems );
         this.topic   = config.topic ?? "";
-        this.retries = Number( config.retries ?? 1 );
+        this.retries = Number( config.retries ?? 0 );
         this.counter = 0;
         this.stats   = { ok:0, error:0, exception:0, retries:0 };
         node.status( "" );
@@ -44,7 +44,7 @@ module.exports = function(RED) {
             catch( e )
             {
                 //console.log(e);
-                if( e.name === "TimeoutError" && node.counter < node.retries )
+                if( e.name === "TimeoutError" && node.counter <= node.retries )
                 {
                     console.log( "Timeout-Error", node.counter );
                     node.stats.retries++;

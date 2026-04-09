@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-fenecon",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Node Red nodes to communicate with a Fenecon FEMS",
     "author": {
         "name": "Mathias Schäffler",

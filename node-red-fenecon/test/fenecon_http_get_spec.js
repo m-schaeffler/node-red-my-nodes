@@ -34,6 +34,7 @@ describe( 'fenecon_http_get Node', function () {
         n1.should.have.a.property('complete', false);
         n1.should.have.a.property('retries', 0);
         await delay(50);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -74,6 +75,7 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"_meta/Version" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 1 );
@@ -116,6 +118,7 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"_meta/.*" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 1 );
@@ -164,6 +167,7 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 1 );
@@ -197,6 +201,7 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         c.should.match( 0 );
@@ -229,6 +234,7 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         c.should.match( 0 );
@@ -261,6 +267,7 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         c.should.match( 0 );
@@ -293,6 +300,7 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         c.should.match( 0 );
@@ -326,10 +334,12 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 0 );
         await delay(1000);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         c.should.match( 0 );
@@ -364,14 +374,17 @@ describe( 'fenecon_http_get Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar" });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 0 );
         await delay(1000);
+        n1.log.should.have.callCount(1);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c.should.match( 0 );
         await delay(1000);
+        n1.log.should.have.callCount(1);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         c.should.match( 0 );

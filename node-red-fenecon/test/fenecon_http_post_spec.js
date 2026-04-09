@@ -33,6 +33,7 @@ describe( 'fenecon_http_post Node', function () {
         n1.should.have.a.property('topic', '');
         n1.should.have.a.property('retries', 0);
         await delay(50);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -58,10 +59,12 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"ess0/SetActivePowerLessOrEquals", payload:1000 });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.receive({ topic:"ess0/SetActivePowerLessOrEquals", payload:null });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('stats',{ok:2,error:0,exception:0,retries:0});
@@ -88,10 +91,12 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:1000 });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.receive({ topic:"foo/bar", payload:null });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('stats',{ok:2,error:0,exception:0,retries:0});
@@ -118,6 +123,7 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('stats',{ok:0,error:1,exception:0,retries:0});
@@ -144,6 +150,7 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:1,retries:0});
@@ -170,6 +177,7 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:1,retries:0});
@@ -196,6 +204,7 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:1,retries:0});
@@ -223,9 +232,11 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         await delay(1000);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:1,retries:0});
@@ -254,12 +265,15 @@ describe( 'fenecon_http_post Node', function () {
         await delay(50);
         n1.receive({ topic:"foo/bar", payload:0 });
         await delay(200);
+        n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         await delay(1000);
+        n1.log.should.have.callCount(1);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         await delay(1000);
+        n1.log.should.have.callCount(1);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
         n1.should.have.a.property('stats',{ok:0,error:0,exception:1,retries:1});

@@ -14,7 +14,6 @@ module.exports = function(RED) {
         async function doGetRequest(msg,send,done)
         {
             node.counter++;
-            console.log(node.counter);
             try
             {
                 const response = await node.fems.httpRequest( node.topic || msg.topic );
@@ -71,7 +70,7 @@ module.exports = function(RED) {
                 //console.log(e);
                 if( e.name === "TimeoutError" && node.counter <= node.retries )
                 {
-                    console.log( "Timeout-Error", node.counter );
+                    node.log( "Timeout-Error #"+node.counter );
                     node.stats.retries++;
                     node.status( {
                         fill:  "yellow",

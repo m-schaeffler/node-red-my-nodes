@@ -67,9 +67,11 @@ module.exports = function(RED) {
             }
         }
 
-        node.on('input', function(msg,send,done) {
+        node.on('input', async function(msg,send,done) {
             node.counter = 0;
-            doPostRequest( msg, send, done );
+            node.fems.httpMutex.withLock( async function(){
+                await doPostRequest( msg, send, done );
+            });
         });
     }
 

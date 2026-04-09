@@ -77,7 +77,7 @@ module.exports = function(RED) {
                         shape: "dot",
                         text:  e.name
                     } );
-                    doGetRequest( msg, send, done );
+                    await doGetRequest( msg, send, done );
                 }
                 else
                 {

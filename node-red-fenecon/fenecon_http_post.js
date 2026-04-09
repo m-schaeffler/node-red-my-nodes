@@ -52,7 +52,7 @@ module.exports = function(RED) {
                         shape: "dot",
                         text:  e.name
                     } );
-                    doPostRequest( msg, send, done );
+                    await doPostRequest( msg, send, done );
                 }
                 else
                 {
@@ -67,7 +67,7 @@ module.exports = function(RED) {
             }
         }
 
-        node.on('input', async function(msg,send,done) {
+        node.on('input', function(msg,send,done) {
             node.counter = 0;
             node.fems.httpMutex.withLock( async function(){
                 await doPostRequest( msg, send, done );

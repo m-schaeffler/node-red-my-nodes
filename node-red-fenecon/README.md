@@ -199,6 +199,8 @@ A Node Red node to manage the state of a `feneconWebsocket` node.
 
 [Mathias Schäffler](https://github.com/m-schaeffler)
 
+[Artem Khrienov (Semaphore and Mutex)](https://medium.com/@artemkhrenov/advanced-concurrency-patterns-in-javascript-semaphore-mutex-read-write-lock-deadlock-prevention-79e8bffb5b81)
+
 ## License
 
 LGPL-2.1

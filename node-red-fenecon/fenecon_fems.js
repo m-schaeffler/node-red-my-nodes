@@ -1,11 +1,14 @@
+const Mutex = require( "./mutex.js" );
+
 module.exports = function(RED) {
     function femsNode(config) {
         RED.nodes.createNode(this,config);
         var node = this;
-        this.hostname = config.hostname ?? "";
-        this.user     = "owner";
-        this.password = "owner";
-        const auth    = "Basic " + Buffer.from( `${this.user}:${this.password}`, "utf-8" ).toString( "base64" );
+        this.hostname  = config.hostname ?? "";
+        this.user      = "owner";
+        this.password  = "owner";
+        this.httpMutex = new Mutex();
+        const auth     = "Basic " + Buffer.from( `${this.user}:${this.password}`, "utf-8" ).toString( "base64" );
 
         this.httpRequest = function(topic,payload=undefined) {
             let options = {

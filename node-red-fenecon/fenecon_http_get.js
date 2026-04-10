@@ -93,8 +93,8 @@ module.exports = function(RED) {
         }
 
         node.on('input', function(msg,send,done) {
-            node.counter = 0;
             node.fems.httpMutex.withLock( async function(){
+                node.counter = 0;
                 await doGetRequest( msg, send, done );
             });
         });

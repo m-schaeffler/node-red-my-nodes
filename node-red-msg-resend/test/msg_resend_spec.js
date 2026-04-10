@@ -73,7 +73,7 @@ describe( 'msg-resend Node', function () {
         n1.should.have.a.property('addCounters', false);
         n1.should.have.a.property('showState', false);
         await delay(500);
-        should.not.exist( n1.context().get("data") );
+        should.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -86,7 +86,7 @@ describe( 'msg-resend Node', function () {
 
   it('should forward messages', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", contextStore:"memoryOnly", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -727,6 +727,78 @@ describe( 'msg-resend Node', function () {
         await delay(500);
         checkData( n1.context().get("data"), "all_topics" );
         c.should.match(12);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+     });
+    });
+  });
+
+  it('should resend messages after redeploy, no store', function (done) {
+    this.timeout( 5000 );
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, addCounters:true, intervalUnit:"msecs", maximum:12, contextStore:"none", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.a.property('topic','t');
+          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('counter',c+1);
+          msg.should.have.a.property('max',12);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('interval', 50);
+        n1.should.have.a.property('maxCount', 12);
+        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('addCounters', true);
+        await delay(500);
+        should.not.exist( n1.context().get("data") );
+        c.should.match(0);
+        n1.receive({ topic: "t", payload: 1 });
+        await delay(25);
+        c.should.match(1);
+        await delay(250);
+        c.should.match(6);
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n2 = helper.getNode("n2");
+        n2.on("input", function (msg) {
+          //console.log(msg);
+          try {
+            msg.should.have.a.property('topic','t');
+            msg.should.have.a.property('payload',1);
+            msg.should.have.a.property('counter',c+1);
+            msg.should.have.a.property('max',12);
+          }
+          catch(err) {
+            done(err);
+          }
+          c++;
+        });
+        n1.should.have.a.property('interval', 50);
+        n1.should.have.a.property('maxCount', 12);
+        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('addCounters', true);
+        await delay(75);
+        c.should.match(6);
+        await delay(500);
+        should.not.exist( n1.context().get("data") );
+        c.should.match(6);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();

@@ -73,7 +73,7 @@ describe( 'msg-resend Node', function () {
         n1.should.have.a.property('addCounters', false);
         n1.should.have.a.property('showState', false);
         await delay(500);
-        should.exist( n1.context().get("data") );
+        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -86,7 +86,7 @@ describe( 'msg-resend Node', function () {
 
   it('should forward messages', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -138,7 +138,7 @@ describe( 'msg-resend Node', function () {
 
   it('should resend messages', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:3, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:3, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -197,7 +197,7 @@ describe( 'msg-resend Node', function () {
 
   it('should resend messages with counters', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:3, addCounters:true, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:3, addCounters:true, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -255,7 +255,7 @@ describe( 'msg-resend Node', function () {
 
   it('should resend messages with first sending delayed', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:1, firstDelayed:true, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:1, firstDelayed:true, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -317,7 +317,7 @@ describe( 'msg-resend Node', function () {
   it('should change the interval', function (done) {
     const expPayload = [1,1,2,3,4,4];
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:1, intervalUnit:"hours", maximum:2, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:1, intervalUnit:"hours", maximum:2, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -370,7 +370,7 @@ describe( 'msg-resend Node', function () {
 
   it('should change count', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -429,7 +429,7 @@ describe( 'msg-resend Node', function () {
 
   it('should not clone messages', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:4, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:4, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -475,7 +475,7 @@ describe( 'msg-resend Node', function () {
 
   it('should clone messages', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:4, clone:true, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:100, intervalUnit:"msecs", maximum:4, clone:true, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -521,7 +521,7 @@ describe( 'msg-resend Node', function () {
 
   it('should resend messages forever', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, intervalUnit:"msecs", maximum:0, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, intervalUnit:"msecs", maximum:0, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -570,7 +570,7 @@ describe( 'msg-resend Node', function () {
 
   it('should be stopped by msg.reset with topic', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, intervalUnit:"msecs", maximum:0, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, intervalUnit:"msecs", maximum:0, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -619,7 +619,7 @@ describe( 'msg-resend Node', function () {
 
   it('should be stopped by msg.reset without topic', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, intervalUnit:"msecs", maximum:0, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, intervalUnit:"msecs", maximum:0, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {
@@ -668,7 +668,7 @@ describe( 'msg-resend Node', function () {
 
   it('should resend messages after redeploy', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, addCounters:true, intervalUnit:"msecs", maximum:12, wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "msg-resend2", name: "test", interval:50, addCounters:true, intervalUnit:"msecs", maximum:12, contextStore:"memoryOnly", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, function () {
      initContext(async function () {

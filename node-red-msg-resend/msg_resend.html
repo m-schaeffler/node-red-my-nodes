@@ -11,6 +11,7 @@
             firstDelayed: {value:false},
             addCounters: {value:false},
             name: {value:""},
+            contextStore:{value:"",required:true},
             showState:{value:false}
         },
         inputs:1,
@@ -24,7 +25,23 @@
         },
         paletteLabel: "msg resend",
         inputLabels: 'input',
-        outputLabels: 'message'
+        outputLabels: 'message',
+        oneditprepare: function() {
+            const node = this;
+            // populate store names
+            $("#node-input-contextStore").empty();
+            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : '';
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                   $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
+        }
     });
 </script>
 
@@ -46,6 +63,10 @@
     <div class="form-row">
         <label for="node-input-maximum"><i class="fa fa-hashtag"></i> Max. count</label>
         <input type="number" id="node-input-maximum" placeholder="Max. count">
+    </div>
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
     </div>
     <div class="form-row">
         <label><i class="fa fa-envelope"></i></label>
@@ -115,6 +136,8 @@
         <dd> the intervall between two resends</dd>
         <dt>maximum <span class="property-type">number</span></dt>
         <dd> the maximum number of resends; 0 is infinite</dd>
+        <dt>Contextstore <span class="property-type">context store</span></dt>
+        <dd> context store for storing the values; <code>none</code> is no storage.</dd>
         <dt>byTopic <span class="property-type">boolean</span></dt>
         <dd> shall resending be done on a topic base</dd>
         <dt>firstDelayed <span class="property-type">boolean</span></dt>

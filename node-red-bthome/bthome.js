@@ -25,6 +25,7 @@ class DeviceNames {
     static 0x15 = "SBBT-104CEU"
     static 0x16 = "SBBT-104CUS";
     static 0x17 = "SBBT-102C";
+    static 0x1827 = "SMSN-0031ZL";
     static 0x201A = "SBCB-01PXNEUB6";
     static 0x201B = "SBCB-01PXNEUB10";
     static 0x201C = "SBCB-01PXNEUB13";
@@ -37,6 +38,7 @@ class DeviceNames {
     static 0x203D = "SBCB-01PXNEUC16";
     static 0x203E = "SBCB-01PXNEUC20";
     static 0x203F = "SBCB-01PXNEUC25";
+    //static 0x = "SBMS-001A";
 }
 Object.freeze( TypeIds );
 Object.freeze( DeviceNames );
@@ -268,6 +270,9 @@ module.exports = function(RED) {
                           }
                         case 0x2E:
                             setData( "humidity", rawdata.getUInt8() );
+                            break;
+                        case 0x2F:
+                            setData( "moisture", rawdata.getUInt8() );
                             break;
                         case 0x3A:
                             events.pushEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );

@@ -13,6 +13,7 @@ module.exports = function(RED) {
         this.addCounters  = Boolean( config.addCounters );
         this.showState    = Boolean( config.showState );
         this.data         = {};
+        this.timer        = {};
         switch( config.intervalUnit ?? "secs" )
         {
             case "secs":
@@ -50,7 +51,7 @@ module.exports = function(RED) {
 
         function defaultStat()
         {
-            return { interval: node.interval, maxCount: node.maxCount, message: null, timer: null };
+            return { interval: node.interval, maxCount: node.maxCount, message: null };
         }
 
         function sendMsg(message,statistic)
@@ -83,11 +84,12 @@ module.exports = function(RED) {
             //console.log( "msg-resend started" );
             for( const i in node.data )
             {
-                if( node.data[i].message && node.data[i].timer == null )
+                if( node.data[i].message && ! node.timer[i] )
                 {
                     node.log( "msg-resend restarting timer for "+i );
-                    node.data[i].timer = setInterval( function(stat) { node.emit( "cyclic", stat ); }, node.data[i].interval, node.data[i] );
+                    node.timer[i] = setInterval( function(top) { node.emit( "cyclic", top ); }, node.data[i].interval, i );
                 }
+                delete node.data[i].timer;
             }
             storeContext();
         });
@@ -102,7 +104,8 @@ module.exports = function(RED) {
                 statistic = defaultStat();
                 if( topic )
                 {
-                    node.data[topic] = statistic;
+                    node.data [topic] = statistic;
+                    node.timer[topic] = null;
                 }
             }
 
@@ -110,15 +113,17 @@ module.exports = function(RED) {
             {
                 if( topic )
                 {
-                    clearInterval( statistic.timer );
-                    node.data[topic] = defaultStat();
+                    clearInterval( node.timer[topic] );
+                    node.data [topic] = defaultStat();
+                    node.timer[topic] = null;
                 }
                 else
                 {
                     for( const i in node.data )
                     {
-                        clearInterval( node.data[i].timer );
-                        node.data[i] = defaultStat();
+                        clearInterval( node.timer[i] );
+                        node.data [i] = defaultStat();
+                        node.timer[i] = null;
                     }
                 }
                 node.status( "" );
@@ -138,11 +143,11 @@ module.exports = function(RED) {
                 if( msg.payload !== undefined )
                 {
                     statistic.counter = 0;
-                    if( statistic.timer )
+                    if( node.timer[topic] )
                     {
                         //console.log("msg-resend clear timer "+topic);
-                        clearInterval( statistic.timer );
-                        statistic.timer = null;
+                        clearInterval( node.timer[topic] );
+                        node.timer[topic] = null;
                     }
                     if( !node.firstDelayed )
                     {
@@ -151,7 +156,7 @@ module.exports = function(RED) {
                     if( node.firstDelayed || statistic.maxCount != 1 )
                     {
                         statistic.message = msg;
-                        statistic.timer   = setInterval( function(stat) { node.emit( "cyclic", stat ); }, statistic.interval, statistic );
+                        node.timer[topic] = setInterval( function(top) { node.emit( "cyclic", top ); }, statistic.interval, topic );
                     }
                 }
             }
@@ -159,13 +164,14 @@ module.exports = function(RED) {
             done();
         });
 
-        node.on( "cyclic", function(stat) {
+        node.on( "cyclic", function(topic) {
             //console.log("msg-resend cyclic "+stat.message.topic);
+            const stat = node.data[topic];
             sendMsg( stat.message, stat );
             if( stat.maxCount > 0 && stat.counter >= stat.maxCount )
             {
-                clearInterval( stat.timer );
-                stat.timer   = null;
+                clearInterval( node.timer[topic] );
+                node.timer[topic] = null;
                 stat.message = null;
             }
             storeContext();
@@ -175,10 +181,9 @@ module.exports = function(RED) {
             //console.log("msg-resend close");
             for( const i in node.data )
             {
-                clearInterval( node.data[i].timer );
-                node.data[i].timer = null;
+                clearInterval( node.timer[i] );
+                node.timer[i] = null;
             }
-            storeContext();
         } );
     }
 

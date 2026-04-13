@@ -50,7 +50,6 @@ describe( 'msg-resend Node, byTopic', function () {
   function checkData(data,topic) {
       data.should.have.a.property(topic).which.is.a.Object();
       data[topic].should.have.a.property('counter',data[topic].maxCount);
-      data[topic].should.have.a.property('timer',null);
       data[topic].should.have.a.property('message',null);
       return data[topic];
   }
@@ -58,7 +57,6 @@ describe( 'msg-resend Node, byTopic', function () {
   function checkDataWithoutCounter(data,topic) {
       data.should.have.a.property(topic).which.is.a.Object();
       data[topic].should.not.have.a.property('counter');
-      data[topic].should.have.a.property('timer',null);
       data[topic].should.have.a.property('message',null);
       return data[topic];
   }

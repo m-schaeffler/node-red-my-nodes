@@ -41,6 +41,7 @@ $ npm install @mschaeffler/node-red-msg-resend
 |:-----|:-------|:----------------------------------|
 |interval | number | the intervall between two resends |
 |maximum  | number | the maximum number of resends; 0 is infinite |
+|Contextstore|context store| context store for storing the values; `none` is no storage |
 |byTopic  | boolean| shall resending be done on a topic base |
 |firstDelayed | boolean| shall the first message be sent after a intervall, or instantly |
 |addCounters  | boolean| shall a counter be added to the sent mesages |

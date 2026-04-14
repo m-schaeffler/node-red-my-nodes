@@ -2,7 +2,7 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../msg_sequence.js");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
-//require("./msg_sequence_spec.js");
+require("./msg_sequence_spec.js");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -73,7 +73,7 @@ describe( 'msg-sequence Node, byTopic', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.a.property('topic',topics1[c]);
           msg.should.have.a.property('payload',c+1);
@@ -113,7 +113,7 @@ describe( 'msg-sequence Node, byTopic', function () {
      });
     });
   });
-/*
+
   it('should sequence messages', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: "n1", type: "msg-sequence", name: "test", outputs:3, interval:100, intervalUnit:"msecs", contextStore:"memoryOnly", bytopic:true, wires: [["n2"],["n3"],["n4"]] },
@@ -130,9 +130,9 @@ describe( 'msg-sequence Node, byTopic', function () {
       var c2 = 0;
       var c3 = 0;
       n2.on("input", function (msg) {
-        console.log("n2",c1,msg);
+        //console.log("n2",c1,msg);
         try {
-          msg.should.have.a.property('topic',c1==0?'t':c1<3?'u':'v');
+          msg.should.have.a.property('topic',topics1[c1]);
           msg.should.have.a.property('payload',c1+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
@@ -143,10 +143,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c1++;
       });
       n3.on("input", function (msg) {
-        console.log("n3",c2,msg);
+        //console.log("n3",c2,msg);
         try {
-          msg.should.have.a.property('topic',c2==0?'t':c2<2?'u':'v');
-          msg.should.have.a.property('payload',c2<2?c2+1:4);
+          msg.should.have.a.property('topic',topics1[c2]);
+          msg.should.have.a.property('payload',c2==2?4:c2+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -156,10 +156,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c2++;
       });
       n4.on("input", function (msg) {
-        console.log("n4",c3,msg);
+        //console.log("n4",c3,msg);
         try {
-          msg.should.have.a.property('topic',c3==0?'t':c3<2?'u':'v');
-          msg.should.have.a.property('payload',c3<2?c3+1:4);
+          msg.should.have.a.property('topic',topics1[c3]);
+          msg.should.have.a.property('payload',c3==2?4:c3+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -177,37 +177,21 @@ describe( 'msg-sequence Node, byTopic', function () {
         c1.should.match(0);
         c2.should.match(0);
         c3.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
+        for(const i in topics1)
+        {
+          n1.receive({ topic: topics1[i], payload: Number(i)+1 });
+        }
         await delay(25);
-        c1.should.match(1);
+        c1.should.match(topics1.length);
         c2.should.match(0);
         c3.should.match(0);
         await delay(475);
-        checkData( n1, "all_topics" );
-        c1.should.match(1);
-        c2.should.match(1);
-        c3.should.match(1);
-        n1.receive({ topic: "u", payload: 2 });
-        await delay(25);
-        c1.should.match(2);
-        c2.should.match(1);
-        c3.should.match(1);
-        await delay(475);
-        checkData( n1, "all_topics" );
-        c1.should.match(2);
-        c2.should.match(2);
-        c3.should.match(2);
-        n1.receive({ topic: "u", payload: 3 });
-        n1.receive({ topic: "v", payload: 4 });
-        await delay(25);
-        c1.should.match(4);
-        c2.should.match(2);
-        c3.should.match(2);
-        await delay(475);
-        checkData( n1, "all_topics" );
-        c1.should.match(4);
-        c2.should.match(3);
-        c3.should.match(3);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
+        c1.should.match(topics1.length);
+        c2.should.match(topics1.length-1);
+        c3.should.match(topics1.length-1);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -232,9 +216,9 @@ describe( 'msg-sequence Node, byTopic', function () {
       var c1 = 0;
       var c2 = 0;
       n2.on("input", function (msg) {
-        console.log("n2",c1,msg);
+        //console.log("n2",c1,msg);
         try {
-          msg.should.have.a.property('topic',c1==0?'t':'u');
+          msg.should.have.a.property('topic',topics2[c1]);
           msg.should.have.a.property('payload',c1+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
@@ -246,10 +230,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c1++;
       });
       n3.on("input", function (msg) {
-        console.log("n3",c2,msg);
+        //console.log("n3",c2,msg);
         try {
-          msg.should.have.a.property('topic',c2==0?'t':'u');
-          msg.should.have.a.property('payload',c2==0?1:4);
+          msg.should.have.a.property('topic',topics2[2-c2]);
+          msg.should.have.a.property('payload',(2-c2)+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
           msg.should.not.have.a.property('resend_interval');
@@ -262,29 +246,24 @@ describe( 'msg-sequence Node, byTopic', function () {
       try {
         n1.should.have.a.property('interval', 3600*1000);
         n1.should.have.a.property('outputs', 2);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         should.exist( n1.context().get("data") );
         c1.should.match(0);
         c2.should.match(0);
-        n1.receive({ topic: "t", payload: 1, resend_interval: 100 });
+        for(const i in topics2)
+        {
+          n1.receive({ topic: topics2[i], payload: Number(i)+1, resend_interval: 100-5*Number(i) });
+        }
         await delay(25);
-        c1.should.match(1);
+        c1.should.match(topics2.length);
         c2.should.match(0);
         await delay(475);
-        checkData( n1, "all_topics" ).should.have.a.property('interval', 100);
-        c1.should.match(1);
-        c2.should.match(1);
-        n1.receive({ topic: "u", payload: 2 });
-        n1.receive({ topic: "u", payload: 3 });
-        n1.receive({ topic: "u", payload: 4 });
-        await delay(25);
-        c1.should.match(4);
-        c2.should.match(1);
-        await delay(475);
-        checkData( n1, "all_topics" );
-        c1.should.match(4);
-        c2.should.match(2);
+        checkData( n1, "t" ).should.have.a.property('interval', 100);
+        checkData( n1, "u" ).should.have.a.property('interval', 95);
+        checkData( n1, "v" ).should.have.a.property('interval', 90);
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -312,7 +291,7 @@ describe( 'msg-sequence Node, byTopic', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log("n2",c,msg);
+        //console.log("n2",c,msg);
         try {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',c+1);
@@ -326,7 +305,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         msg.payload++;
       });
       n3.on("input", function (msg) {
-        console.log("n3",c,msg);
+        //console.log("n3",c,msg);
         try {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',c+1);
@@ -340,7 +319,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         msg.payload++;
       });
       n4.on("input", function (msg) {
-        console.log("n4",c,msg);
+        //console.log("n4",c,msg);
         try {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',c+1);
@@ -354,7 +333,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         msg.payload++;
       });
       n5.on("input", function (msg) {
-        console.log("n5",c,msg);
+        //console.log("n5",c,msg);
         try {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',c+1);
@@ -371,6 +350,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
         n1.should.have.a.property('forceClone', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         should.exist( n1.context().get("data") );
         c.should.match(0);
@@ -378,7 +358,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         await delay(25);
         c.should.match(1);
         await delay(475);
-        checkData( n1, "all_topics" );
+        checkData( n1, "t" );
         c.should.match(4);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -407,7 +387,7 @@ describe( 'msg-sequence Node, byTopic', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log("n2",c,msg);
+        //console.log("n2",c,msg);
         try {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',1);
@@ -421,7 +401,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         msg.payload++;
       });
       n3.on("input", function (msg) {
-        console.log("n3",c,msg);
+        //console.log("n3",c,msg);
         try {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',1);
@@ -435,7 +415,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         msg.payload++;
       });
       n4.on("input", function (msg) {
-        console.log("n4",c,msg);
+        //console.log("n4",c,msg);
         try {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',1);
@@ -449,7 +429,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         msg.payload++;
       });
       n5.on("input", function (msg) {
-        console.log("n5",c,msg);
+        //console.log("n5",c,msg);
         try {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',1);
@@ -466,6 +446,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
         n1.should.have.a.property('forceClone', true);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         should.exist( n1.context().get("data") );
         c.should.match(0);
@@ -473,7 +454,7 @@ describe( 'msg-sequence Node, byTopic', function () {
         await delay(25);
         c.should.match(1);
         await delay(475);
-        checkData( n1, "all_topics" );
+        checkData( n1, "t" );
         c.should.match(4);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -505,10 +486,10 @@ describe( 'msg-sequence Node, byTopic', function () {
       var c3 = 0;
       var c4 = 0;
       n2.on("input", function (msg) {
-        console.log("n2",c1,msg);
+        //console.log("n2",c1,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c1]);
+          msg.should.have.a.property('payload',c1+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -518,10 +499,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c1++;
       });
       n3.on("input", function (msg) {
-        console.log("n3",c2,msg);
+        //console.log("n3",c2,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c2]);
+          msg.should.have.a.property('payload',c2+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -531,10 +512,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c2++;
       });
       n4.on("input", function (msg) {
-        console.log("n4",c3,msg);
+        //console.log("n4",c3,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c3]);
+          msg.should.have.a.property('payload',c3+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -544,10 +525,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c3++;
       });
       n5.on("input", function (msg) {
-        console.log("n5",c4,msg);
+        //console.log("n5",c4,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c4]);
+          msg.should.have.a.property('payload',c4+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -559,31 +540,36 @@ describe( 'msg-sequence Node, byTopic', function () {
       try {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         should.exist( n1.context().get("data") );
         c1.should.match(0);
         c2.should.match(0);
         c3.should.match(0);
         c4.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
+        for(const i in topics2)
+        {
+          n1.receive({ topic: topics2[i], payload: Number(i)+1 });
+        }
         await delay(25);
-        c1.should.match(1);
+        c1.should.match(topics2.length);
         c2.should.match(0);
         c3.should.match(0);
         c4.should.match(0);
         await delay(200);
-        c1.should.match(1);
-        c2.should.match(1);
-        c3.should.match(1);
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
+        c3.should.match(topics2.length);
         c4.should.match(0);
-        n1.receive({ topic: "t", reset: true });
+        n1.receive({ topic: "v", reset: true });
         await delay(500);
-        checkDataWithoutCounter( n1, "all_topics" );
-        c1.should.match(1);
-        c2.should.match(1);
-        c3.should.match(1);
-        c4.should.match(0);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkDataWithoutCounter( n1, "v" );
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
+        c3.should.match(topics2.length);
+        c4.should.match(2);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -614,10 +600,10 @@ describe( 'msg-sequence Node, byTopic', function () {
       var c3 = 0;
       var c4 = 0;
       n2.on("input", function (msg) {
-        console.log("n2",c1,msg);
+        //console.log("n2",c1,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c1]);
+          msg.should.have.a.property('payload',c1+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -627,10 +613,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c1++;
       });
       n3.on("input", function (msg) {
-        console.log("n3",c2,msg);
+        //console.log("n3",c2,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c2]);
+          msg.should.have.a.property('payload',c2+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -640,10 +626,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c2++;
       });
       n4.on("input", function (msg) {
-        console.log("n4",c3,msg);
+        //console.log("n4",c3,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c3]);
+          msg.should.have.a.property('payload',c3+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -653,10 +639,10 @@ describe( 'msg-sequence Node, byTopic', function () {
         c3++;
       });
       n5.on("input", function (msg) {
-        console.log("n5",c4,msg);
+        //console.log("n5",c4,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c4]);
+          msg.should.have.a.property('payload',c4+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -668,30 +654,35 @@ describe( 'msg-sequence Node, byTopic', function () {
       try {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         should.exist( n1.context().get("data") );
         c1.should.match(0);
         c2.should.match(0);
         c3.should.match(0);
         c4.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
+        for(const i in topics2)
+        {
+          n1.receive({ topic: topics2[i], payload: Number(i)+1 });
+        }
         await delay(25);
-        c1.should.match(1);
+        c1.should.match(topics2.length);
         c2.should.match(0);
         c3.should.match(0);
         c4.should.match(0);
         await delay(200);
-        c1.should.match(1);
-        c2.should.match(1);
-        c3.should.match(1);
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
+        c3.should.match(topics2.length);
         c4.should.match(0);
         n1.receive({ reset: true });
         await delay(500);
-        checkDataWithoutCounter( n1, "all_topics" );
-        c1.should.match(1);
-        c2.should.match(1);
-        c3.should.match(1);
+        checkDataWithoutCounter( n1, "t" );
+        checkDataWithoutCounter( n1, "u" );
+        checkDataWithoutCounter( n1, "v" );
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
+        c3.should.match(topics2.length);
         c4.should.match(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -723,24 +714,26 @@ describe( 'msg-sequence Node, byTopic', function () {
       var c3 = 0;
       var c4 = 0;
       n2.on("input", function (msg) {
-        console.log("n2",c1,msg);
+        //console.log("n2",c1,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c1]);
+          msg.should.have.a.property('payload',c1+1);
           msg.should.not.have.a.property('counter');
-          msg.should.not.have.a.property('max');        }
+          msg.should.not.have.a.property('max');
+        }
         catch(err) {
           done(err);
         }
         c1++;
       });
       n3.on("input", function (msg) {
-        console.log("n3",c2,msg);
+        //console.log("n3",c2,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c2]);
+          msg.should.have.a.property('payload',c2+1);
           msg.should.not.have.a.property('counter');
-          msg.should.not.have.a.property('max');        }
+          msg.should.not.have.a.property('max');
+        }
         catch(err) {
           done(err);
         }
@@ -759,17 +752,20 @@ describe( 'msg-sequence Node, byTopic', function () {
       try {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         should.exist( n1.context().get("data") );
         c1.should.match(0);
         c2.should.match(0);
         c3.should.match(0);
         c4.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
+        for(const i in topics2)
+        {
+          n1.receive({ topic: topics2[i], payload: Number(i)+1 });
+        }
         await delay(125);
-        c1.should.match(1);
-        c2.should.match(1);
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
         c3.should.match(0);
         c4.should.match(0);
         await helper._redNodes.stopFlows();
@@ -790,24 +786,26 @@ describe( 'msg-sequence Node, byTopic', function () {
           c2++;
         });
         n4.on("input", function (msg) {
-          console.log("n4",c3,msg);
+          //console.log("n4",c3,msg);
           try {
-            msg.should.have.a.property('topic','t');
-            msg.should.have.a.property('payload',1);
+            msg.should.have.a.property('topic',topics2[c3]);
+            msg.should.have.a.property('payload',c3+1);
             msg.should.not.have.a.property('counter');
-            msg.should.not.have.a.property('max');        }
+            msg.should.not.have.a.property('max');
+          }
           catch(err) {
             done(err);
           }
           c3++;
         });
         n5.on("input", function (msg) {
-          console.log("n5",c4,msg);
+          //console.log("n5",c4,msg);
           try {
-            msg.should.have.a.property('topic','t');
-            msg.should.have.a.property('payload',1);
+            msg.should.have.a.property('topic',topics2[c4]);
+            msg.should.have.a.property('payload',c4+1);
             msg.should.not.have.a.property('counter');
-            msg.should.not.have.a.property('max');        }
+            msg.should.not.have.a.property('max');
+          }
           catch(err) {
             done(err);
           }
@@ -815,18 +813,20 @@ describe( 'msg-sequence Node, byTopic', function () {
         });
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(75);
-        c1.should.match(1);
-        c2.should.match(1);
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
         c3.should.match(0);
         c4.should.match(0);
         await delay(400);
-        c1.should.match(1);
-        c2.should.match(1);
-        c3.should.match(1);
-        c4.should.match(1);
-        checkData( n1, "all_topics" );
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
+        c3.should.match(topics2.length);
+        c4.should.match(topics2.length);
+        checkData( n1, "t" );
+        checkData( n1, "u" );
+        checkData( n1, "v" );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -857,10 +857,10 @@ describe( 'msg-sequence Node, byTopic', function () {
       var c3 = 0;
       var c4 = 0;
       n2.on("input", function (msg) {
-        console.log("n2",c1,msg);
+        //console.log("n2",c1,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c1]);
+          msg.should.have.a.property('payload',c1+1);
           msg.should.not.have.a.property('counter');
           msg.should.not.have.a.property('max');
         }
@@ -870,12 +870,13 @@ describe( 'msg-sequence Node, byTopic', function () {
         c1++;
       });
       n3.on("input", function (msg) {
-        console.log("n3",c2,msg);
+        //console.log("n3",c2,msg);
         try {
-          msg.should.have.a.property('topic','t');
-          msg.should.have.a.property('payload',1);
+          msg.should.have.a.property('topic',topics2[c2]);
+          msg.should.have.a.property('payload',c2+1);
           msg.should.not.have.a.property('counter');
-          msg.should.not.have.a.property('max');        }
+          msg.should.not.have.a.property('max');
+        }
         catch(err) {
           done(err);
         }
@@ -894,17 +895,20 @@ describe( 'msg-sequence Node, byTopic', function () {
       try {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(500);
         should.not.exist( n1.context().get("data") );
         c1.should.match(0);
         c2.should.match(0);
         c3.should.match(0);
         c4.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
+        for(const i in topics2)
+        {
+          n1.receive({ topic: topics2[i], payload: Number(i)+1 });
+        }
         await delay(125);
-        c1.should.match(1);
-        c2.should.match(1);
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
         c3.should.match(0);
         c4.should.match(0);
         await helper._redNodes.stopFlows();
@@ -925,24 +929,26 @@ describe( 'msg-sequence Node, byTopic', function () {
           c2++;
         });
         n4.on("input", function (msg) {
-          console.log("n4",c3,msg);
+          //console.log("n4",c3,msg);
           try {
-            msg.should.have.a.property('topic','t');
-            msg.should.have.a.property('payload',1);
+            msg.should.have.a.property('topic',topics2[c3]);
+            msg.should.have.a.property('payload',c3+1);
             msg.should.not.have.a.property('counter');
-            msg.should.not.have.a.property('max');        }
+            msg.should.not.have.a.property('max');
+          }
           catch(err) {
             done(err);
           }
           c3++;
         });
         n5.on("input", function (msg) {
-          console.log("n5",c4,msg);
+          //console.log("n5",c4,msg);
           try {
-            msg.should.have.a.property('topic','t');
-            msg.should.have.a.property('payload',1);
+            msg.should.have.a.property('topic',topics2[c4]);
+            msg.should.have.a.property('payload',c4+1);
             msg.should.not.have.a.property('counter');
-            msg.should.not.have.a.property('max');        }
+            msg.should.not.have.a.property('max');
+          }
           catch(err) {
             done(err);
           }
@@ -950,15 +956,15 @@ describe( 'msg-sequence Node, byTopic', function () {
         });
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
-        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('byTopic', true);
         await delay(75);
-        c1.should.match(1);
-        c2.should.match(1);
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
         c3.should.match(0);
         c4.should.match(0);
         await delay(400);
-        c1.should.match(1);
-        c2.should.match(1);
+        c1.should.match(topics2.length);
+        c2.should.match(topics2.length);
         c3.should.match(0);
         c4.should.match(0);
         should.not.exist( n1.context().get("data") );
@@ -972,5 +978,5 @@ describe( 'msg-sequence Node, byTopic', function () {
      });
     });
   });
-*/
+
 });

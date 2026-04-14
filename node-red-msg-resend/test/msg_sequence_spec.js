@@ -393,6 +393,7 @@ describe( 'msg-sequence Node', function () {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
         n1.should.have.a.property('forceClone', false);
+        n1.should.have.a.property('byTopic', false);
         await delay(500);
         should.exist( n1.context().get("data") );
         c.should.match(0);
@@ -488,6 +489,7 @@ describe( 'msg-sequence Node', function () {
         n1.should.have.a.property('interval', 100);
         n1.should.have.a.property('outputs', 4);
         n1.should.have.a.property('forceClone', true);
+        n1.should.have.a.property('byTopic', false);
         await delay(500);
         should.exist( n1.context().get("data") );
         c.should.match(0);
@@ -750,7 +752,8 @@ describe( 'msg-sequence Node', function () {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',1);
           msg.should.not.have.a.property('counter');
-          msg.should.not.have.a.property('max');        }
+          msg.should.not.have.a.property('max');
+        }
         catch(err) {
           done(err);
         }
@@ -762,7 +765,8 @@ describe( 'msg-sequence Node', function () {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',1);
           msg.should.not.have.a.property('counter');
-          msg.should.not.have.a.property('max');        }
+          msg.should.not.have.a.property('max');
+        }
         catch(err) {
           done(err);
         }
@@ -817,7 +821,8 @@ describe( 'msg-sequence Node', function () {
             msg.should.have.a.property('topic','t');
             msg.should.have.a.property('payload',1);
             msg.should.not.have.a.property('counter');
-            msg.should.not.have.a.property('max');        }
+            msg.should.not.have.a.property('max');
+          }
           catch(err) {
             done(err);
           }
@@ -829,7 +834,8 @@ describe( 'msg-sequence Node', function () {
             msg.should.have.a.property('topic','t');
             msg.should.have.a.property('payload',1);
             msg.should.not.have.a.property('counter');
-            msg.should.not.have.a.property('max');        }
+            msg.should.not.have.a.property('max');
+          }
           catch(err) {
             done(err);
           }
@@ -897,7 +903,8 @@ describe( 'msg-sequence Node', function () {
           msg.should.have.a.property('topic','t');
           msg.should.have.a.property('payload',1);
           msg.should.not.have.a.property('counter');
-          msg.should.not.have.a.property('max');        }
+          msg.should.not.have.a.property('max');
+        }
         catch(err) {
           done(err);
         }
@@ -952,7 +959,8 @@ describe( 'msg-sequence Node', function () {
             msg.should.have.a.property('topic','t');
             msg.should.have.a.property('payload',1);
             msg.should.not.have.a.property('counter');
-            msg.should.not.have.a.property('max');        }
+            msg.should.not.have.a.property('max');
+          }
           catch(err) {
             done(err);
           }
@@ -964,7 +972,8 @@ describe( 'msg-sequence Node', function () {
             msg.should.have.a.property('topic','t');
             msg.should.have.a.property('payload',1);
             msg.should.not.have.a.property('counter');
-            msg.should.not.have.a.property('max');        }
+            msg.should.not.have.a.property('max');
+          }
           catch(err) {
             done(err);
           }

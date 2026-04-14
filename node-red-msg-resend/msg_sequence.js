@@ -1,16 +1,14 @@
 module.exports = function(RED) {
 
-    function MsgResenderNode(config) {
+    function MsgSequenceNode(config) {
         RED.nodes.createNode(this,config);
         var node    = this;
         var context = this.context();
         this.interval     = Number( config.interval ?? 1 );
-        this.maxCount     = Number( config.maximum ?? 1 );
+        this.outputs      = Number( config.outputs ?? 1 );
         this.contextStore = config.contextStore ?? "";
         this.forceClone   = Boolean( config.clone );
-        this.firstDelayed = Boolean( config.firstDelayed );
         this.byTopic      = Boolean( config.bytopic );
-        this.addCounters  = Boolean( config.addCounters );
         this.showState    = Boolean( config.showState );
         this.data         = {};
         this.timer        = {};
@@ -51,15 +49,7 @@ module.exports = function(RED) {
 
         function defaultStat()
         {
-            return { interval: node.interval, maxCount: node.maxCount, message: null };
-        }
-
-        function setStatus(message,statistic)
-        {
-            if( node.showState )
-            {
-                node.status( {fill:statistic.counter!==statistic.maxCount?"green":"gray", shape:"dot", text: node.byTopic ? `${message.topic}: ${statistic.counter}` : statistic.counter } );
-            }
+            return { interval: node.interval, message: null };
         }
 
         function sendMsg(message,statistic)
@@ -67,14 +57,12 @@ module.exports = function(RED) {
             let outputMsg = node.forceClone ? RED.util.cloneMessage( message ) : message;
 
             statistic.counter++;
-            if( node.addCounters )
-            {
-                outputMsg.counter = statistic.counter;
-                outputMsg.max     = statistic.maxCount;
-            }
 
             node.send( outputMsg );
-            setStatus( message, statistic );
+            if( node.showState )
+            {
+                node.status( {fill:statistic.counter!==node.outputs?"green":"gray", shape:"dot", text: node.byTopic ? `${outputMsg.topic}: ${statistic.counter}` : statistic.counter } );
+            }
 	}
 
         function storeContext()
@@ -93,9 +81,7 @@ module.exports = function(RED) {
                 {
                     node.log( "msg-resend restarting timer for "+i );
                     node.timer[i] = setInterval( function(top) { node.emit( "cyclic", top ); }, node.data[i].interval, i );
-                    setStatus( node.data[i].message, node.data[i] );
                 }
-                delete node.data[i].timer;
             }
             storeContext();
         });
@@ -141,11 +127,6 @@ module.exports = function(RED) {
                     statistic.interval = Number( msg.resend_interval ) ?? node.interval;
                     delete msg.resend_interval;
                 }
-                if( msg.resend_max_count !== undefined )
-                {
-                    statistic.maxCount = Number( msg.resend_max_count ) ?? node.maxCount;
-                    delete msg.resend_max_count;
-                }
                 if( msg.payload !== undefined )
                 {
                     statistic.counter = 0;
@@ -155,11 +136,8 @@ module.exports = function(RED) {
                         clearInterval( node.timer[topic] );
                         node.timer[topic] = null;
                     }
-                    if( !node.firstDelayed )
-                    {
-                        sendMsg( msg, statistic );
-                    }
-                    if( node.firstDelayed || statistic.maxCount != 1 )
+                    sendMsg( msg, statistic );
+                    if( node.outputs > 1 )
                     {
                         statistic.message = msg;
                         node.timer[topic] = setInterval( function(top) { node.emit( "cyclic", top ); }, statistic.interval, topic );
@@ -174,7 +152,7 @@ module.exports = function(RED) {
             //console.log("msg-resend cyclic "+topic);
             const stat = node.data[topic];
             sendMsg( stat.message, stat );
-            if( stat.maxCount > 0 && stat.counter >= stat.maxCount )
+            if( stat.counter >= node.outputs )
             {
                 clearInterval( node.timer[topic] );
                 node.timer[topic] = null;
@@ -193,5 +171,5 @@ module.exports = function(RED) {
         } );
     }
 
-    RED.nodes.registerType("msg-resend2",MsgResenderNode);
+    RED.nodes.registerType("msg-sequence",MsgSequenceNode);
 }

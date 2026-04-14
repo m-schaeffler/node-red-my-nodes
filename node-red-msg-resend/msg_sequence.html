@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('msg-resend2',{
+    RED.nodes.registerType('msg-sequence',{
         category: "function",
         color: "#E6E0F8",
         defaults: {
@@ -7,29 +7,29 @@
                 return v!=='' && !isNaN(v) && Number(v)>0;
             }},
             intervalUnit: {value:"secs"},
-            maximum: {value:5,validate:function(v){
-                return v!=='' && !isNaN(v) && Number(v)>=0;
+            outputs: {value:1,required:true,validate:function(v){
+                return v!=='' && !isNaN(v) && Number(v)>0;
             }},
             bytopic: {value:false},
             clone: {value:false},
-            firstDelayed: {value:false},
-            addCounters: {value:false},
             name: {value:""},
             contextStore:{value:"",required:true},
             showState:{value:false}
         },
         inputs:1,
         outputs:1,
-        icon: "resend.png",
+        icon: "font-awesome/fa-list-ol",
         label: function() {
-            return this.name||"msg resend";
+            return this.name||"msg sequence";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "msg resend",
-        inputLabels: "input",
-        outputLabels: "message",
+        paletteLabel: "sequence",
+        inputLabels: "trigger",
+        outputLabels: function(index) {
+            return `${index+1}. message`;
+        },
         oneditprepare: function() {
             const node = this;
             // populate store names
@@ -49,7 +49,7 @@
     });
 </script>
 
-<script type="text/x-red" data-template-name="msg-resend2">
+<script type="text/x-red" data-template-name="msg-sequence">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -65,8 +65,8 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-maximum"><i class="fa fa-hashtag"></i> Max. count</label>
-        <input type="number" id="node-input-maximum" placeholder="Max. count">
+        <label for="node-input-outputs"><i class="fa fa-hashtag"></i> Outputs</label>
+        <input type="number" id="node-input-outputs" placeholder="Outputs">
     </div>
     <div class="form-row">
         <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
@@ -76,16 +76,6 @@
         <label><i class="fa fa-envelope"></i></label>
         <input type="checkbox" id="node-input-bytopic" style="display: inline-block; width: 20px; vertical-align: baseline;">
         <label for="node-input-bytopic" style="width:70%;">Topic dependent</label>
-    </div>
-    <div class="form-row">
-        <label><i class="fa fa-chevron-right"></i></label>
-        <input type="checkbox" id="node-input-firstDelayed" style="display: inline-block; width: 20px; vertical-align: baseline;">
-        <label for="node-input-firstDelayed" style="width:70%;">Send first message after interval</label>
-    </div>
-    <div class="form-row">
-        <label><i class="fa fa-flag"></i></label>
-        <input type="checkbox" id="node-input-addCounters" style="display: inline-block; width: 20px; vertical-align: baseline;">
-        <label for="node-input-addCounters" style="width:70%;">Add counters to output message</label>
     </div>
     <div class="form-row">
         <label><i class="fa fa-clone"></i></label>
@@ -99,7 +89,7 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="msg-resend2">
+<script type="text/x-red" data-help-name="msg-sequence">
 
     <p>A Node Red node for resending flow messages.</p>
     
@@ -144,10 +134,6 @@
         <dd> context store for storing the values; <code>none</code> is no storage.</dd>
         <dt>byTopic <span class="property-type">boolean</span></dt>
         <dd> shall resending be done on a topic base</dd>
-        <dt>firstDelayed <span class="property-type">boolean</span></dt>
-        <dd> shall the first message be sent after a intervall, or instantly</dd>
-        <dt>addCounters <span class="property-type">boolean</span></dt>
-        <dd> shall a counter be added to the sent mesages</dd>
         <dt>clone <span class="property-type">boolean</span></dt>
         <dd> shall the messages be cloned</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

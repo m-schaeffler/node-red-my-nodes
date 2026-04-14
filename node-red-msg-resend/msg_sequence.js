@@ -54,9 +54,13 @@ module.exports = function(RED) {
 
         function sendMsg(message,statistic)
         {
-            let outputMsg = node.forceClone ? RED.util.cloneMessage( message ) : message;
-
+            let outputMsg = [];
+            for( let i = 0; i < statistic.counter; i++ )
+            {
+                outputMsg.push( null );
+            }
             statistic.counter++;
+            outputMsg.push( node.forceClone ? RED.util.cloneMessage( message ) : message );
 
             node.send( outputMsg );
             if( node.showState )

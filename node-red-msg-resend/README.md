@@ -66,7 +66,20 @@ Any incoming message is immeditely routed to the 1st output and then after a del
     
 ### Input
 
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | topic for the output message|
+|payload |        | payload for the output message |
+|reset   |boolean | if true, resets the node; if combined with a `topic`, only this topic is reseted|
+|resend_interval| number | changes the parameter `interval` for this topic; value is in msec|
+
 ### Output
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | same is in corresponding input message|
+|payload |        | same is in corresponding input message|
+|...     |        | same is in corresponding input message|
 
 ### Parameters
 

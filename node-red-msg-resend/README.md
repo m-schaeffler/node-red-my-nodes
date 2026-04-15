@@ -10,9 +10,9 @@ $ npm install @mschaeffler/node-red-msg-resend
 
 ## msg-resend
 
-![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-resend.png)
-
 A Node Red node for resending flow messages.
+
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-resend.png)
 
 When a new input message arrives, it will be (re)sent to the output port at specified time intervals.
 This process will repeat until the next input message arrives, or until the maximum number of resends has been reached.
@@ -50,6 +50,7 @@ Thanks to Bart Butenaers for the basement I developed this node out of.
 |firstDelayed | boolean| shall the first message be sent after a intervall, or instantly |
 |addCounters  | boolean| shall a counter be added to the sent mesages |
 |clone        | boolean| shall the messages be cloned |
+|Status   | boolean| shows the actual value as a node status |
 
 ### Example Flow
 
@@ -57,13 +58,26 @@ Thanks to Bart Butenaers for the basement I developed this node out of.
 
 ## sequence
 
+A Node Red node for sequencing flow messages into several outputs.
+    
 ![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-sequence.png)
 
+Any incoming message is immeditely routed to the 1st output and then after a delay of `intervall` to the 2nd and so on.
+    
 ### Input
 
 ### Output
 
 ### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|interval | number | the intervall between two steps of the sequence |
+|outputs  | number | the number of outputs of the node |
+|Contextstore|context store| context store for storing the values; `none` is no storage |
+|byTopic  | boolean| shall resending be done on a topic base |
+|clone    | boolean| shall the messages be cloned |
+|Status   | boolean| shows the actual value as a node status |
 
 ### Example Flow
 

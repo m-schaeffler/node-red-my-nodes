@@ -20,7 +20,7 @@
         outputs:1,
         icon: "font-awesome/fa-list-ol",
         label: function() {
-            return this.name||"msg sequence";
+            return this.name||`sequence ${this.interval}${this.intervalUnit}`;
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
@@ -91,10 +91,9 @@
 
 <script type="text/x-red" data-help-name="msg-sequence">
 
-    <p>A Node Red node for resending flow messages.</p>
+    <p>A Node Red node for sequencing flow messages into several outputs.</p>
     
-    <p>When a new input message arrives, it will be (re)sent to the output port at specified time intervals.
-    This process will repeat until the next input message arrives, or until the maximum number of resends has been reached.</p>
+    <p>Any incoming message is immeditely routed to the 1st output and then after a delay of <code>intervall</code> to the 2nd and so on.</p>
     
     <h3>Input</h3>
     <dl class="message-properties">
@@ -106,8 +105,6 @@
         <dd> if true, resets the node; if combined with a <code>topic</code>, only this topic is reseted</dd>
         <dt>resend_interval <span class="property-type">number</span></dt>
         <dd> changes the parameter <code>interval</code> for this topic; value is in msec</dd>
-        <dt>resend_max_count <span class="property-type">number</span></dt>
-        <dd> changes the parameter <code>maximum</code> for this topic</dd>
     </dl>
     
     <h3>Outputs</h3>
@@ -116,10 +113,6 @@
         <dd> same is in corresponding input message</dd>
         <dt>payload <span class="property-type"></span></dt>
         <dd> same is in corresponding input message</dd>
-        <dt>counter <span class="property-type">number</span></dt>
-        <dd> resending counter, if parameter <code>addCounters</code> is set</dd>
-        <dt>max <span class="property-type">number</span></dt>
-        <dd> resending maximum, if parameter <code>addCounters</code> is set</dd>
         <dt>&hellip; <span class="property-type"></span></dt>
         <dd> same is in corresponding input message</dd>
     </dl>
@@ -127,13 +120,13 @@
     <h3>Parameters</h3>
     <dl class="message-properties">
         <dt>interval <span class="property-type">number</span></dt>
-        <dd> the intervall between two resends</dd>
-        <dt>maximum <span class="property-type">number</span></dt>
-        <dd> the maximum number of resends; 0 is infinite</dd>
+        <dd> the intervall between two steps of the sequence</dd>
+        <dt>outputs <span class="property-type">number</span></dt>
+        <dd> the number of outputs of the node</dd>
         <dt>Contextstore <span class="property-type">context store</span></dt>
         <dd> context store for storing the values; <code>none</code> is no storage.</dd>
         <dt>byTopic <span class="property-type">boolean</span></dt>
-        <dd> shall resending be done on a topic base</dd>
+        <dd> shall sequencing be done on a topic base</dd>
         <dt>clone <span class="property-type">boolean</span></dt>
         <dd> shall the messages be cloned</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

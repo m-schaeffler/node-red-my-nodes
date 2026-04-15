@@ -1,0 +1,191 @@
+[
+    {
+        "id": "4ad0611de9769e93",
+        "type": "msg-sequence",
+        "z": "bf81046dda206e25",
+        "interval": "1",
+        "intervalUnit": "secs",
+        "outputs": 6,
+        "bytopic": false,
+        "clone": false,
+        "name": "",
+        "contextStore": "none",
+        "showState": true,
+        "x": 360,
+        "y": 2740,
+        "wires": [
+            [
+                "75c80a198a691761"
+            ],
+            [
+                "34edbebc1a30d3cf"
+            ],
+            [
+                "31093fb9636fcbb7"
+            ],
+            [
+                "30b84d237da2c73a"
+            ],
+            [
+                "513526812273e197"
+            ],
+            [
+                "4bfc8d09c4d7afe3"
+            ]
+        ]
+    },
+    {
+        "id": "a0c6fb8f376da001",
+        "type": "inject",
+        "z": "bf81046dda206e25",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 2720,
+        "wires": [
+            [
+                "4ad0611de9769e93"
+            ]
+        ]
+    },
+    {
+        "id": "75c80a198a691761",
+        "type": "debug",
+        "z": "bf81046dda206e25",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 2640,
+        "wires": []
+    },
+    {
+        "id": "34edbebc1a30d3cf",
+        "type": "debug",
+        "z": "bf81046dda206e25",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 2680,
+        "wires": []
+    },
+    {
+        "id": "31093fb9636fcbb7",
+        "type": "debug",
+        "z": "bf81046dda206e25",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 2720,
+        "wires": []
+    },
+    {
+        "id": "30b84d237da2c73a",
+        "type": "debug",
+        "z": "bf81046dda206e25",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 2760,
+        "wires": []
+    },
+    {
+        "id": "513526812273e197",
+        "type": "debug",
+        "z": "bf81046dda206e25",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 2800,
+        "wires": []
+    },
+    {
+        "id": "4bfc8d09c4d7afe3",
+        "type": "debug",
+        "z": "bf81046dda206e25",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 2840,
+        "wires": []
+    },
+    {
+        "id": "a5bf2db7ef0af1d9",
+        "type": "inject",
+        "z": "bf81046dda206e25",
+        "name": "",
+        "props": [
+            {
+                "p": "reset",
+                "v": "true",
+                "vt": "bool"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 2760,
+        "wires": [
+            [
+                "4ad0611de9769e93"
+            ]
+        ]
+    },
+    {
+        "id": "99817a8dbb5c02eb",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@mschaeffler/node-red-msg-resend": "2.4.0"
+        }
+    }
+]

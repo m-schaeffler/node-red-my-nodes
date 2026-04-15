@@ -1,13 +1,6 @@
 # @mschaeffler/node-red-msg-resend
 
-A Node Red node for resending flow messages.
-
-![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-resend.png)
-
-When a new input message arrives, it will be (re)sent to the output port at specified time intervals.
-This process will repeat until the next input message arrives, or until the maximum number of resends has been reached.
-
-Thanks to Bart Butenaers for the basement I developed this node out of.
+Node Red nodes for sequencing flow messages.
 
 ## Install
 
@@ -15,7 +8,18 @@ Thanks to Bart Butenaers for the basement I developed this node out of.
 $ npm install @mschaeffler/node-red-msg-resend
 ```
 
-## Input
+## msg-resend
+
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-resend.png)
+
+A Node Red node for resending flow messages.
+
+When a new input message arrives, it will be (re)sent to the output port at specified time intervals.
+This process will repeat until the next input message arrives, or until the maximum number of resends has been reached.
+
+Thanks to Bart Butenaers for the basement I developed this node out of.
+
+### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
@@ -25,7 +29,7 @@ $ npm install @mschaeffler/node-red-msg-resend
 |resend_interval| number | changes the parameter `interval` for this topic; value is in msec|
 |resend_max_count| number | changes the parameter `maximum` for this topic|
 
-## Output
+### Output
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
@@ -35,7 +39,7 @@ $ npm install @mschaeffler/node-red-msg-resend
 |max     | number | resending maximum, if parameter `addCounters` is set|
 |...     |        | same is in corresponding input message|
 
-## Parameters
+### Parameters
 
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
@@ -47,9 +51,23 @@ $ npm install @mschaeffler/node-red-msg-resend
 |addCounters  | boolean| shall a counter be added to the sent mesages |
 |clone        | boolean| shall the messages be cloned |
 
-## Example Flow
+### Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-resend.json)
+
+## sequence
+
+![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-sequence.png)
+
+### Input
+
+### Output
+
+### Parameters
+
+### Example Flow
+
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-msg-resend/examples/msg-sequence.json)
 
 ## Author
 

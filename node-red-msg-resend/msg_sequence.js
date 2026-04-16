@@ -54,15 +54,9 @@ module.exports = function(RED) {
 
         function sendMsg(message,statistic)
         {
-            let outputMsg = [];
-            for( let i = 0; i < statistic.counter; i++ )
-            {
-                outputMsg.push( null );
-            }
-            statistic.counter++;
-            outputMsg.push( node.forceClone ? RED.util.cloneMessage( message ) : message );
-
-            node.send( outputMsg );
+            let outputMsgs = new Array( node.outputs );
+            outputMsgs[statistic.counter++] = node.forceClone ? RED.util.cloneMessage( message ) : message;
+            node.send( outputMsgs );
             if( node.showState )
             {
                 node.status( {fill:statistic.counter!==node.outputs?"green":"gray", shape:"dot", text: node.byTopic ? `${outputMsg.topic}: ${statistic.counter}` : statistic.counter } );

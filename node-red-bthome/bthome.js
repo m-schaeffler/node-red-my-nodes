@@ -21,6 +21,7 @@ class DeviceNames {
     static 0x0B = "SBWS-90CM";
     static 0x0C = "SBHT-103C";
     static 0x11 = "SBHT-203C";
+    static 0x13 = "SBMO-103Z"
     static 0x14 = "SBDW-103C";
     static 0x15 = "SBBT-104CEU"
     static 0x16 = "SBBT-104CUS";
@@ -319,6 +320,9 @@ module.exports = function(RED) {
                             break;
                         case 0x60:
                             setData( "channel", rawdata.getUInt8() + 1 );
+                            break;
+                        case 0x64:
+                            setData( "lightLevel", rawdata.getUInt8() );
                             break;
                         case 0xF0:
                             item.typeId = rawdata.getUInt16() & 0xF0FF;

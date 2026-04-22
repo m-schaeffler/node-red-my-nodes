@@ -50,6 +50,7 @@ describe( 'hourmeter Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('cycle',0);
         n1.should.have.a.property('contextStore', 'none');
         n1.should.have.a.property('showState', false);
@@ -68,7 +69,7 @@ describe( 'hourmeter Node', function () {
   it('should work with cycle activated', function (done) {
     this.timeout( 5000 );
     const reasons = ['query','query','query','on','query','query','off','query','query','reset'];
-    var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:1/120, name: "test", wires: [["n2"],["n3"]] },
+    var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:1/120, property: 'payload', name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -129,6 +130,7 @@ describe( 'hourmeter Node', function () {
       });
       try{
         n1.should.have.a.property('topic', 'zaehler');
+        n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('cycle', 1/120);
         start = Date.now();
         await delay(50);
@@ -244,6 +246,7 @@ describe( 'hourmeter Node', function () {
       });
       try{
         n1.should.have.a.property('topic', 'zaehler');
+        n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('cycle', 0);
         start = Date.now();
         await delay(50);
@@ -363,6 +366,7 @@ describe( 'hourmeter Node', function () {
       });
       try{
         n1.should.have.a.property('topic', 'zaehler');
+        n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('cycle', 0);
         start = Date.now();
         await delay(100);
@@ -427,6 +431,7 @@ describe( 'hourmeter Node', function () {
       });
       try{
         n1.should.have.a.property('topic', 'zaehler');
+        n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('cycle', 0);
         start = Date.now();
         await delay(100);
@@ -510,6 +515,7 @@ describe( 'hourmeter Node', function () {
       });
       try{
         n1.should.have.a.property('topic', 'zaehler');
+        n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('cycle', 0);
         start = Date.now();
         await delay(50);

@@ -61,6 +61,7 @@ A [local filesystem context store](https://nodered.org/docs/user-guide/context#s
 |config| type   | description                       |
 |:-----|:-------|:----------------------------------|
 |topic| string | Topic to send output values with.|
+|Property| string | defines the message property to be used as payload.|
 |cycle| number |Cyclic time of output; 0 is only at state change.|
 |Contextstore|context store| context store for storing the values.|
 |Status|boolean| the actual value as a node status.|

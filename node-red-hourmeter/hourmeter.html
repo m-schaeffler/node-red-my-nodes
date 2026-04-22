@@ -5,6 +5,7 @@
         defaults: {
             name: {value:""},
             topic:{value:""},
+            property:{value:"payload",required:true},
             cycle:{value:"0", required:true, validate:RED.validators.number()},
             contextStore:{value:"",required:true},
             showState:{value:false}
@@ -23,6 +24,12 @@
         paletteLabel: "hour meter",
         oneditprepare: function() {
             const node = this
+            // msg property
+            $("#node-input-property").typedInput({
+                type:"msg",
+                types:["msg"],
+                typeField: "#node-input-property-type"
+            });
             // populate store names
             $("#node-input-contextStore").empty();
             //$("#node-input-contextStore").append(`<option value="none">None</option>`);
@@ -50,8 +57,13 @@
         <input type="text" id="node-input-topic" placeholder="Topic">
     </div>
     <div class="form-row">
+        <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
+        <input type="text" id="node-input-property">
+        <input type="hidden" id="node-input-property-type">
+    </div>
+    <div class="form-row">
         <label for="node-input-cycle"><i class="fa fa-hourglass-o"></i> Cycle [min]</label>
-        <input type="text" id="node-input-cycle">
+        <input type="number" id="node-input-cycle">
     </div>
     <div class="form-row">
         <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
@@ -118,6 +130,8 @@
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
         <dd> Topic to send output values with.</dd>
+        <dt>Property <span class="property-type">string</span></dt>
+        <dd> defines the message property to be used as payload.</dd>
         <dt>cycle <span class="property-type">number</span></dt>
         <dd> Cyclic time of output; 0 is only at state change.</dd>
         <dt>Contextstore <span class="property-type">context store</span></dt>

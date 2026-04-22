@@ -6,6 +6,7 @@ module.exports = function(RED)
         RED.nodes.createNode(this,config);
         this.config       = config;
         this.topic        = config.topic ?? "";
+        this.property     = config.property || "payload";
         this.cycle        = Number( config.cycle ?? 0 );
         this.contextStore = config.contextStore ?? "none";
         this.showState    = Boolean( config.showState );
@@ -83,8 +84,8 @@ module.exports = function(RED)
                     }
                     else
                     {
-                        data.state = msg.payload;
-                        switch( msg.payload )
+                        data.state = RED.util.getMessageProperty( msg, node.property );
+                        switch( data.state )
                         {
                             case true:
                             case 1:
@@ -113,7 +114,7 @@ module.exports = function(RED)
                                 }
                                 break;
                             default:
-                                node.warn( `invalid payload: ${msg.payload}` );
+                                node.warn( `invalid msg.${node.property}: ${msg.payload}` );
                         }
                         context.set( "data", data, node.contextStore );
                     }

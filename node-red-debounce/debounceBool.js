@@ -159,7 +159,7 @@ module.exports = function(RED) {
                     {
                         msg.payload = Boolean( value );
                         const debounceTime = msg.debounceMs ?? node.time[!statistic.last];
-                        console.log(msg.payload,statistic.last,debounceTime)
+                        //console.log(msg.payload,statistic.last,debounceTime)
                         statistic.message = msg;
                         if( ! statistic.timer )
                         {

@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-debounce",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "Node Red nodes to debounce a payload.",
     "author": {
         "name": "Mathias Schäffler",
@@ -23,6 +23,7 @@
         "version": ">=4.0.0",
         "nodes": {
             "debounce": "debounce.js",
+            "debounceBool": "debounceBool.js",
             "debounceNumber": "debounceNumber.js"
         }
     },

@@ -163,8 +163,15 @@ module.exports = function(RED) {
                         statistic.message = msg;
                         if( ! statistic.timer )
                         {
-                            statusColor( "yellow" );
-                            statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
+                            if( statistic.last === undefined || value === statistic.last )
+                            {
+                                sendMsg( msg, "dot" );
+                            }
+                            else
+                            {
+                                statusColor( "yellow" );
+                                statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
+                            }
                         }
                         else
                         {

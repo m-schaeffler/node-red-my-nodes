@@ -230,21 +230,20 @@ describe( 'debounceBool Node', function () {
       }
     });
   });
-/*
+
   it('should debounce values, no restart', function (done) {
-    const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    var flow = [{ id: "n1", type: "debounce", name: "test", time:100, timeUnit:"msecs", wires: [["n2"]] },
+    this.timeout( 5000 );
+    var flow = [{ id: "n1", type: "debounceBool", name: "test", timeTrue:100, timeTrueUnit:"msecs", timeFalse:500, timeFalseUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         try {
-          const help = Math.min( (c+1)*4-1, numbers.length-1 );
-          msg.should.have.a.property('topic',help.toString());
-          msg.should.have.a.property('payload',numbers[help]);
+          msg.should.have.a.property('topic',c+1);
+          msg.should.have.a.property('payload',c<4 ? Boolean(c&0x01) : !(c&0x01));
         }
         catch(err) {
           done(err);
@@ -252,23 +251,49 @@ describe( 'debounceBool Node', function () {
         c++;
       });
       try {
-        n1.should.have.a.property('block', false);
-        n1.should.have.a.property('time', 100);
+        n1.should.have.a.property('time', {true:100,false:500});
+        n1.should.have.a.property('restart', false);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
         c.should.match(0);
-        for( const i in numbers )
-        {
-          n1.receive({ topic: i, payload: numbers[i] });
-          await delay(25);
-        }
-        await delay(150);
-        c.should.match(Math.ceil(numbers.length/4));
+        n1.receive({ topic: 1, payload: false });
+        await delay(25);
+        c.should.match(1);
+        n1.receive({ topic: "2a", payload: true });
+        await delay(75);
+        c.should.match(1);
+        n1.receive({ topic: 2, payload: true });
+        await delay(50);
+        c.should.match(2);
+        n1.receive({ topic: "3a", payload: false });
+        await delay(475);
+        c.should.match(2);
+        n1.receive({ topic: 3, payload: false });
+        await delay(50);
+        c.should.match(3);
         n1.context().get("data").should.have.ValidData("all_topics");
-        n1.receive({ topic: "reset", payload: 40 });
         n1.receive({ reset: true });
         await delay(150);
-        c.should.match(Math.ceil(numbers.length/4));
+        c.should.match(3);
+        n1.context().get("data").should.have.ValidData("all_topics");
+        n1.receive({ topic: 4, payload: true });
+        await delay(25);
+        c.should.match(4);
+        n1.receive({ topic: 5, payload: true });
+        await delay(25);
+        c.should.match(5);
+        n1.receive({ topic: "6a", payload: false });
+        await delay(450);
+        c.should.match(5);
+        n1.receive({ topic: 6, payload: false });
+        await delay(50);
+        c.should.match(6);
+        n1.receive({ topic: "7a", payload: true });
+        await delay(75);
+        c.should.match(6);
+        n1.receive({ topic: 7, payload: true });
+        await delay(50);
+        c.should.match(7);
         n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -279,10 +304,10 @@ describe( 'debounceBool Node', function () {
       }
     });
   });
-
+/*
   it('should debounce values, restart active', function (done) {
     const numbers = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21];
-    var flow = [{ id: "n1", type: "debounce", name: "test", restart:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounceBool", name: "test", restart:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -301,7 +326,6 @@ describe( 'debounceBool Node', function () {
         c++;
       });
       try {
-        n1.should.have.a.property('block', false);
         n1.should.have.a.property('time', 100);
         n1.should.have.a.property('restart', true);
         n1.should.have.a.property('byTopic', false);

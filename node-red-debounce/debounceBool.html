@@ -84,14 +84,15 @@
 
 <script type="text/x-red" data-help-name="debounceBool">
 
-    <p>A Node Red node for debouncing data.</p>
+    <p>A Node Red node for debouncing boolean values.</p>
     
-    <p>The <code>debounce</code> node is for a general purpose debouncing of any data (string, boolean, number &hellip;):</p>
+    <p>The <code>debounceBool</code> node is for debouncing of boolean values:</p>
     <ul>
     <li>What data is debounced can be selected with the <code>property</code> property.</li>
-    <li><code>filter</code>: The data can be checked for a change before the debounce.</li>
-    <li>Debouncing means here that the node waits <code>time</code> time before sending out the last received message.</li>
-    <li>It can be changed from debouncing to blocking mode.</li>
+    <li>Unchanged values are sent out immediately.</li>
+    <li>Debouncing means here that the node waits <code>timeTrue</code> / <code>timeFalse</code> time 
+        before sending out the last received message.</li>
+    <li>If <code>restart</code> is active, the debounciong time is started again with every changed message.</li>
     </uL>
     
     <h3>Input</h3>

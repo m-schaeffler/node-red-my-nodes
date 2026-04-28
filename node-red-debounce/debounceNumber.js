@@ -131,6 +131,7 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
+                    const lastReceived = statistic.message?.payload;
                     msg.payload = Number( value );
                     if( ! isNaN( msg.payload ) && testGap( msg.payload, statistic.last ) )
                     {
@@ -141,7 +142,7 @@ module.exports = function(RED) {
                         {
                             statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
                         }
-                        else if( node.restart )
+                        else if( node.restart && msg.payload !== lastReceived )
                         {
                             clearTimeout( statistic.timer );
                             statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );

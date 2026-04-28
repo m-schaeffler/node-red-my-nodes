@@ -149,6 +149,7 @@ module.exports = function(RED) {
                     if( msg.payload !== undefined && ( ! node.filterIn || msg.payload !== statistic.lastIn ) )
                     {
                         const debounceTime = msg.debounceMs ?? node.time;
+                        const lastReceived = statistic.lastIn;
                         statistic.lastIn = msg.payload;
                         if( ! node.block )
                         {
@@ -168,7 +169,7 @@ module.exports = function(RED) {
                         }
                         else
                         {
-                            if( node.restart )
+                            if( node.restart && value !== lastReceived  )
                             {
                                 clearTimeout( statistic.timer );
                                 statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );

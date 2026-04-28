@@ -164,7 +164,7 @@ module.exports = function(RED) {
                         statistic.message = msg;
                         if( ! statistic.timer )
                         {
-                            if( statistic.last === undefined || value === statistic.last )
+                            if( statistic.last === undefined || msg.payload === statistic.last )
                             {
                                 sendMsg( msg, "dot" );
                             }
@@ -176,7 +176,7 @@ module.exports = function(RED) {
                         }
                         else
                         {
-                            if( node.restart && value !== lastReceived )
+                            if( node.restart && msg.payload !== lastReceived )
                             {
                                 clearTimeout( statistic.timer );
                                 statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );

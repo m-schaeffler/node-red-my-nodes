@@ -13,8 +13,11 @@ At the moment these sensors are implemented and tested:
 - Shelly BLU Wall Switch 4
 - Shelly BLU Motion
 - Shelly BLU Distance
-- Shelly BLU Remote
+- Shelly BLU Remote Control ZB
 - Ecowitt WS90 powered by Shelly
+- Shelly BLU Button Tough 1 ZB
+- Shelly BLU H&T ZB
+- Shelly BLU H&T Display ZB
 
 ## Capture of Raw Frames
 

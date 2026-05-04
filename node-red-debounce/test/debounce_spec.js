@@ -56,8 +56,6 @@ describe( 'debounce Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('time', 1000);
         n1.should.have.a.property('block', false);
-        n1.should.have.a.property('filterIn', false);
-        n1.should.have.a.property('filterOut', false);
         n1.should.have.a.property('restart', false);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
@@ -138,62 +136,6 @@ describe( 'debounce Node', function () {
         n1.receive({ invalid: true, payload: 255 });
         await delay(150);
         c.should.match(0);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should forward filtered values', function (done) {
-    const numbersIn  = [-1,0,0,0,0,0,0,0,1,1,1,1];
-    const numbersOut = [-1,0,1,1];
-    const topicsOut  = ["t","u","v","reset"];
-    var flow = [{ id: "n1", type: "debounce", name: "test", filter: true, time:20, timeUnit:"msecs", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg);
-        try {
-          msg.should.have.a.property('topic',topicsOut[c]);
-          msg.should.have.a.property('payload',numbersOut[c]);
-        }
-        catch(err) {
-          done(err);
-        }
-        c++;
-      });
-      try {
-        n1.should.have.a.property('block', false);
-        n1.should.have.a.property('time', 20);
-        n1.should.have.a.property('byTopic', false);
-        n1.should.have.a.property('filterIn', true);
-        n1.should.have.a.property('filterOut', false);
-        await delay(500);
-        c.should.match(0);
-        for( const i in numbersIn )
-        {
-          n1.receive({ topic: topics[i%3], payload: numbersIn[i] });
-          await delay(50);
-        }
-        await delay(100);
-        c.should.match(numbersOut.length-1);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.receive({ topic: "z", payload: numbersIn[numbersIn.length-1] });
-        await delay(100);
-        c.should.match(numbersOut.length-1);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.receive({ reset: true });
-        n1.receive({ topic: "reset", payload: numbersIn[numbersIn.length-1] });
-        await delay(100);
-        c.should.match(numbersOut.length);
         n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -381,109 +323,6 @@ describe( 'debounce Node', function () {
         n1.receive({ reset: true });
         await delay(150);
         c.should.match(1);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should debounce filtered input values', function (done) {
-    var flow = [{ id: "n1", type: "debounce", name: "test", filter:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg);
-        try {
-          msg.should.have.a.property('topic',"t");
-          msg.should.have.a.property('payload',1);
-        }
-        catch(err) {
-          done(err);
-        }
-        c++;
-      });
-      try {
-        n1.should.have.a.property('block', false);
-        n1.should.have.a.property('time', 100);
-        n1.should.have.a.property('filterIn', true);
-        n1.should.have.a.property('filterOut', false);
-        n1.should.have.a.property('byTopic', false);
-        await delay(500);
-        c.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
-        await delay(150);
-        c.should.match(1);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.receive({ topic: "o", payload: 1 });
-        await delay(150);
-        c.should.match(1);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.receive({ topic: "o", payload: 0 });
-        await delay(25);
-        n1.receive({ topic: "t", payload: 1 });
-        await delay(150);
-        c.should.match(2);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should debounce values with filtered output', function (done) {
-    var flow = [{ id: "n1", type: "debounce", name: "test", filterOut:true, time:100, timeUnit:"msecs", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg);
-        try {
-          msg.should.have.a.property('topic',"t");
-          msg.should.have.a.property('payload',1-c);
-        }
-        catch(err) {
-          done(err);
-        }
-        c++;
-      });
-      try {
-        n1.should.have.a.property('block', false);
-        n1.should.have.a.property('time', 100);
-        n1.should.have.a.property('filterIn', false);
-        n1.should.have.a.property('filterOut', true);
-        n1.should.have.a.property('byTopic', false);
-        await delay(500);
-        c.should.match(0);
-        n1.receive({ topic: "t", payload: 1 });
-        await delay(150);
-        c.should.match(1);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.receive({ topic: "o", payload: 1 });
-        await delay(150);
-        c.should.match(1);
-        n1.context().get("data").should.have.ValidData("all_topics");
-        n1.receive({ topic: "o", payload: -1 });
-        await delay(25);
-        n1.receive({ topic: "o", payload: 1 });
-        await delay(150);
-        c.should.match(1);
-        n1.receive({ topic: "t", payload: 0 });
-        await delay(155);
-        c.should.match(2);
         n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

@@ -8,8 +8,6 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.time         = Number( config.time ?? 1 );
         this.block        = Boolean( config.block );
-        this.filterIn     = Boolean( config.filter );
-        this.filterOut    = Boolean( config.filterOut );
         this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
         this.state        = config.showState ? { fill:"gray", shape:"ring", text:"-" } : null;
@@ -48,12 +46,8 @@ module.exports = function(RED) {
 
         function sendMsg(msg,shape)
         {
-            let statistic = node.data[node.byTopic ? msg.topic : "all_topics"];
-            if( ! node.filterOut || msg.payload !== statistic.lastOut )
-            {
-                statistic.lastOut = msg.payload;
-                node.send( msg );
-            }
+            //node.data[node.byTopic ? msg.topic : "all_topics"].last = msg.payload;
+            node.send( msg );
             if( node.state )
             {
                 node.state.fill  = "green";
@@ -146,11 +140,9 @@ module.exports = function(RED) {
                 getPayload( function(value)
                 {
                     msg.payload = value;
-                    if( msg.payload !== undefined && ( ! node.filterIn || msg.payload !== statistic.lastIn ) )
+                    if( msg.payload !== undefined )
                     {
                         const debounceTime = msg.debounceMs ?? node.time;
-                        const lastReceived = statistic.lastIn;
-                        statistic.lastIn = msg.payload;
                         if( ! node.block )
                         {
                             statistic.message = msg;
@@ -169,7 +161,7 @@ module.exports = function(RED) {
                         }
                         else
                         {
-                            if( node.restart && value !== lastReceived  )
+                            if( node.restart && value !== statistic.lastIn )
                             {
                                 clearTimeout( statistic.timer );
                                 statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
@@ -179,6 +171,7 @@ module.exports = function(RED) {
                                 statusColor( "red" );
                             }
                         }
+                        statistic.lastIn = msg.payload;
                     }
                     else
                     {

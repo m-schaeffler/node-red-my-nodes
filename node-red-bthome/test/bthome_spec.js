@@ -1431,7 +1431,7 @@ describe( 'bthome Node', function () {
       n2.on("input", function (msg) {
         try {
           c1++;
-          console.log(msg)
+          //console.log(msg)
           msg.should.have.a.property('topic','dev_unencrypted_1');
           switch( c1 )
           {

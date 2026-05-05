@@ -210,15 +210,7 @@ module.exports = function(RED) {
                 {
                     if( node.eventState )
                     {
-                        console.log(type,event,data)
-                        if( data === null )
-                        {
-                            setData( type, event );
-                        }
-                        else
-                        {
-                            setData( type, data );
-                        }
+                        setData( type, data === null ? event : data );
                     }
                     else
                     {
@@ -392,6 +384,14 @@ module.exports = function(RED) {
                         time: msgTime,
                         rssi: msg.payload.rssi ?? null
                     };
+                    for( const g in item.gw )
+                    {
+                        if( item.gw[g].time < msgTime - 24*3600*1000 )
+                        {
+                            node.warn(`${name}: delete gw ${g}`);
+                            delete item.gw[g];
+                        }
+                    }
                 }
                 if( pid !== null && pid !== item.pid )
                 {

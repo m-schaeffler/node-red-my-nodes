@@ -10,7 +10,8 @@
             eventPrefix:{value:""},
             contextVar:{value:"bthome",required:true},
             contextStore:{value:"none",required:true},
-            batteryState:{value:true,required:true}
+            batteryState:{value:true,required:true},
+            eventState:{value:false,required:true}
         },
         inputs:1,
         outputs:2,
@@ -153,6 +154,10 @@
         <label for="node-input-batteryState"><i class="fa fa-"></i> battery is state</label>
         <input type="checkbox" id="node-input-batteryState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
+    <div class="form-row">
+        <label for="node-input-eventState"><i class="fa fa-"></i> event is state</label>
+        <input type="checkbox" id="node-input-eventState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
     <div class="form-row node-input-devices-container-row">
         <label for="node-input-devices"><i class="fa fa-bluetooth-b"></i> Devices</label>
         <ol id="node-input-devices-container"></ol>
@@ -251,7 +256,9 @@
         <dt>Contextstore <span class="property-type">string</span></dt>
         <dd>  context store to be used.</dd>
         <dt>battery is state <span class="property-type">Boolean</span></dt>
-        <dd> battery level is included in state mesage.</dd>
+        <dd> battery level is included in state message.</dd>
+        <dt>event is state <span class="property-type">Boolean</span></dt>
+        <dd> events are handled as states, so they have also release messages.</dd>
     </dl>
     
     <h4>Device-Configuration</h4>

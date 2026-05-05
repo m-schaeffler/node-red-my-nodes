@@ -57,6 +57,7 @@ module.exports = function(RED) {
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
         this.batteryState = Boolean( config.batteryState );
+        this.eventState   = Boolean( config.eventState );
         this.data         = {};
         this.statistics   = { ok:0, dup:0, old:0, err:0 };
         node.status( "" );
@@ -422,7 +423,7 @@ module.exports = function(RED) {
                 {
                     decryptMsg();
                 }
-                events = new BtEvent( node.eventPrefix, item );
+                events = new BtEvent( node.eventPrefix, item, node.eventState );
                 decodeMsg();
                 if( checkPid() )
                 {

@@ -42,6 +42,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('batteryState', false);
+        n1.should.have.a.property('eventState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.should.have.a.property('statistics',{ok:0,err:0,old:0,dup:0});
@@ -747,6 +748,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('eventPrefix', "EP/");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('eventState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -884,6 +886,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('eventPrefix', "");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('eventState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {

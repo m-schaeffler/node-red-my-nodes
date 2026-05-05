@@ -217,7 +217,7 @@ module.exports = function(RED) {
                         }
                         else
                         {
-                            setData( type, { event:event, data:data } );
+                            setData( type, data );
                         }
                     }
                     else
@@ -303,7 +303,7 @@ module.exports = function(RED) {
                           {
                             const dimmer = rawdata.getUInt8();
                             const data   = rawdata.getUInt8();
-                            setEvent( "dimmer", "dimmer", dimmer==1 ? data : -data );
+                            setEvent( "dimmer", "dimmer", dimmer==2 ? -data : data );
                             break;
                           }
                         case 0x3F:

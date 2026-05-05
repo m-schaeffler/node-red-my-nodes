@@ -206,6 +206,11 @@ module.exports = function(RED) {
                     }
                 }
 
+                function setEvent(type,event,data=null)
+                {
+                    events.pushEvent( type, event, data );
+                }
+
                 rawdata = new Rawdata( rawdata );
                 while( rawdata.length() > 0 )
                 {
@@ -255,7 +260,7 @@ module.exports = function(RED) {
                             setData( "moisture", Boolean( rawdata.getUInt8() ) );
                             break;
                         case 0x21:
-                            events.pushEvent( "motion", rawdata.getEnum( ["","motion"] ) );
+                            setEvent( "motion", rawdata.getEnum( ["","motion"] ) );
                             break;
                         case 0x2C:
                             setData( "vibration", Boolean( rawdata.getUInt8() ) );
@@ -277,13 +282,13 @@ module.exports = function(RED) {
                             setData( "moisture", rawdata.getUInt8() );
                             break;
                         case 0x3A:
-                            events.pushEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
+                            setEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
                             break;
                         case 0x3C:
                           {
                             const dimmer = rawdata.getUInt8();
                             const data   = rawdata.getUInt8();
-                            events.pushEvent( "dimmer", "dimmer", dimmer==1 ? data : -data );
+                            setEvent( "dimmer", "dimmer", dimmer==1 ? data : -data );
                             break;
                           }
                         case 0x3F:
@@ -351,7 +356,7 @@ module.exports = function(RED) {
                 }
                 if( item.typeId === TypeIds.bluRemote && item.data?.tilt )
                 {
-                    events.pushEvent( "rotation", "rotation", item.data.tilt );
+                    setEvent( "rotation", "rotation", item.data.tilt );
                     delete item.data.tilt;
                 }
             }
@@ -423,7 +428,7 @@ module.exports = function(RED) {
                 {
                     decryptMsg();
                 }
-                events = new BtEvent( node.eventPrefix, item, node.eventState );
+                events = new BtEvent( node.eventPrefix, item );
                 decodeMsg();
                 if( checkPid() )
                 {

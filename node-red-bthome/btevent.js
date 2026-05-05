@@ -9,8 +9,6 @@ class BtEvent {
         this._events = {};
         this._prefix = prefix;
         this._item   = item;
-        this._state  = state;
-        console.log(this._state);
     }
     pushEvent(type,event,data=null)
     {
@@ -24,8 +22,7 @@ class BtEvent {
     {
         function pushResult(type,event,index=null)
         {
-        console.log("pr",state)
-            if( ( event.event && event.data !== 0 ) || state )
+            if( ( event.event && event.data !== 0 ) )
             {
                 let payload  = { ...data, type: type, event: event.event };
                 let indexStr = "";;
@@ -53,7 +50,6 @@ class BtEvent {
 
         let   result = [];
         const prefix = this._prefix;
-        const state  = this._state;
         for( const t in this._events )
         {
             const event = this._events[t];

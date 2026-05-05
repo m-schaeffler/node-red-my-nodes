@@ -851,28 +851,17 @@ describe( 'bthome Node', function () {
       let c2 = 0;
       n2.on("input", function (msg) {
         c1++;
-      });
-      n3.on("input", function (msg) {
         try {
-          c2++;
           console.log(msg);
-          /*
-          switch( c2 )
-          {
-            case 1:
-              msg.should.have.a.property('topic','EP/dev_unencrypted_1/S');
-              msg.should.have.a.property('payload',{type:'button',event:'S'});
-              break;
-            case 2:
-              msg.should.have.a.property('topic','EP/dev_unencrypted_1/L');
-              msg.should.have.a.property('payload',{type:'button',event:'L'});
-              break;
-          }
-          */
+          msg.should.have.a.property('topic','dev_unencrypted_1');
+          msg.should.have.a.property('payload',{button:c1==2?"S":""});
         }
         catch(err) {
           done(err);
         }
+      });
+      n3.on("input", function (msg) {
+        c2++;
       });
       try {
         n1.should.have.a.property('name', 'test');
@@ -902,8 +891,8 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:1},"UnitTest");
-        c1.should.match( 0 );
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:1},"UnitTest",{button:""});
+        c1.should.match( 1 );
         c2.should.match( 0 );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
           gateway: "UnitTest",
@@ -916,9 +905,9 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:2},"UnitTest");
-        c1.should.match( 0 );
-        c2.should.match( 1 );
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:2},"UnitTest",{button:"S"});
+        c1.should.match( 2 );
+        c2.should.match( 0 );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
           gateway: "UnitTest",
           addr:    "11:22:33:44:55:66",
@@ -930,10 +919,10 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:5},"UnitTest");
-        n1.should.have.a.property('statistics',{ok:6,err:0,old:0,dup:0});
-        c1.should.match( 0 );
-        c2.should.match( 2 );
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:3},"UnitTest",{button:""});
+        n1.should.have.a.property('statistics',{ok:4,err:0,old:0,dup:0});
+        c1.should.match( 3 );
+        c2.should.match( 0 );
         done();
       }
       catch(err) {

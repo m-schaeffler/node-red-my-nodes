@@ -208,7 +208,22 @@ module.exports = function(RED) {
 
                 function setEvent(type,event,data=null)
                 {
-                    events.pushEvent( type, event, data );
+                    if( node.eventState )
+                    {
+                        console.log(type,event,data)
+                        if( data === null )
+                        {
+                            setData( type, event );
+                        }
+                        else
+                        {
+                            setData( type, { event:event, data:data } );
+                        }
+                    }
+                    else
+                    {
+                        events.pushEvent( type, event, data );
+                    }
                 }
 
                 rawdata = new Rawdata( rawdata );

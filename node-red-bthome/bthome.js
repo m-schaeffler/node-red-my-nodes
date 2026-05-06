@@ -292,8 +292,13 @@ module.exports = function(RED) {
                         case 0x3C:
                           {
                             const dimmer = rawdata.getUInt8();
-                            const data   = rawdata.getUInt8();
-                            events.pushEvent( "dimmer", "dimmer", dimmer==2 ? -data : data );
+                            let   data   = rawdata.getUInt8();
+                            switch( dimmer )
+                            {
+                                case 0: data = 0;     break;
+                                case 2: data = -data; break;
+                            }
+                            events.pushEvent( "dimmer", "dimmer", data );
                             break;
                           }
                         case 0x3F:

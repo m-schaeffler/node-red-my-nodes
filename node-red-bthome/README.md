@@ -100,7 +100,7 @@ There are two output ports:
 |Context-Variable| string | name of the variable in flow context storage |
 |Contextstore | string | context store to be used |
 |battery is state|Boolean| battery level is included in state message.|
-|event is state|Boolean| events are handled as states, so they have also release messages.|
+|mjotion is state|Boolean| motion is a state, not an event.|
 
 #### Device-Configuration
 

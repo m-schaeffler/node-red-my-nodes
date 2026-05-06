@@ -42,7 +42,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('batteryState', false);
-        n1.should.have.a.property('eventState', false);
+        n1.should.have.a.property('motionState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.should.have.a.property('statistics',{ok:0,err:0,old:0,dup:0});
@@ -748,7 +748,6 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('eventPrefix', "EP/");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('eventState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -886,7 +885,6 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('eventPrefix', "");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('eventState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -1052,7 +1050,6 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('eventPrefix', "");
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('eventState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -1187,7 +1184,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('devices');
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('eventState', false);
+        n1.should.have.a.property('motionState', false);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -1251,7 +1248,7 @@ describe( 'bthome Node', function () {
 
   it('should decode unencrypted events (Shelly Motion), state', function (done) {
     let flow = [{ id:'flow', type:'tab' },
-                { id: "n1", type: "bthome", name: "test", eventState:true, devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
+                { id: "n1", type: "bthome", name: "test", motionState:true, devices:testDevices, wires: [["n2"],["n3"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
@@ -1265,7 +1262,7 @@ describe( 'bthome Node', function () {
           c1++;
           //console.log(msg);
           msg.should.have.a.property('topic','dev_unencrypted_1');
-          msg.should.have.a.property('payload',{ lux: c1==2 ? 28.16 : 25.6, motion: c1==2?'motion':'' });
+          msg.should.have.a.property('payload',{ lux: c1==2 ? 28.16 : 25.6, motion: c1==2 });
         }
         catch(err) {
           done(err);
@@ -1279,7 +1276,7 @@ describe( 'bthome Node', function () {
         n1.should.have.a.property('devices');
         n1.should.have.a.property('contextVar', "bthome");
         n1.should.have.a.property('contextStore', "none");
-        n1.should.have.a.property('eventState', true);
+        n1.should.have.a.property('motionState', true);
         await delay(50);
         n1.should.have.a.property('data', {} );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -1301,7 +1298,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:1},"UnitTest",{lux:25.6,motion:""});
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:1},"UnitTest",{lux:25.6,motion:false});
         c1.should.match( 1 );
         c2.should.match( 0 );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -1315,7 +1312,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:2},"UnitTest",{lux:28.16,motion:"motion"});
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:2},"UnitTest",{lux:28.16,motion:true});
         c1.should.match( 2 );
         c2.should.match( 0 );
         n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
@@ -1329,7 +1326,7 @@ describe( 'bthome Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('data');
-        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:3},"UnitTest",{lux:25.6,motion:""});
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:3},"UnitTest",{lux:25.6,motion:false});
         n1.should.have.a.property('statistics',{ok:4,err:0,old:0,dup:0});
         c1.should.match( 3 );
         c2.should.match( 0 );

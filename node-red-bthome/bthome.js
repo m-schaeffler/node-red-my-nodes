@@ -57,7 +57,7 @@ module.exports = function(RED) {
         this.contextVar   = config.contextVar   ?? "bthome";
         this.contextStore = config.contextStore ?? "none";
         this.batteryState = Boolean( config.batteryState );
-        this.eventState   = Boolean( config.eventState );
+        this.motionState  = Boolean( config.motionState );
         this.data         = {};
         this.statistics   = { ok:0, dup:0, old:0, err:0 };
         node.status( "" );
@@ -206,18 +206,6 @@ module.exports = function(RED) {
                     }
                 }
 
-                function setEvent(type,event,data=null)
-                {
-                    if( node.eventState )
-                    {
-                        setData( type, data === null ? event : data );
-                    }
-                    else
-                    {
-                        events.pushEvent( type, event, data );
-                    }
-                }
-
                 rawdata = new Rawdata( rawdata );
                 while( rawdata.length() > 0 )
                 {
@@ -267,8 +255,18 @@ module.exports = function(RED) {
                             setData( "moisture", Boolean( rawdata.getUInt8() ) );
                             break;
                         case 0x21:
-                            setEvent( "motion", rawdata.getEnum( ["","motion"] ) );
+                          {
+                            const event = Boolean( rawdata.getUInt8() );
+                            if( node.motionState )
+                            {
+                                setData( "motion", event );
+                            }
+                            else
+                            {
+                                events.pushEvent( "motion", event ? "motion" : "" );
+                            }
                             break;
+                          }
                         case 0x2C:
                             setData( "vibration", Boolean( rawdata.getUInt8() ) );
                             break;

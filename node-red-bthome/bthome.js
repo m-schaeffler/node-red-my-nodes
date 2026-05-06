@@ -289,13 +289,13 @@ module.exports = function(RED) {
                             setData( "moisture", rawdata.getUInt8() );
                             break;
                         case 0x3A:
-                            setEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
+                            events.pushEvent( "button", rawdata.getEnum( ["","S","SS","SSS","L"] ) );
                             break;
                         case 0x3C:
                           {
                             const dimmer = rawdata.getUInt8();
                             const data   = rawdata.getUInt8();
-                            setEvent( "dimmer", "dimmer", dimmer==2 ? -data : data );
+                            events.pushEvent( "dimmer", "dimmer", dimmer==2 ? -data : data );
                             break;
                           }
                         case 0x3F:
@@ -363,7 +363,7 @@ module.exports = function(RED) {
                 }
                 if( item.typeId === TypeIds.bluRemote && item.data?.tilt )
                 {
-                    setEvent( "rotation", "rotation", item.data.tilt );
+                    events.pushEvent( "rotation", "rotation", item.data.tilt );
                     delete item.data.tilt;
                 }
             }
@@ -388,7 +388,6 @@ module.exports = function(RED) {
                     {
                         if( item.gw[g].time < msgTime - 24*3600*1000 )
                         {
-                            node.warn(`${name}: delete gw ${g}`);
                             delete item.gw[g];
                         }
                     }

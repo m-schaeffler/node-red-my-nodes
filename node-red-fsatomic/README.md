@@ -1,6 +1,6 @@
 # @mschaeffler/node-red-format
 
-Node-Red nodes for atomic file operations..
+Node-Red nodes for atomic file operations.
 
 If the msg property `invalid` is present in the message, all nodes ignore the message.
 

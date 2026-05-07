@@ -1,6 +1,7 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../file_write_atomic.js");
+var fs     = require("fs");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -27,8 +28,8 @@ describe( 'fileWriteAtomic Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('filename', '');
-        n1.should.have.a.property('encoding', 'none');
+        n1.should.have.a.property('filename', "");
+        n1.should.have.a.property('encoding', null);
         n1.should.have.a.property('appendNewline', false);
         n1.should.have.a.property('createDir', false);
         n1.should.have.a.property('showState', false);
@@ -42,43 +43,40 @@ describe( 'fileWriteAtomic Node', function () {
       }
     });
   });
-/*
-  it('should forward numbers rounded to integer', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
+
+  it('should write a string to a file', function (done) {
+    const fn  = "/tmp/test_1.txt";
+    const str = "TestString für das Schreiben in die Datei."
+    var flow = [{ id: "n1", filename:fn, encoding:"utf8", type: "fileWriteAtomic", name: "test" }];
     helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg.payload);
-        try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
-          ++c;
-        }
-        catch(err) {
-          done(err);
-        }
-      });
       try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('encoding', "utf8");
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('showState', false);
         await delay(50);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: i });
-          await delay(50);
-        }
-        c.should.match( numbers.length );
+        n1.receive({ payload: str });
+        await delay(100);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(str.length);
         done();
       }
       catch(err) {
         done(err);
       }
+      finally{
+        console.log(1)
+        fs.rmSync(fn,{force:true});
+        console.log(2)
+      }
     });
   });
-
+/*
   it('should forward numbers rounded to two digits', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
     var flow = [{ id: "n1", type: "formatNumber", digits: "2", name: "test", wires: [["n2"]] },

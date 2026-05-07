@@ -58,8 +58,8 @@ module.exports = function(RED) {
                         await fs.promises.mkdir( path.dirname( filename ), { recursive:true } );
                     }
                     const tmpfile = filename + ".tmp";
-                    //await fs.promises.writeFile( tmpfile, String( payload ), { encoding:encoding, flush:true } );
-                    //await fs.promises.rename( tmpfile, filename );
+                    await fs.promises.writeFile( tmpfile, String( payload ), { encoding:encoding, flush:true } );
+                    await fs.promises.rename( tmpfile, filename );
 
                     done();
                 }

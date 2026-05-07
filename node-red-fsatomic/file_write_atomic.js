@@ -20,17 +20,27 @@ module.exports = function(RED) {
             let filename = msg.filename ?? node.filename;
             let payload  = msg.payload  ?? "";
             let encoding = msg.encoding ?? node.encoding;
+
+            function setStatus(color,text)
+            {
+                if( node.showState )
+                {
+                    node.status({ fill: color, shape: "dot", text: text ?? "ok" });
+                }
+                done( text );
+            }
+
             if( msg.invalid )
             {
                 done();
             }
             else if( ! filename )
             {
-                done( "no filename" );
+                setStatus( "red", "no filename" );
             }
             else if( node.locked )
             {
-                done( "already locked" );
+                setStatus( "yellow", "locked" );
             }
             else
             {
@@ -68,16 +78,15 @@ module.exports = function(RED) {
                     await fs.promises.writeFile( tmpfile, payload, { encoding:encoding, flush:true } );
                     await fs.promises.rename( tmpfile, filename );
 
-                    done();
+                    setStatus( "green" );
                 }
                 catch( err )
                 {
-                    done( err.message );
+                    setStatus( "red", err.message );
                 }
                 finally
                 {
                     node.locked = false;
-                    console.log("unlocked")
                 }
             }
         });

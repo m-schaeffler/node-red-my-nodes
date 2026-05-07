@@ -50,6 +50,7 @@ module.exports = function(RED) {
                                 payload = JSON.stringify( payload );
                                 break;
                             case "number":
+                            case "boolean":
                                 payload = String( payload );
                                 break;
                         }

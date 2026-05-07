@@ -1,0 +1,74 @@
+<script type="text/javascript">
+    RED.nodes.registerType('fileReadSimple',{
+        category: "storage",
+        color: "BurlyWood",
+        defaults: {
+            name:{value:""},
+            filename:{value:""},
+            encoding:{value:"utf8",required:true},
+            showState:{value:false}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "file-in.svg",
+        label: function() {
+            return this.name||this.filename||"file read simple";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "readSimple",
+        inputLabels: 'trigger',
+        outputLabels: 'read file'
+    });
+</script>
+
+<script type="text/html" data-template-name="fileReadSimple">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
+        <input type="text" id="node-input-filename">
+    </div>
+    <div class="form-row">
+        <label for="node-input-encoding"><i class="fa fa-flag"></i> Encoding</label>
+        <select type="text" id="node-input-encoding">
+            <option value="utf8">UTF-8</option>
+            <option value="utf16le">UTF-16 le</option>
+            <option value="latin1">ISO-8859-1</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="fileReadSimple">
+    <p>With this node data can be written into a file in an atomic manner, so that there is either the old file ort the new file, but never no file.</p>
+    <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
+
+    <h3>Input</h3>
+    
+    <dl class="message-properties">
+        <dt>filename <span class="property-type">string</span></dt>
+        <dd> name of the file (optional).</dd>
+        <dt>encoding <span class="property-type">string</span></dt>
+        <dd> encoding for the file (optional).</dd>
+    </dl>
+
+    <h3>Output</h3>
+    
+    <h3>Parameter</h3>
+
+    <dl class="message-properties">
+        <dt>filename <span class="property-type">string</span></dt>
+        <dd> default file name.</dd>
+        <dt>encoding <span class="property-type">string</span></dt>
+        <dd> default encoding, <a href="https://nodejs.org/api/buffer.html#buffers-and-character-encodings">only the encodings integrated into nodejs are possible</a>.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dd> shows the actual value as a node status.</dd>
+    </dl>
+</script>

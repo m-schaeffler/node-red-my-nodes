@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-fsatomic",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "nodes for atomic file operations.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-fsatomic",
@@ -19,7 +19,8 @@
   "node-red": {
     "version": ">=3.1.0",
     "nodes": {
-      "fileWriteAtomic": "file_write_atomic.js"
+      "fileWriteAtomic": "file_write_atomic.js",
+      "fileReadSimple": "file_read_simple.js"
     }
   },
   "author": {

@@ -2,6 +2,7 @@ var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../file_write_atomic.js");
 var fs     = require("fs");
+var os     = require("os");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -117,6 +118,7 @@ describe( 'fileWriteAtomic Node', function () {
         fs.existsSync(fn+".tmp").should.be.False();
         fs.existsSync(fn).should.be.True();
         fs.statSync(fn).size.should.match(str.length);
+        fs.readFileSync(fn,{encoding:"utf8"}).should.match(str);
         done();
       }
       catch(err) {
@@ -147,6 +149,7 @@ describe( 'fileWriteAtomic Node', function () {
         fs.existsSync(fn+".tmp").should.be.False();
         fs.existsSync(fn).should.be.True();
         fs.statSync(fn).size.should.match(str.length+1);
+        fs.readFileSync(fn,{encoding:"latin1"}).should.match(str+os.EOL);
         done();
       }
       catch(err) {
@@ -205,6 +208,7 @@ describe( 'fileWriteAtomic Node', function () {
         fs.existsSync(dir).should.be.True();
         fs.existsSync(fn2).should.be.True();
         fs.statSync(fn2).size.should.match(str.length);
+        fs.readFileSync(fn2,{encoding:"utf8"}).should.match(str);
         done();
       }
       catch(err) {
@@ -236,6 +240,7 @@ describe( 'fileWriteAtomic Node', function () {
         fs.existsSync(fn+".tmp").should.be.False();
         fs.existsSync(fn).should.be.True();
         fs.statSync(fn).size.should.match(utf.length+4);
+        fs.readFileSync(fn,{encoding:"utf8"}).should.match(utf);
         done();
       }
       catch(err) {
@@ -266,6 +271,223 @@ describe( 'fileWriteAtomic Node', function () {
         fs.existsSync(fn+".tmp").should.be.False();
         fs.existsSync(fn).should.be.True();
         fs.statSync(fn).size.should.match(utf.length);
+        fs.readFileSync(fn,{encoding:"latin1"}).should.match(utf);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+      finally{
+        fs.rmSync(fn,{force:true});
+      }
+    });
+  });
+
+  it('should write an empty file', function (done) {
+    var flow = [{ id: "n1", type: "fileWriteAtomic", name: "test" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', "");
+        n1.should.have.a.property('encoding', null);
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ filename: fn });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        fs.existsSync(fn+".tmp").should.be.False();
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+      finally{
+        fs.rmSync(fn,{force:true});
+      }
+    });
+  });
+
+  it('should write a payload==null', function (done) {
+    var flow = [{ id: "n1", filename:fn, type: "fileWriteAtomic", name: "test" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('encoding', null);
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ payload:null });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        fs.existsSync(fn+".tmp").should.be.False();
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+      finally{
+        fs.rmSync(fn,{force:true});
+      }
+    });
+  });
+
+  it('should write an empty string', function (done) {
+    var flow = [{ id: "n1", filename:fn, type: "fileWriteAtomic", name: "test" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('encoding', null);
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ payload:"" });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        fs.existsSync(fn+".tmp").should.be.False();
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+      finally{
+        fs.rmSync(fn,{force:true});
+      }
+    });
+  });
+
+  it('should write a number', function (done) {
+    var flow = [{ id: "n1", filename:fn, type: "fileWriteAtomic", name: "test" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('encoding', null);
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ payload:123456 });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        fs.existsSync(fn+".tmp").should.be.False();
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(6);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+      finally{
+        fs.rmSync(fn,{force:true});
+      }
+    });
+  });
+
+  it('should write an object', function (done) {
+    const obj = {test:"test",value:123,flag:true};
+    var flow = [{ id: "n1", filename:fn, type: "fileWriteAtomic", name: "test" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('encoding', null);
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ payload:obj });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        fs.existsSync(fn+".tmp").should.be.False();
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(39);
+        JSON.parse(fs.readFileSync(fn,{encoding:"utf8"})).should.match(obj);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+      finally{
+        fs.rmSync(fn,{force:true});
+      }
+    });
+  });
+
+  it('should write a buffer', function (done) {
+    const buf = Buffer.from(utf);
+    var flow = [{ id: "n1", filename:fn, encoding:"latin1", type: "fileWriteAtomic", name: "test" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('encoding', "latin1");
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ payload:buf });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        fs.existsSync(fn+".tmp").should.be.False();
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(utf.length+4);
+        fs.readFileSync(fn,{encoding:"utf8"}).should.match(utf);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+      finally{
+        fs.rmSync(fn,{force:true});
+      }
+    });
+  });
+
+  it('should write a binary buffer', function (done) {
+    const buf = Buffer.alloc(25,0xA5);
+    var flow = [{ id: "n1", filename:fn, type: "fileWriteAtomic", name: "test" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('encoding', null);
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ payload:buf });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        fs.existsSync(fn+".tmp").should.be.False();
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(25);
+        fs.readFileSync(fn).should.match(buf);
         done();
       }
       catch(err) {

@@ -17,9 +17,9 @@ module.exports = function(RED) {
         node.status( "" );
 
         node.on('input', async function(msg,send,done) {
-            let   filename = msg.filename ?? node.filename;
-            let   payload  = msg.payload  ?? "";
-            const encoding = msg.encoding ?? node.encoding;
+            let filename = msg.filename ?? node.filename;
+            let payload  = msg.payload  ?? "";
+            let encoding = msg.encoding ?? node.encoding;
             if( msg.invalid )
             {
                 done();
@@ -41,11 +41,17 @@ module.exports = function(RED) {
                     {
                         filename = path.resolve( path.join( RED.settings.fileWorkingDirectory, filename ) );
                     }
+
                     if( ! Buffer.isBuffer( payload ) )
                     {
-                        if( typeof payload == "object" )
+                        switch( typeof payload )
                         {
-                            payload = JSON.stringify( payload );
+                            case "object":
+                                payload = JSON.stringify( payload );
+                                break;
+                            case "number":
+                                payload = String( payload );
+                                break;
                         }
                         if( node.appendNewline )
                         {
@@ -58,7 +64,7 @@ module.exports = function(RED) {
                         await fs.promises.mkdir( path.dirname( filename ), { recursive:true } );
                     }
                     const tmpfile = filename + ".tmp";
-                    await fs.promises.writeFile( tmpfile, String( payload ), { encoding:encoding, flush:true } );
+                    await fs.promises.writeFile( tmpfile, payload, { encoding:encoding, flush:true } );
                     await fs.promises.rename( tmpfile, filename );
 
                     done();

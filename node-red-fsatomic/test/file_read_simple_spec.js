@@ -314,4 +314,117 @@ describe( 'fileReadSimple Node', function () {
     });
   });
 */
+  it('should read a json file', function (done) {
+    var flow = [{ id: "n1", filename:fn_json, format:"json", type: "fileReadSimple", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          ++c;
+          msg.should.have.property('topic',"trigger");
+          msg.should.have.property('filename',fn_json);
+          msg.should.have.property('encoding','utf8');
+          msg.should.have.property('payload', { topic: 'test', value: 123456, flag: true });
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('filename', fn_json);
+        n1.should.have.a.property('encoding', "utf8");
+        n1.should.have.a.property('format', "json");
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ topic: "trigger" });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 1 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should not read invalid json', function (done) {
+    var flow = [{ id: "n1", filename:fn_utf, encoding:"utf8", format:"json", type: "fileReadSimple", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('filename', fn_utf);
+        n1.should.have.a.property('encoding', "utf8");
+        n1.should.have.a.property('format', "json");
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ topic: "trigger" });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(1);
+        c.should.match( 0 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should read to a buffer', function (done) {
+    var flow = [{ id: "n1", filename:fn_utf, format:"buffer", type: "fileReadSimple", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          ++c;
+          msg.should.have.property('topic',"trigger");
+          msg.should.have.property('filename',fn_utf);
+          msg.should.have.property('encoding',null);
+          msg.should.have.property('payload',fs.readFileSync(fn_utf));
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('filename', fn_utf);
+        n1.should.have.a.property('encoding', "utf8");
+        n1.should.have.a.property('format', "buffer");
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ topic: "trigger" });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 1 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });

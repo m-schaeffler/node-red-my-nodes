@@ -42,11 +42,18 @@ module.exports = function(RED) {
                         filename = path.resolve( path.join( RED.settings.fileWorkingDirectory, filename ) );
                     }
 
+                    if( node.format == "buffer" )
+                    {
+                        encoding = null;
+                    }
                     let payload = await fs.promises.readFile( filename, encoding );
-
-                    msg.encoding = encoding;
+                    if( node.format == "json" )
+                    {
+                        payload = JSON.parse( payload );
+                    }
 
                     msg.filename = filename;
+                    msg.encoding = encoding;
                     msg.payload  = payload;
                     send( msg );
                     setStatus( "green" );

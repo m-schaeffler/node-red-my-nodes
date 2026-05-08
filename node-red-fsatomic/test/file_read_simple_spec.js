@@ -160,7 +160,7 @@ describe( 'fileReadSimple Node', function () {
   });
 
   it('should read a utf16 file', function (done) {
-    var flow = [{ id: "n1", filename:fn_utf16, encoding:"utf16le", type: "fileReadSimple", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", encoding:"", type: "fileReadSimple", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -180,12 +180,12 @@ describe( 'fileReadSimple Node', function () {
         }
       });
       try{
-        n1.should.have.a.property('filename', fn_utf16);
-        n1.should.have.a.property('encoding', "utf16le");
+        n1.should.have.a.property('filename', "");
+        n1.should.have.a.property('encoding', "");
         n1.should.have.a.property('format', "string");
         n1.should.have.a.property('showState', false);
         await delay(50);
-        n1.receive({ topic: "trigger" });
+        n1.receive({ topic: "trigger", filename:fn_utf16, encoding:"utf16le" });
         await delay(100);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

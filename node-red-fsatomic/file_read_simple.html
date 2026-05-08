@@ -21,7 +21,17 @@
         },
         paletteLabel: "readSimple",
         inputLabels: 'trigger',
-        outputLabels: 'read file'
+        outputLabels: 'read file',
+        oneditprepare: function() {
+            var node = this;
+            $("#node-input-format").on("change",function() {
+                if (this.value === "buffer") {
+                    $("#encoding-details").hide();
+                } else {
+                    $("#encoding-details").show();
+                }
+            }).trigger("change");
+        }
     });
 </script>
 
@@ -34,7 +44,7 @@
         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
         <input type="text" id="node-input-filename">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="encoding-details">
         <label for="node-input-encoding"><i class="fa fa-flag"></i> Encoding</label>
         <select type="text" id="node-input-encoding">
             <option value="utf8">UTF-8</option>

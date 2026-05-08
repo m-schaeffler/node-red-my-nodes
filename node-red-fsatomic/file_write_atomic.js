@@ -18,9 +18,9 @@ module.exports = function(RED) {
         node.status( "" );
 
         node.on('input', async function(msg,send,done) {
-            let filename = msg.filename ?? node.filename;
-            let payload  = msg.payload  ?? "";
-            let encoding = msg.encoding ?? node.encoding;
+            let filename = node.filename || msg.filename;
+            let encoding = node.encoding || msg.encoding;
+            let payload  = msg.payload   ?? "";
 
             function setStatus(color,text)
             {

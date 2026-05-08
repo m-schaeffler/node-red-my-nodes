@@ -7,7 +7,8 @@ module.exports = function(RED) {
         //this.config = config;
         var node = this;
         this.filename  = config.filename ?? "";
-        this.encoding  = config.encoding ?? null;
+        this.encoding  = config.encoding ?? "utf8";
+        this.format    = config.format   ?? "string";
         this.showState = Boolean( config.showState );
         node.status( "" );
 
@@ -41,7 +42,9 @@ module.exports = function(RED) {
                         filename = path.resolve( path.join( RED.settings.fileWorkingDirectory, filename ) );
                     }
 
-                    let payload = await fs.promises.readFile( filename, { encoding:encoding } );
+                    let payload = await fs.promises.readFile( filename, encoding );
+
+                    msg.encoding = encoding;
 
                     msg.filename = filename;
                     msg.payload  = payload;

@@ -8,13 +8,15 @@
             encoding:{value:"utf8",required:true},
             appendNewline:{value:false},
             createDir:{value:false},
+            jsonPretty:{value:false},
             showState:{value:false}
         },
         inputs:1,
         outputs:0,
         icon: "file-out.svg",
         label: function() {
-            return this.name||this.filename||"file write atomic";
+            const help = this.filename.split( "/" );
+            return this.name||help.pop()||"file write atomic";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
@@ -48,6 +50,10 @@
     <div class="form-row">
         <label for="node-input-createdir"><i class="fa fa-folder-o"></i> create dir</label>
         <input type="checkbox" id="node-input-createdir" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-jsonPretty"><i class="fa fa-list"></i> pretty json</label>
+        <input type="checkbox" id="node-input-jsonPretty" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>

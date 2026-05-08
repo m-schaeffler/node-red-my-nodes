@@ -1,3 +1,4 @@
+
 var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../file_write_atomic.js");
@@ -39,6 +40,7 @@ describe( 'fileWriteAtomic Node', function () {
         n1.should.have.a.property('encoding', null);
         n1.should.have.a.property('appendNewline', false);
         n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('jsonPretty', null);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -445,6 +447,7 @@ describe( 'fileWriteAtomic Node', function () {
         n1.should.have.a.property('encoding', null);
         n1.should.have.a.property('appendNewline', false);
         n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('jsonPretty', null);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload:obj });
@@ -454,6 +457,39 @@ describe( 'fileWriteAtomic Node', function () {
         fs.existsSync(fn+".tmp").should.be.False();
         fs.existsSync(fn).should.be.True();
         fs.statSync(fn).size.should.match(39);
+        JSON.parse(fs.readFileSync(fn,{encoding:"utf8"})).should.match(obj);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+      finally{
+        fs.rmSync(fn,{force:true});
+      }
+    });
+  });
+
+  it('should write a formated object', function (done) {
+    const obj = {test:"test",value:123,flag:true};
+    var flow = [{ id: "n1", filename:fn, jsonPretty:true, type: "fileWriteAtomic", name: "test" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      try{
+        fs.existsSync(fn).should.be.False();
+        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('encoding', null);
+        n1.should.have.a.property('appendNewline', false);
+        n1.should.have.a.property('createDir', false);
+        n1.should.have.a.property('jsonPretty', 3);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ payload:obj });
+        await delay(100);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        fs.existsSync(fn+".tmp").should.be.False();
+        fs.existsSync(fn).should.be.True();
+        fs.statSync(fn).size.should.match(55);
         JSON.parse(fs.readFileSync(fn,{encoding:"utf8"})).should.match(obj);
         done();
       }

@@ -12,6 +12,7 @@ module.exports = function(RED) {
         this.encoding      = config.encoding ?? null;
         this.createDir     = Boolean( config.createDir );
         this.appendNewline = Boolean( config.appendNewline );
+        this.jsonPretty    = config.jsonPretty ? 3 : null;
         this.showState     = Boolean( config.showState );
         this.locked        = false;
         node.status( "" );
@@ -57,7 +58,7 @@ module.exports = function(RED) {
                         switch( typeof payload )
                         {
                             case "object":
-                                payload = JSON.stringify( payload );
+                                payload = JSON.stringify( payload, null, node.jsonPretty );
                                 break;
                             case "number":
                             case "boolean":

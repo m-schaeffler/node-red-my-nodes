@@ -1,0 +1,111 @@
+[
+    {
+        "id": "6f74e3616e69813e",
+        "type": "inject",
+        "z": "2babd0cd09c939ba",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "write",
+        "payload": "{\"test\":\"String\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "80e83b9d3c65bb67"
+            ]
+        ]
+    },
+    {
+        "id": "731d165ff6ffe733",
+        "type": "fileReadSimple",
+        "z": "2babd0cd09c939ba",
+        "name": "",
+        "filename": "/tmp/test.json",
+        "encoding": "utf8",
+        "format": "json",
+        "showState": true,
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "9baca2358742cf21"
+            ]
+        ]
+    },
+    {
+        "id": "80e83b9d3c65bb67",
+        "type": "fileWriteAtomic",
+        "z": "2babd0cd09c939ba",
+        "name": "",
+        "filename": "/tmp/test.json",
+        "encoding": "utf8",
+        "appendNewline": true,
+        "createDir": false,
+        "jsonPretty": true,
+        "showState": true,
+        "x": 340,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "9baca2358742cf21",
+        "type": "debug",
+        "z": "2babd0cd09c939ba",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "c2e2b681dbe06801",
+        "type": "inject",
+        "z": "2babd0cd09c939ba",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "read",
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "731d165ff6ffe733"
+            ]
+        ]
+    },
+    {
+        "id": "e1045f1d9f1caffc",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@mschaeffler/node-red-fsatomic": "0.3.0"
+        }
+    }
+]

@@ -18,7 +18,11 @@ With this node data can be written into a file in an atomic manner, so that ther
 
 ### Input
 
-.
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|payload|buffer, number, string, object| value to be written to the file.|
+|filename|string| name of the file, if the parameter `filename` is empty.|
+|encoding|string| encoding for the file, if the parameter `encoding` is `msg.encoding`.|
 
 ### Parameters
 
@@ -37,11 +41,18 @@ With this node data can be read from a file in way similar to the `fileWriteAtom
 
 ### Input
 
-.
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|filename|string| name of the file, if the parameter `filename` is empty.|
+|encoding|string| encoding for the file, if the parameter `encoding` is `msg.encoding`.|
 
 ### Output
 
-.
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|payload|string, object or buffer| content of the file.|
+|filename|string| name of the file.|
+|encoding|string| encoding for the file.|
 
 ### Parameters
 

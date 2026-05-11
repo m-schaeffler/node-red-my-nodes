@@ -16,6 +16,10 @@ module.exports = function(RED) {
         this.showState     = Boolean( config.showState );
         this.locked        = {};
         node.status( "" );
+        if( this.encoding == "message" )
+        {
+            this.encoding = "";
+        }
 
         node.on('input', async function(msg,send,done) {
             let filename = node.filename || msg.filename;
@@ -46,7 +50,6 @@ module.exports = function(RED) {
             else
             {
                 node.locked[filename] = true;
-                console.log(node.locked)
                 try
                 {
                     if( RED.settings.fileWorkingDirectory && !path.isAbsolute( filename ) )

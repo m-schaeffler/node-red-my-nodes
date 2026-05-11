@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-fsatomic",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "nodes for atomic file operations.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-fsatomic",

@@ -50,6 +50,7 @@
             <option value="utf8">UTF-8</option>
             <option value="utf16le">UTF-16 le</option>
             <option value="latin1">ISO-8859-1</option>
+            <option value="message">msg.encoding</option>
         </select>
     </div>
     <div class="form-row">
@@ -74,20 +75,32 @@
     
     <dl class="message-properties">
         <dt>filename <span class="property-type">string</span></dt>
-        <dd> name of the file (optional).</dd>
+        <dd> name of the file, if the parameter <code>filename</code> is empty.</dd>
         <dt>encoding <span class="property-type">string</span></dt>
-        <dd> encoding for the file (optional).</dd>
+        <dd> encoding for the file, if the parameter <code>encoding</code> is <code>msg.encoding</code>.</dd>
     </dl>
 
     <h3>Output</h3>
+
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string, object or buffer</span></dt>
+        <dd> content of the file.</dd>
+        <dt>filename <span class="property-type">string</span></dt>
+        <dd> name of the file.</dd>
+        <dt>encoding <span class="property-type">string</span></dt>
+        <dd> encoding for the file.</dd>
+    </dl>
     
     <h3>Parameter</h3>
 
     <dl class="message-properties">
         <dt>filename <span class="property-type">string</span></dt>
-        <dd> default file name.</dd>
+        <dd> file name; if set to <code>""</code>, the file name is set by the input message (<code>msg.filename</code>).</dd>
         <dt>encoding <span class="property-type">string</span></dt>
-        <dd> default encoding, <a href="https://nodejs.org/api/buffer.html#buffers-and-character-encodings">only the encodings integrated into nodejs are possible</a>.</dd>
+        <dd> encoding, <a href="https://nodejs.org/api/buffer.html#buffers-and-character-encodings">only the encodings integrated into nodejs are possible</a>.
+             If set to <code>msg.encoding</code>, the encoding is taken from the input message.</dd>
+        <dt>Format <span class="property-type">boolean</span></dt>
+        <dd> Data format of <code>msg.payload</code>: raw Buffer, String or parsed JSON.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

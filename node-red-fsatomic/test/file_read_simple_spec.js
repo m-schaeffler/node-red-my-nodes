@@ -160,7 +160,7 @@ describe( 'fileReadSimple Node', function () {
   });
 
   it('should read a utf16 file', function (done) {
-    var flow = [{ id: "n1", encoding:"", type: "fileReadSimple", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", encoding:"message", type: "fileReadSimple", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");

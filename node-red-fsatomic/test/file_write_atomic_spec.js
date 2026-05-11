@@ -225,18 +225,18 @@ describe( 'fileWriteAtomic Node', function () {
   });
 
   it('should write unicode to a file as unicode', function (done) {
-    var flow = [{ id: "n1", filename:fn, encoding:"utf8", type: "fileWriteAtomic", name: "test" }];
+    var flow = [{ id: "n1", filename:fn, encoding:"message", type: "fileWriteAtomic", name: "test" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try{
         fs.existsSync(fn).should.be.False();
         n1.should.have.a.property('filename', fn);
-        n1.should.have.a.property('encoding', "utf8");
+        n1.should.have.a.property('encoding', "");
         n1.should.have.a.property('appendNewline', false);
         n1.should.have.a.property('createDir', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
-        n1.receive({ payload: utf });
+        n1.receive({ payload: utf, encoding: "utf8" });
         await delay(100);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

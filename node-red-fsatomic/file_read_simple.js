@@ -11,6 +11,10 @@ module.exports = function(RED) {
         this.format    = config.format   ?? "string";
         this.showState = Boolean( config.showState );
         node.status( "" );
+        if( this.encoding == "message" )
+        {
+            this.encoding = "";
+        }
 
         node.on('input', async function(msg,send,done) {
             let filename = node.filename || msg.filename;

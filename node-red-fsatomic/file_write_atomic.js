@@ -14,7 +14,7 @@ module.exports = function(RED) {
         this.appendNewline = Boolean( config.appendNewline );
         this.jsonPretty    = config.jsonPretty ? 3 : null;
         this.showState     = Boolean( config.showState );
-        this.locked        = false;
+        this.locked        = {};
         node.status( "" );
 
         node.on('input', async function(msg,send,done) {
@@ -39,13 +39,14 @@ module.exports = function(RED) {
             {
                 setStatus( "red", "no filename" );
             }
-            else if( node.locked )
+            else if( node.locked[filename] )
             {
-                setStatus( "yellow", "locked" );
+                setStatus( "yellow", "already locked: "+filename );
             }
             else
             {
-                node.locked = true;
+                node.locked[filename] = true;
+                console.log(node.locked)
                 try
                 {
                     if( RED.settings.fileWorkingDirectory && !path.isAbsolute( filename ) )
@@ -87,7 +88,7 @@ module.exports = function(RED) {
                 }
                 finally
                 {
-                    node.locked = false;
+                    node.locked[filename] = false;
                 }
             }
         });

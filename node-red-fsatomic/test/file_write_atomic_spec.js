@@ -17,6 +17,7 @@ describe( 'fileWriteAtomic Node', function () {
   const fn  = "/tmp/test_1.txt";
   const dir = "/tmp/foobar";
   const fn2 = dir+"/test_2.txt";
+  const fn3 = "/tmp/test_2.txt";
   const utf = "Zwölf Boxkämpfer jagen Viktor quer über den großen Sylter Deich";
   const str = "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern";
 
@@ -567,26 +568,32 @@ describe( 'fileWriteAtomic Node', function () {
   });
 
   it('should have locking', function (done) {
-    var flow = [{ id: "n1", filename:fn, type: "fileWriteAtomic", name: "test" }];
+    var flow = [{ id: "n1", type: "fileWriteAtomic", name: "test" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try{
         fs.existsSync(fn).should.be.False();
-        n1.should.have.a.property('filename', fn);
+        n1.should.have.a.property('filename', "");
         n1.should.have.a.property('encoding', null);
         n1.should.have.a.property('appendNewline', false);
         n1.should.have.a.property('createDir', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
-        n1.receive({ payload: str });
-        n1.receive({ payload: utf });
+        n1.receive({ filename:fn,  payload: str });
+        n1.receive({ filename:fn,  payload: utf });
+        n1.receive({ filename:fn3, payload: str });
+        n1.receive({ filename:fn3, payload: utf });
         await delay(100);
         n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(1);
+        n1.error.should.have.callCount(2);
         fs.existsSync(fn+".tmp").should.be.False();
         fs.existsSync(fn).should.be.True();
         fs.statSync(fn).size.should.match(str.length);
         fs.readFileSync(fn,{encoding:"utf8"}).should.match(str);
+        fs.existsSync(fn3+".tmp").should.be.False();
+        fs.existsSync(fn3).should.be.True();
+        fs.statSync(fn3).size.should.match(str.length);
+        fs.readFileSync(fn3,{encoding:"utf8"}).should.match(str);
         done();
       }
       catch(err) {

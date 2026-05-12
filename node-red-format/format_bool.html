@@ -6,10 +6,14 @@
             name:{value:""},
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
+            topic:{value:""},
             falseValue:{value:"0",required:true},
+            falseValueType:{value:"num"},
             trueValue:{value:"1",required:true},
+            trueValueType:{value:"num"},
             timeout:{value:"0",validate:RED.validators.number(),required:true},
             timeoutValue:{value:""},
+            timeoutValueType:{value:"str"},
             showState:{value:false},
             filter:{value:false}
         },
@@ -31,6 +35,21 @@
                 types:["msg","jsonata"],
                 typeField: "#node-input-propertyType"
             })
+            $("#node-input-falseValue").typedInput({
+                type:"bool",
+                types:["str","num","bool","json"],
+                typeField: "#node-input-falseValueType"
+            })
+            $("#node-input-trueValue").typedInput({
+                type:"bool",
+                types:["str","num","bool","json"],
+                typeField: "#node-input-trueValueType"
+            })
+            $("#node-input-timeoutValue").typedInput({
+                type:"bool",
+                types:["str","num","bool","json"],
+                typeField: "#node-input-timeoutValueType"
+            })
         }
     });
 </script>
@@ -41,6 +60,10 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-envelope-o"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+    <div class="form-row">
         <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
         <input type="text" id="node-input-property">
         <input type="hidden" id="node-input-propertyType">
@@ -48,10 +71,12 @@
     <div class="form-row">
         <label for="node-input-falseValue"><i class="fa fa-square-o"></i> false Value</label>
         <input type="text" id="node-input-falseValue">
+        <input type="hidden" id="node-input-falseValueType">
     </div>
     <div class="form-row">
         <label for="node-input-trueValue"><i class="fa fa-check-square-o"></i> true Value</label>
         <input type="text" id="node-input-trueValue">
+        <input type="hidden" id="node-input-trueValueType">
     </div>
     <div class="form-row">
         <label for="node-input-timeout"><i class="fa fa-refresh"></i> Timeout</label>
@@ -60,6 +85,7 @@
     <div class="form-row">
         <label for="node-input-timeoutValue"><i class="fa fa-share-square-o"></i> Timeout Value</label>
         <input type="text" id="node-input-timeoutValue">
+        <input type="hidden" id="node-input-timeoutValueType">
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>

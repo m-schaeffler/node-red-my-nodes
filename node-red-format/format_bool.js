@@ -6,13 +6,14 @@ module.exports = function(RED) {
         var node = this;
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.falseValue   = config.falseValue ?? "0";
-        this.trueValue    = config.trueValue ?? "1";
+        this.topic        = config.topic || "";
+        this.falseValue   = RED.util.evaluateNodeProperty( config.falseValue ?? 0, config.falseValueType ?? "num" );
+        this.trueValue    = RED.util.evaluateNodeProperty( config.trueValue ?? 1, config.trueValueType ?? "num" );
         this.timeout      = Number( config.timneout ?? 0 );
-        this.timeoutValue = config.timeoutValue ?? "";
+        this.timeoutValue = RED.util.evaluateNodeProperty( config.timeoutValue ?? "", config.timeoutValueType ?? "str" );
         this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
-        this.last         = undefined;
+        this.last;
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -65,7 +66,11 @@ module.exports = function(RED) {
             getPayload( function(value)
             {
                 let status = {};
-                msg.payload = Boolean( value );
+                msg.payload = Boolean( value ) ? node.trueValue : node.falseValue;
+                if( node.topic )
+                {
+                    msg.topic = node.topic;
+                }
                 if( node.filter )
                 {
                     status.shape = "dot";

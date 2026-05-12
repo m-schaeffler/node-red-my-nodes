@@ -27,10 +27,11 @@ describe( 'format_bool Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', '');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
-        n1.should.have.a.property('falseValue', '0');
-        n1.should.have.a.property('trueValue', "1");
+        n1.should.have.a.property('falseValue', 0);
+        n1.should.have.a.property('trueValue', 1);
         n1.should.have.a.property('timeout', 0);
         n1.should.have.a.property('timeoutValue', "");
         n1.should.have.a.property('filter', false);
@@ -45,19 +46,20 @@ describe( 'format_bool Node', function () {
       }
     });
   });
-/*
-  it('should forward numbers rounded to integer', function (done) {
-    const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
+
+  it('should forward booleans', function (done) {
+    const values = [false,true,0,1,"","Test"];
+    var flow = [{ id: "n1", type: "formatBool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg.payload);
+        console.log(msg);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          msg.should.have.property('topic',"FooBar");
+          msg.should.have.property('payload',c&1);
           ++c;
         }
         catch(err) {
@@ -65,15 +67,23 @@ describe( 'format_bool Node', function () {
         }
       });
       try{
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('falseValue', 0);
+        n1.should.have.a.property('trueValue', 1);
+        n1.should.have.a.property('timeout', 0);
+        n1.should.have.a.property('timeoutValue', "");
+        n1.should.have.a.property('filter', false);
         await delay(50);
-        for( const i of numbers )
+        for( const i of values )
         {
-          n1.receive({ payload: i });
+          n1.receive({ topic: "FooBar", payload: i });
           await delay(50);
         }
-        c.should.match( numbers.length );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        c.should.match( values.length );
         done();
       }
       catch(err) {
@@ -82,6 +92,51 @@ describe( 'format_bool Node', function () {
     });
   });
 
+  it('should convert to defined numbers', function (done) {
+    const values = [false,true,0,1,"","Test"];
+    var flow = [{ id: "n1", topic:"new Topic", falseValue:20, trueValue:24, type:"formatBool", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg);
+        try {
+          msg.should.have.property('topic',"new Topic");
+          msg.should.have.property('payload',20+4*(c&1));
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('topic', 'new Topic');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('falseValue', 20);
+        n1.should.have.a.property('trueValue', 24);
+        n1.should.have.a.property('timeout', 0);
+        n1.should.have.a.property('timeoutValue', "");
+        n1.should.have.a.property('filter', false);
+        await delay(50);
+        for( const i of values )
+        {
+          n1.receive({ topic: "FooBar", payload: i });
+          await delay(50);
+        }
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( values.length );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+/*
   it('should forward numbers rounded to two digits', function (done) {
     const numbers = [-1,0,1,12.345,-12.345,"-1","0","1","34.5","-34.5",true,false];
     var flow = [{ id: "n1", type: "formatNumber", digits: "2", name: "test", wires: [["n2"]] },

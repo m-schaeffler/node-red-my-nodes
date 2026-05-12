@@ -16,6 +16,8 @@ $ npm install @mschaeffler/node-red-fsatomic
 
 With this node data can be written into a file in an atomic manner, so that there is either the old file ort the new file, but never no file.
 
+There is a locking mechanism: If data is written to a file, while the last writing is still processed, the 2nd request is discarded.
+
 ### Input
 
 |msg.    | type   | description   |

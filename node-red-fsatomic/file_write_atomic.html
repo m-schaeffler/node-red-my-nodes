@@ -64,6 +64,7 @@
 
 <script type="text/html" data-help-name="fileWriteAtomic">
     <p>With this node data can be written into a file in an atomic manner, so that there is either the old file ort the new file, but never no file.</p>
+    <p>There is a locking mechanism: If data is written to a file, while the last writing is still processed, the 2nd request is discarded.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
 
     <h3>Input</h3>

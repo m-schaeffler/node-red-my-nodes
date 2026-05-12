@@ -13,7 +13,7 @@
             trueValueType:{value:"num"},
             timeout:{value:"0",validate:RED.validators.number(),required:true},
             timeoutValue:{value:""},
-            timeoutValueType:{value:"str"},
+            timeoutValueType:{value:"last"},
             showState:{value:false},
             filter:{value:false}
         },
@@ -47,9 +47,16 @@
             })
             $("#node-input-timeoutValue").typedInput({
                 type:"bool",
-                types:["str","num","bool","json"],
+                types:[{value:'last',label:'last Value',hasValue:false},"str","num","bool","json"],
                 typeField: "#node-input-timeoutValueType"
             })
+            $("#node-input-timeout").on("change",function() {
+                if (this.value === "0") {
+                    $("#timeout-details").hide();
+                } else {
+                    $("#timeout-details").show();
+                }
+            }).trigger("change");
         }
     });
 </script>
@@ -82,7 +89,7 @@
         <label for="node-input-timeout"><i class="fa fa-refresh"></i> Timeout</label>
         <input type="number" id="node-input-timeout">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="timeout-details">
         <label for="node-input-timeoutValue"><i class="fa fa-share-square-o"></i> Timeout Value</label>
         <input type="text" id="node-input-timeoutValue">
         <input type="hidden" id="node-input-timeoutValueType">

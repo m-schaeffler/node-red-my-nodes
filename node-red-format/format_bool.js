@@ -9,8 +9,11 @@ module.exports = function(RED) {
         this.topic        = config.topic || "";
         this.falseValue   = RED.util.evaluateNodeProperty( config.falseValue ?? 0, config.falseValueType ?? "num" );
         this.trueValue    = RED.util.evaluateNodeProperty( config.trueValue ?? 1, config.trueValueType ?? "num" );
-        this.timeout      = Number( config.timneout ?? 0 );
-        this.timeoutValue = RED.util.evaluateNodeProperty( config.timeoutValue ?? "", config.timeoutValueType ?? "str" );
+        this.timeout      = Number( config.timeout ?? 0 );
+        {
+            const type = config.timeoutValueType ?? "last";
+            this.timeoutValue = type !== "last" ? RED.util.evaluateNodeProperty( config.timeoutValue ?? "", type ) : null;
+        }
         this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
         this.last;
@@ -66,7 +69,7 @@ module.exports = function(RED) {
             getPayload( function(value)
             {
                 let status = {};
-                msg.payload = Boolean( value ) ? node.trueValue : node.falseValue;
+                msg.payload = value ? node.trueValue : node.falseValue;
                 if( node.topic )
                 {
                     msg.topic = node.topic;

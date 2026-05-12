@@ -58,6 +58,7 @@ exports.getPayload = function(node,msg,callback)
     }
 }
 
+/*
 exports.convertTypedInput = function(value,type)
 {
     switch( type )
@@ -72,6 +73,7 @@ exports.convertTypedInput = function(value,type)
             return value;
     }
 }
+*/
 
 exports.distance = function(a,b)
 {

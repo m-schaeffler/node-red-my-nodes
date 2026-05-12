@@ -13,8 +13,8 @@ module.exports = function(RED) {
         this.threshold_fall = Number( config.threshold_fall );
         this.consecutiveRise= Number( config.consecutive ?? 1 );
         this.consecutiveFall= Number( config.consecutiveFall ?? 1 );
-        this.outputRise     = tools.convertTypedInput( config.outputRise ?? "true", config.outputRiseType ?? "bool" );
-        this.outputFall     = tools.convertTypedInput( config.outputFall ?? "false",config.outputFallType ?? "bool" );
+        this.outputRise     = RED.util.evaluateNodeProperty( config.outputRise ?? "true", config.outputRiseType ?? "bool" );
+        this.outputFall     = RED.util.evaluateNodeProperty( config.outputFall ?? "false",config.outputFallType ?? "bool" );
         this.noInit         = Boolean( config.noInit );
         this.showState      = Boolean( config.showState );
         if( this.propertyType === "jsonata" )

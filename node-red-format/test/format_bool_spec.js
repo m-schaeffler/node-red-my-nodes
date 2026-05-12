@@ -349,20 +349,20 @@ describe( 'format_bool Node', function () {
       }
     });
   });
-/*
-  it('should handle payload == null', function (done) {
-    const numbers = [null,null,-1,null,null,1];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", wires: [["n2"]] },
+
+  it('should have no timeout', function (done) {
+    this.timeout( 3000 );
+    var flow = [{ id: "n1", type: "formatBool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg.payload);
+        //console.log(msg);
         try {
-          const h = numbers[c];
-          msg.should.have.property('payload',typeof h == "number" ? h.toFixed(0) : h );
+          msg.should.have.property('topic',"FooBar");
+          msg.should.have.property('payload',1);
           ++c;
         }
         catch(err) {
@@ -370,15 +370,24 @@ describe( 'format_bool Node', function () {
         }
       });
       try{
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('falseValue', 0);
+        n1.should.have.a.property('trueValue', 1);
+        n1.should.have.a.property('timeout', 0);
+        n1.should.have.a.property('timeoutValue', null);
+        n1.should.have.a.property('filter', false);
         await delay(50);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: i });
-          await delay(50);
-        }
-        c.should.match( numbers.length );
+        n1.receive({ topic: "FooBar", payload: true });
+        await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        c.should.match( 1 );
+        await delay(2000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 1 );
         done();
       }
       catch(err) {
@@ -387,20 +396,19 @@ describe( 'format_bool Node', function () {
     });
   });
 
-  it('should handle payload == null with filtering', function (done) {
-    const numbers = [null,null,-1,-1,null,null,null,1,1];
-    const results = [null,-1,null,1];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", filter:true, wires: [["n2"]] },
+  it('should have timeout', function (done) {
+    this.timeout( 3000 );
+    var flow = [{ id: "n1", timeout:0.2, type: "formatBool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg.payload);
+        //console.log(msg);
         try {
-          const h = results[c];
-          msg.should.have.property('payload',typeof h == "number" ? h.toFixed(0) : h );
+          msg.should.have.property('topic',"FooBar");
+          msg.should.have.property('payload',c<6?1:0);
           ++c;
         }
         catch(err) {
@@ -408,17 +416,33 @@ describe( 'format_bool Node', function () {
         }
       });
       try{
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('falseValue', 0);
+        n1.should.have.a.property('trueValue', 1);
+        n1.should.have.a.property('timeout', 200);
+        n1.should.have.a.property('timeoutValue', null);
+        n1.should.have.a.property('filter', false);
         await delay(50);
-        n1.should.have.a.property('filter', true);
+        n1.receive({ topic: "FooBar", payload: true });
         await delay(50);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: i });
-          await delay(50);
-        }
-        c.should.match( results.length );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        c.should.match( 1 );
+        await delay(1000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 6 );
+        n1.receive({ topic: "FooBar", payload: false });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 7 );
+        await delay(1000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 12 );
         done();
       }
       catch(err) {
@@ -427,28 +451,28 @@ describe( 'format_bool Node', function () {
     });
   });
 
-  it('should handle payload == null with objects', function (done) {
-    const numbers = [-1,null,1];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload.value", wires: [["n2"]] },
+  it('should have timeout with own value', function (done) {
+    this.timeout( 3000 );
+    var flow = [{ id: "n1", timeout:0.2, timeoutValue:"-", timeoutValueType:"str", type: "formatBool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg.payload);
+        //console.log(msg);
         try {
-          switch( c )
+          msg.should.have.property('topic',"FooBar");
+          switch(c)
           {
-            case 1:
-            case 3:
-              msg.should.have.property('payload',null);
+            case 0:
+              msg.should.have.property('payload',1);
               break;
-            case 4:
-              msg.should.have.property('payload',"255");
+            case 6:
+              msg.should.have.property('payload',0);
               break;
             default:
-              msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+              msg.should.have.property('payload',"-");
           }
           ++c;
         }
@@ -457,19 +481,33 @@ describe( 'format_bool Node', function () {
         }
       });
       try{
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('falseValue', 0);
+        n1.should.have.a.property('trueValue', 1);
+        n1.should.have.a.property('timeout', 200);
+        n1.should.have.a.property('timeoutValue', "-");
+        n1.should.have.a.property('filter', false);
         await delay(50);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: {value:i} });
-          await delay(50);
-        }
-        n1.receive({ payload: null });
+        n1.receive({ topic: "FooBar", payload: true });
         await delay(50);
-        n1.receive({ payload: {value:255} });
-        await delay(50);
-        c.should.match( numbers.length + 2 );
         n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
+        c.should.match( 1 );
+        await delay(1000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 6 );
+        n1.receive({ topic: "FooBar", payload: false });
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 7 );
+        await delay(1000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 12 );
         done();
       }
       catch(err) {
@@ -478,91 +516,4 @@ describe( 'format_bool Node', function () {
     });
   });
 
-  it('should handle payload == null with Jsonata', function (done) {
-    const numbers = [-1,null,1];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg.payload);
-        try {
-          msg.should.have.property('payload',c==1 ? null : (Number(numbers[c])+5).toFixed(0));
-          ++c;
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try{
-        await delay(100);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: i });
-          await delay(50);
-        }
-        c.should.match( numbers.length );
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(1);
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should handle payload == null with Jsonata and objects', function (done) {
-    const numbers = [-1,null,1];
-    var flow = [{ id: "n1", type: "formatNumber", name: "test", property:"payload.value+5", propertyType:"jsonata", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg.payload);
-        try {
-          switch( c )
-          {
-            case 1:
-            case 3:
-              msg.should.have.property('payload',null);
-              break;
-            case 4:
-              msg.should.have.property('payload',"260");
-              break;
-            default:
-              msg.should.have.property('payload',(Number(numbers[c])+5).toFixed(0));
-          }
-          c++;
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try{
-        await delay(100);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: {value:i} });
-          await delay(50);
-        }
-        n1.receive({ payload: null });
-        await delay(50);
-        n1.receive({ payload: {value:255} });
-        await delay(50);
-        c.should.match( numbers.length + 2 );
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(1);
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-*/
 });

@@ -11,7 +11,7 @@ module.exports = function(RED) {
         this.propertyType = config.propertyType ?? "msg";
         this.threshold    = Number( config.threshold );
         this.consecutive  = Number( config.consecutive ?? 1 );
-        this.output       = tools.convertTypedInput( config.output ?? "true", config.outputType ?? "bool" );
+        this.output       = RED.util.evaluateNodeProperty( config.output ?? "true", config.outputType ?? "bool" );
         this.showState    = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {

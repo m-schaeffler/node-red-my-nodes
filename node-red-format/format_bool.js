@@ -9,14 +9,15 @@ module.exports = function(RED) {
         this.topic        = config.topic || "";
         this.falseValue   = RED.util.evaluateNodeProperty( config.falseValue ?? 0, config.falseValueType ?? "num" );
         this.trueValue    = RED.util.evaluateNodeProperty( config.trueValue ?? 1, config.trueValueType ?? "num" );
-        this.timeout      = Number( config.timeout ?? 0 );
+        this.timeout      = Number( config.timeout ?? 0 ) * 1000;
         {
             const type = config.timeoutValueType ?? "last";
             this.timeoutValue = type !== "last" ? RED.util.evaluateNodeProperty( config.timeoutValue ?? "", type ) : null;
         }
         this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
-        this.last;
+        this.interval_id  = null;
+        this.last         = null;
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -34,6 +35,16 @@ module.exports = function(RED) {
             {
                 done();
                 return;
+            }
+            function sendMsg()
+            {
+                clearInterval( node.interval_id );
+                node.last = msg.payload;
+                send( msg );
+                if( node.timeout > 0 )
+                {
+                    node.interval_id = setInterval( function(t) { node.emit("cyclic",t); }, node.timeout, msg.topic );
+                }
             }
             function getPayload(callback)
             {
@@ -79,9 +90,8 @@ module.exports = function(RED) {
                     status.shape = "dot";
                     if( msg.payload !== node.last )
                     {
-                        node.last = msg.payload;
                         status.fill = "green";
-                        send( msg );
+                        sendMsg();
                     }
                     else
                     {
@@ -90,7 +100,7 @@ module.exports = function(RED) {
                 }
                 else
                 {
-                    send( msg );
+                    sendMsg();
                 }
                 if( node.showState )
                 {
@@ -99,6 +109,18 @@ module.exports = function(RED) {
                 }
                 done();
             } );
+        });
+
+        node.on('cyclic', function(topic) {
+            //console.log( "collect chart cyclic "+topic+" "+node.last );
+            node.send( {
+                topic:   topic,
+                payload: node.timeoutValue ?? node.last
+            } );
+        });
+
+        node.on('close', function() {
+            clearInterval( node.interval_id );
         });
     }
 

@@ -31,6 +31,13 @@
                 types:["msg","jsonata"],
                 typeField: "#node-input-propertyType"
             })
+            $("#node-input-digits").on("change",function() {
+                if (this.value === "0") {
+                    $("#decimal-details").hide();
+                } else {
+                    $("#decimal-details").show();
+                }
+            }).trigger("change");
         }
     });
 </script>
@@ -53,7 +60,7 @@
         <label for="node-input-grouping"><i class="fa fa-angle-left"></i> Tausender</label>
         <input type="text" id="node-input-grouping">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="decimal-details">
         <label for="node-input-decimal"><i class="fa fa-angle-down"></i> Dezimal</label>
         <input type="text" id="node-input-decimal">
     </div>

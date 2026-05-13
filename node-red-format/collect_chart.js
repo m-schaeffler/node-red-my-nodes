@@ -26,8 +26,36 @@ module.exports = function(RED) {
                 return;
             }
         }
+        switch( config.cyclicUnit ?? "secs" )
+        {
+            case "secs":
+                this.cyclic *= 1000;
+                break;
+            case "mins":
+                this.cyclic *= 1000 * 60;
+                break;
+            case "hours":
+                this.cyclic *= 1000 * 60 * 60;
+                break;
+            default:
+                // "msecs" so no conversion needed
+        }
+        switch( config.hoursUnit ?? "hours" )
+        {
+            case "secs":
+                this.hours *= 1000;
+                break;
+            case "mins":
+                this.hours *= 1000 * 60;
+                break;
+            case "hours":
+                this.hours *= 1000 * 60 * 60;
+                break;
+            default:
+                // "msecs" so no conversion needed
+        }
         this.onceTimeout = setTimeout( function() { node.emit("started"); }, 250 );
-        this.interval_id = setInterval( function() { node.emit("cyclic"); }, this.cyclic*1000 + Math.random()*2*this.cycleJitter-this.cycleJitter );
+        this.interval_id = setInterval( function() { node.emit("cyclic"); }, this.cyclic + Math.random()*2*this.cycleJitter-this.cycleJitter );
         node.status( "" );
 
         function getTopic(index)
@@ -206,7 +234,7 @@ module.exports = function(RED) {
         node.on('cyclic', function() {
             node.cycleCounter++;
             //console.log( "collect chart cyclic "+node.cycleCounter+" "+node.newData );
-            let dateStart = Date.now() - node.hours * 3600*1000;
+            let dateStart = Date.now() - node.hours;
             if( node.cycleCounter >= node.eraseCycles )
             {
                 //node.cycleCounter = 0;
@@ -230,7 +258,7 @@ module.exports = function(RED) {
             }
             if( node.newData )
             {
-                dateStart -= node.eraseCycles * node.cyclic * 1000;
+                dateStart -= node.eraseCycles * node.cyclic;
                 for( const i in node.topics )
                 {
                     node.data[i].t = dateStart;

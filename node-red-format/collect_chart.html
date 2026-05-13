@@ -9,8 +9,10 @@
             contextStore:{value:"",required:true},
             topics:{value:"[]",required:true},
             cyclic:{value:60,validate:RED.validators.number(),required:true},
+            cyclicUnit:{value:"secs"},
             eraseCycles:{value:10,validate:RED.validators.number(),required:true},
             hours:{value:24,validate:RED.validators.number(),required:true},
+            hoursUnit:{value:"hours"},
             eraseWithData:{value:false},
             showState:{value:false}
         },
@@ -28,6 +30,14 @@
         outputLabels: 'complete chart',
         oneditprepare: function() {
             const node = this;
+            if( this.cyclicUnit === undefined )
+            {
+                $("#node-input-cyclicUnit").val( "secs" );
+            }
+            if( this.hoursUnit === undefined )
+            {
+                $("#node-input-hoursUnit").val( "hours" );
+            }
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
@@ -117,16 +127,28 @@
         <select type="text" id="node-input-contextStore"></select>
     </div>
     <div class="form-row">
-        <label for="node-input-cyclic"><i class="fa fa-refresh"></i> Zykluszeit</label>
-        <input type="number" id="node-input-cyclic">
+        <label for="node-input-cyclic"><i class="fa fa-refresh"></i> Cyclic</label>
+        <input type="number" id="node-input-cyclic" style="width:70px;" placeholder="Time">
+        <select id="node-input-cyclicUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-eraseCycles"><i class="fa fa-trash"></i> Löschzyklen</label>
         <input type="number" id="node-input-eraseCycles">
     </div>
     <div class="form-row">
-        <label for="node-input-hours"><i class="fa fa-hourglass-end"></i> Stunden</label>
-        <input type="number" id="node-input-hours">
+        <label for="node-input-hours"><i class="fa fa-hourglass-end"></i> Timespan</label>
+        <input type="number" id="node-input-hours" style="width:70px;" placeholder="Time">
+        <select id="node-input-hoursUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-eraseWithData"><i class="fa fa-trash"></i> Erase only with data</label>

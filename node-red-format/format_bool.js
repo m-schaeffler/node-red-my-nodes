@@ -9,7 +9,7 @@ module.exports = function(RED) {
         this.topic        = config.topic || "";
         this.falseValue   = RED.util.evaluateNodeProperty( config.falseValue ?? 0, config.falseValueType ?? "num" );
         this.trueValue    = RED.util.evaluateNodeProperty( config.trueValue ?? 1, config.trueValueType ?? "num" );
-        this.timeout      = Number( config.timeout ?? 0 ) * 1000;
+        this.timeout      = Number( config.timeout ?? 0 );
         {
             const type = config.timeoutValueType ?? "last";
             this.timeoutValue = type !== "last" ? RED.util.evaluateNodeProperty( config.timeoutValue ?? "", type ) : null;
@@ -27,6 +27,20 @@ module.exports = function(RED) {
                 node.error(RED._("debug.invalid-exp", {error: this.property}));
                 return;
             }
+        }
+        switch( config.timeoutUnit ?? "secs" )
+        {
+            case "secs":
+                this.timeout *= 1000;
+                break;
+            case "mins":
+                this.timeout *= 1000 * 60;
+                break;
+            case "hours":
+                this.timeout *= 1000 * 60 * 60;
+                break;
+            default:
+                // "msecs" so no conversion needed
         }
         node.status( "" );
 

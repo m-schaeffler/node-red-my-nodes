@@ -53,9 +53,9 @@ describe( 'collect_chart Node', function () {
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('contextStore', 'none');
         n1.should.have.a.property('topics', []);
-        n1.should.have.a.property('cyclic', 60);
+        n1.should.have.a.property('cyclic', 60000);
         n1.should.have.a.property('eraseCycles',10);
-        n1.should.have.a.property('hours', 24);
+        n1.should.have.a.property('hours', 24*3600*1000);
         n1.should.have.a.property('eraseAlways', true);
         n1.should.have.a.property('showState', false);
         n1.should.have.a.property('cycleJitter', 2000);
@@ -128,7 +128,7 @@ describe( 'collect_chart Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('cyclic', 1);
+        n1.should.have.a.property('cyclic', 1000);
         n1.should.have.a.property('cycleJitter', 0);
         n1.should.have.a.property('showState', true);
         await delay(750);
@@ -230,7 +230,7 @@ describe( 'collect_chart Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('cyclic', 1);
+        n1.should.have.a.property('cyclic', 1000);
         n1.should.have.a.property('cycleJitter', 0);
         n1.should.have.a.property('topics', topics);
         n1.should.have.a.property('showState', true);
@@ -387,7 +387,7 @@ describe( 'collect_chart Node', function () {
   it('should delete old data', function (done) {
     this.timeout( 30000 );
     const numbers = [0,1,2,3,4,5,6,7,8,9];
-    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "0.5", eraseCycles: "5", hours: 4/3600, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "0.5", eraseCycles: "5", hours: 4, hoursUnit:"secs", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -459,9 +459,9 @@ describe( 'collect_chart Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('cyclic', 0.5);
+        n1.should.have.a.property('cyclic', 500);
         n1.should.have.a.property('eraseCycles', 5);
-        n1.should.have.a.property('hours', 4/3600);
+        n1.should.have.a.property('hours', 4*1000);
         await delay(750);
         c.should.be.equal(1);
         for( const i of numbers )
@@ -495,7 +495,7 @@ describe( 'collect_chart Node', function () {
   it('should delete old data when no new data arrives', function (done) {
     this.timeout( 30000 );
     const numbers = [0,1,2,3,4,5,6,7,8,9];
-    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "0.5", eraseCycles: "5", hours: 4/3600, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "0.5", eraseCycles: "5", hours: 4, hoursUnit:"secs", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -532,9 +532,9 @@ describe( 'collect_chart Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('cyclic', 0.5);
+        n1.should.have.a.property('cyclic', 500);
         n1.should.have.a.property('eraseCycles', 5);
-        n1.should.have.a.property('hours', 4/3600);
+        n1.should.have.a.property('hours', 4000);
         await delay(750);
         c.should.be.equal(1);
         for( const i of numbers )
@@ -558,7 +558,7 @@ describe( 'collect_chart Node', function () {
   it('should not delete old data when no new data arrives', function (done) {
     this.timeout( 30000 );
     const numbers = [0,1,2,3,4,5,6,7,8,9];
-    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "0.5", eraseCycles: "5", hours: 4/3600, eraseWithData:true, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "collectChart", cycleJitter: "0", cyclic: "0.5", eraseCycles: "5", hours: 4, hoursUnit:"secs", eraseWithData:true, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -596,9 +596,9 @@ describe( 'collect_chart Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('cyclic', 0.5);
+        n1.should.have.a.property('cyclic', 500);
         n1.should.have.a.property('eraseCycles', 5);
-        n1.should.have.a.property('hours', 4/3600);
+        n1.should.have.a.property('hours', 4000);
         n1.should.have.a.property('eraseAlways', false);
         await delay(750);
         c.should.be.equal(1);

@@ -1,0 +1,103 @@
+[
+    {
+        "id": "ecf7b970dea06684",
+        "type": "inject",
+        "z": "55bf9467bb188640",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 170,
+        "y": 240,
+        "wires": [
+            [
+                "00060e5b1a948da3"
+            ]
+        ]
+    },
+    {
+        "id": "4b47c6a5b8dc0aeb",
+        "type": "inject",
+        "z": "55bf9467bb188640",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 170,
+        "y": 320,
+        "wires": [
+            [
+                "00060e5b1a948da3"
+            ]
+        ]
+    },
+    {
+        "id": "0f54e96b7adf34fb",
+        "type": "debug",
+        "z": "55bf9467bb188640",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 480,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "00060e5b1a948da3",
+        "type": "formatBool",
+        "z": "55bf9467bb188640",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "topic": "",
+        "falseValue": "0",
+        "falseValueType": "num",
+        "trueValue": "1",
+        "trueValueType": "num",
+        "timeout": "0",
+        "timeoutUnit": "secs",
+        "timeoutValue": "",
+        "timeoutValueType": "last",
+        "showState": true,
+        "filter": false,
+        "x": 320,
+        "y": 280,
+        "wires": [
+            [
+                "0f54e96b7adf34fb"
+            ]
+        ]
+    },
+    {
+        "id": "3cefa7d679694944",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "@mschaeffler/node-red-format": "2.1.0"
+        }
+    }
+]

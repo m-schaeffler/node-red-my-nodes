@@ -48,6 +48,39 @@ This value is then
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/format.json)
 
+## formatBool
+
+Formats a boolean payload e.G. for display in a graph.
+
+![image of nodes](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/formatBool.png)
+
+### Input
+
+The message property to be used as payload can be defined with the `Property` property.
+
+### Output
+
+|msg.    | type   | description   |
+|:-------|:-------|:--------------|
+|payload | string | formated value|
+
+### Parameters
+
+|config| type   | description                       |
+|:-----|:-------|:----------------------------------|
+|Topic|string| defines the topic for the output message, `""` is `msg.topic`.|
+|Property| string | defines the message property to be used as payload.|
+|falseValue|number, string, JSON|output value for falsy values.|
+|trueValue|number, string, JSON|output value for truthy values.|
+|Timeout|number| Timeout duration; `0` is no timeout.|
+|Timeout Value|last, number, string, JSON|output value in case of a timeout, with "last Value" the last received value will be resent.|
+|Status|boolean|shows the actual value as a node status.|
+|Filter|boolean|block sending of unchanged `payload`.|
+
+### Example Flow
+
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/formatBool.json)
+
 ## collectChart
 
 Aggregates data series for a chart of dashboard 2.0.

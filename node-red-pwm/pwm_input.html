@@ -7,6 +7,7 @@
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
             measureTime:{value:3600,validate:RED.validators.number(),required:true},
+            timeUnit:{value:"secs"},
             contextStore:{value:"",required:true},
             showState:{value:false}
         },
@@ -24,6 +25,10 @@
         outputLabels: 'pwm signal',
         oneditprepare: function() {
             const node = this;
+            if( this.timeUnit === undefined )
+            {
+                $("#node-input-timeUnit").val( "secs" );
+            }
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
@@ -58,7 +63,13 @@
     </div>
     <div class="form-row">
         <label for="node-input-measureTime"><i class="fa fa-repeat"></i> measure time</label>
-        <input type="number" id="node-input-measureTime">
+        <input type="number" id="node-input-measureTime" style="width:70px;" placeholder="Time">>
+        <select id="node-input-timeUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>

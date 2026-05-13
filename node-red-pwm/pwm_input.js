@@ -7,14 +7,13 @@ module.exports = function(RED) {
         var context = this.context();
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.measureTime  = Number( config.measureTime ?? 3600 ) * 1000;
+        this.measureTime  = Number( config.measureTime ?? 3600 );
         this.contextStore = config.contextStore ?? "none";
         this.showState    = Boolean( config.showState );
         this.data         = [];
         this.topic        = null;
         this.value        = null;
         this.last         = null;
-        this.timCyclic    = setInterval( function() { node.emit("cyclic"); }, Math.max( this.measureTime/240, 1000 ) );
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -25,6 +24,21 @@ module.exports = function(RED) {
                 return;
             }
         }
+        switch( config.timeUnit ?? "secs" )
+        {
+            case "secs":
+                this.measureTime *= 1000;
+                break;
+            case "mins":
+                this.measureTime *= 1000 * 60;
+                break;
+            case "hours":
+                this.measureTime *= 1000 * 60 * 60;
+                break;
+            default:
+                // "msecs" so no conversion needed
+        }
+        this.timCyclic = setInterval( function() { node.emit("cyclic"); }, Math.max( this.measureTime/240, 1000 ) );
         node.status( "" );
 
         if( node.contextStore != "none" )

@@ -6,7 +6,7 @@ module.exports = function(RED) {
         var node = this;
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.cyclic       = Number( config.cyclicTime ?? 60 ) * 1000;
+        this.cyclic       = Number( config.cyclicTime ?? 60 );
         this.showState    = Boolean( config.showState );
         this.topic        = null;
         this.onTime       = null;
@@ -23,6 +23,20 @@ module.exports = function(RED) {
                 node.error(RED._("debug.invalid-exp", {error: this.property}));
                 return;
             }
+        }
+        switch( config.cyclicUnit ?? "secs" )
+        {
+            case "secs":
+                this.cyclic *= 1000;
+                break;
+            case "mins":
+                this.cyclic *= 1000 * 60;
+                break;
+            case "hours":
+                this.cyclic *= 1000 * 60 * 60;
+                break;
+            default:
+                // "msecs" so no conversion needed
         }
         node.status( "" );
 

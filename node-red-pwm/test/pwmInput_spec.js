@@ -209,10 +209,10 @@ describe( 'pwm_input Node', function () {
             await delay(150);
             c.should.match( 2*i+1 );
         }
-        c.should.match( 15 );
-        should.not.exist( n1.context().get("data") );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        c.should.match( 15 );
+        should.not.exist( n1.context().get("data") );
         done();
       }
       catch(err) {

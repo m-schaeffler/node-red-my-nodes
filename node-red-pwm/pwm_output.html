@@ -7,6 +7,7 @@
             property:{value:"payload",required:true},
             propertyType:{value:"msg"},
             cyclicTime:{value:60,validate:RED.validators.number(),required:true},
+            cyclicUnit:{value:"secs"},
             showState:{value:false}
         },
         inputs:1,
@@ -23,6 +24,10 @@
         inputLabels: 'input',
         outputLabels: 'pwm signal',
         oneditprepare: function() {
+            if( this.cyclicUnit === undefined )
+            {
+                $("#node-input-cyclicUnit").val( "secs" );
+            }
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
@@ -44,7 +49,13 @@
     </div>
     <div class="form-row">
         <label for="node-input-cyclicTime"><i class="fa fa-repeat"></i> Period</label>
-        <input type="number" id="node-input-cyclicTime">
+        <input type="number" id="node-input-cyclicTime" style="width:70px;" placeholder="Time">
+        <select id="node-input-cyclicUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>

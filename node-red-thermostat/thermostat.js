@@ -19,6 +19,20 @@ module.exports = function(RED) {
         this.lastO      = null;
         this.timerHeat  = null;
         this.timerCycle = null;
+        switch( config.cycleUnit ?? "secs" )
+        {
+            case "secs":
+                this.cycleTime *= 1000;
+                break;
+            case "mins":
+                this.cycleTime *= 1000 * 60;
+                break;
+            case "hours":
+                this.cycleTime *= 1000 * 60 * 60;
+                break;
+            default:
+                // "msecs" so no conversion needed
+        }
         initData();
         node.status( "" );
         context.get( "data", function(err,value)
@@ -83,8 +97,8 @@ module.exports = function(RED) {
                     case 3: time *= 1.2; break; // 2nd cycle
                 }
                 time = Math.min( time, node.data.cycleTime * 0.985 );
-                node.timerHeat  = setTimeout( function(){ node.emit("stopHeater"); }, time                * 1000 );
-                node.timerCycle = setTimeout( function(){ node.emit("newCycle");   }, node.data.cycleTime * 1000 );
+                node.timerHeat  = setTimeout( function(){ node.emit("stopHeater"); }, time                );
+                node.timerCycle = setTimeout( function(){ node.emit("newCycle");   }, node.data.cycleTime );
             }
             else
             {
@@ -177,7 +191,7 @@ module.exports = function(RED) {
                 }
                 if( msg.payload?.cycleTime !== undefined )
                 {
-                    node.data.cycleTime = msg.payload.cycleTime;
+                    node.data.cycleTime = msg.payload.cycleTime * 1000;
                 }
                 if( msg.payload?.cycleCount !== undefined )
                 {

@@ -80,14 +80,14 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('minDelta', 0.25);
         n1.should.have.a.property('summand', 0.4);
         n1.should.have.a.property('factor', 0.2);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         n1.should.have.a.property('resetAtStop', false);
         await delay(500);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         should.not.exist( n1.context().get("data") );
         c1.should.match( 1 );
         c2.should.match( 1 );
@@ -134,11 +134,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // change nominal data
@@ -150,7 +150,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:22,factor:0.2,cycleTime:900,cycleCount:3});
+        n1.should.have.a.property('data',{nominal:22,factor:0.2,cycleTime:900000,cycleCount:3});
         n1.context().get("data").should.match(n1.data);
         // change closed loop control data
         n1.receive({ topic:"data", payload: {
@@ -159,7 +159,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:22,factor:0.4,cycleTime:900,cycleCount:3});
+        n1.should.have.a.property('data',{nominal:22,factor:0.4,cycleTime:900000,cycleCount:3});
         n1.context().get("data").should.match(n1.data);
         // set actual data
         n1.receive({ topic:"data", payload: {
@@ -169,14 +169,14 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:22,factor:0.4,cycleTime:900,cycleCount:3,block:false,temperature:19});
+        n1.should.have.a.property('data',{nominal:22,factor:0.4,cycleTime:900000,cycleCount:3,block:false,temperature:19});
         n1.context().get("data").should.match(n1.data);
         // reset
         n1.receive({ reset: true });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,block:false,temperature:19});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,block:false,temperature:19});
         n1.context().get("data").should.match(n1.data);
         // change nominal data again
         n1.receive({ topic:"data", payload: {
@@ -188,7 +188,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:22,factor:0.8,cycleTime:900,cycleCount:3,block:false,temperature:19});
+        n1.should.have.a.property('data',{nominal:22,factor:0.8,cycleTime:900000,cycleCount:3,block:false,temperature:19});
         n1.context().get("data").should.match(n1.data);
         // redeploy node
         await helper._redNodes.stopFlows();
@@ -219,7 +219,7 @@ describe( 'thermostat Node', function () {
         await delay(500);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,block:false,temperature:19});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,block:false,temperature:19});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 2 );
         c2.should.match( 2 );
@@ -267,11 +267,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -328,7 +328,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 9 );
         c2.should.match( 9 );
@@ -376,11 +376,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "on_off");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -409,7 +409,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 3 );
         c2.should.match( 3 );
@@ -456,11 +456,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -475,7 +475,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.8});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,temperature:19.8});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 2 );
         c2.should.match( 2 );
@@ -522,11 +522,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "cycleCount");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -541,7 +541,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 2 );
         c2.should.match( 2 );
@@ -590,11 +590,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 10);
+        n1.should.have.a.property('cycleTime', 10000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "0_1");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -615,7 +615,7 @@ describe( 'thermostat Node', function () {
         c1.should.match( 3 );
         c2.should.match( 3 );
         await delay(6000);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:1,temperature:18.9});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10000,cycleCount:1,temperature:18.9});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 3 );
         c2.should.match( 3 );
@@ -665,11 +665,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 10);
+        n1.should.have.a.property('cycleTime', 10000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "cycleCount");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -759,7 +759,7 @@ describe( 'thermostat Node', function () {
         c1.should.match( 3 );
         c2.should.match( 9 );
         await delay(6000);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:4,temperature:18.1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10000,cycleCount:4,temperature:18.1});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 3 );
         c2.should.match( 9 );
@@ -807,11 +807,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -840,7 +840,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7,block:false});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,temperature:19.7,block:false});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 3 );
         c2.should.match( 5 );
@@ -888,11 +888,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // block
@@ -921,7 +921,7 @@ describe( 'thermostat Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7,block:false});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,temperature:19.7,block:false});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 3 );
         c2.should.match( 2 );
@@ -971,11 +971,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 10);
+        n1.should.have.a.property('cycleTime', 10000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -1023,7 +1023,7 @@ describe( 'thermostat Node', function () {
         await delay(6080);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:2,temperature:18.1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10000,cycleCount:2,temperature:18.1});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 3 );
         c2.should.match( 5 );
@@ -1074,11 +1074,11 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 10);
+        n1.should.have.a.property('cycleTime', 10000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "cycleCount");
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -1126,7 +1126,7 @@ describe( 'thermostat Node', function () {
         await delay(6080);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10,cycleCount:2,temperature:18.1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:10000,cycleCount:2,temperature:18.1});
         n1.context().get("data").should.match(n1.data);
         c1.should.match( 4 );
         c2.should.match( 5 );
@@ -1173,12 +1173,12 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         n1.should.have.a.property('resetAtStop', false);
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -1188,7 +1188,7 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         c1.should.match( 2 );
         c2.should.match( 2 );
-        n1.should.have.a.property('data',{nominal:22,factor:0.1,cycleTime:2000,cycleCount:2,temperature:19.7});
+        n1.should.have.a.property('data',{nominal:22,factor:0.1,cycleTime:2000000,cycleCount:2,temperature:19.7});
         // switch off
         n1.receive({ topic:"data", payload: { trigger: false } });
         await delay(50);
@@ -1196,14 +1196,14 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         c1.should.match( 3 );
         c2.should.match( 3 );
-        n1.should.have.a.property('data',{nominal:22,factor:0.1,cycleTime:2000,cycleCount:2,temperature:19.7});
+        n1.should.have.a.property('data',{nominal:22,factor:0.1,cycleTime:2000000,cycleCount:2,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
         // switch not on
         n1.receive({ topic:"data", payload: { temperature: 19.7, trigger: true, nominal:19,factor:0.5,cycleTime:2500,cycleCount:3 } });
         await delay(50);
         c1.should.match( 4 );
         c2.should.match( 4 );
-        n1.should.have.a.property('data',{nominal:19,factor:0.1,cycleTime:2500,cycleCount:3,temperature:19.7});
+        n1.should.have.a.property('data',{nominal:19,factor:0.1,cycleTime:2500000,cycleCount:3,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
         done();
       }
@@ -1248,12 +1248,12 @@ describe( 'thermostat Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('topic', 'thermostat');
         n1.should.have.a.property('nominal', 20);
-        n1.should.have.a.property('cycleTime', 600);
+        n1.should.have.a.property('cycleTime', 600000);
         n1.should.have.a.property('cycleCount', 1);
         n1.should.have.a.property('feedback', "boolean");
         n1.should.have.a.property('resetAtStop', true);
         await delay(500);
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1});
         c1.should.match( 1 );
         c2.should.match( 1 );
         // switch on
@@ -1263,7 +1263,7 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         c1.should.match( 2 );
         c2.should.match( 2 );
-        n1.should.have.a.property('data',{nominal:22,factor:0.1,cycleTime:2000,cycleCount:2,temperature:19.7});
+        n1.should.have.a.property('data',{nominal:22,factor:0.1,cycleTime:2000000,cycleCount:2,temperature:19.7});
         // switch off
         n1.receive({ topic:"data", payload: { trigger: false } });
         await delay(50);
@@ -1271,14 +1271,14 @@ describe( 'thermostat Node', function () {
         n1.error.should.have.callCount(0);
         c1.should.match( 3 );
         c2.should.match( 3 );
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
         // switch not on
         n1.receive({ topic:"data", payload: { temperature: 19.7, trigger: true, nominal:19,factor:0.5,cycleTime:2000,cycleCount:2 } });
         await delay(50);
         c1.should.match( 4 );
         c2.should.match( 4 );
-        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600,cycleCount:1,temperature:19.7});
+        n1.should.have.a.property('data',{nominal:20,factor:0.2,cycleTime:600000,cycleCount:1,temperature:19.7});
         n1.context().get("data").should.match(n1.data);
         done();
       }

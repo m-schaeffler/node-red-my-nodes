@@ -13,6 +13,20 @@ module.exports = function(RED)
         this.interval_id  = null;
         var node    = this;
         var context = this.context();
+        switch( config.cycleUnit ?? "mins" )
+        {
+            case "secs":
+                this.cycle *= 1000;
+                break;
+            case "mins":
+                this.cycle *= 1000 * 60;
+                break;
+            case "hours":
+                this.cycle *= 1000 * 60 * 60;
+                break;
+            default:
+                // "msecs" so no conversion needed
+        }
         node.status( "" );
 
         if( this.cycle > 0 )
@@ -22,7 +36,7 @@ module.exports = function(RED)
                 node.emit( "input", {query:true} );
             }
             setTimeout( emitQuery, 75 );
-            this.interval_id = setInterval( emitQuery, this.cycle*60*1000 );
+            this.interval_id = setInterval( emitQuery, this.cycle );
         }
 
         node.on( 'input', function(msg,send,done)

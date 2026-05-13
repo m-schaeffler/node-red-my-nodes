@@ -10,6 +10,7 @@
             summand: {value:"0.4",rerquired:true,validate:RED.validators.number()},
             factor: {value:"0.2",rerquired:true,validate:RED.validators.number()},
             cycleTime: {value:"600",rerquired:true,validate:RED.validators.number()},
+            cycleUnit:{value:"secs"},
             cycleCount: {value:"1",rerquired:true,validate:RED.validators.number()},
             feedback: {value:"boolean",required:true},
             resetAtStop: {value:false}
@@ -25,7 +26,14 @@
         },
         paletteLabel: "thermostat",
         inputLabels: 'input data',
-        outputLabels: ['switch feedback','heater control']
+        outputLabels: ['switch feedback','heater control'],
+        oneditprepare: function() {
+            const node = this;
+            if( this.cycleUnit === undefined )
+            {
+                $("#node-input-cycleUnit").val( "secs" );
+            }
+        }
     });
 </script>
 
@@ -57,11 +65,17 @@
    
     <div class="form-row">
         <label for="node-input-cycleTime"><i class="fa fa-star"></i> cycle time</label>
-        <input type="text" id="node-input-cycleTime"></input>
+        <input type="text" id="node-input-cycleTime" style="width:70px;" placeholder="Time"></input>
+        <select id="node-input-cycleUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-cycleCount"><i class="fa fa-repeat"></i> cycle count</label>
-        <input type="text" id="node-input-cycleCount"></input>
+        <input type="number" id="node-input-cycleCount"></input>
     </div>
     <div class="form-row">
         <label for="node-input-feedback"><i class="fa fa-chevron-left"></i> switch feedback</label>

@@ -7,6 +7,7 @@
             topic:{value:""},
             property:{value:"payload",required:true},
             cycle:{value:"0", required:true, validate:RED.validators.number()},
+            cycleUnit:{value:"mins"},
             contextStore:{value:"",required:true},
             showState:{value:false}
         },
@@ -24,6 +25,10 @@
         paletteLabel: "hour meter",
         oneditprepare: function() {
             const node = this
+            if( this.cycleUnit === undefined )
+            {
+                $("#node-input-cycleUnit").val( "mins" );
+            }
             // msg property
             $("#node-input-property").typedInput({
                 type:"msg",
@@ -62,8 +67,14 @@
         <input type="hidden" id="node-input-property-type">
     </div>
     <div class="form-row">
-        <label for="node-input-cycle"><i class="fa fa-hourglass-o"></i> Cycle [min]</label>
-        <input type="number" id="node-input-cycle">
+        <label for="node-input-cycle"><i class="fa fa-hourglass-o"></i> Cycle</label>
+        <input type="number" id="node-input-cycle" style="width:70px;" placeholder="Time">
+        <select id="node-input-cycleUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>

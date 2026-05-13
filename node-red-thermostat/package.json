@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-thermostat",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A Node Red node to control an (electric) heater",
     "author": {
         "name": "Mathias Schäffler",

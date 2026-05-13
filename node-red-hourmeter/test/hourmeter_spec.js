@@ -69,7 +69,7 @@ describe( 'hourmeter Node', function () {
   it('should work with cycle activated', function (done) {
     this.timeout( 5000 );
     const reasons = ['query','query','query','on','query','query','off','query','query','reset'];
-    var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:1/120, property: 'payload', name: "test", wires: [["n2"],["n3"]] },
+    var flow = [{ id: "n1", type: "hourmeter", topic:"zaehler", cycle:500, cycleUnit:"msecs", property: 'payload', name: "test", wires: [["n2"],["n3"]] },
                 { id: "n2", type: "helper" },
                 { id: "n3", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -131,7 +131,7 @@ describe( 'hourmeter Node', function () {
       try{
         n1.should.have.a.property('topic', 'zaehler');
         n1.should.have.a.property('property', 'payload');
-        n1.should.have.a.property('cycle', 1/120);
+        n1.should.have.a.property('cycle', 500);
         start = Date.now();
         await delay(50);
         c1.should.match( 0 );

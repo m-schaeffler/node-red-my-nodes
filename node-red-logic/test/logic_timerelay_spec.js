@@ -173,7 +173,7 @@ describe( 'logic_timerrelay Node', function () {
   });
 
   it('should delay switching on, output number', function (done) {
-    var flow = [{ id: "n1", type: "timerelay", delay:250, postrun:0, outputOn:"1", outputOnType:"num", outputOff:"0", outputOffType:"num", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "timerelay", delay:250, delayUnit:"msec", postrun:0, outputOn:"1", outputOnType:"num", outputOff:"0", outputOffType:"num", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -223,7 +223,7 @@ describe( 'logic_timerrelay Node', function () {
   });
 
   it('should delay switching off, output string', function (done) {
-    var flow = [{ id: "n1", type: "timerelay", delay:0, postrun:250, outputOn:"on", outputOnType:"str", outputOff:"off", outputOffType:"str", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "timerelay", delay:0, postrun:250, postrunUnit:"msec", outputOn:"on", outputOnType:"str", outputOff:"off", outputOffType:"str", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -278,7 +278,7 @@ describe( 'logic_timerrelay Node', function () {
   it('should delay switching on and off, output json', function (done) {
     const jsonOn  = { value:true, num:42 };
     const jsonOff = { value:false, num:-1 };
-    var flow = [{ id: "n1", type: "timerelay", delay:250, postrun:250, outputOn:JSON.stringify(jsonOn), outputOnType:"json", outputOff:JSON.stringify(jsonOff), outputOffType:"json", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "timerelay", delay:250, delayUnit:"msec", postrun:250, postrunUnit:"msec", outputOn:JSON.stringify(jsonOn), outputOnType:"json", outputOff:JSON.stringify(jsonOff), outputOffType:"json", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -320,7 +320,7 @@ describe( 'logic_timerrelay Node', function () {
   });
 
   it('should not have max on time', function (done) {
-    var flow = [{ id: "n1", type: "timerelay", maxOn:150, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "timerelay", maxOn:150, maxOnUnit:"msec", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -378,7 +378,7 @@ describe( 'logic_timerrelay Node', function () {
   });
 
   it('should not have min on time', function (done) {
-    var flow = [{ id: "n1", type: "timerelay", minOn:150, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "timerelay", minOn:150, minOnUnit:"msec", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");

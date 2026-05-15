@@ -1,15 +1,30 @@
 module.exports = function(RED) {
     var tools = require('./tools.js');
 
+    function timeUnits(unit)
+    {
+        switch( unit ?? "secs" )
+        {
+            case "secs":
+                return 1000;
+            case "mins":
+                return 1000 * 60;
+            case "hours":
+                return 1000 * 60 * 60;
+            default:
+                return 1;
+        }
+    }
+
     function TimeRelayNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
         this.property  = config.property || "payload";
-        this.delay     = Number( config.delay ?? 0 );
-        this.postrun   = Number( config.postrun ?? 0 );
-        this.minOn     = Number( config.minOn ?? 0 );
-        this.maxOn     = Number( config.maxOn ?? 0 );
+        this.delay     = Number( config.delay ?? 0 )   * timeUnits( config.delayUnit );
+        this.postrun   = Number( config.postrun ?? 0 ) * timeUnits( config.postrunUnit );
+        this.minOn     = Number( config.minOn ?? 0 )   * timeUnits( config.minOnUnit );
+        this.maxOn     = Number( config.maxOn ?? 0 )   * timeUnits( config.maxOnUnit );
         this.outputOn  = RED.util.evaluateNodeProperty( config.outputOn  ?? "true", config.outputOnType  ?? "bool" );
         this.outputOff = RED.util.evaluateNodeProperty( config.outputOff ?? "false",config.outputOffType ?? "bool" );
         this.showState = Boolean( config.showState );

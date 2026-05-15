@@ -6,9 +6,13 @@
             name:{value:""},
             property:{value:"payload",required:true},
             delay:{value:"0",required:true},
+            delayUnit:{value:"secs"},
             minOn:{value:"0",required:true},
+            minOnUnit:{value:"secs"},
             maxOn:{value:"0",required:true},
+            maxOnUnit:{value:"secs"},
             postrun:{value:"0",required:true},
+            postrunUnit:{value:"secs"},
             outputOn:{value:true,required:true},
             outputOnType:{value:"bool"},
             outputOff:{value:false,required:true},
@@ -28,6 +32,22 @@
         inputLabels: 'input',
         outputLabels: 'boolean',
         oneditprepare: function() {
+            if( this.delayUnit === undefined )
+            {
+                $("#node-input-delayUnit").val( "msecs" );
+            }
+            if( this.minOnUnit === undefined )
+            {
+                $("#node-input-minOnUnit").val( "msecs" );
+            }
+            if( this.maxOnUnit === undefined )
+            {
+                $("#node-input-maxOnUnit").val( "msecs" );
+            }
+            if( this.postrunUnit === undefined )
+            {
+                $("#node-input-postrunUnit").val( "msecs" );
+            }
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg"],
@@ -45,7 +65,7 @@
             })
         }
     });
-</script>
+</script>7
 
 <script type="text/html" data-template-name="timerelay">
     <div class="form-row">
@@ -59,19 +79,43 @@
     </div>
     <div class="form-row">
         <label for="node-input-delay"><i class="fa fa-play"></i> Delay</label>
-        <input type="text" id="node-input-delay">
+        <input type="text" id="node-input-delay" style="width:70px;" placeholder="Time">
+        <select id="node-input-delayUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-postrun"><i class="fa fa-stop"></i> Postrun</label>
-        <input type="text" id="node-input-postrun">
+        <input type="text" id="node-input-postrun" style="width:70px;" placeholder="Time">
+        <select id="node-input-postrunUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-minOn"><i class="fa fa-hourglass-start"></i> min on time</label>
-        <input type="text" id="node-input-minOn">
+        <input type="text" id="node-input-minOn" style="width:70px;" placeholder="Time">
+        <select id="node-input-minOnUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-maxOn"><i class="fa fa-hourglass-end"></i> max on time</label>
-        <input type="text" id="node-input-maxOn">
+        <input type="text" id="node-input-maxOn" style="width:70px;" placeholder="Time">
+        <select id="node-input-maxOnUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-outputOn"><i class="fa fa-sign-out"></i> on Output</label>

@@ -10,10 +10,12 @@
             deltaTime:{value:"60", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
+            deltaUnit:{value:"secs"},
             minData:{value:"1", required:true, validate:function(v){
                 return v!=='' && !isNaN(v) && Number(v)>0;}
             },
             filter:{value:0, validate:RED.validators.number()},
+            filterUnit:{value:"secs"},
             filterVal:{value:0, validate:RED.validators.number()},
             filterMul:{value:10, validate:RED.validators.number()},
             zeroIsZero:{value:false},
@@ -32,6 +34,14 @@
         inputLabels: 'input',
         outputLabels: 'output',
         oneditprepare: function() {
+            if( this.deltaUnit === undefined )
+            {
+                $("#node-input-deltaUnit").val( "secs" );
+            }
+            if( this.filterUnit === undefined )
+            {
+                $("#node-input-filterUnit").val( "secs" );
+            }
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
@@ -57,15 +67,27 @@
     </div>
     <div class="form-row">
        <label for="node-input-minMean"><i class="fa fa-hourglass-o"></i> Zeitspanne</label>
-       <input type="text" id="node-input-deltaTime">
+       <input type="text" id="node-input-deltaTime" style="width:70px;" placeholder="Time">
+        <select id="node-input-deltaUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-minData"><i class="fa fa-check-square-o"></i> min. Data</label>
-        <input type="text" id="node-input-minData">
+        <input type="number" id="node-input-minData">
     </div>
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter"></i> Filterzeit</label>
-        <input type="number" id="node-input-filter">
+        <input type="number" id="node-input-filter" style="width:70px;" placeholder="Time">
+        <select id="node-input-filterUnit" style="width:140px;">
+            <option value="msecs">MilliSeconds</option>
+            <option value="secs">Seconds</option>
+            <option value="mins">Minutes</option>
+            <option value="hours">Hours</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-filterVal"><i class="fa fa-filter"></i> Filter Wert</label>
@@ -73,7 +95,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-filterMul"><i class="fa fa-filter"></i> Filter Wiederholungsfaktor</label>
-        <input type="text" id="node-input-filterMul">
+        <input type="number" id="node-input-filterMul">
     </div>
     <div class="form-row">
         <label for="node-input-decimals"><i class="fa fa-sort-numeric-asc"></i> Nachkommastellen</label>

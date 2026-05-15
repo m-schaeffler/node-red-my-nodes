@@ -58,23 +58,6 @@ exports.getPayload = function(node,msg,callback)
     }
 }
 
-/*
-exports.convertTypedInput = function(value,type)
-{
-    switch( type )
-    {
-        case "num":
-            return Number( value );
-        case "bool":
-            return exports.property2boolean( value );
-        case "json":
-            return JSON.parse( value );
-        default:
-            return value;
-    }
-}
-*/
-
 exports.distance = function(a,b)
 {
     return a>b ? a-b : b-a;
@@ -83,4 +66,19 @@ exports.distance = function(a,b)
 exports.formatNumber = function(value)
 {
     return value > 5000 ? value.toFixed( 0 ) : value.toPrecision( 4 );
+}
+
+exports.timeUnits = function(unit)
+{
+    switch( unit ?? "secs" )
+    {
+        case "secs":
+            return 1000;
+        case "mins":
+            return 1000 * 60;
+        case "hours":
+            return 1000 * 60 * 60;
+        default:
+            return 1;
+    }
 }

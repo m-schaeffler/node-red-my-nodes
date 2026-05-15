@@ -178,7 +178,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should mean data only for deltaTime window', function (done) {
-    var flow = [{ id: "n1", type: "mean", deltaTime: "0.1", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", deltaTime: "100", deltaUnit:"msec", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -219,7 +219,7 @@ describe( 'math_mean Node', function () {
   });
 
   it('should filter data in time domain', function (done) {
-    var flow = [{ id: "n1", type: "mean", filter: "1", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", filter: "1000", filterUnit:"msec", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -320,7 +320,7 @@ describe( 'math_mean Node', function () {
 
   it('should filter data in both domains 1', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "mean", filter: "0.25", filterVal: "100", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "mean", filter: "250", filterUnit:"msec", filterVal: "100", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");

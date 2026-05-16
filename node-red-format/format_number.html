@@ -10,6 +10,16 @@
             grouping:{value:"'"},
             decimal:{value:",",required:true},
             digits:{value:0,validate:RED.validators.number(),required:true},
+            minColor:{value:""},
+            minValue:{value:"", validate:function(v){
+                const minColor = $("#node-input-minColor").length ? $("#node-input-minColor").val() : this.minColor;
+                return minColor===undefined || minColor==="" || ( v!=="" && !isNaN(v) );
+            }},
+            maxColor:{value:""},
+            maxValue:{value:"", validate:function(v){
+                const maxColor = $("#node-input-maxColor").length ? $("#node-input-maxColor").val() : this.maxColor;
+                return maxColor===undefined || maxColor==="" || ( v!=="" && !isNaN(v) );
+            }},
             showState:{value:false},
             filter:{value:false}
         },
@@ -36,6 +46,20 @@
                     $("#decimal-details").hide();
                 } else {
                     $("#decimal-details").show();
+                }
+            }).trigger("change");
+            $("#node-input-minColor").on("change",function() {
+                if (this.value === "") {
+                    $("#node-input-minValue").hide();
+                } else {
+                    $("#node-input-minValue").show();
+                }
+            }).trigger("change");
+            $("#node-input-maxColor").on("change",function() {
+                if (this.value === "") {
+                    $("#node-input-maxValue").hide();
+                } else {
+                    $("#node-input-maxValue").show();
                 }
             }).trigger("change");
         }
@@ -67,6 +91,28 @@
     <div class="form-row">
         <label for="node-input-digits"><i class="fa fa-angle-right"></i> Stellen</label>
         <input type="number" id="node-input-digits">
+    </div>
+    <div class="form-row">
+        <label for="node-input-minColor"><i class="fa fa-chevron-left"></i> min. color</label>
+        <input type="text" id="node-input-minValue" style="width:70px;" placeholder="value">
+        <select type="text" id="node-input-minColor"  style="width:140px;">
+            <option value="">none</option>
+            <option value="red">red</option>
+            <option value="yellow">yellow</option>
+            <option value="green">green</option>
+            <option value="blue">blue</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxColor"><i class="fa fa-chevron-right"></i> max. color</label>
+        <input type="text" id="node-input-maxValue" style="width:70px;" placeholder="value">
+        <select type="text" id="node-input-maxColor"  style="width:140px;">
+            <option value="">none</option>
+            <option value="red">red</option>
+            <option value="yellow">yellow</option>
+            <option value="green">green</option>
+            <option value="blue">blue</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>

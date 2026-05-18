@@ -33,6 +33,10 @@ describe( 'format_number Node', function () {
         n1.should.have.a.property('grouping', "");
         n1.should.have.a.property('decimal', ".");
         n1.should.have.a.property('digits', 0);
+        n1.should.have.a.property('minColor', "");
+        n1.should.have.a.property('minValue', Number.MIN_SAFE_INTEGER);
+        n1.should.have.a.property('maxColor', "");
+        n1.should.have.a.property('maxValue', Number.MAX_SAFE_INTEGER);
         n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);

@@ -10,9 +10,14 @@ module.exports = function(RED) {
         this.grouping     = config.grouping ?? "";
         this.decimal      = config.decimal ?? ".";
         this.digits       = Number( config.digits ?? 0 );
+        this.minColor     = config.minColor ?? "";
+        this.minValue     = Number( config.minValue ?? Number.MIN_SAFE_INTEGER );
+        this.maxColor     = config.maxColor ?? "";
+        this.maxValue     = Number( config.maxValue ?? Number.MAX_SAFE_INTEGER );
         this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
         this.last         = undefined;
+        this.color        = "";
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -75,6 +80,7 @@ module.exports = function(RED) {
             {
                 const number = Number( value );
                 let   status = {};
+                let   color  = "";
                 if( ! ( Number.isNaN( number ) || value === null ) )
                 {
                     const roundedNumber = number.toFixed( node.digits );
@@ -99,10 +105,23 @@ module.exports = function(RED) {
                     {
                         msg.payload += node.unit;
                     }
+                    if( node.minColor && number <= node.minValue )
+                    {
+                        color = node.minColor;
+                    }
+                    else if( node.maxColor && number >= node.maxValue )
+                    {
+                        color = node.maxColor;
+                    }
                 }
                 else
                 {
                     msg.payload = value;
+                }
+                if( color !== node.color )
+                {
+                    msg.ui_update = { "class":color };
+                    node.color = color;
                 }
                 if( node.filter )
                 {

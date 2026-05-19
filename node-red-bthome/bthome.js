@@ -7,6 +7,7 @@ class TypeIds {
     static bluButton = 1;
     static bluDW     = 2;
     static bluRemote = 9;
+    static bluDwZb   = 20;
 }
 class DeviceNames {
     static 0x01 = "SBBT-002C";
@@ -273,7 +274,7 @@ module.exports = function(RED) {
                         case 0x2D:
                           {
                             let state = rawdata.getUInt8();
-                            if( item.typeId === TypeIds.bluDW )
+                            if( item.typeId === TypeIds.bluDW || item.typeId === TypeIds.bluDwZb )
                             {
                                 state = Boolean( state );
                             }

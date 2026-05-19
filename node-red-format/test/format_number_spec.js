@@ -33,10 +33,7 @@ describe( 'format_number Node', function () {
         n1.should.have.a.property('grouping', "");
         n1.should.have.a.property('decimal', ".");
         n1.should.have.a.property('digits', 0);
-        n1.should.have.a.property('minColor', "");
-        n1.should.have.a.property('minValue', Number.MIN_SAFE_INTEGER);
-        n1.should.have.a.property('maxColor', "");
-        n1.should.have.a.property('maxValue', Number.MAX_SAFE_INTEGER);
+        n1.should.have.a.property('colors', []);
         n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
@@ -694,6 +691,57 @@ describe( 'format_number Node', function () {
         c.should.match( numbers.length + 2 );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(1);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should output colors', function (done) {
+    const numbers = [0,10,11,89,90,100];
+    const colors = '[{"operator":"<=","value":"10","color":"redValue"},{"operator":">=","value":"90","color":"greenValue"}]';
+    var flow = [{ id: "n1", type: "formatNumber", colors:colors, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          switch( ++c )
+          {
+              case 1:
+                  msg.should.have.property('ui_update', { class: 'redValue' } );
+                  break;
+              case 3:
+                  msg.should.have.property('ui_update', { class: '' } );
+                  break;
+              case 5:
+                  msg.should.have.property('ui_update', { class: 'greenValue' } );
+                  break;
+              default:
+                  msg.should.not.have.property('ui_update');
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('colors',JSON.parse(colors));
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ payload: i });
+          await delay(50);
+        }
+        c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         done();
       }
       catch(err) {

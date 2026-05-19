@@ -1,4 +1,4 @@
-<script type="text/javascript">
+7<script type="text/javascript">
     RED.nodes.registerType('formatNumber',{
         category: "Dashboard 2",
         color: "#C7E9C0",
@@ -10,16 +10,7 @@
             grouping:{value:"'"},
             decimal:{value:",",required:true},
             digits:{value:0,validate:RED.validators.number(),required:true},
-            minColor:{value:""},
-            minValue:{value:"", validate:function(v){
-                const minColor = $("#node-input-minColor").length ? $("#node-input-minColor").val() : this.minColor;
-                return minColor===undefined || minColor==="" || ( v!=="" && !isNaN(v) );
-            }},
-            maxColor:{value:""},
-            maxValue:{value:"", validate:function(v){
-                const maxColor = $("#node-input-maxColor").length ? $("#node-input-maxColor").val() : this.maxColor;
-                return maxColor===undefined || maxColor==="" || ( v!=="" && !isNaN(v) );
-            }},
+            colors:{value:"[]",required:true},
             showState:{value:false},
             filter:{value:false}
         },
@@ -48,20 +39,68 @@
                     $("#decimal-details").show();
                 }
             }).trigger("change");
-            $("#node-input-minColor").on("change",function() {
-                if (this.value === "") {
-                    $("#node-input-minValue").hide();
-                } else {
-                    $("#node-input-minValue").show();
-                }
-            }).trigger("change");
-            $("#node-input-maxColor").on("change",function() {
-                if (this.value === "") {
-                    $("#node-input-maxValue").hide();
-                } else {
-                    $("#node-input-maxValue").show();
-                }
-            }).trigger("change");
+            // Colors
+            const colorsList = $("#node-input-colors-container").css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,device) {
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    const row = $('<div/>').appendTo(container);
+                    var properyOperator = $('<select/>',{class:"node-input-color-operator",style:"width:43px; margin-right:10px;"}).appendTo(row);
+                    properyOperator.append($("<option></option>").val("<").text("<"));
+                    properyOperator.append($("<option></option>").val("<=").text("<="));
+                    properyOperator.append($("<option></option>").val(">=").text(">="));
+                    properyOperator.append($("<option></option>").val(">").text(">"));
+                    const propertyValue = $('<input/>',{class:"node-input-color-value",type:"text"})
+                        .css("width","35%")
+                        .appendTo(row)
+                        .typedInput({types:['num']});
+                    $('<div/>',{style: 'display:inline-block; padding:0px 6px;'})
+                        .text('=')
+                        .appendTo(row);
+                    var propertyColor = $('<select/>',{class:"node-input-color-color",style:"width:45%;"}).appendTo(row);
+                    propertyColor.append($("<option></option>").val("redValue").text("red"));
+                    propertyColor.append($("<option></option>").val("greenValue").text("green"));
+                    propertyColor.append($("<option></option>").val("darkgreenValue").text("darkgreen"));
+                    propertyColor.append($("<option></option>").val("yellowValue").text("yellow"));
+                    propertyColor.append($("<option></option>").val("blueValue").text("blue"));
+                    propertyColor.append($("<option></option>").val("grayValue").text("gray"));
+                    propertyColor.append($("<option></option>").val("silverValue").text("silver"));
+                    properyOperator.val(device.operator ?? "<=");
+                    propertyValue.typedInput('value',device.value ?? "");
+                    propertyColor.val(device.color ?? "");
+                },
+                sortable: true,
+                removable: true
+            });
+            const help = JSON.parse( this.colors ?? "[]" );
+            for( const v of help ) {
+                colorsList.editableList('addItem',v);
+            }
+        },
+        oneditresize: function(size) {
+            const rows = $("#dialog-form>div:not(.node-input-colors-container-row)");
+            let height = size.height;
+            for(let i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            const editorRow = $("#dialog-form>div.node-input-colors-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            $("#node-input-colors-container").editableList('height',height);
+        },
+        oneditsave: function() {
+            const colors = $("#node-input-colors-container").editableList('items');
+            let help = [];
+            colors.each(function(i) {
+                const item = $(this);
+                const operator = item.find(".node-input-color-operator").val();
+                const value    = item.find(".node-input-color-value").typedInput('value');
+                const color    = item.find(".node-input-color-color").val();
+                help.push( { operator:operator, value:value, color:color } );
+            });
+            //console.log(JSON.stringify( help ))
+            this.colors = JSON.stringify( help );
         }
     });
 </script>
@@ -93,34 +132,16 @@
         <input type="number" id="node-input-digits">
     </div>
     <div class="form-row">
-        <label for="node-input-minColor"><i class="fa fa-chevron-left"></i> min. color</label>
-        <input type="text" id="node-input-minValue" style="width:70px;" placeholder="value">
-        <select type="text" id="node-input-minColor"  style="width:140px;">
-            <option value="">none</option>
-            <option value="redValue">red</option>
-            <option value="yellowValue">yellow</option>
-            <option value="greenValue">green</option>
-            <option value="blueValue">blue</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-maxColor"><i class="fa fa-chevron-right"></i> max. color</label>
-        <input type="text" id="node-input-maxValue" style="width:70px;" placeholder="value">
-        <select type="text" id="node-input-maxColor"  style="width:140px;">
-            <option value="">none</option>
-            <option value="redValue">red</option>
-            <option value="yellowValue">yellow</option>
-            <option value="greenValue">green</option>
-            <option value="blueValue">blue</option>
-        </select>
-    </div>
-    <div class="form-row">
         <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
         <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter"></i> Filter</label>
         <input type="checkbox" id="node-input-filter" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row node-input-colors-container-row">
+        <label for="node-input-colors"><i class="fa fa-chevron-right "></i> Colors</label>
+        <ol id="node-input-colors-container"></ol>
     </div>
 </script>
 

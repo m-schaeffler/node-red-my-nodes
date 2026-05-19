@@ -10,10 +10,7 @@ module.exports = function(RED) {
         this.grouping     = config.grouping ?? "";
         this.decimal      = config.decimal ?? ".";
         this.digits       = Number( config.digits ?? 0 );
-        this.minColor     = config.minColor ?? "";
-        this.minValue     = Number( config.minValue ?? Number.MIN_SAFE_INTEGER );
-        this.maxColor     = config.maxColor ?? "";
-        this.maxValue     = Number( config.maxValue ?? Number.MAX_SAFE_INTEGER );
+        this.colors       = JSON.parse( config.colors ?? "[]" );
         this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
         this.last         = undefined;
@@ -105,13 +102,16 @@ module.exports = function(RED) {
                     {
                         msg.payload += node.unit;
                     }
-                    if( node.minColor && number <= node.minValue )
+                    for( const c of node.colors )
                     {
-                        color = node.minColor;
-                    }
-                    else if( node.maxColor && number >= node.maxValue )
-                    {
-                        color = node.maxColor;
+                        if( ( c.operator === "<"  && ( number <  Number( c.value ) ) ) ||
+                            ( c.operator === "<=" && ( number <= Number( c.value ) ) ) ||
+                            ( c.operator === ">"  && ( number >  Number( c.value ) ) ) ||
+                            ( c.operator === ">=" && ( number >= Number( c.value ) ) ) )
+                        {
+                            color = c.color;
+                            break;
+                        }
                     }
                 }
                 else

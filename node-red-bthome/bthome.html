@@ -40,7 +40,7 @@
             const currentStore = node.contextStore || '';
             // set changed handler
             $("#node-input-contextStore").on('change',function() {
-                console.log($("#node-input-contextStore").val());
+                //console.log($("#node-input-contextStore").val());
                 if( $("#node-input-contextStore").val() == "none" ) {
                     $("#node-contextVar-line").hide();
                     $("#node-input-contextVar").val("bthome");
@@ -88,8 +88,8 @@
                 //sortable: true,
                 removable: true
             });
-            console.log(this.devices)
-            const help = JSON.parse( this.devices ?? "[]" );
+            //console.log(this.devices)
+            const help = JSON.parse( this.devices ?? "{}" );
             for( const i in help ) {
                 const v = help[i];
                 devicesList.editableList('addItem',typeof v == "string" ? {name:v} : {mac:i,topic:v.topic,key:v.key});
@@ -115,7 +115,7 @@
                 const key   = device.find(".node-input-device-key")  .typedInput('value');
                 help[mac] = key==="" ? { topic:topic } : { topic:topic, key:key };
             });
-            console.log(JSON.stringify( help ))
+            //console.log(JSON.stringify( help ))
             this.devices = JSON.stringify( help );
         }
     });

@@ -14,7 +14,7 @@ module.exports = function(RED) {
         this.showState    = Boolean( config.showState );
         this.filter       = Boolean( config.filter );
         this.last         = undefined;
-        this.color        = "";
+        this.color        = this.colors.length == 0 ? "" : null;
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -107,7 +107,9 @@ module.exports = function(RED) {
                         if( ( c.operator === "<"  && ( number <  Number( c.value ) ) ) ||
                             ( c.operator === "<=" && ( number <= Number( c.value ) ) ) ||
                             ( c.operator === ">"  && ( number >  Number( c.value ) ) ) ||
-                            ( c.operator === ">=" && ( number >= Number( c.value ) ) ) )
+                            ( c.operator === ">=" && ( number >= Number( c.value ) ) ) ||
+                            ( c.operator === "="  && ( number == Number( c.value ) ) ) ||
+                              c.operator === "else" )
                         {
                             color = c.color;
                             break;
@@ -117,6 +119,14 @@ module.exports = function(RED) {
                 else
                 {
                     msg.payload = value;
+                    for( const c of node.colors )
+                    {
+                        if( c.operator === "NaN" )
+                        {
+                            color = c.color;
+                            break;
+                        }
+                    }
                 }
                 if( color !== node.color )
                 {

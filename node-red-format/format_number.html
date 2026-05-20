@@ -47,11 +47,14 @@
                         whiteSpace: 'nowrap'
                     });
                     const row = $('<div/>').appendTo(container);
-                    var properyOperator = $('<select/>',{class:"node-input-color-operator",style:"width:43px; margin-right:10px;"}).appendTo(row);
+                    var properyOperator = $('<select/>',{class:"node-input-color-operator",style:"width:53px; margin-right:10px;"}).appendTo(row);
                     properyOperator.append($("<option></option>").val("<").text("<"));
                     properyOperator.append($("<option></option>").val("<=").text("<="));
                     properyOperator.append($("<option></option>").val(">=").text(">="));
                     properyOperator.append($("<option></option>").val(">").text(">"));
+                    properyOperator.append($("<option></option>").val("=").text("="));
+                    properyOperator.append($("<option></option>").val("else").text("else"));
+                    properyOperator.append($("<option></option>").val("NaN").text("NaN"));
                     const propertyValue = $('<input/>',{class:"node-input-color-value",type:"text"})
                         .css("width","35%")
                         .appendTo(row)
@@ -59,7 +62,7 @@
                     $('<div/>',{style: 'display:inline-block; padding:0px 6px;'})
                         .text('=')
                         .appendTo(row);
-                    var propertyColor = $('<select/>',{class:"node-input-color-color",style:"width:45%;"}).appendTo(row);
+                    var propertyColor = $('<select/>',{class:"node-input-color-color",style:"width:40%;"}).appendTo(row);
                     propertyColor.append($("<option></option>").val("redValue").text("red"));
                     propertyColor.append($("<option></option>").val("greenValue").text("green"));
                     propertyColor.append($("<option></option>").val("darkgreenValue").text("darkgreen"));
@@ -67,9 +70,21 @@
                     propertyColor.append($("<option></option>").val("blueValue").text("blue"));
                     propertyColor.append($("<option></option>").val("grayValue").text("gray"));
                     propertyColor.append($("<option></option>").val("silverValue").text("silver"));
+                    properyOperator.on("change", function() {
+                        var type = $(this).val();
+                        if( type == "else" || type == "NaN" )
+                        {
+                            propertyValue.typedInput('hide');
+                        }
+                        else
+                        {
+                            propertyValue.typedInput('show');
+                        }
+                    });
                     properyOperator.val(device.operator ?? "<=");
                     propertyValue.typedInput('value',device.value ?? "");
                     propertyColor.val(device.color ?? "");
+                    properyOperator.change();
                 },
                 sortable: true,
                 removable: true

@@ -59,6 +59,7 @@ describe( 'format_number Node', function () {
         //console.log(msg.payload);
         try {
           msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          msg.should.not.have.property('ui_update');
           ++c;
         }
         catch(err) {
@@ -318,6 +319,7 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.a.property('payload',numbers[c]);
+          msg.should.not.have.property('ui_update');
           ++c;
         }
         catch(err) {
@@ -700,7 +702,7 @@ describe( 'format_number Node', function () {
   });
 
   it('should output colors', function (done) {
-    const numbers = [0,10,11,89,90,100];
+    const numbers = [50,0,10,11,89,90,100,"error"];
     const colors = '[{"operator":"<=","value":"10","color":"redValue"},{"operator":">=","value":"90","color":"greenValue"}]';
     var flow = [{ id: "n1", type: "formatNumber", colors:colors, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -711,17 +713,71 @@ describe( 'format_number Node', function () {
       n2.on("input", function (msg) {
         //console.log(msg);
         try {
-          msg.should.have.property('payload',Number(numbers[c]).toFixed(0));
+          msg.should.have.property('payload',c==7?numbers[c]:Number(numbers[c]).toFixed(0));
+          switch( ++c )
+          {
+              case 2:
+                  msg.should.have.property('ui_update', { class: 'redValue' } );
+                  break;
+              case 1:
+              case 4:
+              case 8:
+                  msg.should.have.property('ui_update', { class: '' } );
+                  break;
+              case 6:
+                  msg.should.have.property('ui_update', { class: 'greenValue' } );
+                  break;
+              default:
+                  msg.should.not.have.property('ui_update');
+          }
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('colors',JSON.parse(colors));
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ payload: i });
+          await delay(50);
+        }
+        c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should output colors 2nd test', function (done) {
+    const numbers = [50,0,10,11,89,90,100,"error"];
+    const colors = '[{"operator":"=","value":"10","color":"redValue"},{"operator":"else","value":"","color":"greenValue"},{"operator":"NaN","value":"","color":"grayValue"}]';
+    var flow = [{ id: "n1", type: "formatNumber", colors:colors, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.property('payload',c==7?numbers[c]:Number(numbers[c]).toFixed(0));
           switch( ++c )
           {
               case 1:
-                  msg.should.have.property('ui_update', { class: 'redValue' } );
+              case 4:
+                  msg.should.have.property('ui_update', { class: 'greenValue' } );
                   break;
               case 3:
-                  msg.should.have.property('ui_update', { class: '' } );
+                  msg.should.have.property('ui_update', { class: 'redValue' } );
                   break;
-              case 5:
-                  msg.should.have.property('ui_update', { class: 'greenValue' } );
+              case 8:
+                  msg.should.have.property('ui_update', { class: 'grayValue' } );
                   break;
               default:
                   msg.should.not.have.property('ui_update');

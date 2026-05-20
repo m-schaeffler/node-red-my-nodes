@@ -45,6 +45,20 @@ This value is then
 |Filter|boolean|block sending of unchanged `payload`.|
 |Color|array|control the color for the output value with rules.|
 
+#### colors
+
+With the color parameter values can be formated for the `dashboard 2`.
+
+This classes should be defined (for an example check the `ui-template` in the 
+[examples](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-bthome/examples/CSS.json)):
+- greenValue
+- darkgreenValue
+- yellowValue
+- redValue
+- blueValue
+- grayValue
+- silverValue
+
 ### Example Flow
 
 [example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-format/examples/format.json)

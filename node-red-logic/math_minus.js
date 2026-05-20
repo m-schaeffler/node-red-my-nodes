@@ -4,6 +4,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
+        this.topic        = config.topic ?? "";
         this.property     = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
         this.showState    = Boolean( config.showState );
@@ -54,6 +55,10 @@ module.exports = function(RED) {
                 let status = { text:msg.payload };
                 if( ! isNaN( msg.payload ) )
                 {
+                    if( node.topic )
+                    {
+                        msg.topic = node.topic;
+                    }
                     if( node.filter )
                     {
                         status.shape = "dot";

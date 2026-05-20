@@ -43,6 +43,7 @@ This value is then
 |Stellen|number|number of digits after the decimal point.|
 |Status|boolean|shows the actual value as a node status.|
 |Filter|boolean|block sending of unchanged `payload`.|
+|Color|array|control the color for the output value with rules.|
 
 ### Example Flow
 

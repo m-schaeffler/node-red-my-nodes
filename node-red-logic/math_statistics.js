@@ -30,7 +30,7 @@ module.exports = function(RED) {
             }
             else if( msg.reset || msg.topic==="init" )
             {
-                context.set( "data", {} );
+                context.set( "data", {}, node.contextStore );
                 node.status( "" );
                 done();
             }

@@ -27,6 +27,7 @@ class DeviceNames {
     static 0x15 = "SBBT-104CEU"
     static 0x16 = "SBBT-104CUS";
     static 0x17 = "SBBT-102C";
+    static 0x21 = "SBDW-302C";
     static 0x1827 = "SMSN-0031ZL";
     static 0x201A = "SBCB-01PXNEUB6";
     static 0x201B = "SBCB-01PXNEUB10";

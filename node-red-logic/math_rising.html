@@ -17,7 +17,7 @@
         outputs:1,
         icon: "raising-edge.png",
         label: function() {
-            return this.name||"rising edge";
+            return this.name||this.topic||"rising edge";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

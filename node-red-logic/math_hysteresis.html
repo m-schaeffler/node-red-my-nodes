@@ -25,7 +25,7 @@
         outputs:1,
         icon: "hysteresis.png",
         label: function() {
-            return this.name||"hysteresis";
+            return this.name||this.topic||"hysteresis";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

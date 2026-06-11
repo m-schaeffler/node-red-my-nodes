@@ -75,90 +75,12 @@ exports.int2CCC = function(i,space=false)
     return i.toString().padStart( 3, space ? "\u2007" : "0" );
 }
 
-exports.date2Format = function(date,format)
+exports.timestamp2zdt = function(timestamp)
 {
-    let out  = "";
-    let mask = false;
-    for( const c of format )
-    {
-        if( mask )
-        {
-            out += c;
-            mask = false;
-        }
-        else
-        {
-            switch( c )
-            {
-                case "\\":
-                    mask = true;
-                    break;
-                case "Y":
-                    out += date.getFullYear();
-                    break;
-                case "m":
-                    out += date.getMonth() + 1;
-                    break;
-                case "M":
-                    out += exports.int2CC( date.getMonth() + 1 );
-                    break;
-                case "b":
-                    out += exports.monthName( date );
-                    break;
-                case "B":
-                    out += exports.monthName( date, true );
-                    break;
-                case "d":
-                    out += date.getDate();
-                    break;
-                case "D":
-                    out += exports.int2CC( date.getDate() );
-                    break;
-                case "h":
-                    out += date.getHours();
-                    break;
-                case "H":
-                    out += exports.int2CC( date.getHours() );
-                    break;
-                case "n":
-                    out += date.getMinutes();
-                    break;
-                case "N":
-                    out += exports.int2CC( date.getMinutes() );
-                    break;
-                case "s":
-                    out += date.getSeconds();
-                    break;
-                case "S":
-                    out += exports.int2CC( date.getSeconds() );
-                    break;
-                case "F":
-                    out += exports.int2CCC( date.getMilliseconds() );
-                    break;
-                case "w":
-                    out += date.getDay();
-                    break;
-                case "a":
-                    out += exports.dayName( date );
-                    break;
-                case "A":
-                    out += exports.dayName( date, true );
-                    break;
-                case "W":
-                    out += exports.getWeek( date );
-                    break;
-                case "z":
-                    out += date.getTimezoneOffset() / 60;
-                    break;
-                default:
-                    out += c;
-            }
-        }
-    }
-    return out;
+    return timestamp ? Temporal.Instant.fromEpochMilliseconds( timestamp ).toZonedDateTimeISO( Temporal.Now.timeZoneId() ) : null;
 }
 
-exports.date2FormatUTC = function(date,format)
+exports.date2Format = function(zdt,format)
 {
     let out  = "";
     let mask = false;
@@ -177,40 +99,61 @@ exports.date2FormatUTC = function(date,format)
                     mask = true;
                     break;
                 case "Y":
-                    out += date.getUTCFullYear();
+                    out += zdt.year;
                     break;
                 case "m":
-                    out += date.getUTCMonth() + 1;
+                    out += zdt.month;
                     break;
                 case "M":
-                    out += exports.int2CC( date.getUTCMonth() + 1 );
+                    out += exports.int2CC( zdt.month );
+                    break;
+                case "b":
+                    out += exports.monthName( zdt );
+                    break;
+                case "B":
+                    out += exports.monthName( zdt, true );
                     break;
                 case "d":
-                    out += date.getUTCDate();
+                    out += zdt.day;
                     break;
                 case "D":
-                    out += exports.int2CC( date.getUTCDate() );
+                    out += exports.int2CC( zdt.day );
                     break;
                 case "h":
-                    out += date.getUTCHours();
+                    out += zdt.hour;
                     break;
                 case "H":
-                    out += exports.int2CC( date.getUTCHours() );
+                    out += exports.int2CC( zdt.hour );
                     break;
                 case "n":
-                    out += date.getUTCMinutes();
+                    out += zdt.minute;
                     break;
                 case "N":
-                    out += exports.int2CC( date.getUTCMinutes() );
+                    out += exports.int2CC( zdt.minute );
                     break;
                 case "s":
-                    out += date.getUTCSeconds();
+                    out += zdt.second;
                     break;
                 case "S":
-                    out += exports.int2CC( date.getUTCSeconds() );
+                    out += exports.int2CC( zdt.second );
                     break;
                 case "F":
-                    out += exports.int2CCC( date.getUTCMilliseconds() );
+                    out += exports.int2CCC( zdt.millisecond );
+                    break;
+                case "w":
+                    out += zdt.dayOfWeek;
+                    break;
+                case "a":
+                    out += exports.dayName( zdt );
+                    break;
+                case "A":
+                    out += exports.dayName( zdt, true );
+                    break;
+                case "W":
+                    out += zdt.weekOfYear;
+                    break;
+                case "z":
+                    out += zdt.timeZoneId;
                     break;
                 default:
                     out += c;
@@ -222,21 +165,20 @@ exports.date2FormatUTC = function(date,format)
 
 exports.date2dateStr = function(date)
 {
-    return exports.date2Format( date, "D:M:Y" ); //`${exports.int2CC(date.getDate())}:${exports.int2CC(date.getMonth()+1)}:${date.getFullYear()}`;
+    return exports.date2Format( date, "D:M:Y" );
 }
 
 exports.date2timeStr = function(date,space=true)
 {
-    return exports.date2Format( date, space ? "h:N" : "H:N" ); //`${exports.int2CC(date.getHours(),space)}:${exports.int2CC(date.getMinutes())}`;
+    return exports.date2Format( date, space ? "h:N" : "H:N" );
 }
 
-exports.formatTime = function(time)
+exports.formatTime = function(zdt)
 {
-    if( time )
+    if( zdt )
     {
-        const d     = (time instanceof Date) ? time : new Date( time );
-        const delta = Date.now() - d;
-        return exports.date2Format( d, delta < 48*3600*1000 ? "h:N" : "d.M." ); //`${d.getDate()}.${d.getMonth()+1}.`;
+        const delta = zdt.until( Temporal.Now.zonedDateTimeISO() ).total( "days" );
+        return exports.date2Format( zdt, delta < 2 ? "h:N" : "d.M." );
     }
     else
     {
@@ -244,53 +186,35 @@ exports.formatTime = function(time)
     }
 }
 
-function intTime2color(delta,ok,nok)
+exports.time2color = function(zdt,ok=3,nok=24)
 {
-    if( delta < ok*3600*1000 )
+    if( zdt )
     {
-        return "green";
+        const delta = zdt.until( Temporal.Now.zonedDateTimeISO() ).total( "hours" );
+        if( delta < ok )
+        {
+            return "green";
+        }
+        else if( delta > nok )
+        {
+            return "red";
+        }
     }
-    else if( delta > nok*3600*1000 )
-    {
-        return "red";
-    }
-    else
-    {
-        return "";
-    }
-}
-
-exports.time2color = function(time,ok=3,nok=24)
-{
-    const d     = new Date( time );
-    const delta = Date.now() - d;
-    return intTime2color( delta, ok, nok );
+    return "";
 }
 
 // Date/Time
 
-exports.weekdays = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
-exports.weekdaysLong = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-exports.dayName = function(date,long=false)
+exports.weekdays = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+exports.weekdaysLong = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+exports.dayName = function(zdt,long=false)
 {
-    return long ? exports.weekdaysLong[date.getDay()] : exports.weekdays[date.getDay()];
+    return long ? exports.weekdaysLong[zdt.dayOfWeek] : exports.weekdays[zdt.dayOfWeek];
 }
 
 exports.months = ["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
 exports.monthsLong = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-exports.monthName = function(date,long)
+exports.monthName = function(zdt,long)
 {
-    return long ? exports.monthsLong[date.getMonth()] : exports.months[date.getMonth()];
-}
-
-function donnerstag(datum)
-{
-    return new Date( datum.getTime() + ( 3 - ( ( datum.getDay() + 6 ) % 7 ) ) * 86400000 );
-}
-
-exports.getWeek = function(date)
-{
-    const DoDat = donnerstag( date );
-    const DoKW1 = donnerstag( new Date( DoDat.getFullYear(), 0, 4 ) );
-    return Math.floor( 1.5 + ( DoDat.getTime() - DoKW1.getTime()) / 86400000 / 7 );
+    return long ? exports.monthsLong[zdt.month-1] : exports.months[zdt.month-1];
 }

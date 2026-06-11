@@ -1,6 +1,6 @@
 {
   "name": "myUtils",
-  "version": "1.6.1",
+  "version": "2.0.0",
   "description": "utility functions for node red.",
   "license": "LGPL-2.1",
   "private": true,
@@ -10,11 +10,14 @@
     "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=26"
   },
   "main": "utilities.js",
   "author": {
     "name": "Mathias Schäffler",
     "url": "https://github.com/m-schaeffler"
+  },
+  "scripts": {
+    "test": "mocha \"test/*_spec.js\""
   }
 }

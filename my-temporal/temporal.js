@@ -1,84 +1,26 @@
-// Utilities for use in NodeRed function nodes
-
-exports.stripFirst = function(str,sep="/")
-{
-    let help = str.split( sep );
-    help.shift();
-    return help.join( sep );
-}
-
-exports.stripLast = function(str,sep="/")
-{
-    let help = str.split( sep );
-    help.pop();
-    return help.join( sep );
-}
-
-exports.sepStr = function(str=null)
-{
-    if( str !== "" )
-        return "\u2009/\u2009";
-    else
-        return "";
-}
-
-exports.unitStr = function(unit)
-{
-    if( unit != "" )
-        return `\u202F${unit}`;
-    else
-        return "";
-}
-
-exports.iconStr = function(icon)
-{
-    if( icon != "" )
-    {
-        return `<i style="line-height:130%" class=\"fa ${icon}\" aria-hidden=\"true\"/>`;
-    }
-    else
-    {
-        return "";
-    }
-}
-
-exports.formatNumber = function(number,limit,unit="")
-{
-    switch( number )
-    {
-        case undefined:
-            return "";
-        case null:
-            return "\u2014";
-        default:
-            return number.toFixed( number>limit ? 0 : 1 ) + exports.unitStr(unit);
-    }
-}
-
-exports.number2color = function(number,low,high)
-{
-    if( number >= high )
-        return 'green';
-    else if( number < low )
-        return 'red';
-    else
-        return '';
-}
-
-exports.int2CC = function(i,space=false)
-{
-    return i.toString().padStart( 2, space ? "\u2007" : "0" );
-}
-
-exports.int2CCC = function(i,space=false)
-{
-    return i.toString().padStart( 3, space ? "\u2007" : "0" );
-}
-
-// Date/Time
+// Temporal functions for use in NodeRed function nodes
+const myUtils = require( '../my-utils/utilities.js' );
 
 exports.now = function()
-{}
+{
+    return Temporal.Now.instant();
+}
+
+exports.timestamp2instant = function(timestamp)
+{
+    if( Number.isNaN( timestamp ) )
+    {
+        return "invalid";
+    }
+    else if( timestamp )
+    {
+        return Temporal.Instant.fromEpochMilliseconds( timestamp );
+    }
+    else
+    {
+        return null;
+    }
+}
 
 exports.timestamp2zdt = function(timestamp)
 {
@@ -97,7 +39,14 @@ exports.timestamp2zdt = function(timestamp)
 }
 
 exports.nowUntil = function(zdt,unit)
-{}
+{
+    return zdt.until( Temporal.Now.instant() ).total( unit );
+}
+
+exports.isLater = function(zdt1,zdt2)
+{
+    return Temporal.Instant.compare( zdt1, zdt2 ) < 0;
+}
 
 exports.date2Format = function(zdt,format)
 {
@@ -124,7 +73,7 @@ exports.date2Format = function(zdt,format)
                     out += zdt.month;
                     break;
                 case "M":
-                    out += exports.int2CC( zdt.month );
+                    out += myUtils.int2CC( zdt.month );
                     break;
                 case "b":
                     out += exports.monthName( zdt );
@@ -136,28 +85,28 @@ exports.date2Format = function(zdt,format)
                     out += zdt.day;
                     break;
                 case "D":
-                    out += exports.int2CC( zdt.day );
+                    out += myUtils.int2CC( zdt.day );
                     break;
                 case "h":
                     out += zdt.hour;
                     break;
                 case "H":
-                    out += exports.int2CC( zdt.hour );
+                    out += myUtils.int2CC( zdt.hour );
                     break;
                 case "n":
                     out += zdt.minute;
                     break;
                 case "N":
-                    out += exports.int2CC( zdt.minute );
+                    out += myUtils.int2CC( zdt.minute );
                     break;
                 case "s":
                     out += zdt.second;
                     break;
                 case "S":
-                    out += exports.int2CC( zdt.second );
+                    out += myUtils.int2CC( zdt.second );
                     break;
                 case "F":
-                    out += exports.int2CCC( zdt.millisecond );
+                    out += myUtils.int2CCC( zdt.millisecond );
                     break;
                 case "w":
                     out += zdt.dayOfWeek;

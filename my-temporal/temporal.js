@@ -1,9 +1,9 @@
 // Temporal functions for use in NodeRed function nodes
 const myUtils = require( '../my-utils/utilities.js' );
 
-exports.now = function()
+exports.now = function(timezone=null)
 {
-    return Temporal.Now.instant();
+    return timezone ? Temporal.Now.zonedDateTimeISO( timezone ) : Temporal.Now.instant();
 }
 
 exports.timestamp2instant = function(timestamp)
@@ -38,14 +38,32 @@ exports.timestamp2zdt = function(timestamp)
     }
 }
 
-exports.nowUntil = function(zdt,unit)
+exports.untilNow = function(zdt,unit)
 {
-    return zdt.until( Temporal.Now.instant() ).total( unit );
+    return zdt ? zdt.until( Temporal.Now.instant() ).total( unit ) : null;
 }
 
 exports.isLater = function(zdt1,zdt2)
 {
     return Temporal.Instant.compare( zdt1, zdt2 ) < 0;
+}
+
+exports.linearZdt = function(a, a1,a2, zdt1,zdt2)
+{
+    if( a < a1 )
+    {
+        return zdt1;
+    }
+    else if( a > a2 )
+    {
+        return zdt2;
+    }
+    else
+    {
+        const b1 = zdt1.epochMilliseconds;
+        const b2 = zdt2.epochMilliseconds;
+        return exports.timestamp2zdt( Math.round( b1 + (a-a1) * (b2-b1) / (a2-a1) ) );
+    }
 }
 
 exports.date2Format = function(zdt,format)

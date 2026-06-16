@@ -3,7 +3,15 @@ const myUtils = require( '../my-utils/utilities.js' );
 
 exports.now = function(timezone=null)
 {
-    return timezone ? Temporal.Now.zonedDateTimeISO( timezone ) : Temporal.Now.instant();
+    switch( timezone )
+    {
+        case null:
+            return Temporal.Now.instant();
+        case "local":
+            return Temporal.Now.zonedDateTimeISO();
+        default:
+            return Temporal.Now.zonedDateTimeISO( timezone );
+    }
 }
 
 exports.timestamp2instant = function(timestamp)

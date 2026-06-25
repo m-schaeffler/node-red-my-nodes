@@ -4,10 +4,12 @@ const Rawdata = require( "./rawdata.js" );
 const BtEvent = require( "./btevent.js" );
 
 class TypeIds {
-    static bluButton = 1;
-    static bluDW     = 2;
-    static bluRemote = 9;
-    static bluDwZb   = 20;
+    static bluButton    =  1;
+    static bluDW        =  2;
+    static bluRemote    =  9;
+    static bluDwZb      = 20;
+    static bluDwMini    = 32;
+    static bluDwOutdoor = 33;
 }
 class DeviceNames {
     static 0x01 = "SBBT-002C";
@@ -27,6 +29,7 @@ class DeviceNames {
     static 0x15 = "SBBT-104CEU"
     static 0x16 = "SBBT-104CUS";
     static 0x17 = "SBBT-102C";
+    static 0x20 = "SBDW-203C";
     static 0x21 = "SBDW-302C";
     static 0x1827 = "SMSN-0031ZL";
     static 0x201A = "SBCB-01PXNEUB6";
@@ -275,7 +278,7 @@ module.exports = function(RED) {
                         case 0x2D:
                           {
                             let state = rawdata.getUInt8();
-                            if( item.typeId === TypeIds.bluDW || item.typeId === TypeIds.bluDwZb )
+                            if( item.typeId === TypeIds.bluDW || item.typeId === TypeIds.bluDwZb || item.typeId === TypeIds.bluDwOutdoor || item.typeId === TypeIds.bluDwMini )
                             {
                                 state = Boolean( state );
                             }

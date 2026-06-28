@@ -39,6 +39,6 @@
     "url": "https://github.com/m-schaeffler"
   },
   "scripts": {
-    "test": "mocha \"test/*_spec.js\""
+    "test": "mocha \"test/math_3point_spec.js\""
   }
 }

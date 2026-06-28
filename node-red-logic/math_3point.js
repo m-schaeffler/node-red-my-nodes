@@ -1,22 +1,27 @@
 module.exports = function(RED) {
     var tools = require('./tools.js');
 
-    function HysteresisEdgeNode(config) {
+    const colors = {"1":"yellow","0":"gray","-1":"blue"};
+
+    function ThreePointNode(config) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node    = this;
         var context = this.context();
-        this.topic          = config.topic || "";
-        this.property       = config.property ?? "payload";
-        this.propertyType   = config.propertyType ?? "msg";
-        this.threshold_rise = Number( config.threshold_raise );
-        this.threshold_fall = Number( config.threshold_fall );
-        this.consecutiveRise= Number( config.consecutive ?? 1 );
-        this.consecutiveFall= Number( config.consecutiveFall ?? 1 );
-        this.outputRise     = RED.util.evaluateNodeProperty( config.outputRise ?? "true", config.outputRiseType ?? "bool" );
-        this.outputFall     = RED.util.evaluateNodeProperty( config.outputFall ?? "false",config.outputFallType ?? "bool" );
-        this.noInit         = Boolean( config.noInit );
-        this.showState      = Boolean( config.showState );
+        this.topic            = config.topic || "";
+        this.property         = config.property ?? "payload";
+        this.propertyType     = config.propertyType ?? "msg";
+        this.thresholdUpRise  = Number( config.threshold_raise );
+        this.thresholdUpFall  = Number( config.threshold_fall );
+        this.thresholdLowRise = Number( config.threshold_raise );
+        this.thresholdLowFall = Number( config.threshold_fall );
+        this.output           = {
+            "1":  RED.util.evaluateNodeProperty( config.outputUpper  ?? "+1", config.outputRiseType ?? "num" ),
+            "0":  RED.util.evaluateNodeProperty( config.outputMiddle ?? "0",  config.outputRiseType ?? "num" ),
+            "-1": RED.util.evaluateNodeProperty( config.outputLower  ?? "-1", config.outputFallType ?? "num" )
+        };
+        this.noInit           = Boolean( config.noInit );
+        this.showState        = Boolean( config.showState );
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -27,14 +32,12 @@ module.exports = function(RED) {
                 return;
             }
         }
-        node.cntRise = 0;
-        node.cntFall = 0;
         node.status( "" );
 
         function msgSetEdge(msg,edge)
         {
-            msg.payload = edge ? node.outputRise : node.outputFall;
-            msg.edge    = edge ? "rising" : 'falling';
+            msg.edge    = edge;
+            msg.payload = node.output[edge];
         }
 
         node.on('input', function(msg,send,done) {
@@ -97,7 +100,7 @@ module.exports = function(RED) {
 
                         function sendMsg(edge)
                         {
-                            status.fill = edge ? "yellow" : "blue";
+                            status.fill = colors[edge];
                             data[msg.topic] = { edge:edge, status:status.fill };
                             context.set( "data", data );
                             if( last !== undefined || ! node.noInit )
@@ -108,36 +111,17 @@ module.exports = function(RED) {
                             }
                         }
 
-                        if( msg.value > node.threshold_rise && last !== true )
+                        if( msg.value > node.thresholdUpRise && last !== +1 )
                         {
-                            if( ++node.cntRise >= node.consecutiveRise )
-                            {
-                                sendMsg( true );
-                                node.cntRise = 0;
-                            }
-                            else
-                            {
-                                status.fill = "gray";
-                            }
-                            node.cntFall = 0;
+                            sendMsg( +1 );
                         }
-                        else if( msg.value < node.threshold_fall && last !== false )
+                        else if( node.thresholdDownRise < msg.value && msg.value < node.thresholdUpFall && last !== 0 )
                         {
-                            if( ++node.cntFall >= node.consecutiveFall )
-                            {
-                                sendMsg( false );
-                                node.cntFall = 0;
-                            }
-                            else
-                            {
-                                status.fill = "gray";
-                            }
-                            node.cntRise = 0;
+                            sendMsg( 0 );
                         }
-                        else
+                        else if( msg.value < node.thresholdDownFall && last !== -1 )
                         {
-                            node.cntRise = 0;
-                            node.cntFall = 0;
+                            sendMsg( -1 );
                         }
                     }
                     else
@@ -156,5 +140,5 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("hysteresisEdge",HysteresisEdgeNode);
+    RED.nodes.registerType("threePoint",ThreePointNode);
 }

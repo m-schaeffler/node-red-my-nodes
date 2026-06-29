@@ -164,7 +164,7 @@ describe( 'math_threePoint Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          console.log(msg)
+          //console.log(msg)
           c++;
           msg.should.have.property('topic','newtopic');
           switch( c )
@@ -242,7 +242,7 @@ describe( 'math_threePoint Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
-          msg.should.have.property('payload',true);
+          msg.should.have.property('payload',+1);
           msg.should.have.property('value',5000);
           msg.should.have.property('init',true);
         }

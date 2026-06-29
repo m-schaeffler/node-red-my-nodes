@@ -277,9 +277,9 @@ describe( 'math_threePoint Node', function () {
       }
     });
   });
-/*
+
   it('should work with different topics', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", threshold_raise:"200", threshold_fall:"100", outputRise:"false", outputRiseType:"bool", outputFall:"true", outputFallType:"bool", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "threePoint", outputUpper:"false", outputUpperType:"bool", outputLower:"true", outputLowerType:"bool",name: "test", thresholdUpRise:"90", thresholdUpFall:"80", thresholdLowRise:"70", thresholdLowFall:"60", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -297,8 +297,8 @@ describe( 'math_threePoint Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('outputRise', false);
-        n1.should.have.a.property('outputFall', true);
+        n1.should.have.a.property('outputUpper', false);
+        n1.should.have.a.property('outputLower', true);
         await delay(50);
         n1.receive({ topic:"A", payload: 1000 });
         await delay(50);
@@ -318,14 +318,14 @@ describe( 'math_threePoint Node', function () {
   it('should have reset', function (done) {
     const jsonR = { text:"Text R", num:42 };
     const jsonF = { text:"Text F", num:-1 };
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"200", threshold_fall:"100", outputRise:JSON.stringify(jsonR), outputRiseType:"json", outputFall:JSON.stringify(jsonF), outputFallType:"json", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "threePoint", outputUpper:JSON.stringify(jsonR), outputUpperType:"json", outputMiddle:"null", outputMiddleType:"json", outputLower:JSON.stringify(jsonF), outputLowerType:"json",name: "test", thresholdUpRise:"90", thresholdUpFall:"80", thresholdLowRise:"70", thresholdLowFall:"60", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         c++;
         try {
           switch( c ) {
@@ -355,8 +355,9 @@ describe( 'math_threePoint Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('outputRise', jsonR);
-        n1.should.have.a.property('outputFall', jsonF);
+        n1.should.have.a.property('outputUpper', jsonR);
+        n1.should.have.a.property('outputMiddle', null);
+        n1.should.have.a.property('outputLower', jsonF);
         await delay(50);
         n1.receive({ payload: 0 });
         await delay(50);
@@ -368,13 +369,13 @@ describe( 'math_threePoint Node', function () {
         await delay(50);
         n1.receive({ reset: true });
         await delay(50);
-        n1.receive({ payload: 1000 });
+        n1.receive({ payload:75  });
         await delay(50);
         n1.receive({ topic: "init" });
         await delay(50);
         n1.receive({ payload: 150 });
         await delay(50);
-        n1.receive({ payload: 2 });
+        n1.receive({ payload: 75 });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -388,19 +389,19 @@ describe( 'math_threePoint Node', function () {
   });
 
   it('should have query', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"1.1", threshold_fall:"1.9", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "threePoint", name: "test", thresholdUpRise:"2.90", thresholdUpFall:"2.10", thresholdLowRise:"1.90", thresholdLowFall:"1.1", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         try {
           msg.should.have.property('topic',(c%4).toString());
           const h = ( c % 4 ) > 1.5;
           msg.should.have.property('payload',h);
-          msg.should.have.property('edge',h ? 'rising' : 'falling');
+          msg.should.have.property('edge',h);
           if( c <= 3 )
           {
             msg.should.have.a.property('value',c);
@@ -444,7 +445,7 @@ describe( 'math_threePoint Node', function () {
   });
 
   it('should work with objects', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"200", threshold_fall:"100", property:"payload.value", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "threePoint", property:"payload.value", name: "test", thresholdUpRise:"90", thresholdUpFall:"80", thresholdLowRise:"70", thresholdLowFall:"60", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -452,7 +453,7 @@ describe( 'math_threePoint Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          msg.should.have.property('payload',true);
+          msg.should.have.property('payload',+1);
           msg.should.have.property('value',210);
           msg.should.have.property('init',true);
           c++;
@@ -481,7 +482,7 @@ describe( 'math_threePoint Node', function () {
   });
 
   it('should have Jsonata', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"200", threshold_fall:"100", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "threePoint", property:"payload+5", propertyType:"jsonata", name: "test", thresholdUpRise:"90", thresholdUpFall:"80", thresholdLowRise:"70", thresholdLowFall:"60", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -489,8 +490,8 @@ describe( 'math_threePoint Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          msg.should.have.property('payload',true);
-          msg.should.have.property('value',198+5);
+          msg.should.have.property('payload',+1);
+          msg.should.have.property('value',88+5);
           msg.should.have.property('init',true);
           c++;
         }
@@ -502,9 +503,9 @@ describe( 'math_threePoint Node', function () {
         n1.should.have.a.property('property', "payload+5");
         n1.should.have.a.property('propertyType', "jsonata");
         await delay(50);
-        n1.receive({ payload: 150 });
+        n1.receive({ payload: 81 });
         await delay(50);
-        n1.receive({ payload: 198 });
+        n1.receive({ payload: 88 });
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -516,5 +517,5 @@ describe( 'math_threePoint Node', function () {
       }
     });
   });
-*/
+
 });

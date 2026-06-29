@@ -47,10 +47,10 @@ describe( 'math_threePoint Node', function () {
       }
     });
   });
-/*
+
   it('should check for edges', function (done) {
-    const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
-    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
+    const numbers = [1000,10,69.9,70,70.1,80,89.9,90,90.1,100,90,80.1,80,79.9,70,60.1,60,59.9,0];
+    var flow = [{ id: "n1", type: "threePoint", outputUpper: "up", outputUpperType:"str", outputMiddle: "mid", outputMiddleType:"str", outputLower: "down", outputLowerType:"str", name: "test", thresholdUpRise:"90", thresholdUpFall:"80", thresholdLowRise:"70", thresholdLowFall:"60", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -64,44 +64,58 @@ describe( 'math_threePoint Node', function () {
           {
             case 1:
                msg.should.have.property('topic','const1');
-               msg.should.have.property('payload','Text F');
+               msg.should.have.property('payload','down');
                msg.should.have.property('value',50);
-               msg.should.have.property('edge','falling');
+               msg.should.have.property('edge',-1);
                msg.should.have.property('init',true);
                break;
              case 2:
                msg.should.have.property('topic','const2');
-               msg.should.have.property('payload','Text R');
+               msg.should.have.property('payload','up');
                msg.should.have.property('value',250);
-               msg.should.have.property('edge','rising');
+               msg.should.have.property('edge',+1);
                msg.should.have.property('init',true);
                break;
              case 3:
                msg.should.have.property('topic','edge');
-               msg.should.have.property('payload','Text R');
+               msg.should.have.property('payload','up');
                msg.should.have.property('value',1000);
-               msg.should.have.property('edge','rising');
+               msg.should.have.property('edge',+1);
                msg.should.have.property('init',true);
                break;
              case 4:
                msg.should.have.property('topic','edge');
-               msg.should.have.property('payload','Text F');
+               msg.should.have.property('payload','down');
                msg.should.have.property('value',10);
-               msg.should.have.property('edge','falling');
+               msg.should.have.property('edge',-1);
                msg.should.have.property('init',false);
                break;
              case 5:
                msg.should.have.property('topic','edge');
-               msg.should.have.property('payload','Text R');
-               msg.should.have.property('value',200.1);
-               msg.should.have.property('edge','rising');
+               msg.should.have.property('payload','mid');
+               msg.should.have.property('value',70.1);
+               msg.should.have.property('edge',0);
                msg.should.have.property('init',false);
                break;
              case 6:
                msg.should.have.property('topic','edge');
-               msg.should.have.property('payload','Text F');
-               msg.should.have.property('value',99.9);
-               msg.should.have.property('edge','falling');
+               msg.should.have.property('payload','up');
+               msg.should.have.property('value',90.1);
+               msg.should.have.property('edge',+1);
+               msg.should.have.property('init',false);
+               break;
+             case 7:
+               msg.should.have.property('topic','edge');
+               msg.should.have.property('payload','mid');
+               msg.should.have.property('value',79.9);
+               msg.should.have.property('edge',0);
+               msg.should.have.property('init',false);
+               break;
+             case 8:
+               msg.should.have.property('topic','edge');
+               msg.should.have.property('payload','down');
+               msg.should.have.property('value',59.9);
+               msg.should.have.property('edge',-1);
                msg.should.have.property('init',false);
                break;
              default:
@@ -113,22 +127,24 @@ describe( 'math_threePoint Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('threshold_rise', 200);
-        n1.should.have.a.property('threshold_fall', 100);
-        n1.should.have.a.property('outputRise', 'Text R');
-        n1.should.have.a.property('outputFall', 'Text F');
+        n1.should.have.a.property('thresholdUpRise', 90);
+        n1.should.have.a.property('thresholdUpFall', 80);
+        n1.should.have.a.property('thresholdLowRise', 70);
+        n1.should.have.a.property('thresholdLowFall', 60);
+        n1.should.have.a.property('output', { '0': "mid", '1': "up", '-1': "down" });
         n1.should.have.a.property('noInit', false);
         await delay(50);
+        c.should.match( 0 );
         for( const i of numbers )
         {
           n1.receive({ topic:"const1", payload: 50 });
           n1.receive({ topic:"const2", payload: 250 });
-          n1.receive({ topic:"edge", payload: i });
+          n1.receive({ topic:"edge",   payload: i });
           await delay(50);
         }
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( 6 );
+        c.should.match( 8 );
         done();
       }
       catch(err) {
@@ -136,7 +152,7 @@ describe( 'math_threePoint Node', function () {
       }
     });
   });
-
+/*
   it('should check for edges, without init msg', function (done) {
     const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
     var flow = [{ id: "n1", type: "hysteresisEdge", noInit:true, outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", topic:"newtopic", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
@@ -189,199 +205,6 @@ describe( 'math_threePoint Node', function () {
         for( const i in numbers )
         {
           n1.receive({ topic:i, payload: numbers[i] });
-          await delay(50);
-        }
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        c.should.match( 3 );
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should respect consecutive parameter', function (done) {
-    const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
-    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "42", outputRiseType:"num", outputFall: "-1", outputFallType:"num", name: "test", threshold_raise:"200", threshold_fall:"100", consecutive:"3", consecutiveFall:"3", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        try {
-          c++;
-          switch( c )
-          {
-             case 1:
-               msg.should.have.property('payload',42);
-               msg.should.have.property('value',252);
-               msg.should.have.property('edge','rising');
-               msg.should.have.property('init',true);
-               break;
-             case 2:
-               msg.should.have.property('payload',-1);
-               msg.should.have.property('value',2);
-               msg.should.have.property('edge','falling');
-               msg.should.have.property('init',false);
-               break;
-             case 3:
-               msg.should.have.property('payload',42);
-               msg.should.have.property('value',302);
-               msg.should.have.property('edge','rising');
-               msg.should.have.property('init',false);
-               break;
-             default:
-               done("too much messages");
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('threshold_rise', 200);
-        n1.should.have.a.property('threshold_fall', 100);
-        n1.should.have.a.property('consecutiveRise', 3);
-        n1.should.have.a.property('consecutiveFall', 3);
-        n1.should.have.a.property('outputRise', 42);
-        n1.should.have.a.property('outputFall', -1);
-        await delay(50);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: i });
-          await delay(50);
-        }
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        c.should.match( 3 );
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should respect consecutiveRise parameter', function (done) {
-    const numbers = [1000,150,10,400,40,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,400,40,400,40,400,40,300,301,302];
-    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "42", outputRiseType:"num", outputFall: "-1", outputFallType:"num", name: "test", threshold_raise:"200", threshold_fall:"100", consecutive:"3", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        try {
-          c++;
-          switch( c )
-          {
-             case 1:
-               msg.should.have.property('payload',-1);
-               msg.should.have.property('value',10);
-               msg.should.have.property('edge','falling');
-               msg.should.have.property('init',true);
-               break;
-             case 2:
-               msg.should.have.property('payload',42);
-               msg.should.have.property('value',252);
-               msg.should.have.property('edge','rising');
-               msg.should.have.property('init',false);
-               break;
-             case 3:
-               msg.should.have.property('payload',-1);
-               msg.should.have.property('value',0);
-               msg.should.have.property('edge','falling');
-               msg.should.have.property('init',false);
-               break;
-             case 4:
-               msg.should.have.property('payload',42);
-               msg.should.have.property('value',302);
-               msg.should.have.property('edge','rising');
-               msg.should.have.property('init',false);
-               break;
-             default:
-               done("too much messages");
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('threshold_rise', 200);
-        n1.should.have.a.property('threshold_fall', 100);
-        n1.should.have.a.property('consecutiveRise', 3);
-        n1.should.have.a.property('outputRise', 42);
-        n1.should.have.a.property('outputFall', -1);
-        await delay(50);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: i });
-          await delay(50);
-        }
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        c.should.match( 4 );
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should respect consecutiveFall parameter', function (done) {
-    const numbers = [150,10,150,250,251,252,253,254,255,150,151,152,153,154,155,0,1,2,3,4,5,300,301,302];
-    var flow = [{ id: "n1", type: "hysteresisEdge", outputRise: "42", outputRiseType:"num", outputFall: "-1", outputFallType:"num", name: "test", threshold_raise:"200", threshold_fall:"100", consecutiveFall:"3", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      n2.on("input", function (msg) {
-        try {
-          c++;
-          switch( c )
-          {
-             case 1:
-               msg.should.have.property('payload',42);
-               msg.should.have.property('value',250);
-               msg.should.have.property('edge','rising');
-               msg.should.have.property('init',true);
-               break;
-             case 2:
-               msg.should.have.property('payload',-1);
-               msg.should.have.property('value',2);
-               msg.should.have.property('edge','falling');
-               msg.should.have.property('init',false);
-               break;
-             case 3:
-               msg.should.have.property('payload',42);
-               msg.should.have.property('value',300);
-               msg.should.have.property('edge','rising');
-               msg.should.have.property('init',false);
-               break;
-             default:
-               done("too much messages");
-          }
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('threshold_rise', 200);
-        n1.should.have.a.property('threshold_fall', 100);
-        n1.should.have.a.property('consecutiveFall', 3);
-        n1.should.have.a.property('outputRise', 42);
-        n1.should.have.a.property('outputFall', -1);
-        await delay(50);
-        for( const i of numbers )
-        {
-          n1.receive({ payload: i });
           await delay(50);
         }
         n1.warn.should.have.callCount(0);

@@ -11,14 +11,14 @@ module.exports = function(RED) {
         this.topic            = config.topic || "";
         this.property         = config.property ?? "payload";
         this.propertyType     = config.propertyType ?? "msg";
-        this.thresholdUpRise  = Number( config.threshold_raise );
-        this.thresholdUpFall  = Number( config.threshold_fall );
-        this.thresholdLowRise = Number( config.threshold_raise );
-        this.thresholdLowFall = Number( config.threshold_fall );
+        this.thresholdUpRise  = Number( config.thresholdUpRise );
+        this.thresholdUpFall  = Number( config.thresholdUpFall );
+        this.thresholdLowRise = Number( config.thresholdLowRise );
+        this.thresholdLowFall = Number( config.thresholdLowFall );
         this.output           = {
-            "1":  RED.util.evaluateNodeProperty( config.outputUpper  ?? "+1", config.outputRiseType ?? "num" ),
-            "0":  RED.util.evaluateNodeProperty( config.outputMiddle ?? "0",  config.outputRiseType ?? "num" ),
-            "-1": RED.util.evaluateNodeProperty( config.outputLower  ?? "-1", config.outputFallType ?? "num" )
+            "1":  RED.util.evaluateNodeProperty( config.outputUpper  ?? "+1", config.outputUpperType ?? "num" ),
+            "0":  RED.util.evaluateNodeProperty( config.outputMiddle ?? "0",  config.outputMiddleType ?? "num" ),
+            "-1": RED.util.evaluateNodeProperty( config.outputLower  ?? "-1", config.outputLowerType ?? "num" )
         };
         this.noInit           = Boolean( config.noInit );
         this.showState        = Boolean( config.showState );
@@ -115,11 +115,11 @@ module.exports = function(RED) {
                         {
                             sendMsg( +1 );
                         }
-                        else if( node.thresholdDownRise < msg.value && msg.value < node.thresholdUpFall && last !== 0 )
+                        else if( node.thresholdLowRise < msg.value && msg.value < node.thresholdUpFall && last !== 0 )
                         {
                             sendMsg( 0 );
                         }
-                        else if( msg.value < node.thresholdDownFall && last !== -1 )
+                        else if( msg.value < node.thresholdLowFall && last !== -1 )
                         {
                             sendMsg( -1 );
                         }

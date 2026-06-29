@@ -156,7 +156,7 @@ describe( 'math_threePoint Node', function () {
 
   it('should check for edges, without init msg', function (done) {
     const numbers = [1000,10,69.9,70,70.1,80,89.9,90,90.1,100,90,80.1,80,79.9,70,60.1,60,59.9,0];
-    var flow = [{ id: "n1", type: "hysteresisEdge", noInit:true, outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", topic:"newtopic", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "threePoint", topic:"newtopic", noInit:true, outputUpper: "up", outputUpperType:"str", outputMiddle: "mid", outputMiddleType:"str", outputLower: "down", outputLowerType:"str", name: "test", thresholdUpRise:"90", thresholdUpFall:"80", thresholdLowRise:"70", thresholdLowFall:"60", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -170,21 +170,33 @@ describe( 'math_threePoint Node', function () {
           switch( c )
           {
              case 1:
-               msg.should.have.property('payload','Text F');
+               msg.should.have.property('payload','down');
                msg.should.have.property('value',10);
-               msg.should.have.property('edge','falling');
+               msg.should.have.property('edge',-1);
                msg.should.have.property('init',false);
                break;
              case 2:
-               msg.should.have.property('payload','Text R');
-               msg.should.have.property('value',200.1);
-               msg.should.have.property('edge','rising');
+               msg.should.have.property('payload','mid');
+               msg.should.have.property('value',70.1);
+               msg.should.have.property('edge',0);
                msg.should.have.property('init',false);
                break;
              case 3:
-               msg.should.have.property('payload','Text F');
-               msg.should.have.property('value',99.9);
-               msg.should.have.property('edge','falling');
+               msg.should.have.property('payload','up');
+               msg.should.have.property('value',90.1);
+               msg.should.have.property('edge',+1);
+               msg.should.have.property('init',false);
+               break;
+             case 4:
+               msg.should.have.property('payload','mid');
+               msg.should.have.property('value',79.9);
+               msg.should.have.property('edge',0);
+               msg.should.have.property('init',false);
+               break;
+             case 5:
+               msg.should.have.property('payload','down');
+               msg.should.have.property('value',59.9);
+               msg.should.have.property('edge',-1);
                msg.should.have.property('init',false);
                break;
              default:
@@ -211,7 +223,7 @@ describe( 'math_threePoint Node', function () {
         }
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( 3 );
+        c.should.match( 5 );
         done();
       }
       catch(err) {
@@ -219,9 +231,9 @@ describe( 'math_threePoint Node', function () {
       }
     });
   });
-/*
+
   it('should not forward invalid data', function (done) {
-    var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "threePoint", name: "test", thresholdUpRise:"90", thresholdUpFall:"80", thresholdLowRise:"70", thresholdLowFall:"60", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -239,8 +251,6 @@ describe( 'math_threePoint Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('outputRise', true);
-        n1.should.have.a.property('outputFall', false);
         await delay(50);
         n1.receive({ invalid:true, payload: 1000 });
         await delay(50);
@@ -267,7 +277,7 @@ describe( 'math_threePoint Node', function () {
       }
     });
   });
-
+/*
   it('should work with different topics', function (done) {
     var flow = [{ id: "n1", type: "hysteresisEdge", threshold_raise:"200", threshold_fall:"100", outputRise:"false", outputRiseType:"bool", outputFall:"true", outputFallType:"bool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

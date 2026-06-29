@@ -297,8 +297,7 @@ describe( 'math_threePoint Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('outputUpper', false);
-        n1.should.have.a.property('outputLower', true);
+        n1.should.have.a.property('output', { '0': 0, '1': false, '-1': true });
         await delay(50);
         n1.receive({ topic:"A", payload: 1000 });
         await delay(50);
@@ -325,7 +324,7 @@ describe( 'math_threePoint Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         c++;
         try {
           switch( c ) {
@@ -336,15 +335,24 @@ describe( 'math_threePoint Node', function () {
               msg.should.have.property('init',true);
               break;
             case 3:
-            case 4:
               msg.should.have.property('payload',jsonR);
               msg.should.have.a.property('value',1000);
-              msg.should.have.property('init',c==4);
+              msg.should.have.property('init',false);
+              break;
+            case 4:
+              msg.should.have.property('payload',null);
+              msg.should.have.a.property('value',75);
+              msg.should.have.property('init',true);
               break;
             case 5:
-              msg.should.have.property('payload',jsonF);
-              msg.should.have.a.property('value',2);
+              msg.should.have.property('payload',jsonR);
+              msg.should.have.a.property('value',150);
               msg.should.have.property('init',true);
+              break;
+            case 6:
+              msg.should.have.property('payload',null);
+              msg.should.have.a.property('value',75);
+              msg.should.have.property('init',false);
               break;
             default:
               done("too much messages");
@@ -355,9 +363,7 @@ describe( 'math_threePoint Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('outputUpper', jsonR);
-        n1.should.have.a.property('outputMiddle', null);
-        n1.should.have.a.property('outputLower', jsonF);
+        n1.should.have.a.property('output', { '0': null, '1': jsonR, '-1': jsonF } );
         await delay(50);
         n1.receive({ payload: 0 });
         await delay(50);
@@ -379,7 +385,7 @@ describe( 'math_threePoint Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( 5 );
+        c.should.match( 6 );
         done();
       }
       catch(err) {
@@ -396,10 +402,17 @@ describe( 'math_threePoint Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.property('topic',(c%4).toString());
-          const h = ( c % 4 ) > 1.5;
+          let h;
+          switch( c % 4 )
+          {
+              case 0:
+              case 1: h = -1; break;
+              case 2: h =  0; break;
+              case 3: h = +1; break;
+          }
           msg.should.have.property('payload',h);
           msg.should.have.property('edge',h);
           if( c <= 3 )
@@ -466,7 +479,7 @@ describe( 'math_threePoint Node', function () {
         n1.should.have.a.property('property', "payload.value");
         n1.should.have.a.property('propertyType', "msg");
         await delay(50);
-        n1.receive({ payload: {value:150} });
+        n1.receive({ payload: {value:65} });
         await delay(50);
         n1.receive({ payload: {a:1,value:210,b:88} });
         await delay(50);

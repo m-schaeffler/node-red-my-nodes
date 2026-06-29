@@ -16,9 +16,9 @@ module.exports = function(RED) {
         this.thresholdLowRise = Number( config.thresholdLowRise );
         this.thresholdLowFall = Number( config.thresholdLowFall );
         this.output           = {
-            "1":  RED.util.evaluateNodeProperty( config.outputUpper  ?? "+1", config.outputUpperType ?? "num" ),
+            "1":  RED.util.evaluateNodeProperty( config.outputUpper  ?? "+1", config.outputUpperType  ?? "num" ),
             "0":  RED.util.evaluateNodeProperty( config.outputMiddle ?? "0",  config.outputMiddleType ?? "num" ),
-            "-1": RED.util.evaluateNodeProperty( config.outputLower  ?? "-1", config.outputLowerType ?? "num" )
+            "-1": RED.util.evaluateNodeProperty( config.outputLower  ?? "-1", config.outputLowerType  ?? "num" )
         };
         this.noInit           = Boolean( config.noInit );
         this.showState        = Boolean( config.showState );

@@ -127,6 +127,7 @@ describe( 'math_threePoint Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', '');
         n1.should.have.a.property('thresholdUpRise', 90);
         n1.should.have.a.property('thresholdUpFall', 80);
         n1.should.have.a.property('thresholdLowRise', 70);
@@ -152,9 +153,9 @@ describe( 'math_threePoint Node', function () {
       }
     });
   });
-/*
+
   it('should check for edges, without init msg', function (done) {
-    const numbers = [1000,10,199.9,200,200.1,1000,100.1,100,99.9,0];
+    const numbers = [1000,10,69.9,70,70.1,80,89.9,90,90.1,100,90,80.1,80,79.9,70,60.1,60,59.9,0];
     var flow = [{ id: "n1", type: "hysteresisEdge", noInit:true, outputRise: "Text R", outputRiseType:"str", outputFall: "Text F", outputFallType:"str", topic:"newtopic", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -163,7 +164,7 @@ describe( 'math_threePoint Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          //console.log(msg)
+          console.log(msg)
           c++;
           msg.should.have.property('topic','newtopic');
           switch( c )
@@ -196,10 +197,11 @@ describe( 'math_threePoint Node', function () {
       });
       try {
         n1.should.have.a.property('topic', 'newtopic');
-        n1.should.have.a.property('threshold_rise', 200);
-        n1.should.have.a.property('threshold_fall', 100);
-        n1.should.have.a.property('outputRise', 'Text R');
-        n1.should.have.a.property('outputFall', 'Text F');
+        n1.should.have.a.property('thresholdUpRise', 90);
+        n1.should.have.a.property('thresholdUpFall', 80);
+        n1.should.have.a.property('thresholdLowRise', 70);
+        n1.should.have.a.property('thresholdLowFall', 60);
+        n1.should.have.a.property('output', { '0': "mid", '1': "up", '-1': "down" });
         n1.should.have.a.property('noInit', true);
         await delay(50);
         for( const i in numbers )
@@ -217,7 +219,7 @@ describe( 'math_threePoint Node', function () {
       }
     });
   });
-
+/*
   it('should not forward invalid data', function (done) {
     var flow = [{ id: "n1", type: "hysteresisEdge", name: "test", threshold_raise:"200", threshold_fall:"100", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

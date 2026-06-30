@@ -9,15 +9,15 @@
             propertyType:{value:"msg"},
             thresholdUpRise:{value:"",required:true,validate:RED.validators.number()},
             thresholdUpFall:{value:"",required:true,validate:function(v){
-                const rise = $("#node-input-threshold_up_rise").length ? $("#node-input-threshold_up_rise").val() : this.thresholdUpRise;
+                const rise = $("#node-input-thresholdUpRise").length ? $("#node-input-thresholdUpRise").val() : this.thresholdUpRise;
                 return v!=='' && !isNaN(v) && Number(v)<rise;}
             },
             thresholdLowRise:{value:"",required:true,validate:function(v){
-                const fall = $("#node-input-threshold_up_fall").length ? $("#node-input-threshold_up_fall").val() : this.thresholdUpFall;
+                const fall = $("#node-input-thresholdUpFall").length ? $("#node-input-thresholdUpFall").val() : this.thresholdUpFall;
                 return v!=='' && !isNaN(v) && Number(v)<fall;}
             },
             thresholdLowFall:{value:"",required:true,validate:function(v){
-                const rise = $("#node-input-threshold_low_rise").length ? $("#node-input-threshold_low_rise").val() : this.thresholdLowRise;
+                const rise = $("#node-input-thresholdLowRise").length ? $("#node-input-thresholdLowRise").val() : this.thresholdLowRise;
                 return v!=='' && !isNaN(v) && Number(v)<rise;}
             },
             outputUpper:{value:"+1",required:true},
@@ -81,20 +81,20 @@
         <input type="hidden" id="node-input-propertyType">
     </div>
     <div class="form-row">
-        <label for="node-input-threshold_up_rise"><i class="fa fa-chevron-up"></i> up up threshold</label>
-        <input type="text" id="node-input-threshold_up_rise">
+        <label for="node-input-thresholdUpRise"><i class="fa fa-chevron-up"></i> upper up threshold</label>
+        <input type="text" id="node-input-thresholdUpRise">
     </div>
     <div class="form-row">
-        <label for="node-input-threshold_up_fall"><i class="fa fa-chevron-down"></i> up dn threshold</label>
-        <input type="text" id="node-input-threshold_up_fall">
+        <label for="node-input-thresholdUpFall"><i class="fa fa-chevron-down"></i> upper down threshold</label>
+        <input type="text" id="node-input-thresholdUpFall">
     </div>
     <div class="form-row">
-        <label for="node-input-threshold_low_rise"><i class="fa fa-chevron-up"></i> dn up threshold</label>
-        <input type="text" id="node-input-threshold_low_rise">
+        <label for="node-input-thresholdLowRise"><i class="fa fa-chevron-up"></i> lower up threshold</label>
+        <input type="text" id="node-input-thresholdLowRise">
     </div>
     <div class="form-row">
-        <label for="node-input-threshold_low_fall"><i class="fa fa-chevron-down"></i> dn dn threshold</label>
-        <input type="text" id="node-input-threshold_low_fall">
+        <label for="node-input-thresholdLowFall"><i class="fa fa-chevron-down"></i> lower down threshold</label>
+        <input type="text" id="node-input-thresholdLowFall">
     </div>
     <div class="form-row">
         <label for="node-input-outputUpper"><i class="fa fa-sign-out"></i> upper Output</label>
@@ -102,7 +102,7 @@
         <input type="hidden" id="node-input-outputUpperType">
     </div>
     <div class="form-row">
-        <label for="node-input-outputMiddle"><i class="fa fa-sign-out"></i> middle Output</label>
+        <label for="node-input-outputMiddle"><i class="fa fa-sign-out"></i> mid Output</label>
         <input type="text" id="node-input-outputMiddle">
         <input type="hidden" id="node-input-outputMiddleType">
     </div>
@@ -123,7 +123,7 @@
 
 <script type="text/html" data-help-name="threePoint">
     
-    <p>Message is only forwarded, if the payload rises above an upper limit or falls below a lower limit.</p>
+    <p>Message is only forwarded, if the payload rises above an upper limit or falls below a lower limit; there are two pairs of these limits for an upper and a lower threshold.</p>
     <p>Each <code>topic</code> is treated seperatly.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
 
@@ -142,7 +142,7 @@
     
     <h3>Output</h3>
 
-    <p>Trigger message, in case an edge is detected.</p>    
+    <p>Trigger message, in case an edge is detected.</p>
 
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
@@ -152,7 +152,7 @@
         <dt>value <span class="property-type">number</span></dt>
         <dd> last input value for <code>topic</code>.</dd>
         <dt>edge <span class="property-type">string</span></dt>
-        <dd> <code>"rising"</code> or <code>"falling"</code> according to detected edge.</dd>
+        <dd> <code>+1</code>, <code>0</code> or <code>-1</code> according to detected edge.</dd>
         <dt>init <span class="property-type">boolean</span></dt>
         <dd> <code>true</code> in case of an initialization message without really an edge detection.</dd>
     </dl>
@@ -164,18 +164,20 @@
         <dd> defines the topic for the output message, "" is <code>msg.topic</code>.</dd>
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
-        <dt>up Threshold <span class="property-type">number</span></dt>
-        <dd> threshold value for the rising edge detection.</dd>
-        <dt>d(ow)n Threshold <span class="property-type">number</span></dt>
-        <dd> threshold value for the falling edge detection.</dd>
-        <dt>rise Consecutive <span class="property-type">number</span></dt>
-        <dd> number of consecutive frames to generate a rising output.</dd>
-        <dt>fall Consecutive <span class="property-type">number</span></dt>
-        <dd> number of consecutive frames to generate a falling output.</dd>
-        <dt>rise Output <span class="property-type">multi</span></dt>
-        <dd> Value to be sent in case of a rising edge.</dd>
-        <dt>fall Output <span class="property-type">multi</span></dt>
-        <dd> Value to be sent in case of a falling edge.</dd>
+        <dt>upper up Threshold <span class="property-type">number</span></dt>
+        <dd> threshold value for the rising edge detection of the upper level.</dd>
+        <dt>upper down Threshold <span class="property-type">number</span></dt>
+        <dd> threshold value for the falling edge detection of the upper level.</dd>
+        <dt>lower up Threshold <span class="property-type">number</span></dt>
+        <dd> threshold value for the rising edge detection of the lower level.</dd>
+        <dt>lower down Threshold <span class="property-type">number</span></dt>
+        <dd> threshold value for the falling edge detection of the lower level.</dd>
+        <dt>upper Output <span class="property-type">multi</span></dt>
+        <dd> Value to be sent in case of rising above the upper threshold.</dd>
+        <dt>mid Output <span class="property-type">multi</span></dt>
+        <dd> Value to be sent in case of beeing between the two thresholds.</dd>
+        <dt>lower Output <span class="property-type">multi</span></dt>
+        <dd> Value to be sent in case of falling below the lower threshold.</dd>
         <dt>no init <span class="property-type">boolean</span></dt>
         <dd> does not send init messages.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>

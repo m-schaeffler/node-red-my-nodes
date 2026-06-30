@@ -1,6 +1,6 @@
 {
   "name": "myTemporal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "temporal functions for node red.",
   "license": "LGPL-2.1",
   "private": true,

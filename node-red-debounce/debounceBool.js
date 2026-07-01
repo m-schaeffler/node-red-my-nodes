@@ -12,7 +12,7 @@ module.exports = function(RED) {
         };
         this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
-        this.state        = config.showState ? { fill:"gray", shape:"ring", text:"-" } : null;
+        this.state        = config.showState ? { fill:"gray", shape:"dot", text:"-" } : null;
         this.data         = {};
         if( this.propertyType === "jsonata" )
         {
@@ -79,15 +79,6 @@ module.exports = function(RED) {
             {
                 node.state.fill  = color;
                 node.state.shape = "dot";
-                node.status( node.state );
-            }
-        }
-
-        function statusRing()
-        {
-            if( node.state )
-            {
-                node.state.shape = "ring";
                 node.status( node.state );
             }
         }
@@ -164,9 +155,9 @@ module.exports = function(RED) {
                         statistic.message = msg;
                         if( ! statistic.timer )
                         {
-                            if( statistic.last === undefined || msg.payload === statistic.last )
+                            if( statistic.last === undefined || msg.payload === statistic.last || debounceTime == 0 )
                             {
-                                sendMsg( msg, "dot" );
+                                sendMsg( msg, "ring" );
                             }
                             else
                             {
@@ -176,7 +167,11 @@ module.exports = function(RED) {
                         }
                         else
                         {
-                            if( node.restart && msg.payload !== lastReceived )
+                            if( debounceTime == 0 )
+                            {
+                                sendMsg( msg, "ring" );
+                            }
+                            else if( node.restart )
                             {
                                 clearTimeout( statistic.timer );
                                 statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
@@ -197,12 +192,8 @@ module.exports = function(RED) {
             stat.timer = null;
             if( stat.message )
             {
-                sendMsg( stat.message, "ring" );
+                sendMsg( stat.message, "dot" );
                 stat.message = null;
-            }
-            else
-            {
-                statusRing();
             }
         } );
 

@@ -36,7 +36,7 @@ exports.timestamp2zdt = function(timestamp)
     {
         return "invalid";
     }
-    else if( timestamp )
+    else if( timestamp != null )
     {
         return Temporal.Instant.fromEpochMilliseconds( timestamp ).toZonedDateTimeISO( Temporal.Now.timeZoneId() );
     }

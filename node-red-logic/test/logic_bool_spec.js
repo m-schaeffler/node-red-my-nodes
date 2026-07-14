@@ -43,7 +43,7 @@ describe( 'logic_bool Node', function () {
   });
 
   it('should forward bool values', function (done) {
-    const numbers = [false,0,"0","false","off",true,1,"1","true","on"];
+    const numbers = [false,0,"0","false","off",true,1,"1","true","on",2,1000,-1,-1000];
     var flow = [{ id: "n1", type: "tobool", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {

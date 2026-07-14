@@ -1,25 +1,28 @@
-// general functions
+         // general functions
 
 exports.property2boolean = function(input)
 {
-    switch( input )
+    switch( typeof input )
     {
-        case true:
-        case 1:
-        case "1":
-        case "true":
-        case "on":
-            return true;
-        case false:
-        case 0:
-        case "0":
-        case "false":
-        case "off":
-        case "overpower":
-            return false;
-        default:
-            return null;
+    	case "boolean":
+    	    return input;
+    	case "number":
+    	    return Number.isNaN( input ) ? null : Boolean( input );
+    	case "string":
+            switch( input )
+            {
+                case "1":
+                case "true":
+                case "on":
+                    return true;
+                case "0":
+                case "false":
+                case "off":
+                case "overpower":
+                    return false;
+            }
     }
+    return null;
 }
 
 exports.prepareProperty = function(node)

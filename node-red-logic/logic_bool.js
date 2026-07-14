@@ -5,6 +5,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
+        this.topic     = config.topic ?? "";
         this.property  = config.property || "payload";
         this.showState = Boolean( config.showState );
         this.filter    = Boolean( config.filter );
@@ -21,6 +22,10 @@ module.exports = function(RED) {
             let status = { text:msg.payload ?? "error" };
             if( msg.payload !== null )
             {
+                if( node.topic )
+                {
+                    msg.topic = node.topic;
+                }
                 if( node.filter )
                 {
                     status.shape = "dot";

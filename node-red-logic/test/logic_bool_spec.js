@@ -27,6 +27,7 @@ describe( 'logic_bool Node', function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('topic', "");
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('filter', false);
@@ -52,6 +53,7 @@ describe( 'logic_bool Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
+          msg.should.have.a.property('topic',"FooBar");
           msg.should.have.property('payload',c>=5);
           ++c;
         }
@@ -60,10 +62,11 @@ describe( 'logic_bool Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', "");
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ payload: i });
+          n1.receive({ topic:"FooBar", payload: i });
           await delay(50);
         }
         c.should.match( numbers.length );
@@ -78,7 +81,7 @@ describe( 'logic_bool Node', function () {
   });
 
   it('should not forward invalid data', function (done) {
-    var flow = [{ id: "n1", type: "tobool", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "tobool", topic:"Test", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -87,6 +90,7 @@ describe( 'logic_bool Node', function () {
       n2.on("input", function (msg) {
         c++;
         try {
+          msg.should.have.a.property('topic',"Test");
           msg.should.have.a.property('payload',true);
         }
         catch(err) {
@@ -94,6 +98,7 @@ describe( 'logic_bool Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', "Test");
         await delay(50);
         n1.receive({ invalid:true, payload: false });
         await delay(50);

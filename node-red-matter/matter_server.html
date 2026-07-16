@@ -1,0 +1,106 @@
+<script type="text/javascript">
+    RED.nodes.registerType('matterServer',{
+        category: 'input',
+        color: '#0fcdf8',
+        defaults: {
+            name:  {value:""},
+            fems:  {value:"",type:"feneconFems",required:true},
+            edge:  {value:"0",required:true},
+            risk:  {value:false},
+            timeout:{value:false}
+        },
+        inputs:1,
+        outputs:3,
+        icon: "matter.svg",
+        label: function() {
+            return this.name||"Matter";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "Matter",
+        inputLabels: 'command / request',
+        outputLabels: ['subscribed data','config data','state']
+    });
+</script>
+
+<script type="text/x-red" data-template-name="matterServer">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-fems"><i class="fa fa-server"></i> FEMS</label>
+        <input type="text" id="node-input-fems">
+    </div>
+    <div class="form-row">
+        <label for="node-input-edge"><i class="fa fa-list"></i> Edge</label>
+        <input type="text" id="node-input-edge"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-risk"><i class="fa fa-bolt"></i> Risk accepted</label>
+        <input type="checkbox" id="node-input-risk" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-timeout"><i class="fa fa-hourglass-start"></i> Timeout</label>
+        <input type="checkbox" id="node-input-timeout" style="display:inline-block; width:20px; vertical-align:baseline;">
+    </div>
+    <div class="form-row node-input-inlist-container-row">
+        <label for="node-input-inlist"><i class="fa fa-arrow-right"></i> Inlist</label>
+        <ol id="node-input-inlist-container"></ol>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="matterServer">
+
+    <p>.</p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>open</code>, <code>close</code> or name of the config parameter to be written</dd>
+        <dt>payload <span class="property-type">number / string</span></dt>
+        <dd> value of the config parameter to be written</dd>
+    </dl>
+    
+    <h3>Outputs</h3>
+    
+    <h4>subscribed data</h4>
+    <p>Cyclic output of the subscribed data points.</p>
+    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> received data points. It is an object with key/value pairs.</dd>
+    </dl>
+    
+    <h4>config data</h4>
+    <p>Config data of the FEMS.</p>
+    
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> received config data.</dd>
+    </dl>
+
+    <h4>state</h4>
+    <p>Actual state of the websocket connection.</p>
+
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> state of the websocket.</dd>
+    </dl>
+    
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>fems <span class="property-type">feneconFems</span></dt>
+        <dd> configuration of the FEMS.</dd>
+        <dt>Edge <span class="property-type">string</span></dt>
+        <dd> id of the edge; normally <code>"0"</code>.</dd>
+        <dt>Inlist <span class="property-type">array</span></dt>
+        <dd> list of subscribed data points.</dd>
+        <dt>Risk <span class="property-type">boolean</span></dt>
+        <dd> risk accepted, enables writing.</dd>
+        <dt>Timeout <span class="property-type">boolean</span></dt>
+        <dd> send <code>"timeout"</code> as state, if 10s no subscribed message arrives.</dd>
+    </dl>
+    
+</script>

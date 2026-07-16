@@ -1,0 +1,36 @@
+{
+    "name": "@mschaeffler/node-red-matterServer",
+    "version": "0.0.1",
+    "description": "Node Red nodes to do Matter communication via a matter.js server",
+    "author": {
+        "name": "Mathias Schäffler",
+        "url": "https://github.com/m-schaeffler"
+    },
+    "license": "LGPL-2.1",
+    "keywords": [
+        "node-red",
+        "Matter",
+        "Thread"
+    ],
+    "bugs": {
+        "url": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-matter/issues"
+    },
+    "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-matter",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+    },
+    "node-red": {
+        "version": ">=3.1.0",
+        "nodes": {
+            "matterServer": "matter_server.js",
+            "matterShellySim": "matter_shelly_sim.js"
+        }
+    },
+    "engines": {
+        "node": ">=26"
+    },
+    "scripts": {
+        "test": "mocha \"test/*_spec.js\""
+    }
+}

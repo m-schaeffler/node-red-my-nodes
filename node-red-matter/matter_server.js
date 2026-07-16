@@ -3,11 +3,6 @@ module.exports = function(RED) {
     function MatterServerNode(config) {
         RED.nodes.createNode(this,config);
         var node = this;
-        this.fems    = RED.nodes.getNode( config.fems );
-        this.edge    = config.edge ?? "0";
-        this.inlist  = JSON.parse( config.inlist ?? "[]" );
-        this.risk    = Boolean( config.risk );
-        this.timeout = Boolean( config.timeout );
         this.state      = "closed";
         this.socket     = null;
         this.timStartup = null;
@@ -47,45 +42,6 @@ module.exports = function(RED) {
             node.socket     = null;
             doSetState( "error", "red", error );
             node.error( error );
-        }
-
-        function sendEmsRequest(method,params)
-        {
-            const payload = {
-                jsonrpc: "2.0",
-                method:  method,
-                params:  params,
-                id:      crypto.randomUUID()
-            };
-            //console.log(payload)
-            if( node.socket )
-            {
-                try
-                {
-                    node.socket.send( JSON.stringify( payload ) );
-                }
-                catch( e )
-                {
-                    setError( "e.message" );
-                }
-            }
-            else
-            {
-                node.error( "websocket is closed" );
-            }
-        }
-
-        function sendEdgeRequest(method,params)
-        {
-            sendEmsRequest( "edgeRpc", {
-                edgeId:  node.edge,
-                payload: {
-                    jsonrpc: "2.0",
-                    method:  method,
-                    params:  params,
-                    id:      crypto.randomUUID()
-                }
-            } );
         }
 
         node.on('input', function(msg,send,done) {

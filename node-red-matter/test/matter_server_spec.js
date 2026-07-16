@@ -1,4 +1,5 @@
 var should = require("should");
+var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../matter_server.js");
 
@@ -17,24 +18,31 @@ describe( 'matter_server Node', function () {
 
   afterEach(function(done) {
       helper.unload().then(function() {
+          return Context.clean({allNodes: {}});
+      }).then(function () {
+          return Context.close();
+      }).then(function () {
           helper.stopServer(done);
       });
   });
 
   it('should be loaded', function (done) {
-    var flow = [{ id: "n1", type: "matterServer", name: "test" }];
+    var flow = [{ id: "n1", type: "matterServer", name: "test", z:"flow" }];
     helper.load(node, flow, async function () {
       var n1 = helper.getNode("n1");
       try {
         n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems', null);
-        n1.should.have.a.property('edge', '0');
-        n1.should.have.a.property('inlist', []);
-        n1.should.have.a.property('risk', false);
-        n1.should.have.a.property('timeout', false);
+        n1.should.have.a.property('url', '');
+        n1.should.have.a.property('port', 5580);
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('contextVar', "matter");
+        n1.should.have.a.property('contextStore', "none");
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data', {} );
+        should.not.exist( n1.context().flow.get("matter") );
         done();
       }
       catch(err) {

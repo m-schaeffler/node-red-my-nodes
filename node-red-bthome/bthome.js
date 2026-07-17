@@ -272,6 +272,9 @@ module.exports = function(RED) {
                             }
                             break;
                           }
+                        case 0x26:
+                            setData( "problem", Boolean( rawdata.getUInt8() ) );
+                            break;
                         case 0x2C:
                             setData( "vibration", Boolean( rawdata.getUInt8() ) );
                             break;
@@ -315,6 +318,9 @@ module.exports = function(RED) {
                             setData( "distance", distance != 0 ? distance : null );
                             break;
                           }
+                        case 0x43:
+                            setData( "current", rawdata.getUInt16() / 1000 );
+                            break;
                         case 0x44:
                             setData( "wind", rawdata.getUInt16() / 100 );
                             break;
@@ -324,6 +330,12 @@ module.exports = function(RED) {
                         case 0x46:
                             setData( "uv", rawdata.getUInt8() / 10 );
                             break;
+                        case 0x4A:
+                            setData( "voltage", rawdata.getUInt16() / 10 );
+                            break;
+                        case 0x4D:
+                            setData( "energy", rawdata.getUInt32() );
+                            break;
                         case 0x53:
                             setData( "text", rawdata.getBuffer().toString() );
                             break;
@@ -332,6 +344,9 @@ module.exports = function(RED) {
                             break;
                         case 0x59:
                             setData( "count", rawdata.getInt8() );
+                            break;
+                        case 0x5C:
+                            setData( "power", rawdata.getUInt32() / 100 );
                             break;
                         case 0x5E:
                             setData( "direction", rawdata.getUInt16() / 100 );

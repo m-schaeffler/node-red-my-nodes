@@ -349,5 +349,119 @@ describe( 'matter_shelly_sim Node', function () {
     });
   });
 
+  it('should convert cover messages', function (done) {
+    var flow = [{ id: "n1", type: "matterShellySim", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var c  = 0;
+      n2.on("input", function (msg) {
+        try {
+          //console.log(msg)
+          msg.should.have.a.property('topic',"Cover");
+          switch( c )
+          {
+            case 0:
+              msg.should.have.a.property('payload',{ command: "windowcovering.open", data: null });
+              break;
+            case 1:
+              msg.should.have.a.property('payload',{ command: "windowcovering.close", data: null });
+              break;
+            case 2:
+              msg.should.have.a.property('payload',{ command: "windowcovering.stop", data: null });
+              break;
+            case 3:
+              msg.should.have.a.property('payload',{ command: "windowcovering.gotolift", data: 80 });
+              break;
+            default:
+              done("too much messages");
+          }
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        await delay(50);
+        n1.receive({ topic:"Cover", payload: { command:"cover", data: "open" } });
+        await delay(50);
+        n1.receive({ topic:"Cover", payload: { command:"cover", data: "close" } });
+        await delay(50);
+        n1.receive({ topic:"Cover", payload: { command:"cover", data: "stop" } });
+        await delay(50);
+        n1.receive({ topic:"Cover", payload: { command:"position", data: 80 } });
+        await delay(50);
+        n1.log.should.have.callCount(0);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 4 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should convert roller messages', function (done) {
+    var flow = [{ id: "n1", type: "matterShellySim", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var c  = 0;
+      n2.on("input", function (msg) {
+        try {
+          //console.log(msg)
+          msg.should.have.a.property('topic',"Roller");
+          switch( c )
+          {
+            case 0:
+              msg.should.have.a.property('payload',{ command: "windowcovering.open", data: null });
+              break;
+            case 1:
+              msg.should.have.a.property('payload',{ command: "windowcovering.close", data: null });
+              break;
+            case 2:
+              msg.should.have.a.property('payload',{ command: "windowcovering.stop", data: null });
+              break;
+            case 3:
+              msg.should.have.a.property('payload',{ command: "windowcovering.gotolift", data: 80 });
+              break;
+            default:
+              done("too much messages");
+          }
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        await delay(50);
+        n1.receive({ topic:"Roller", payload: { command:"roller", data: "open" } });
+        await delay(50);
+        n1.receive({ topic:"Roller", payload: { command:"roller", data: "close" } });
+        await delay(50);
+        n1.receive({ topic:"Roller", payload: { command:"roller", data: "stop" } });
+        await delay(50);
+        n1.receive({ topic:"Roller", payload: { command:"position", data: 80 } });
+        await delay(50);
+        n1.log.should.have.callCount(0);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 4 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });
 

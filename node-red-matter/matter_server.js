@@ -72,6 +72,29 @@ module.exports = function(RED) {
             node.error( error );
         }
 
+        function storeNode(n)
+        {
+        }
+
+        function storeNodes(nodes)
+        {
+            for( const n of nodes )
+            {
+                storeNode( n );
+            }
+        }
+
+        function deleteNode(id)
+        {
+        /*
+            if( matter.dataById[id] )
+            {
+                matter.dataById[id].online = false;
+                changed[id] = true;
+            }
+            */
+        }
+
         function sendCommand(command,args={})
         {
             const payload = {
@@ -186,8 +209,10 @@ module.exports = function(RED) {
                     sendCommand( "start_listening" );
                     break;
                 case "start_listening":
-                    if( data.result !== undefined )
+                    if( data.result !== undefined && data.message_id == "start_listening" )
                     {
+                        clearTimeout( node.timStartup );
+                        storeNodes( data.result );
                         setStatus( "connected" );
                     }
                     else
@@ -196,6 +221,51 @@ module.exports = function(RED) {
                     }
                     break;
                 case "connected":
+                    if( data.result !== undefined )
+                    {
+                        // command result
+                        const [message,param] = data.message_id.split( "|" );
+                        switch( message )
+                        {
+                            case "get_nodes":
+                                storeNodes( data.result );
+                                break;
+                        }
+                    }
+                    else if( data.error_code !== undefined )
+                    {
+                        // command error
+                        node.error( `${data.message_id}: ${data.details}` );
+                    }
+                    else
+                    {
+                        // Event
+                        switch( data.event )
+                        {
+                            case "attribute_updated":
+                                //matter.dataById[payload.data[0]].time = time;
+                                //setAttribute( payload.data[0], payload.data[1], payload.data[2] );
+                                break;
+                            case "node_event":
+                                //handleEvent( data.data );
+                                break;
+                            case "node_added":
+                                node.warn( data.event );
+                                // fall through
+                            case "node_updated":
+                                storeNode( data.data );
+                                break;
+                            case "node_removed":
+                                node.warn( data.event );
+                                deleteNode( data.data );
+                                break;
+                            case undefined:
+                                node.error( "invalid message", data );
+                                break;
+                            default:
+                                node.warn( "Event: " + data.event );
+                        }
+                    }
                     break;
                 default:
                     node.error( "wsReceived: unkown state " + node.state );

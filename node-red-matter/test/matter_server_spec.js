@@ -52,7 +52,7 @@ describe( 'matter_server Node', function () {
     });
   });
 
-  it('should subscribe data, get and set config data', function (done) {
+  it('should connect and get data', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
                 { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
@@ -88,23 +88,7 @@ describe( 'matter_server Node', function () {
       n3.on("input", function (msg) {
         console.log(msg);
         try {
-          msg.should.have.property('topic','edgeConfig');
-          msg.should.have.property('payload').which.is.an.Object();
-          msg.payload.should.have.a.property('ctrlGridOptimizedCharge0').which.is.an.Object();
-          msg.payload.ctrlGridOptimizedCharge0.should.have.a.property('properties').which.is.an.Object();
-          switch( ++c2 )
-          {
-              case 2:
-                  msg.payload.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime','11:30');
-                  break;
-              case 3:
-                  msg.payload.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime',mtt);
-                  break;
-              default:
-                  msg.payload.ctrlGridOptimizedCharge0.properties.should.have.a.property('manualTargetTime').which.is.a.String();
-          }
-          mtt ??= msg.payload.ctrlGridOptimizedCharge0.properties.manualTargetTime;
-          //console.log(mtt,msg.payload.ctrlGridOptimizedCharge0.properties.manualTargetTime);
+          done("tbd")
         }
         catch(err) {
           done(err);
@@ -145,47 +129,29 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
-        /*
         n1.receive({ topic:"open" }); // 2nd
         await delay(50);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
         c1.should.match( 0 );
-        c2.should.match( 1 );
-        c3.should.match( 7 );
-        n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
-        await delay(1000);
+        c2.should.match( 0 );
+        c3.should.match( 5 );
+        await delay(2000);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
-        c1.should.match( 1 );
-        c2.should.match( 2 );
-        c3.should.match( 7 );
-        n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:mtt });
-        await delay(1000);
-        n1.warn.should.have.callCount(1);
-        n1.error.should.have.callCount(0);
-        actualState.should.match( 'connected' );
-        c1.should.match( 2 );
-        c2.should.match( 3 );
-        c3.should.match( 7 );
-        await delay(1000);
-        n1.warn.should.have.callCount(1);
-        n1.error.should.have.callCount(0);
-        actualState.should.match( 'connected' );
-        c1.should.match( 3 );
-        c2.should.match( 3 );
-        c3.should.match( 7 );
-        */
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        c3.should.match( 5 );
         n1.receive({ topic:"close" });
         await delay(200);
-        n1.warn.should.have.callCount(0);
+        n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'closed' );
         c1.should.match( 0 );
         c2.should.match( 0 );
-        c3.should.match( 6 );
+        c3.should.match( 7 );
         done();
       }
       catch(err) {

@@ -3,11 +3,13 @@
         category: 'input',
         color: '#0fcdf8',
         defaults: {
-            name:  {value:""},
-            fems:  {value:"",type:"feneconFems",required:true},
-            edge:  {value:"0",required:true},
-            risk:  {value:false},
-            timeout:{value:false}
+            name: {value:""},
+            host: {value:"", required:true},
+            port: {value:"5580", required:true, validate:RED.validators.number()},
+            statusPrefix:{value:""},
+            eventPrefix:{value:""},
+            contextVar:{value:"matter",required:true},
+            contextStore:{value:"none",required:true}
         },
         inputs:1,
         outputs:3,
@@ -20,7 +22,34 @@
         },
         paletteLabel: "Matter",
         inputLabels: 'command / request',
-        outputLabels: ['subscribed data','config data','state']
+        outputLabels: ['subscribed data','config data','state'],
+        oneditprepare: function() {
+            const node = this;
+            // populate store names
+            $("#node-input-contextStore").empty();
+            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : '';
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                   $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // set changed handler
+            $("#node-input-contextStore").on('change',function() {
+                //console.log($("#node-input-contextStore").val());
+                if( $("#node-input-contextStore").val() == "none" ) {
+                    $("#node-contextVar-line").hide();
+                    $("#node-input-contextVar").val("matter");
+                }
+                else {
+                    $("#node-contextVar-line").show();
+                }
+            });
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
+        }
     });
 </script>
 
@@ -30,24 +59,28 @@
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-fems"><i class="fa fa-server"></i> FEMS</label>
-        <input type="text" id="node-input-fems">
+        <label for="node-input-host"><i class="fa fa-server"></i> Hostname</label>
+        <input type="text" id="node-input-host">
     </div>
     <div class="form-row">
-        <label for="node-input-edge"><i class="fa fa-list"></i> Edge</label>
-        <input type="text" id="node-input-edge"></input>
+        <label for="node-input-port"><i class="fa fa-plug"></i> Port</label>
+        <input type="text" id="node-input-port"></input>
     </div>
     <div class="form-row">
-        <label for="node-input-risk"><i class="fa fa-bolt"></i> Risk accepted</label>
-        <input type="checkbox" id="node-input-risk" style="display:inline-block; width:20px; vertical-align:baseline;">
+        <label for="node-input-statusPrefix"><i class="fa fa-star"></i> Status-Prefix</label>
+        <input type="text" id="node-input-statusPrefix"></input>
     </div>
     <div class="form-row">
-        <label for="node-input-timeout"><i class="fa fa-hourglass-start"></i> Timeout</label>
-        <input type="checkbox" id="node-input-timeout" style="display:inline-block; width:20px; vertical-align:baseline;">
+        <label for="node-input-eventPrefix"><i class="fa fa-star-o"></i> Event-Prefix</label>
+        <input type="text" id="node-input-eventPrefix"></input>
     </div>
-    <div class="form-row node-input-inlist-container-row">
-        <label for="node-input-inlist"><i class="fa fa-arrow-right"></i> Inlist</label>
-        <ol id="node-input-inlist-container"></ol>
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
+    </div>
+    <div class="form-row" id="node-contextVar-line">
+        <label for="node-input-contextVar"><i class="fa fa-database"></i> Context-Variable</label>
+        <input type="text" id="node-input-contextVar"></input>
     </div>
 </script>
 

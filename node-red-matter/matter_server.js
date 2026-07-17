@@ -6,7 +6,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         var node = this;
         this.flowcontext  = this.context().flow;
-        this.url          = config.url  ?? "";
+        this.host         = config.host ?? "";
         this.port         = config.port ?? 5580;
         this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
@@ -50,19 +50,19 @@ module.exports = function(RED) {
             node.send( [
                 null,
                 null,
-                { topic:"fems", payload:state }
+                { topic:"matter", payload:state }
             ] );
         }
 
         function setStatus(state)
         {
-            //console.log(state)
+            console.log("state "+state)
             doSetState( state, node.socket ? ( state == "connected" ? "green" : "yellow" ) : "gray", state );
         }
 
         function setError(error)
         {
-            //console.log("error "+error)
+            console.log("error "+error)
             clearTimeout( node.timStartup );
             clearTimeout( node.timRecv );
             node.timStartup = null;
@@ -70,6 +70,10 @@ module.exports = function(RED) {
             node.socket     = null;
             doSetState( "error", "red", error );
             node.error( error );
+        }
+
+        function sendCommand(command)
+        {
         }
 
         node.on('input', function(msg,send,done) {
@@ -85,7 +89,7 @@ module.exports = function(RED) {
                                 clearTimeout( node.timStartup );
                                 node.socket.close();
                             }
-                            node.socket = new WebSocket( `ws://${node.url}:${node.port}` );
+                            node.socket = new WebSocket( `ws://${node.host}:${node.port}/ws` );
                             node.socket.addEventListener( 'open',    wsConnected );
                             node.socket.addEventListener( 'message', wsReceived  );
                             node.socket.addEventListener( 'close',   wsClosed    );
@@ -148,8 +152,7 @@ module.exports = function(RED) {
         function wsConnected(event)
         {
             console.log('WebSocket connection established!',event);
-            setStatus( "authenticate" );
-            sendEmsRequest( "authenticateWithPassword", { password: node.fems.password } );
+            setStatus( "waitForState" );
         }
 
         function wsReceived(event)
@@ -158,69 +161,14 @@ module.exports = function(RED) {
             const data = JSON.parse( event.data );
             switch( node.state )
             {
-                case "authenticate":
-                    setStatus( "subscribeEdges" );
-                    sendEmsRequest( "subscribeEdges", { edges: [node.edge] } );
+                case "waitForState":
+                    setStatus( "start_listening" );
+                    sendCommand( "start_listening" );
                     break;
-                case "subscribeEdges":
-                    setStatus( "getEdgeConfig" );
-                    sendEdgeRequest( "getEdgeConfig", {} );
-                    break;
-                case "getEdgeConfig":
-                    if( data?.result?.payload?.result?.components )
-                    {
-                        node.send( [
-                            null,
-                            { topic:"edgeConfig", payload:data.result.payload.result.components },
-                            null
-                        ] );
-                    }
-                    else
-                    {
-                        node.warn( data );
-                    }
-                    setStatus( "subscribeChannels" );
-                    sendEdgeRequest( "subscribeChannels", { count:0, channels: node.inlist } );
-                    break;
-                case "subscribeChannels":
-                    clearTimeout( node.timStartup );
-                    node.timStartup = null;
-                    if( node.timeout )
-                    {
-                        node.timRecv = setTimeout( wsTimeoutReceive, 10000 );
-                    }
+                case "start_listening":
                     setStatus( "connected" );
                     break;
                 case "connected":
-                    if( data.params )
-                    {
-                        switch( data.params.payload.method )
-                        {
-                            case 'currentData':
-                                //console.log(data.params.payload.params)
-                                if( node.timRecv )
-                                {
-                                    node.timRecv.refresh();
-                                }
-                                node.flow.set( "wsAlive", Date.now() );
-                                node.send( [
-                                    { topic:data.params.payload.method, payload:data.params.payload.params },
-                                    null,
-                                    null
-                                ] );
-                                break;
-                            case "edgeConfig":
-                                //console.log(data.params.payload.params.components)
-                                node.send( [
-                                    null,
-                                    { topic:"edgeConfig", payload:data.params.payload.params.components },
-                                    null
-                                ] );
-                                break;
-                            default:
-                                node.warn( "unknown method " + data.params.payload.method );
-                        }
-                    }
                     break;
                 default:
                     node.error( "wsReceived: unkown state " + node.state );

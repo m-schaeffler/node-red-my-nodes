@@ -56,7 +56,7 @@ module.exports = function(RED) {
 
         function setStatus(state)
         {
-            console.log("state "+state)
+            //console.log("state "+state)
             doSetState( state, node.socket ? ( state == "connected" ? "green" : "yellow" ) : "gray", state );
         }
 
@@ -72,8 +72,28 @@ module.exports = function(RED) {
             node.error( error );
         }
 
-        function sendCommand(command)
+        function sendCommand(command,args={})
         {
+            const payload = {
+                message_id: command,
+                command:    command,
+                args:       args
+            };
+            if( node.socket )
+            {
+                try
+                {
+                    node.socket.send( JSON.stringify( payload ) );
+                }
+                catch( e )
+                {
+                    setError( e.message );
+                }
+            }
+            else
+            {
+                node.error( "websocket is closed" );
+            }
         }
 
         node.on('input', function(msg,send,done) {
@@ -151,13 +171,13 @@ module.exports = function(RED) {
 
         function wsConnected(event)
         {
-            console.log('WebSocket connection established!',event);
+            //console.log('WebSocket connection established!',event);
             setStatus( "waitForState" );
         }
 
         function wsReceived(event)
         {
-            console.log('Message from server: ', event.data);
+            //console.log('Message from server: ', event.data);
             const data = JSON.parse( event.data );
             switch( node.state )
             {
@@ -166,7 +186,14 @@ module.exports = function(RED) {
                     sendCommand( "start_listening" );
                     break;
                 case "start_listening":
-                    setStatus( "connected" );
+                    if( data.result !== undefined )
+                    {
+                        setStatus( "connected" );
+                    }
+                    else
+                    {
+                        setError( "invalid answer" );
+                    }
                     break;
                 case "connected":
                     break;
@@ -177,7 +204,7 @@ module.exports = function(RED) {
 
         function wsError(event)
         {
-            console.error('WebSocket error:', event);
+            //console.error('WebSocket error:', event);
             if( node.socket )
             {
                 setError( "websocket error" );
@@ -186,9 +213,12 @@ module.exports = function(RED) {
 
         function wsClosed(event)
         {
-            console.log('WebSocket connection closed:', event.code, event.reason);
+            //console.log('WebSocket connection closed:', event.code, event.reason);
             node.socket = null;
-            setStatus( "closed" );
+            if( node.state !== "error" )
+            {
+                setStatus( "closed" );
+            }
             clearTimeout( node.timStartup );
             clearTimeout( node.timRecv );
             node.timStartup = null;
@@ -197,7 +227,7 @@ module.exports = function(RED) {
 
         function wsTimeout()
         {
-            console.log('WebSocket startup timeout');
+            //console.log('WebSocket startup timeout');
             const help = node.socket;
             setError( "websocket startup timeout" );
             help.close();
@@ -205,12 +235,12 @@ module.exports = function(RED) {
 
         function wsTimeoutReceive()
         {
-            console.log('WebSocket receive timeout');
+            //console.log('WebSocket receive timeout');
             node.warn("websocket receive timeout");
             node.send( [
                 null,
                 null,
-                { topic:"fems", payload:"timeout" }
+                { topic:"matter", payload:"timeout" }
             ] );
         }
 

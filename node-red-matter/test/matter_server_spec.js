@@ -143,8 +143,8 @@ describe( 'matter_server Node', function () {
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
         c1.should.match( 0 );
-        c2.should.match( 1 );
-        c3.should.match( 6 );
+        c2.should.match( 0 );
+        c3.should.match( 4 );
         /*
         n1.receive({ topic:"open" }); // 2nd
         await delay(50);
@@ -177,15 +177,15 @@ describe( 'matter_server Node', function () {
         c1.should.match( 3 );
         c2.should.match( 3 );
         c3.should.match( 7 );
+        */
         n1.receive({ topic:"close" });
         await delay(200);
-        n1.warn.should.have.callCount(1);
+        n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'closed' );
-        c1.should.match( 3 );
-        c2.should.match( 3 );
-        c3.should.match( 9 );
-        */
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        c3.should.match( 6 );
         done();
       }
       catch(err) {

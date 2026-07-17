@@ -66,7 +66,7 @@ module.exports = function(RED) {
                 }
                 catch( e )
                 {
-                    setError( "e.message" );
+                    setError( e.message );
                 }
             }
             else
@@ -258,7 +258,10 @@ module.exports = function(RED) {
         {
             //console.log('WebSocket connection closed:', event.code, event.reason);
             node.socket = null;
-            setStatus( "closed" );
+            if( node.state !== "error" )
+            {
+                setStatus( "closed" );
+            }
             clearTimeout( node.timStartup );
             clearTimeout( node.timRecv );
             node.timStartup = null;

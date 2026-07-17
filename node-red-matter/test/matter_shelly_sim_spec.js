@@ -135,6 +135,47 @@ describe( 'matter_shelly_sim Node', function () {
     });
   });
 
+  it('should convert output messages with comples data', function (done) {
+    var flow = [{ id: "n1", type: "matterShellySim", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var c  = 0;
+      n2.on("input", function (msg) {
+        try {
+          //console.log(msg)
+          msg.should.have.a.property('topic',"Output");
+          msg.should.have.a.property('payload',{ command: c%2?"onoff.off":"onoff.on", data: null });
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        await delay(50);
+        n1.receive({ topic:"Output", payload: { command:"output", data: { turn:true } } });
+        await delay(50);
+        n1.receive({ topic:"Output", payload: { command:"output", data: { turn:false } } });
+        await delay(50);
+        n1.receive({ topic:"Output", payload: { command:"output", data: { on:true } } });
+        await delay(50);
+        n1.receive({ topic:"Output", payload: { command:"output", data: { on:false } } });
+        await delay(50);
+        n1.log.should.have.callCount(0);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 4 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should convert relay messages', function (done) {
     var flow = [{ id: "n1", type: "matterShellySim", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -182,7 +223,7 @@ describe( 'matter_shelly_sim Node', function () {
       n2.on("input", function (msg) {
         try {
           //console.log(msg)
-          msg.should.have.a.property('topic',"Relay");
+          msg.should.have.a.property('topic',"Switch");
           msg.should.have.a.property('payload',{ command: c%2?"onoff.off":"onoff.on", data: null });
           ++c;
         }
@@ -193,9 +234,9 @@ describe( 'matter_shelly_sim Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         await delay(50);
-        n1.receive({ topic:"Relay", payload: { command:"relay", data: true } });
+        n1.receive({ topic:"Switch", payload: { command:"switch", data: true } });
         await delay(50);
-        n1.receive({ topic:"Relay", payload: { command:"relay", data: false } });
+        n1.receive({ topic:"Switch", payload: { command:"switch", data: false } });
         await delay(50);
         n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
@@ -219,7 +260,7 @@ describe( 'matter_shelly_sim Node', function () {
       n2.on("input", function (msg) {
         try {
           //console.log(msg)
-          msg.should.have.a.property('topic',"Relay");
+          msg.should.have.a.property('topic',"Light");
           msg.should.have.a.property('payload',{ command: c%2?"onoff.off":"onoff.on", data: null });
           ++c;
         }
@@ -230,9 +271,9 @@ describe( 'matter_shelly_sim Node', function () {
       try {
         n1.should.have.a.property('name', 'test');
         await delay(50);
-        n1.receive({ topic:"Relay", payload: { command:"relay", data: true } });
+        n1.receive({ topic:"Light", payload: { command:"light", data: true } });
         await delay(50);
-        n1.receive({ topic:"Relay", payload: { command:"relay", data: false } });
+        n1.receive({ topic:"Light", payload: { command:"light", data: false } });
         await delay(50);
         n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
@@ -246,4 +287,67 @@ describe( 'matter_shelly_sim Node', function () {
     });
   });
 
+  it('should convert light messages with comples data', function (done) {
+    var flow = [{ id: "n1", type: "matterShellySim", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n1 = helper.getNode("n1");
+      var n2 = helper.getNode("n2");
+      var c  = 0;
+      n2.on("input", function (msg) {
+        try {
+          //console.log(msg)
+          msg.should.have.a.property('topic',"Light");
+          switch( c )
+          {
+            case 5:
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:127,transitionTime:null,optionsMask:0x00,optionsOverride:0x00} });
+              break;
+            case 6:
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:0,transitionTime:null,optionsMask:0x00,optionsOverride:0x00} });
+              break;
+            case 7:
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:254,transitionTime:5,optionsMask:0x00,optionsOverride:0x00} });
+              break;
+            default:
+              msg.should.have.a.property('payload',{ command: c%2?"onoff.off":"onoff.on", data: null });
+          }
+          ++c;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('name', 'test');
+        await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { turn:true } } });
+        await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { turn:false } } });
+        await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { on:true } } });
+        await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { on:false } } });
+        await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { on:true, brightness:50 } } });
+        await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { brightness:0 } } });
+        await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { brightness:100, transition:5 } } });
+        await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { transition:1 } } });
+        await delay(50);
+        n1.log.should.have.callCount(0);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( 8 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });
+

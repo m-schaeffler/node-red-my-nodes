@@ -1,4 +1,4 @@
-const Types = require( './types.js' );
+const Matter = require( './matter.js' );
 
 module.exports = function(RED) {
 
@@ -12,8 +12,7 @@ module.exports = function(RED) {
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar   ?? "matter";
         this.contextStore = config.contextStore ?? "none";
-        this.matter     = { dataById: {}, namesLut: {} };
-        this.changed    = {};
+        this.matter     = new Matter();
         this.state      = "closed";
         this.socket     = null;
         this.timStartup = null;
@@ -33,7 +32,7 @@ module.exports = function(RED) {
                     //console.log( "context read", value );
                     if( value !== undefined )
                     {
-                        node.matter = value;
+                        //node.matter = value;
                     }
                 }
             } );
@@ -71,50 +70,6 @@ module.exports = function(RED) {
             node.socket     = null;
             doSetState( "error", "red", error );
             node.error( error );
-        }
-
-        function storeNode(n)
-        {
-            let help = node.matter.dataById[n.node_id] ?? {};
-            help.online   = n.available;
-            help.time     = ( help.online ? Temporal.Now.instant() : Temporal.PlainDateTime.from( n.last_interview ).toZonedDateTime( Temporal.Now.timeZoneId() ) ).epochMilliseconds;
-            help.make     = n.attributes["0/40/1"];
-            help.model    = n.attributes["0/40/3"];
-            help.label    = n.attributes["0/40/5"];
-            help.name     = n.attributes["0/40/5"] || `${n.attributes["0/40/1"]}_${n.attributes["0/40/18"]}`;
-            help.internal ??= {};
-            help.data     ??= {};
-            for( const e of n.attributes["0/29/3"] )
-            {
-                const channel = n.attributes["0/29/3"].length == 1 ? help.name : `${help.name}/${e}`;
-                help.internal[e] ??= {};
-                help.data    [e] ??= {};
-                help.internal[e].name = channel;
-                node.matter.namesLut[channel] = { node: n.node_id, endpoint: e };
-            }
-            node.matter.dataById[n.node_id] = help;
-            node.changed        [n.node_id] = true;
-            for( const a in n.attributes )
-            {
-                //setAttribute( n.node_id, a, n.attributes[a] );
-            }
-        }
-
-        function storeNodes(nodes)
-        {
-            for( const n of nodes )
-            {
-                storeNode( n );
-            }
-        }
-
-        function deleteNode(id)
-        {
-            if( node.matter.dataById[id] )
-            {
-                node.matter.dataById[id].online = false;
-                node.changed[id] = true;
-            }
         }
 
         function sendCommand(command,args={})
@@ -234,8 +189,8 @@ module.exports = function(RED) {
                     if( data.result !== undefined && data.message_id == "start_listening" )
                     {
                         clearTimeout( node.timStartup );
-                        storeNodes( data.result );
-                        console.log(node.matter);
+                        node.matter.storeNodes( data.result );
+                        console.log(node.matter._dataById);
                         setStatus( "connected" );
                     }
                     else
@@ -251,7 +206,7 @@ module.exports = function(RED) {
                         switch( message )
                         {
                             case "get_nodes":
-                                storeNodes( data.result );
+                                node.matter.storeNodes( data.result );
                                 break;
                         }
                     }
@@ -266,8 +221,7 @@ module.exports = function(RED) {
                         switch( data.event )
                         {
                             case "attribute_updated":
-                                matter.dataById[payload.data[0]].time = Temporal.Now.instant().epochMilliseconds;
-                                //setAttribute( payload.data[0], payload.data[1], payload.data[2] );
+                                node.matter.setAttribute( payload.data[0], payload.data[1], payload.data[2] );
                                 break;
                             case "node_event":
                                 //handleEvent( data.data );
@@ -276,11 +230,11 @@ module.exports = function(RED) {
                                 node.warn( data.event );
                                 // fall through
                             case "node_updated":
-                                storeNode( data.data );
+                                node.matter.storeNode( data.data );
                                 break;
                             case "node_removed":
                                 node.warn( data.event );
-                                deleteNode( data.data );
+                                node.matter.deleteNode( data.data );
                                 break;
                             case undefined:
                                 node.error( "invalid message", data );

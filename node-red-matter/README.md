@@ -30,9 +30,11 @@ $ npm install @mschaeffler/node-red-matterServer
 |config  | type        | description                       |
 |:-------|:------------|:----------------------------------|
 
+## MatterShellySim node
+
 ## Example Flow
 
-[examnple flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-matter/examples/matter.json)
+[example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-matter/examples/matter.json)
 
 ## Author
 

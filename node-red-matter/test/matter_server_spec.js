@@ -42,7 +42,7 @@ describe( 'matter_server Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        n1.should.have.a.property('data', {} );
+        n1.should.have.a.property('matter');
         should.not.exist( n1.context().flow.get("matter") );
         done();
       }

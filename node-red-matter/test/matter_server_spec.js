@@ -2,6 +2,7 @@ var should = require("should");
 var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 var helper = require("node-red-node-test-helper");
 var node   = require("../matter_server.js");
+require("./matter_spec.js");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -73,12 +74,8 @@ describe( 'matter_server Node', function () {
       n2.on("input", function (msg) {
         console.log(msg);
         try {
-          msg.should.have.property('topic','currentData');
+          msg.should.have.property('topic').which.is.a.String();
           msg.should.have.property('payload').which.is.an.Object();
-          msg.payload.should.have.property('_sum/ProductionActivePower').which.is.a.Number();
-          msg.payload.should.have.property('meter0/CurrentL1').which.is.a.Number();
-          msg.payload.should.have.property('_sum/State').which.is.a.Number();
-          msg.payload.should.have.property('batteryInverter0/AirTemperature').which.is.a.Number();
           ++c1;
         }
         catch(err) {
@@ -126,22 +123,23 @@ describe( 'matter_server Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
-        c1.should.match( 0 );
+        c1.should.be.above( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
+        const c1_soll = c1;
         n1.receive({ topic:"open" }); // 2nd
         await delay(50);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
-        c1.should.match( 0 );
+        c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 5 );
         await delay(2000);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
-        c1.should.match( 0 );
+        c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 5 );
         n1.receive({ topic:"close" });
@@ -149,7 +147,7 @@ describe( 'matter_server Node', function () {
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'closed' );
-        c1.should.match( 0 );
+        c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 7 );
         done();

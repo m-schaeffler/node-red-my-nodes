@@ -247,6 +247,13 @@ module.exports = function(RED) {
                 default:
                     node.error( "wsReceived: unkown state " + node.state );
             }
+            node.matter.sendChanged( function(name,data){
+                node.send( [
+                    { topic: name, payload: data },
+                    null,
+                    null
+                ] );
+            } );
         }
 
         function wsError(event)

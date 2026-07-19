@@ -120,6 +120,25 @@ class MatterData {
             this.changed[id] = true;
         }
     }
+
+    sendChanged(sendData)
+    {
+        for( const i in this._changed )
+        {
+            if( this._changed[i] )
+            {
+                this._changed[i] = false;
+                const n = this._dataById[i];
+                if( n.label )
+                {
+                    for( const e in n.data )
+                    {
+                        sendData( n.internal[e].name, n.data[e] );
+                    }
+                }
+            }
+        }
+    }
 }
 
 // Export

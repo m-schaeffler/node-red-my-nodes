@@ -54,7 +54,7 @@ describe( 'matter_server Node', function () {
   });
 
   it('should connect and get data', function (done) {
-    this.timeout( 5000 );
+    this.timeout( 10000 );
     var flow = [{ id: 'flow', type: 'tab' },
                 { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
@@ -135,13 +135,33 @@ describe( 'matter_server Node', function () {
         c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 5 );
-        await delay(2000);
+        await delay(6000);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
         c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 5 );
+        n1.should.have.a.property("matter");
+
+        for( const i in n1.matter._dataById )
+        {
+          const n = n1.matter._dataById[i];
+          n.should.have.a.property("online").which.is.Boolean();
+          n.should.have.a.property("time").which.is.a.Number();
+          n.should.have.a.property("make").which.is.a.String();
+          n.should.have.a.property("model").which.is.a.String();
+          n.should.have.a.property("label").which.is.a.String();
+          n.should.have.a.property("name").which.is.a.String();
+          n.should.have.a.property("internal").which.is.an.Object();
+          n.should.have.a.property("data").which.is.an.Object();
+          if( n.label )
+          {
+            n.should.have.a.property("ip4").which.is.a.String();
+            n.should.have.a.property("ip4").which.is.a.String();
+          }
+        }
+
         n1.receive({ topic:"close" });
         await delay(200);
         n1.warn.should.have.callCount(1);

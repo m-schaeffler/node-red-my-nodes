@@ -121,6 +121,30 @@ class MatterData {
         }
     }
 
+    storeIP(id,ips)
+    {
+        const testIPv4 = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+        for( const v of ips )
+        {
+            if( testIPv4.test( v ) )
+            {
+                this._dataById[id].ip4 = v;
+            }
+            else
+            {
+                this._dataById[id].ip6 = v;
+            }
+        }
+    }
+
+    forAllIds(callback)
+    {
+        for( const i in this._dataById )
+        {
+            callback( i );
+        }
+    }
+
     sendChanged(sendData)
     {
         for( const i in this._changed )

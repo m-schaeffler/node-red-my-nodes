@@ -72,10 +72,11 @@ module.exports = function(RED) {
             node.error( error );
         }
 
-        function sendCommand(command,args={})
+        function sendCommand(command,id="",args={})
         {
+            //console.log("send command "+command+" "+id)
             const payload = {
-                message_id: command,
+                message_id: `${command}|${id}`,
                 command:    command,
                 args:       args
             };
@@ -130,6 +131,7 @@ module.exports = function(RED) {
                     }
                     break;
                 case "close":
+          console.log(node.matter._dataById);
                     if( node.socket )
                     {
                         clearTimeout( node.timStartup );
@@ -186,12 +188,18 @@ module.exports = function(RED) {
                     sendCommand( "start_listening" );
                     break;
                 case "start_listening":
-                    if( data.result !== undefined && data.message_id == "start_listening" )
+                    if( data.result !== undefined && data.message_id == "start_listening|" )
                     {
                         clearTimeout( node.timStartup );
                         node.matter.storeNodes( data.result );
-                        console.log(node.matter._dataById);
                         setStatus( "connected" );
+                        node.matter.forAllIds( function(id){
+                            sendCommand( "get_node_ip_addresses", id, {
+                                node_id:      id,
+                                prefer_cache: false,
+                                scoped:       false
+                            } );
+                        } );
                     }
                     else
                     {
@@ -207,6 +215,9 @@ module.exports = function(RED) {
                         {
                             case "get_nodes":
                                 node.matter.storeNodes( data.result );
+                                break;
+                            case "get_node_ip_addresses":
+                                node.matter.storeIP( param, data.result );
                                 break;
                         }
                     }

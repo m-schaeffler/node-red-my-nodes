@@ -114,10 +114,10 @@ class MatterData {
 
     deleteNode(id)
     {
-        if( this.dataById[id] )
+        if( this._dataById[id] )
         {
-            this.dataById[id].online = false;
-            this.changed[id] = true;
+            this._dataById[id].online = false;
+            this._changed[id] = true;
         }
     }
 

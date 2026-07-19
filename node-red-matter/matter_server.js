@@ -16,7 +16,6 @@ module.exports = function(RED) {
         this.socket     = null;
         this.timStartup = null;
         this.timRecv    = null;
-        this.flow       = this.context().flow;
         node.status( "" );
 
         function doSetState(state,color,text)
@@ -160,7 +159,7 @@ module.exports = function(RED) {
 
         function wsReceived(event)
         {
-            //console.log('Message from server: ', event.data);
+            console.log('Message from server: ', event.data);
             const data = JSON.parse( event.data );
             switch( node.state )
             {
@@ -192,6 +191,10 @@ module.exports = function(RED) {
                     }
                     break;
                 case "connected":
+                    if( node.timRecv )
+                    {
+                        node.timRecv.refresh();
+                    }
                     if( data.result !== undefined )
                     {
                         // command result
@@ -217,10 +220,10 @@ module.exports = function(RED) {
                         switch( data.event )
                         {
                             case "attribute_updated":
-                                node.matter.setAttribute( payload.data[0], payload.data[1], payload.data[2] );
+                                node.matter.setAttribute( data.data[0], data.data[1], data.data[2] );
                                 break;
                             case "node_event":
-                                //handleEvent( data.data );
+                                node.matter.handleEvent( data.data );
                                 break;
                             case "node_added":
                                 node.warn( data.event );
@@ -245,7 +248,7 @@ module.exports = function(RED) {
             }
             node.matter.sendChanged( function(name,data){
                 node.send( [
-                    { topic: name, payload: data },
+                    { topic: node.statusPrefix+name, payload: data },
                     null,
                     null
                 ] );

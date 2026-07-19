@@ -159,7 +159,7 @@ module.exports = function(RED) {
 
         function wsReceived(event)
         {
-            console.log('Message from server: ', event.data);
+            //console.log('Message from server: ', event.data);
             const data = JSON.parse( event.data );
             switch( node.state )
             {

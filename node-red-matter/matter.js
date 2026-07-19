@@ -75,6 +75,7 @@ class MatterData {
     {
         this._dataById[id].time = Temporal.Now.instant().epochMilliseconds;
         this._doSetAttribute( id, attr, value );
+        this._changed[id] = true;
     }
 
     storeNode(n)

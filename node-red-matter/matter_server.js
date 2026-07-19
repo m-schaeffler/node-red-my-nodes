@@ -10,8 +10,7 @@ module.exports = function(RED) {
         this.port         = config.port ?? 5580;
         this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
-        this.contextVar   = config.contextVar   ?? "matter";
-        this.contextStore = config.contextStore ?? "none";
+        this.contextVar   = config.contextVar ?? "";
         this.matter     = new Matter();
         this.state      = "closed";
         this.socket     = null;
@@ -19,24 +18,6 @@ module.exports = function(RED) {
         this.timRecv    = null;
         this.flow       = this.context().flow;
         node.status( "" );
-        if( node.contextStore !== "none" )
-        {
-            node.flowcontext.get( node.contextVar, node.contextStore, function(err,value)
-            {
-                if( err )
-                {
-                    node.error( err );
-                }
-                else
-                {
-                    //console.log( "context read", value );
-                    if( value !== undefined )
-                    {
-                        //node.matter = value;
-                    }
-                }
-            } );
-        }
 
         function doSetState(state,color,text)
         {
@@ -200,6 +181,10 @@ module.exports = function(RED) {
                                 scoped:       false
                             } );
                         } );
+                        if( node.contextVar )
+                        {
+                            node.flowcontext.set( node.contextVar, node.matter._dataById );
+                        }
                     }
                     else
                     {

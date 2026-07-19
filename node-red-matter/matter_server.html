@@ -8,48 +8,20 @@
             port: {value:"5580", required:true, validate:RED.validators.number()},
             statusPrefix:{value:""},
             eventPrefix:{value:""},
-            contextVar:{value:"matter",required:true},
-            contextStore:{value:"none",required:true}
+            contextVar:{value:""},
         },
         inputs:1,
         outputs:3,
         icon: "matter.svg",
         label: function() {
-            return this.name||"Matter";
+            return this.name||this.host||"Matter Server";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
         paletteLabel: "Matter",
         inputLabels: 'command / request',
-        outputLabels: ['subscribed data','config data','state'],
-        oneditprepare: function() {
-            const node = this;
-            // populate store names
-            $("#node-input-contextStore").empty();
-            $("#node-input-contextStore").append(`<option value="none">None</option>`);
-            const defaultStore = RED.settings.hasOwnProperty('context') ? RED.settings.context.default : '';
-            RED.settings.context.stores.forEach(function(item){
-                if( item ) {
-                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
-                   $("#node-input-contextStore").append(opt);
-                }
-            });
-            const currentStore = node.contextStore || '';
-            // set changed handler
-            $("#node-input-contextStore").on('change',function() {
-                //console.log($("#node-input-contextStore").val());
-                if( $("#node-input-contextStore").val() == "none" ) {
-                    $("#node-contextVar-line").hide();
-                    $("#node-input-contextVar").val("matter");
-                }
-                else {
-                    $("#node-contextVar-line").show();
-                }
-            });
-            // select the current option
-            $("#node-input-contextStore").val(currentStore);
-        }
+        outputLabels: ['subscribed data','config data','state']
     });
 </script>
 
@@ -75,10 +47,6 @@
         <input type="text" id="node-input-eventPrefix"></input>
     </div>
     <div class="form-row">
-        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
-        <select type="text" id="node-input-contextStore"></select>
-    </div>
-    <div class="form-row" id="node-contextVar-line">
         <label for="node-input-contextVar"><i class="fa fa-database"></i> Context-Variable</label>
         <input type="text" id="node-input-contextVar"></input>
     </div>

@@ -37,8 +37,7 @@ describe( 'matter_server Node', function () {
         n1.should.have.a.property('port', 5580);
         n1.should.have.a.property('statusPrefix', "");
         n1.should.have.a.property('eventPrefix', "");
-        n1.should.have.a.property('contextVar', "matter");
-        n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('contextVar', "");
         n1.should.have.a.property('state','closed');
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -109,8 +108,7 @@ describe( 'matter_server Node', function () {
         n1.should.have.a.property('port', 5580);
         n1.should.have.a.property('statusPrefix', "");
         n1.should.have.a.property('eventPrefix', "");
-        n1.should.have.a.property('contextVar', "matter");
-        n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('contextVar', "");
         n1.should.have.a.property('state','closed');
         await delay(50);
         n1.warn.should.have.callCount(0);

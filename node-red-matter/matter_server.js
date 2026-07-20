@@ -113,7 +113,6 @@ module.exports = function(RED) {
                 case "close":
                     if( node.socket )
                     {
-                console.log(node.matter._dataById);
                         clearTimeout( node.timStartup );
                         node.timStartup = null;
                         node.socket.close();

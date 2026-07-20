@@ -29,8 +29,17 @@ describe( 'matter data handling', function () {
       matter._dataById[8].should.have.a.property("model","Roborock Robotic Vacuum Cleaner");
       matter._dataById[8].should.have.a.property("label","Rocky");
       matter._dataById[8].should.have.a.property("name","Rocky");
-      matter._dataById[8].should.have.a.property("internal").which.is.an.Object();
-      matter._dataById[8].should.have.a.property("data").which.is.an.Object();
+      matter._dataById[8].should.have.a.property("internal",{ '1': {
+          name:'Rocky',
+          supportedRunModes:{'0':'Idle','1':'Cleaning','2':'Mapping'},
+          supportedCleanModes: {'1': 'Quiet, Vacuum Only','2': 'Auto, Vacuum Only','3': 'Deep Clean, Vacuum Only','4': 'Quiet, Mop Only','5': 'Auto, Mop Only','6': 'Deep Clean, Mop Only','7': 'Quiet, Vacuum and Mop','8': 'Auto, Vacuum and Mop','9': 'Deep Clean, Vacuum and Mop'},
+          supportedAreas: {'1': 'Bad OG','2': 'Flur OG','3': 'Schlafzimmer','4': 'Treppe','5': 'Clara','6': 'Küche','7': 'Flur','8': 'Toilette','9': 'Wohnzimmer','10': 'Johanna','11': 'Flur','12': 'Bad DG','13': 'Schlafzimmer'} }});
+      matter._dataById[8].should.have.a.property("data",{ '1': {
+          runMode:'Idle',
+          cleanMode: 'Auto, Vacuum and Mop',
+          state: 'Docked',
+          errors: [],
+          selectedAreas: [] }});
       matter._dataById[8].should.not.have.a.property("ip4");
       matter._dataById[8].should.not.have.a.property("ip6");
       matter.should.have.a.property("_namesLut",{Rocky:{ node: 8, endpoint: 1 }});
@@ -40,7 +49,12 @@ describe( 'matter data handling', function () {
       let callback = sinon.spy();
       matter.sendChanged( callback );
       callback.should.be.calledOnce();
-      callback.should.be.calledWith("Rocky",{});
+      callback.should.be.calledWith("Rocky",{
+          runMode:'Idle',
+          cleanMode: 'Auto, Vacuum and Mop',
+          state: 'Docked',
+          errors: [],
+          selectedAreas: [] });
     }
       matter.should.have.a.property("_changed",{8:false});
       //
@@ -56,8 +70,9 @@ describe( 'matter data handling', function () {
       matter._dataById[8].should.have.a.property("ip6","1:2:3::4:5:6");
       await delay(50);
       //
-      matter.setAttribute(8,null,null);
+      matter.setAttribute(8,"1/84/1",1);
       matter._dataById[8].time.should.be.approximately(Temporal.Now.instant().epochMilliseconds,5);
+      matter._dataById[8].data.should.match({1:{runMode:"Cleaning"}});
       matter.should.have.a.property("_changed",{8:true});
       //
       matter.deleteNode( 8 );

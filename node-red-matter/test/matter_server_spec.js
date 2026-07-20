@@ -411,8 +411,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 1 );
-        console.log("tpd: sinnvolles topic!!")
-        n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
+        n1.receive({ topic:"Rocky", payload:{command:"rvc.stop"} });
         await delay(50);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(1);

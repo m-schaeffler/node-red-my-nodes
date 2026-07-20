@@ -1,4 +1,4 @@
-# @mschaeffler/node-red-matterServerr
+# @mschaeffler/node-red-matterServer
 
 Node Red nodes to do Matter communication via a matter.js server
 

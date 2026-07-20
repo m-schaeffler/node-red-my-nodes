@@ -59,21 +59,7 @@ describe( 'matter data handling', function () {
       matter.should.have.a.property("_changed",{8:true});
   });
 
-  it('should encrypt bthome messages with timestamp as counter', function (done) {
-    try {
-    /*
-      Encrypt.encryptBthome(
-        [69,0,128,5,3,2,1,0x2D,1,0x3F,60,0],
-        '00:10:20:30:40:50',
-        Math.floor( Date.now()/1000 ),
-        '00112233445566778899AABBCCDDEEFF'
-      ).should.be.an.Array();
-      */
-      done();
-    }
-    catch(err) {
-      done(err);
-    }
+  it('should encrypt bthome messages with timestamp as counter', function () {
   });
 
 });

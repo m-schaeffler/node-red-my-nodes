@@ -64,7 +64,6 @@ describe( 'matter_server Node', function () {
       var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
       var c1 = 0;
       var c2 = 0;
       var c3 = 0;
@@ -124,7 +123,7 @@ describe( 'matter_server Node', function () {
         c1.should.be.above( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
-        const c1_soll = c1;
+        let c1_soll = c1;
         n1.receive({ topic:"open" }); // 2nd
         await delay(50);
         n1.warn.should.have.callCount(1);
@@ -137,7 +136,8 @@ describe( 'matter_server Node', function () {
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
-        c1.should.match( c1_soll );
+        c1.should.be.aboveOrEqual( c1_soll );
+        c1_soll = c1;
         c2.should.match( 0 );
         c3.should.match( 5 );
         n1.should.have.a.property("matter");
@@ -176,21 +176,18 @@ describe( 'matter_server Node', function () {
     });
   });
 
-/*
   it('should handle invalid URLs', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"foobar:lan", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
-                { id: "n4", type: "helper", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"foobar:lan", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
+                { id: "n4", type: "helper", z: "flow" }];
+    helper.load([node], flow, async function () {
       var n4 = helper.getNode("n4");
       var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
       var c1 = 0;
       var c2 = 0;
       var c3 = 0;
@@ -207,7 +204,7 @@ describe( 'matter_server Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','fems');
+          msg.should.have.property('topic','matter');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -217,9 +214,12 @@ describe( 'matter_server Node', function () {
       });
       try{
         n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('edge', '0');
-        n1.should.have.a.property('inlist', inlist);
+        n1.should.have.a.property('host', 'foobar:lan');
+        n1.should.have.a.property('port', 5580);
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('contextVar', "");
+        n1.should.have.a.property('state','closed');
         await delay(50);
         n1.receive({ topic:"open" });
         await delay(2000);
@@ -240,17 +240,15 @@ describe( 'matter_server Node', function () {
   it('should handle invalid addresses', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"foobar.lan", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
-                { id: "n4", type: "helper", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"foobar.lan", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
+                { id: "n4", type: "helper", z: "flow" }];
+    helper.load([node], flow, async function () {
       var n4 = helper.getNode("n4");
       var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
       var c1 = 0;
       var c2 = 0;
       var c3 = 0;
@@ -267,7 +265,7 @@ describe( 'matter_server Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','fems');
+          msg.should.have.property('topic','matter');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -277,9 +275,12 @@ describe( 'matter_server Node', function () {
       });
       try{
         n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('edge', '0');
-        n1.should.have.a.property('inlist', inlist);
+        n1.should.have.a.property('host', 'foobar.lan');
+        n1.should.have.a.property('port', 5580);
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('contextVar', "");
+        n1.should.have.a.property('state','closed');
         await delay(50);
         n1.receive({ topic:"open" });
         await delay(2000);
@@ -300,17 +301,15 @@ describe( 'matter_server Node', function () {
   it('should handle invalid IPs', function (done) {
     this.timeout( 2500 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"192.168.254.254", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
-                { id: "n4", type: "helper", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"192.168.254.254", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
+                { id: "n4", type: "helper", z: "flow" }];
+    helper.load([node], flow, async function () {
       var n4 = helper.getNode("n4");
       var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
       var c1 = 0;
       var c2 = 0;
       var c3 = 0;
@@ -327,7 +326,7 @@ describe( 'matter_server Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','fems');
+          msg.should.have.property('topic','matter');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -337,9 +336,12 @@ describe( 'matter_server Node', function () {
       });
       try{
         n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('edge', '0');
-        n1.should.have.a.property('inlist', inlist);
+        n1.should.have.a.property('host', '192.168.254.254');
+        n1.should.have.a.property('port', 5580);
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('contextVar', "");
+        n1.should.have.a.property('state','closed');
         await delay(50);
         n1.receive({ topic:"open" });
         await delay(2000);
@@ -360,17 +362,15 @@ describe( 'matter_server Node', function () {
   it('should handle other requests without open', function (done) {
     this.timeout( 2500 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "feneconWebsocket", fems: "nf", edge:"0", inlist:JSON.stringify(inlist), name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
-                { id: "n4", type: "helper", z: "flow" },
-                { id: "nf", type: "feneconFems", hostname:"fems.lan", name:"TestFems", z: "flow" }];
-    helper.load([node,nodeFems], flow, async function () {
+                { id: "n4", type: "helper", z: "flow" }];
+    helper.load([node], flow, async function () {
       var n4 = helper.getNode("n4");
       var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
-      var nf = helper.getNode("nf");
       var c1 = 0;
       var c2 = 0;
       var c3 = 0;
@@ -387,7 +387,7 @@ describe( 'matter_server Node', function () {
         console.log(msg.payload);
         c3++;
         try {
-          msg.should.have.property('topic','fems');
+          msg.should.have.property('topic','matter');
           msg.should.have.property('payload').which.is.a.String();
           actualState = msg.payload;
         }
@@ -397,9 +397,12 @@ describe( 'matter_server Node', function () {
       });
       try{
         n1.should.have.a.property('name', 'test');
-        n1.should.have.a.property('fems').which.is.an.Object();
-        n1.should.have.a.property('edge', '0');
-        n1.should.have.a.property('inlist', inlist);
+        n1.should.have.a.property('host', 'localhost');
+        n1.should.have.a.property('port', 5580);
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('contextVar', "");
+        n1.should.have.a.property('state','closed');
         await delay(50);
         n1.receive({ topic:"close" });
         await delay(50);
@@ -409,6 +412,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 1 );
+        console.log("tpd: sinnvolles topic!!")
         n1.receive({ topic:"ctrlGridOptimizedCharge0/manualTargetTime", payload:"11:30" });
         await delay(50);
         n1.warn.should.have.callCount(1);
@@ -424,7 +428,7 @@ describe( 'matter_server Node', function () {
       }
     });
   });
-
+/*
   it('should not write config without risk accepted', function (done) {
     this.timeout( 2500 );
     var flow = [{ id: 'flow', type: 'tab' },

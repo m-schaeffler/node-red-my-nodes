@@ -78,6 +78,10 @@ class MatterData {
         this._changed[id] = true;
     }
 
+    handleEvent(data)
+    {
+    }
+
     storeNode(n)
     {
         let help = this._dataById[n.node_id] ?? {};

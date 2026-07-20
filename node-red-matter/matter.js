@@ -45,7 +45,7 @@ class OperationalStatusBitmap_Global {
 }
 Object.freeze(OperationalStatusBitmap_Global)
 
-//
+// LUTs
 
 class MatterClusters {
     static OnOff               = 0x0006;
@@ -166,6 +166,74 @@ class MatterData {
                     }
                 }
             }
+        }
+    }
+
+    sendCommand(topic,command,data,sendCommand)
+    {
+        const id = this._namesLut[topic];
+
+        function sendDeviceCommand(cluster,command,data={})
+        {
+            sendCommand( "device_command", "", {
+                "node_id":      id.node,
+                "endpoint_id":  id.endpoint,
+                "cluster_id":   cluster,
+                "command_name": command,
+                "payload":      data
+            } );
+        }
+
+        switch( command )
+        {
+            case "onoff.on":
+                sendDeviceCommand( MatterClusters.OnOff, "On" );
+                break;
+            case "onoff.off":
+                sendDeviceCommand( MatterClusters.OnOff, "Off" );
+                break;
+            case "onoff.toggle":
+                sendDeviceCommand( MatterClusters.OnOff, "Toggle" );
+                break;
+            case "levelcontrol.movetolevel":
+                sendDeviceCommand( MatterClusters.LevelControl, "MoveToLevel", data );
+                break;
+            case "rvc.clean":
+                if( data != null )
+                {
+                    sendDeviceCommand( MatterClusters.ServiceArea, "SelectAreas", { newAreas: convertAreas( data ) } );
+                }
+                sendDeviceCommand( MatterClusters.RvcRunMode, "ChangeToMode", { newMode: 1 } );
+                break;
+            case "rvc.stop":
+                sendDeviceCommand( MatterClusters.RvcRunMode, "ChangeToMode", { newMode: 0 });
+                break;
+            case "rvc.gohome":
+                sendDeviceCommand( MatterClusters.RvcOperationalState, "GoHome" );
+                break;
+            case "rvc.pause":
+                sendDeviceCommand( MatterClusters.RvcOperationalState, "Pause" );
+                break;
+            case "rvc.resume":
+                sendDeviceCommand( MatterClusters.RvcOperationalState, "Resume" );
+                break;
+            case "rvc.selectareas":
+                sendDeviceCommand( MatterClusters.ServiceArea, "SelectAreas", { newAreas: convertAreas( data ) } );
+                break;
+            case "windowcovering.open":
+                sendDeviceCommand( MatterClusters.WindowCovering, "UpOrOpen" );
+                break;
+            case "windowcovering.close":
+                sendDeviceCommand( MatterClusters.WindowCovering, "DownOrClose" );
+                break;
+            case "windowcovering.stop":
+                sendDeviceCommand( MatterClusters.WindowCovering, "StopMotion" );
+                break;
+            case "windowcovering.gotolift":
+                sendDeviceCommand( MatterClusters.WindowCovering, "GoToLiftPercentage", { liftPercent100thsValue: (100-data)*100 } );
+                break;
+            default:
+                throw new Error( "not implemented "+command );
         }
     }
 }

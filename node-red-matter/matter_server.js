@@ -134,18 +134,7 @@ module.exports = function(RED) {
                     else
                     {
                         console.log(msg.topic,msg.payload)
-                        /*
-                        const help = msg.topic.split( '/' );
-                        const payload = {
-                            componentId: help[0],
-                            properties: [{
-                                name:  help[1],
-                                value: msg.payload
-                            }]
-                        };
-                        //console.log("updateComponentConfig",payload);
-                        sendEdgeRequest( "updateComponentConfig", payload );
-                        */
+                        node.matter.sendCommand( msg.topic, msg.payload.command, msg.payload.data, sendCommand );
                     }
             }
             done();

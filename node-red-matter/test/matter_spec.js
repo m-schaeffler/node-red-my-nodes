@@ -1,4 +1,5 @@
 var should = require("should");
+var sinon  = require("sinon");
 var Matter = require("../matter.js");
 
 function delay(ms) {
@@ -35,15 +36,20 @@ describe( 'matter data handling', function () {
       matter.should.have.a.property("_namesLut",{Rocky:{ node: 8, endpoint: 1 }});
       matter.should.have.a.property("_changed",{8:true});
       //
-      matter.sendChanged( function(name,data) {
-        name.should.match( "Rocky" );
-        data.should.be.an.Object();
-      } );
+    {
+      let callback = sinon.spy();
+      matter.sendChanged( callback );
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("Rocky",{});
+    }
       matter.should.have.a.property("_changed",{8:false});
       //
-      matter.forAllIds( function(id){
-        id.should.match( "8" );
-      } );
+    {
+      let callback = sinon.spy();
+      matter.forAllIds( callback );
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("8");
+    }
       //
       matter.storeIP( 8, ["1.2.3.4","1:2:3::4:5:6"] );
       matter._dataById[8].should.have.a.property("ip4","1.2.3.4");
@@ -57,6 +63,36 @@ describe( 'matter data handling', function () {
       matter.deleteNode( 8 );
       matter._dataById[8].should.have.a.property("online",false);
       matter.should.have.a.property("_changed",{8:true});
+      //
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Rocky","rvc.clean",null,callback);
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("device_command","",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
+    }
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Rocky","rvc.stop",null,callback);
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("device_command","",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:0}});
+    }
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Rocky","rvc.gohome",null,callback);
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("device_command","",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'GoHome',payload:{}});
+    }
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Rocky","rvc.resume",null,callback);
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("device_command","",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'Resume',payload:{}});
+    }
+    {
+      let callback = sinon.spy();
+      should(function(){matter.sendCommand("Rocky","foobar",null,callback)}).throw();
+      callback.should.not.be.called();
+    }
   });
 
   it('should encrypt bthome messages with timestamp as counter', function () {

@@ -255,6 +255,7 @@ class MatterData {
 
     handleEvent(data)
     {
+        console.log(data)
     }
 
     storeNode(n)

@@ -1,6 +1,6 @@
 # @mschaeffler/node-red-matterServer
 
-Node Red nodes to do ![matter logo](icons/matter.svg) Matter communication via a matter.js server
+Node Red nodes to do Matter communication via a matter.js server
 
 ![image of example flow](https://github.com/m-schaeffler/node-red-my-nodes/raw/main/node-red-matter/examples/matter.png)
 

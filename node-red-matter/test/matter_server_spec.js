@@ -69,7 +69,7 @@ describe( 'matter_server Node', function () {
       var c3 = 0;
       var actualState;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.property('topic').which.is.a.String();
           msg.should.have.property('payload').which.is.an.Object();
@@ -444,7 +444,7 @@ describe( 'matter_server Node', function () {
       var c3 = 0;
       var actualState;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.property('topic').which.is.a.String();
           msg.should.have.property('payload').which.is.an.Object();

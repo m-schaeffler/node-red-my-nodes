@@ -133,8 +133,14 @@ module.exports = function(RED) {
                     }
                     else
                     {
-                        console.log(msg.topic,msg.payload)
-                        node.matter.sendCommand( msg.topic, msg.payload.command, msg.payload.data, sendCommand );
+                        try
+                        {
+                            node.matter.sendCommand( msg.topic, msg.payload.command, msg.payload.data, sendCommand );
+                        }
+                        catch(err)
+                        {
+                            node.error( err.message );
+                        }
                     }
             }
             done();
@@ -196,6 +202,11 @@ module.exports = function(RED) {
                             case "get_node_ip_addresses":
                                 node.matter.storeIP( param, data.result );
                                 break;
+                            /*
+                            case "device_command":
+                            	console.log("device_command",data.result)
+                            	break;
+                            */
                         }
                     }
                     else if( data.error_code !== undefined )

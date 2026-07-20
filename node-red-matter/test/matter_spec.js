@@ -68,25 +68,38 @@ describe( 'matter data handling', function () {
       let callback = sinon.spy();
       matter.sendCommand("Rocky","rvc.clean",null,callback);
       callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
+      callback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
+    }
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Rocky","rvc.clean",["Bad OG"],callback);
+      callback.should.be.calledTwice();
+      callback.should.be.calledWith("device_command","SelectAreas",{node_id:8,endpoint_id:1,cluster_id:336,command_name:'SelectAreas',payload:{newAreas:[1]}});
+      callback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
     }
     {
       let callback = sinon.spy();
       matter.sendCommand("Rocky","rvc.stop",null,callback);
       callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:0}});
+      callback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:0}});
     }
     {
       let callback = sinon.spy();
       matter.sendCommand("Rocky","rvc.gohome",null,callback);
       callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'GoHome',payload:{}});
+      callback.should.be.calledWith("device_command","GoHome",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'GoHome',payload:{}});
     }
     {
       let callback = sinon.spy();
       matter.sendCommand("Rocky","rvc.resume",null,callback);
       callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'Resume',payload:{}});
+      callback.should.be.calledWith("device_command","Resume",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'Resume',payload:{}});
+    }
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Rocky","rvc.selectareas",[],callback);
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("device_command","SelectAreas",{node_id:8,endpoint_id:1,cluster_id:336,command_name:'SelectAreas',payload:{newAreas:[]}});
     }
     {
       let callback = sinon.spy();

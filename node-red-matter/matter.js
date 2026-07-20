@@ -171,17 +171,65 @@ class MatterData {
 
     sendCommand(topic,command,data,sendCommand)
     {
-        const id = this._namesLut[topic];
+        const id       = this._namesLut[topic];
+        if( id === undefined )
+        {
+            throw new Error( "unknown node " + topic );
+        }
+        const internal = this._dataById[id.node].internal[id.endpoint];
 
         function sendDeviceCommand(cluster,command,data={})
         {
-            sendCommand( "device_command", "", {
+            sendCommand( "device_command", command, {
                 "node_id":      id.node,
                 "endpoint_id":  id.endpoint,
                 "cluster_id":   cluster,
                 "command_name": command,
                 "payload":      data
             } );
+        }
+
+        function convertAreas(areas)
+        {
+            function area2id(area)
+            {
+                for( const id in internal.supportedAreas )
+                {
+                    if( id == area || internal.supportedAreas[id] == area )
+                        return Number( id );
+                }
+                console.log(internal.supportedAreas)
+                throw new Error( "invalid area " + area );
+            }
+
+            let help = [];
+            switch( typeof areas )
+            {
+                case "number":
+                case "string":
+                    help.push( area2id( areas ) );
+                    break;
+                case "object":
+                    if( Array.isArray( areas ) )
+                    {
+                        for( const i in areas )
+                        {
+                            help.push( area2id( areas[i] ) );
+                        }
+                    }
+                    else
+                    {
+                        for( const i in areas )
+                        {
+                            if( areas[i] )
+                            {
+                                help.push( area2id( i ) );
+                            }
+                        }
+                    }
+                    break;
+            }
+            return help;
         }
 
         switch( command )

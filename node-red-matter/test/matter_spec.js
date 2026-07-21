@@ -118,12 +118,75 @@ describe( 'matter data handling', function () {
     }
     {
       let callback = sinon.spy();
+      should(function(){matter.sendCommand("FooBar","rvc.stop",null,callback)}).throw();
+      callback.should.not.be.called();
+    }
+    {
+      let callback = sinon.spy();
       should(function(){matter.sendCommand("Rocky","foobar",null,callback)}).throw();
       callback.should.not.be.called();
     }
   });
 
-  it('should encrypt bthome messages with timestamp as counter', function () {
+  it('should work with shelly plus2pm', async function () {
+      let matter = new Matter();
+      matter.storeNodes( JSON.parse(plus2pm) );
+      matter.should.have.a.property("_dataById");
+      matter._dataById.should.have.a.property("12");
+      matter._dataById[12].should.have.a.property("online",false);
+      matter._dataById[12].should.have.a.property("time",1784459509075);
+      matter._dataById[12].should.have.a.property("make","Shelly");
+      matter._dataById[12].should.have.a.property("model","Shelly 2PM Gen3");
+      matter._dataById[12].should.have.a.property("label","");
+      matter._dataById[12].should.have.a.property("name","Shelly_E4B32322A954");
+      matter._dataById[12].should.have.a.property("internal",{
+        '1': {name: 'Shelly_E4B32322A954/1' },
+        '2': {name: 'Shelly_E4B32322A954/2' }
+      });
+      matter._dataById[12].should.have.a.property("data",{
+        '1': { output: false, power: 0, energy: 0, returned_energy: 0 },
+        '2': { output: false, power: 0, energy: 0, returned_energy: 0 }
+      });
+      matter._dataById[12].should.not.have.a.property("ip4");
+      matter._dataById[12].should.not.have.a.property("ip6");
+      matter.should.have.a.property("_namesLut",{
+        'Shelly_E4B32322A954/1': { node: 12, endpoint: 1 },
+        'Shelly_E4B32322A954/2': { node: 12, endpoint: 2 }
+      });
+      matter.should.have.a.property("_changed",{12:true});
+      //
+    {
+      let callback = sinon.spy();
+      matter.sendChanged( callback );
+      callback.should.not.be.called();
+    }
+      matter.should.have.a.property("_changed",{12:false});
+      //
+    {
+      let callback = sinon.spy();
+      matter.forAllIds( callback );
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("12");
+    }
+      //
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Shelly_E4B32322A954/1","onoff.on",null,callback);
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("device_command","On",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'On',payload:{}});
+    }
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Shelly_E4B32322A954/1","onoff.off",null,callback);
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("device_command","Off",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'Off',payload:{}});
+    }
+    {
+      let callback = sinon.spy();
+      matter.sendCommand("Shelly_E4B32322A954/2","onoff.toggle",null,callback);
+      callback.should.be.calledOnce();
+      callback.should.be.calledWith("device_command","Toggle",{node_id:12,endpoint_id:2,cluster_id:6,command_name:'Toggle',payload:{}});
+    }
   });
 
 });

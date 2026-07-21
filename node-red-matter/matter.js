@@ -146,6 +146,9 @@ class MatterData {
                         break;
                 }
                 break;
+            case "70": // Icd Management+
+                item.icd = true;
+                break;
             case "84": // RVC Run Mode
                 switch( attribute )
                 {

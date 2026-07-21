@@ -55,11 +55,13 @@ describe( 'matter_server Node', function () {
   it('should connect and get data', function (done) {
     this.timeout( 10000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"],["n5"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
-                { id: "n4", type: "helper", z: "flow" }];
+                { id: "n4", type: "helper", z: "flow" },
+                { id: "n5", type: "helper", z: "flow" }];
     helper.load([node], flow, async function () {
+      var n5 = helper.getNode("n5");
       var n4 = helper.getNode("n4");
       var n3 = helper.getNode("n3");
       var n2 = helper.getNode("n2");
@@ -67,6 +69,7 @@ describe( 'matter_server Node', function () {
       var c1 = 0;
       var c2 = 0;
       var c3 = 0;
+      var c4 = 0;
       var actualState;
       n2.on("input", function (msg) {
         //console.log(msg);
@@ -100,6 +103,17 @@ describe( 'matter_server Node', function () {
           done(err);
         }
       });
+      n5.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.property('topic').which.is.a.String();
+          msg.should.not.have.property('payload');
+          ++c4;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
       try{
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('host', 'localhost');
@@ -114,6 +128,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 0 );
+        c4.should.match( 0 );
         n1.receive({ topic:"open" });
         await delay(150);
         n1.warn.should.have.callCount(0);
@@ -122,6 +137,7 @@ describe( 'matter_server Node', function () {
         c1.should.be.above( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
+        c4.should.match( 2 );
         let c1_soll = c1;
         n1.receive({ topic:"open" }); // 2nd
         await delay(50);
@@ -131,6 +147,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 5 );
+        c4.should.match( 2 );
         await delay(6000);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
@@ -139,6 +156,7 @@ describe( 'matter_server Node', function () {
         c1_soll = c1;
         c2.should.match( 0 );
         c3.should.match( 5 );
+        c4.should.match( 2 );
         n1.should.have.a.property("matter");
 
         for( const i in n1.matter._dataById )
@@ -167,6 +185,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 7 );
+        c4.should.match( 2 );
         done();
       }
       catch(err) {

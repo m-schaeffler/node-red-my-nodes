@@ -146,7 +146,7 @@ class MatterData {
                         break;
                 }
                 break;
-            case "70": // Icd Management+
+            case "70": // Icd Management
                 item.icd = true;
                 break;
             case "84": // RVC Run Mode
@@ -329,7 +329,7 @@ class MatterData {
         }
     }
 
-    sendChanged(sendData)
+    sendChanged(sendData,sendTimeout)
     {
         for( const i in this._changed )
         {
@@ -343,6 +343,7 @@ class MatterData {
                     {
                         sendData( n.internal[e].name, n.data[e] );
                     }
+                    sendTimeout( n.name );
                 }
             }
         }

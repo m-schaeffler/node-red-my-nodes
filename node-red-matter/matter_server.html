@@ -1,7 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('matterServer',{
         category: 'input',
-        color: '#0fcdf8',
+        color: '#008B8B',
         defaults: {
             name: {value:""},
             host: {value:"", required:true},
@@ -11,7 +11,7 @@
             contextVar:{value:""},
         },
         inputs:1,
-        outputs:3,
+        outputs:4,
         icon: "matter.svg",
         label: function() {
             return this.name||this.host||"Matter Server";
@@ -21,7 +21,7 @@
         },
         paletteLabel: "Matter",
         inputLabels: 'command',
-        outputLabels: ['received data','received events','state']
+        outputLabels: ['received data','received events','state','node timeout']
     });
 </script>
 

@@ -46,15 +46,18 @@ describe( 'matter data handling', function () {
       matter.should.have.a.property("_changed",{8:true});
       //
     {
-      let callback = sinon.spy();
-      matter.sendChanged( callback );
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("Rocky",{
+      let callback1 = sinon.spy();
+      let callback2 = sinon.spy();
+      matter.sendChanged( callback1, callback2 );
+      callback1.should.be.calledOnce();
+      callback1.should.be.calledWith("Rocky",{
           runMode:'Idle',
           cleanMode: 'Auto, Vacuum and Mop',
           state: 'Docked',
           errors: [],
           selectedAreas: [] });
+      callback2.should.be.calledOnce();
+      callback2.should.be.calledWith("Rocky");
     }
       matter.should.have.a.property("_changed",{8:false});
       //
@@ -156,9 +159,11 @@ describe( 'matter data handling', function () {
       matter.should.have.a.property("_changed",{12:true});
       //
     {
-      let callback = sinon.spy();
-      matter.sendChanged( callback );
-      callback.should.not.be.called();
+      let callback1 = sinon.spy();
+      let callback2 = sinon.spy();
+      matter.sendChanged( callback1, callback2 );
+      callback1.should.not.be.called();
+      callback2.should.not.be.called();
     }
       matter.should.have.a.property("_changed",{12:false});
       //

@@ -16,6 +16,7 @@ module.exports = function(RED) {
         this.socket     = null;
         this.timStartup = null;
         this.timRecv    = null;
+        this.timReopen  = null;
         node.status( "" );
 
         function doSetState(state,color,text)
@@ -30,7 +31,8 @@ module.exports = function(RED) {
             node.send( [
                 null,
                 null,
-                { topic:"matter", payload:state }
+                { topic:"matter", payload:state },
+                null
             ] );
         }
 
@@ -90,6 +92,8 @@ module.exports = function(RED) {
                                 clearTimeout( node.timStartup );
                                 node.socket.close();
                             }
+                            clearTimeout( node.timReopen );
+                            node.timReopen = null;
                             node.socket = new WebSocket( `ws://${node.host}:${node.port}/ws` );
                             node.socket.addEventListener( 'open',    wsConnected );
                             node.socket.addEventListener( 'message', wsReceived  );
@@ -114,7 +118,9 @@ module.exports = function(RED) {
                     if( node.socket )
                     {
                         clearTimeout( node.timStartup );
+                        clearTimeout( node.timReopen );
                         node.timStartup = null;
+                        node.timReopen  = null;
                         node.socket.close();
                         node.socket = null;
                         setStatus( "closing" );
@@ -234,6 +240,9 @@ module.exports = function(RED) {
                                 node.warn( data.event );
                                 node.matter.deleteNode( data.data );
                                 break;
+                            case "server_shutdown":
+                            	node.timRestart = setTimeout( wsRestart, 5000 );
+                            	break;
                             case undefined:
                                 node.error( "invalid message", data );
                                 break;
@@ -249,7 +258,15 @@ module.exports = function(RED) {
                 node.send( [
                     { topic: node.statusPrefix+name, payload: data },
                     null,
+                    null,
                     null
+                ] );
+            }, function(name){
+                node.send( [
+                    null,
+                    null,
+                    null,
+                    { topic: name }
                 ] );
             } );
         }
@@ -292,8 +309,15 @@ module.exports = function(RED) {
             node.send( [
                 null,
                 null,
-                { topic:"matter", payload:"timeout" }
+                { topic:"matter", payload:"timeout" },
+                null
             ] );
+        }
+
+        function wsRestart()
+        {
+            console.log('WebSocket restart');
+            node.emit( "input", { topic: "open" } );
         }
 
         node.on('close', function() {
@@ -307,6 +331,7 @@ module.exports = function(RED) {
             }
             clearTimeout( node.timStartup );
             clearTimeout( node.timRecv );
+            clearTimeout( node.timReopen );
         });
     }
 

@@ -135,7 +135,7 @@ describe( 'matter_shelly_sim Node', function () {
     });
   });
 
-  it('should convert output messages with comples data', function (done) {
+  it('should convert output messages with complex data', function (done) {
     var flow = [{ id: "n1", type: "matterShellySim", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -287,7 +287,7 @@ describe( 'matter_shelly_sim Node', function () {
     });
   });
 
-  it('should convert light messages with comples data', function (done) {
+  it('should convert light messages with complex data', function (done) {
     var flow = [{ id: "n1", type: "matterShellySim", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {

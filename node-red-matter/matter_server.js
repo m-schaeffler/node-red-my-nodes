@@ -131,12 +131,28 @@ module.exports = function(RED) {
                         setStatus( "closed" );
                     }
                     break;
-                default:
-                    if( node.state != "connected" )
+                case "get_thread_border_routers":
+                    if( node.state == "connected" )
+                    {
+                         sendCommand( "get_thread_border_routers" );
+                    }
+                    else
                     {
                         node.error( `cannot send in ${node.state} state` );
                     }
+                    break;
+                case "get_thread_diagnostics":
+                    if( node.state == "connected" )
+                    {
+                         sendCommand( "get_thread_diagnostics", { force: true } );
+                    }
                     else
+                    {
+                        node.error( `cannot send in ${node.state} state` );
+                    }
+                    break;
+                default:
+                    if( node.state == "connected" )
                     {
                         try
                         {
@@ -146,6 +162,10 @@ module.exports = function(RED) {
                         {
                             node.error( err.message );
                         }
+                    }
+                    else
+                    {
+                        node.error( `cannot send in ${node.state} state` );
                     }
             }
             done();
@@ -212,6 +232,12 @@ module.exports = function(RED) {
                             	console.log("device_command",data.result)
                             	break;
                             */
+                            case "get_thread_border_routers":
+                                node.warn(data.result);
+                                break;
+                            case "get_thread_diagnostics":
+                                node.warn(data.result);
+                                break;
                         }
                     }
                     else if( data.error_code !== undefined )

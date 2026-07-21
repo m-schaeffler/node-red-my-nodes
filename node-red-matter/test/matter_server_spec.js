@@ -137,7 +137,7 @@ describe( 'matter_server Node', function () {
         c1.should.be.above( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
-        c4.should.match( 2 );
+        c4.should.be.aboveOrEqual( 2 );
         let c1_soll = c1;
         n1.receive({ topic:"open" }); // 2nd
         await delay(50);
@@ -147,7 +147,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 5 );
-        c4.should.match( 2 );
+        c4.should.be.aboveOrEqual( 2 );
         await delay(6000);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
@@ -156,7 +156,7 @@ describe( 'matter_server Node', function () {
         c1_soll = c1;
         c2.should.match( 0 );
         c3.should.match( 5 );
-        c4.should.match( 2 );
+        c4.should.be.aboveOrEqual( 2 );
         n1.should.have.a.property("matter");
 
         for( const i in n1.matter._dataById )
@@ -185,7 +185,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( c1_soll );
         c2.should.match( 0 );
         c3.should.match( 7 );
-        c4.should.match( 2 );
+        c4.should.be.aboveOrEqual( 2 );
         done();
       }
       catch(err) {

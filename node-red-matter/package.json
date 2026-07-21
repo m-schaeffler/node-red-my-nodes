@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-matterserver",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Node Red nodes to do Matter communication via a matter.js server",
     "author": {
         "name": "Mathias Schäffler",

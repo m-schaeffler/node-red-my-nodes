@@ -258,7 +258,15 @@ class MatterData {
 
     handleEvent(data)
     {
-        console.log(data)
+        switch( data.cluster_id )
+        {
+            case 40:
+            case 51:
+            case 145:
+                break;
+            default:
+                console.log(data);
+        }
     }
 
     storeNode(n)

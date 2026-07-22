@@ -347,6 +347,7 @@ class MatterData {
         {
             case 40:
             case 51:
+            case 56:
             case 145:
                 break;
             default:
@@ -560,13 +561,25 @@ class MatterData {
 
     timeSync()
     {
-        const utc = Math.round( Temporal.Now.zonedDateTimeISO().since( Temporal.ZonedDateTime.from({year:2000,month:1,day:1,timeZone:'utc'}) ).total( "microseconds" ) );
+        const now        = Temporal.Now.zonedDateTimeISO();
+        const epoch      = Temporal.ZonedDateTime.from({year:2000,month:1,day:1,timeZone:'utc'});
+        const utc        = Math.round( now.since( epoch ).total( "microseconds" ) );
+        const far_future = Math.round( now.add({ years:1 }).since( epoch ).total( "microseconds" ) );
+        const utc_offset = Math.round( Temporal.Now.zonedDateTimeISO().offsetNanoseconds / 1_000_000_000 );
+        const dst_offset = 0
+        const tz_list    = [{ offset: utc_offset, validAt: 0 }];
+        const dst_list   = [{ offset: dst_offset, validStarting: 0, validUntil: far_future }];
         for( const i in this._dataById )
         {
             const n = this._dataById[i];
             if( n.timeSync )
             {
                 console.log("time sync",n.name)
+                // Set TimeZone FIRST
+                this.sendDeviceCommand( i, 0, MatterClusters.TimeSynchronization, "SetTimeZone", { timeZone:tz_list } );
+                // Set DST Offset SECOND
+                this.sendDeviceCommand( i, 0, MatterClusters.TimeSynchronization, "SetDSTOffset", { dstOffset:dst_list } );
+                // Set UTC Time LAST
                 this.sendDeviceCommand( i, 0, MatterClusters.TimeSynchronization, "SetUTCTime", { utcTime:utc, granularity:4 } );
             }
         }

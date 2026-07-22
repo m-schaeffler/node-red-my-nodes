@@ -138,113 +138,132 @@ class MatterData {
                             break;
                     }
                     break;
-            case "69": // BooleanStateswitch( attribute )
-                switch( attribute )
-                {
-                    case "0": // StateValue
-                        setDataValue( "sensor", value );
-                        break;
-                }
-                break;
-            case "70": // Icd Management
-                item.icd = true;
-                break;
-            case "84": // RVC Run Mode
-                switch( attribute )
-                {
-                    case "0": // SupportedModes
-                        setInternalMode( "supportedRunModes", value );
-                        break;
-                    case "1": // Current­Mode
-                        setDataValue( "runMode", item.internal[endpoint].supportedRunModes[value] );
-                        break;
-                }
-                break;
-            case "85": // RVC Clean Mode
-                switch( attribute )
-                {
-                    case "0": // SupportedModes
-                        setInternalMode( "supportedCleanModes", value );
-                        break;
-                    case "1": // Current­Mode
-                        setDataValue( "cleanMode", item.internal[endpoint].supportedCleanModes[value] );
-                        break;
-                }
-                break;
-            case "97": // RVC Operational State
-                switch( attribute )
-                {
-                    case "4": // OperationalState
-                        setDataValue( "state", OperationalStateEnum[value] );
-                        break;
-                    case "5": // OperationalError
-                        setDataValue( "errors", convertErrors( value ) );
-                        break;
-                }
-                break;
-            case "128": // Boolean State Configuration
-                switch( attribute )
-                {
-                    case "7": // Sensor­Fault
-                        setDataValue( "errors", value ? ["GeneralFault"] : [] );
-                        break;
-                }
-                break;
-            case "144": // Electrical Power Measurement
-                switch( attribute )
-                {
-                    case "8": // ActivePower
-                        setDataValue( "power", value / 1000 );
-                        break;
-                }
-                break;
-            case "145": // Electrical Energy Measurement
-                switch( attribute )
-                {
-                    case "1": // CumulativeEnergyImported
-                        setDataValue( "energy", value["0"] / 1000 );
-                        break;
-                    case "2": // CumulativeEnergyExported
-                        setDataValue( "returned_energy", value["0"] / 1000 );
-                        break;
-                }
-                break;
-            case "258": // Window Covering
-                switch( attribute )
-                {
-                    case "8": // CurrentPositionLiftPercentage
-                        setDataValue( "pos", value !== null ? 100 - value : null );
-                        break;
-                    case "9": // CurrentPositionTiltPercentage
-                        setDataValue( "tilt", value );
-                        break;
-                    case "10": // OperationalStatus
-                        setDataValue( "output", OperationalStatusBitmap_Global[ value & 0x03 ] );
-                        break;
-                }
-                break;
-            case "336": // Service Area
-                switch( attribute )
-                {
-                    case "0": // SupportedAreas
-                        item.internal[endpoint].supportedAreas = {};
-                        for( const v in value )
-                        {
-                            item.internal[endpoint].supportedAreas[value[v][0]] = value[v][2][0][0];
-                        }
-                        break;
-                    case "2": // SelectedAreas
-                      {
-                        let selectedAreas = [];
-                        for( const a of value )
-                        {
-                            selectedAreas.push( item.internal[endpoint].supportedAreas[a] );
-                        }
-                        setDataValue( "selectedAreas", selectedAreas );
-                      }
-                        break;
-                }
-                break;
+                case "56": // TimeSynchronization
+                    item.timeSync = true;
+                    break;
+                case "69": // BooleanStateswitch( attribute )
+                    switch( attribute )
+                    {
+                        case "0": // StateValue
+                            setDataValue( "sensor", value );
+                            break;
+                    }
+                    break;
+                case "70": // Icd Management
+                    item.icd = true;
+                    break;
+                case "84": // RVC Run Mode
+                    switch( attribute )
+                    {
+                        case "0": // SupportedModes
+                            setInternalMode( "supportedRunModes", value );
+                            break;
+                        case "1": // Current­Mode
+                            setDataValue( "runMode", item.internal[endpoint].supportedRunModes[value] );
+                            break;
+                    }
+                    break;
+                case "85": // RVC Clean Mode
+                    switch( attribute )
+                    {
+                        case "0": // SupportedModes
+                            setInternalMode( "supportedCleanModes", value );
+                            break;
+                        case "1": // Current­Mode
+                            setDataValue( "cleanMode", item.internal[endpoint].supportedCleanModes[value] );
+                            break;
+                    }
+                    break;
+                case "97": // RVC Operational State
+                    switch( attribute )
+                    {
+                        case "4": // OperationalState
+                            setDataValue( "state", OperationalStateEnum[value] );
+                            break;
+                        case "5": // OperationalError
+                            setDataValue( "errors", convertErrors( value ) );
+                            break;
+                    }
+                    break;
+                case "128": // Boolean State Configuration
+                    switch( attribute )
+                    {
+                        case "7": // Sensor­Fault
+                            setDataValue( "errors", value ? ["GeneralFault"] : [] );
+                            break;
+                    }
+                    break;
+                case "144": // Electrical Power Measurement
+                    switch( attribute )
+                    {
+                        case "8": // ActivePower
+                            setDataValue( "power", value / 1000 );
+                            break;
+                    }
+                    break;
+                case "145": // Electrical Energy Measurement
+                    switch( attribute )
+                    {
+                        case "1": // CumulativeEnergyImported
+                            setDataValue( "energy", value["0"] / 1000 );
+                            break;
+                        case "2": // CumulativeEnergyExported
+                            setDataValue( "returned_energy", value["0"] / 1000 );
+                            break;
+                    }
+                    break;
+                case "258": // Window Covering
+                    switch( attribute )
+                    {
+                        case "8": // CurrentPositionLiftPercentage
+                            setDataValue( "pos", value !== null ? 100 - value : null );
+                            break;
+                        case "9": // CurrentPositionTiltPercentage
+                            setDataValue( "tilt", value );
+                            break;
+                        case "10": // OperationalStatus
+                            setDataValue( "output", OperationalStatusBitmap_Global[ value & 0x03 ] );
+                            break;
+                    }
+                    break;
+                case "336": // Service Area
+                    switch( attribute )
+                    {
+                        case "0": // SupportedAreas
+                            item.internal[endpoint].supportedAreas = {};
+                            for( const v in value )
+                            {
+                                item.internal[endpoint].supportedAreas[value[v][0]] = value[v][2][0][0];
+                            }
+                            break;
+                        case "2": // SelectedAreas
+                          {
+                            let selectedAreas = [];
+                            for( const a of value )
+                            {
+                                selectedAreas.push( item.internal[endpoint].supportedAreas[a] );
+                            }
+                            setDataValue( "selectedAreas", selectedAreas );
+                          }
+                            break;
+                    }
+                    break;
+                case "1026": // TemperatureMeasurement
+                    switch( attribute )
+                    {
+                        case "0": // MeasuredValue
+                            setDataValue( "temperature", value !== null ? value / 100 : null );
+                            break;
+                    }
+                    break;
+                case "1029": // RelativeHumidityMeasurement
+                    switch( attribute )
+                    {
+                        case "0": // MeasuredValue
+                            setDataValue( "humidity", value !== null ? value / 100 : null );
+                            break;
+                    }
+                    break;
             }
         }
     }

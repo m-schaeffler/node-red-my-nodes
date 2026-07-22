@@ -57,14 +57,14 @@ class AirQualityEnum {
 Object.freeze(AirQualityEnum)
 
 class MeasurementUnitEnum {
-    static 0 = "PPM"; // Parts per Million (106) MEA
-    static 1 = "PPB"; // Parts per Billion (109) MEA
-    static 2 = "PPT"; // Parts per Trillion (1012) MEA
-    static 3 = "MGM3"; // Milligram per m3 MEA
-    static 4 = "UGM3"; // Microgram per m3 MEA
-    static 5 = "NGM3"; // Nanogram per m3 MEA
-    static 6 = "PM3"; // Particles per m3 MEA
-    static 7 = "BQM3"; // Becquerel per m3
+    static 0 = "ppm";   // Parts per Million (106) MEA
+    static 1 = "ppb";   // Parts per Billion (109) MEA
+    static 2 = "ppt";   // Parts per Trillion (1012) MEA
+    static 3 = "mg/m³"; // Milligram per m3 MEA
+    static 4 = "µg/m³"; // Microgram per m3 MEA
+    static 5 = "ng/m³"; // Nanogram per m3 MEA
+    static 6 = "1/m³";  // Particles per m3 MEA
+    static 7 = "Bq/m³"; // Becquerel per m3
 }
 Object.freeze(MeasurementUnitEnum)
 
@@ -214,7 +214,7 @@ class MatterData {
                             setDataValue( "state", OperationalStateEnum[value] );
                             break;
                         case "5": // OperationalError
-                            setDataValue( "errors", convertErrors( value ) );
+                            setDataValue( "stateErrors", convertErrors( value ) );
                             break;
                     }
                     break;
@@ -222,7 +222,7 @@ class MatterData {
                     switch( attribute )
                     {
                         case "7": // Sensor­Fault
-                            setDataValue( "errors", value ? ["GeneralFault"] : [] );
+                            setDataValue( "sensorErrors", value ? ["GeneralFault"] : [] );
                             break;
                     }
                     break;

@@ -39,7 +39,7 @@ describe( 'matter data handling', function () {
           runMode:'Idle',
           cleanMode: 'Auto, Vacuum and Mop',
           state: 'Docked',
-          errors: [],
+          stateErrors: [],
           selectedAreas: [] }});
       matter._dataById[8].should.not.have.a.property("ip4");
       matter._dataById[8].should.not.have.a.property("ip6");
@@ -55,7 +55,7 @@ describe( 'matter data handling', function () {
           runMode:'Idle',
           cleanMode: 'Auto, Vacuum and Mop',
           state: 'Docked',
-          errors: [],
+          stateErrors: [],
           selectedAreas: [] });
       callback2.should.be.calledOnce();
       callback2.should.be.calledWith("Rocky");

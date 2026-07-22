@@ -73,6 +73,7 @@ Object.freeze(MeasurementUnitEnum)
 class MatterClusters {
     static OnOff               = 0x0006;
     static LevelControl        = 0x0008;
+    static TimeSynchronization = 0x0038;
     static RvcRunMode          = 0x0054;
     static RvcOperationalState = 0x0061;
     static WindowCovering      = 0x0102;
@@ -83,11 +84,12 @@ Object.freeze(MatterClusters);
 // MatterData
 
 class MatterData {
-    constructor()
+    constructor(sendCallback)
     {
         this._dataById = {};
         this._namesLut = {};
         this._changed  = {};
+        this.sendCommandCallback = sendCallback;
     }
 
     _doSetAttribute(id,attr,value)
@@ -440,25 +442,25 @@ class MatterData {
         }
     }
 
-    sendCommand(topic,command,data,sendCommand)
+    sendDeviceCommand(node,endpoint,cluster,command,data={})
     {
-        const id       = this._namesLut[topic];
+        this.sendCommandCallback( "device_command", command, {
+            "node_id":      node,
+            "endpoint_id":  endpoint,
+            "cluster_id":   cluster,
+            "command_name": command,
+            "payload":      data
+        } );
+    }
+
+    sendCommand(topic,command,data)
+    {
+        const id = this._namesLut[topic];
         if( id === undefined )
         {
             throw new Error( "unknown node " + topic );
         }
         const internal = this._dataById[id.node].internal[id.endpoint];
-
-        function sendDeviceCommand(cluster,command,data={})
-        {
-            sendCommand( "device_command", command, {
-                "node_id":      id.node,
-                "endpoint_id":  id.endpoint,
-                "cluster_id":   cluster,
-                "command_name": command,
-                "payload":      data
-            } );
-        }
 
         function convertAreas(areas)
         {
@@ -506,53 +508,67 @@ class MatterData {
         switch( command )
         {
             case "onoff.on":
-                sendDeviceCommand( MatterClusters.OnOff, "On" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.OnOff, "On" );
                 break;
             case "onoff.off":
-                sendDeviceCommand( MatterClusters.OnOff, "Off" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.OnOff, "Off" );
                 break;
             case "onoff.toggle":
-                sendDeviceCommand( MatterClusters.OnOff, "Toggle" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.OnOff, "Toggle" );
                 break;
             case "levelcontrol.movetolevel":
-                sendDeviceCommand( MatterClusters.LevelControl, "MoveToLevel", data );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.LevelControl, "MoveToLevel", data );
                 break;
             case "rvc.clean":
                 if( data != null )
                 {
-                    sendDeviceCommand( MatterClusters.ServiceArea, "SelectAreas", { newAreas: convertAreas( data ) } );
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ServiceArea, "SelectAreas", { newAreas: convertAreas( data ) } );
                 }
-                sendDeviceCommand( MatterClusters.RvcRunMode, "ChangeToMode", { newMode: 1 } );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcRunMode, "ChangeToMode", { newMode: 1 } );
                 break;
             case "rvc.stop":
-                sendDeviceCommand( MatterClusters.RvcRunMode, "ChangeToMode", { newMode: 0 });
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcRunMode, "ChangeToMode", { newMode: 0 });
                 break;
             case "rvc.gohome":
-                sendDeviceCommand( MatterClusters.RvcOperationalState, "GoHome" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcOperationalState, "GoHome" );
                 break;
             case "rvc.pause":
-                sendDeviceCommand( MatterClusters.RvcOperationalState, "Pause" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcOperationalState, "Pause" );
                 break;
             case "rvc.resume":
-                sendDeviceCommand( MatterClusters.RvcOperationalState, "Resume" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcOperationalState, "Resume" );
                 break;
             case "rvc.selectareas":
-                sendDeviceCommand( MatterClusters.ServiceArea, "SelectAreas", { newAreas: convertAreas( data ) } );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ServiceArea, "SelectAreas", { newAreas: convertAreas( data ) } );
                 break;
             case "windowcovering.open":
-                sendDeviceCommand( MatterClusters.WindowCovering, "UpOrOpen" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.WindowCovering, "UpOrOpen" );
                 break;
             case "windowcovering.close":
-                sendDeviceCommand( MatterClusters.WindowCovering, "DownOrClose" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.WindowCovering, "DownOrClose" );
                 break;
             case "windowcovering.stop":
-                sendDeviceCommand( MatterClusters.WindowCovering, "StopMotion" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.WindowCovering, "StopMotion" );
                 break;
             case "windowcovering.gotolift":
-                sendDeviceCommand( MatterClusters.WindowCovering, "GoToLiftPercentage", { liftPercent100thsValue: (100-data)*100 } );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.WindowCovering, "GoToLiftPercentage", { liftPercent100thsValue: (100-data)*100 } );
                 break;
             default:
                 throw new Error( "not implemented "+command );
+        }
+    }
+
+    timeSync()
+    {
+        const utc = Math.round( Temporal.Now.zonedDateTimeISO().since( Temporal.ZonedDateTime.from({year:2000,month:1,day:1,timeZone:'utc'}) ).total( "microseconds" ) );
+        for( const i in this._dataById )
+        {
+            const n = this._dataById[i];
+            if( n.timeSync )
+            {
+                console.log("time sync",n.name)
+                this.sendDeviceCommand( i, 0, MatterClusters.TimeSynchronization, "SetUTCTime", { utcTime:utc, granularity:4 } );
+            }
         }
     }
 }

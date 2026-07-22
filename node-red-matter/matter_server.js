@@ -11,7 +11,7 @@ module.exports = function(RED) {
         this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar ?? "";
-        this.matter     = new Matter();
+        this.matter     = new Matter( sendCommand );
         this.state      = "closed";
         this.socket     = null;
         this.timStartup = null;
@@ -56,7 +56,7 @@ module.exports = function(RED) {
 
         function sendCommand(command,id="",args={})
         {
-            //console.log("send command "+command+" "+id)
+            //console.log("send command "+command+" "+id,args)
             const payload = {
                 message_id: `${command}|${id}`,
                 command:    command,
@@ -151,12 +151,22 @@ module.exports = function(RED) {
                         node.error( `cannot send in ${node.state} state` );
                     }
                     break;
+                case "timeSync":
+                    if( node.state == "connected" )
+                    {
+                         node.matter.timeSync();
+                    }
+                    else
+                    {
+                        node.error( `cannot timesync in ${node.state} state` );
+                    }
+                    break;
                 default:
                     if( node.state == "connected" )
                     {
                         try
                         {
-                            node.matter.sendCommand( msg.topic, msg.payload.command, msg.payload.data, sendCommand );
+                            node.matter.sendCommand( msg.topic, msg.payload.command, msg.payload.data );
                         }
                         catch(err)
                         {

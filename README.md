@@ -14,6 +14,7 @@ The node red node packages are released in this repository:
 - [@mschaeffler/node-red-hourmeter](node-red-hourmeter/README.md)
 - [@mschaeffler/node-red-init](node-red-init/README.md)
 - [@mschaeffler/node-red-logic](node-red-logic/README.md)
+- [@mschaeffler/node-red-matter](node-red-matter/README.md)
 - [@mschaeffler/node-red-msg-resend](node-red-msg-resend/README.md)
 - [@mschaeffler/node-red-thermostat](node-red-thermostat/README.md)
 

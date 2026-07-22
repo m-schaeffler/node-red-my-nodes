@@ -173,8 +173,7 @@ describe( 'matter_server Node', function () {
           n.should.have.a.property("data").which.is.an.Object();
           if( n.label )
           {
-            n.should.have.a.property("ip4").which.is.a.String();
-            n.should.have.a.property("ip4").which.is.a.String();
+            n.should.have.a.property("ip6").which.is.a.String();
           }
         }
 
@@ -543,6 +542,99 @@ describe( 'matter_server Node', function () {
         await delay(200);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(2);
+        actualState.should.match( 'closed' );
+        c2.should.match( 0 );
+        c3.should.match( 6 );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should do time sync', function (done) {
+    this.timeout( 2500 );
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "n4", type: "helper", z: "flow" }];
+    helper.load([node], flow, async function () {
+      var n4 = helper.getNode("n4");
+      var n3 = helper.getNode("n3");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c1 = 0;
+      var c2 = 0;
+      var c3 = 0;
+      var actualState;
+      n2.on("input", function (msg) {
+        //console.log(msg);
+        try {
+          msg.should.have.property('topic').which.is.a.String();
+          msg.should.have.property('payload').which.is.an.Object();
+          ++c1;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n3.on("input", function (msg) {
+        console.log(msg);
+        try {
+          done("tbd")
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      n4.on("input", function (msg) {
+        console.log(msg.payload);
+        c3++;
+        try {
+          msg.should.have.property('topic','matter');
+          msg.should.have.property('payload').which.is.a.String();
+          actualState = msg.payload;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('host', 'localhost');
+        n1.should.have.a.property('port', 5580);
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('contextVar', "");
+        n1.should.have.a.property('state','closed');
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c1.should.match( 0 );
+        c2.should.match( 0 );
+        c3.should.match( 0 );
+        n1.receive({ topic:"open" });
+        await delay(150);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        actualState.should.match( 'connected' );
+        c1.should.be.above( 0 );
+        c2.should.match( 0 );
+        c3.should.match( 4 );
+        //
+        n1.receive({ topic:"timeSync" });
+        await delay(150);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c2.should.match( 0 );
+        c3.should.match( 4 );
+        //
+        n1.receive({ topic:"close" });
+        await delay(200);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
         actualState.should.match( 'closed' );
         c2.should.match( 0 );
         c3.should.match( 6 );

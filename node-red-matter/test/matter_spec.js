@@ -18,7 +18,8 @@ describe( 'matter data handling', function () {
   const flood   = '[{"node_id":15,"date_commissioned":"2026-07-18T15:01:57.003000","last_interview":"2026-07-19T13:11:49.075000","interview_version":6,"available":true,"is_bridge":false,"attributes":{"0/29/65533":2,"0/29/65532":0,"0/29/0":[{"0":22,"1":1}],"0/29/1":[29,31,40,42,48,49,51,54,60,62,63,70],"0/29/2":[41],"0/29/3":[1],"0/29/65531":[0,1,2,3,65528,65529,65530,65531,65532,65533],"0/29/65530":[],"0/29/65529":[],"0/29/65528":[],"0/31/1":[],"0/31/65533":1,"0/31/65532":0,"0/31/0":[{"1":5,"2":2,"3":[112233],"4":null,"254":1}],"0/31/2":4,"0/31/3":3,"0/31/4":4,"0/31/65531":[0,1,2,3,4,65528,65529,65530,65531,65532,65533],"0/31/65530":[0,1],"0/31/65529":[],"0/31/65528":[],"0/40/13":"http://shelly.com","0/40/18":"58E6C508A520","0/40/21":16973824,"0/40/22":1,"0/40/65533":3,"0/40/0":17,"0/40/1":"Shelly","0/40/2":5264,"0/40/3":"Shelly Flood","0/40/4":6178,"0/40/5":"","0/40/6":"XX","0/40/7":4,"0/40/8":"v4","0/40/9":16973889,"0/40/10":"1.3.0-s1","0/40/19":{"0":3,"1":3},"0/40/65532":0,"0/40/65531":[0,1,2,3,4,5,6,7,8,9,10,13,18,19,21,22,65528,65529,65530,65531,65532,65533],"0/40/65530":[0,1,2],"0/40/65529":[],"0/40/65528":[],"0/42/65533":1,"0/42/0":[],"0/42/1":true,"0/42/2":1,"0/42/3":null,"0/42/65532":0,"0/42/65531":[0,1,2,3,65528,65529,65530,65531,65532,65533],"0/42/65530":[0,1,2],"0/42/65529":[0],"0/42/65528":[],"0/48/65533":1,"0/48/65532":0,"0/48/0":0,"0/48/1":{"0":60,"1":900},"0/48/2":0,"0/48/3":0,"0/48/4":true,"0/48/65531":[0,1,2,3,4,65528,65529,65530,65531,65532,65533],"0/48/65530":[],"0/48/65529":[0,2,4],"0/48/65528":[1,3,5],"0/49/65532":1,"0/49/2":10,"0/49/3":15,"0/49/8":[0],"0/49/65533":2,"0/49/0":3,"0/49/1":[{"0":"T3BlbldydC1Jb1Q=","1":true}],"0/49/4":true,"0/49/5":null,"0/49/6":null,"0/49/7":null,"0/49/65531":[0,1,2,3,4,5,6,7,8,65528,65529,65530,65531,65532,65533],"0/49/65530":[],"0/49/65529":[0,2,4,6,8],"0/49/65528":[1,5,7],"0/51/4":0,"0/51/65533":2,"0/51/65532":0,"0/51/0":[{"0":"ws0","1":true,"2":null,"3":null,"4":"WObFCKUg","5":["wKgLtg=="],"6":["/oAAAAAAAABa5sX//gilIA=="],"7":1}],"0/51/1":32,"0/51/2":7,"0/51/8":false,"0/51/65531":[0,1,2,4,8,65528,65529,65530,65531,65532,65533],"0/51/65530":[0,1,2,3],"0/51/65529":[0,1],"0/51/65528":[2],"0/54/65533":1,"0/54/65532":0,"0/54/0":"1inz/ogr","0/54/1":4,"0/54/2":3,"0/54/3":1,"0/54/4":-55,"0/54/65531":[0,1,2,3,4,65528,65529,65530,65531,65532,65533],"0/54/65530":[],"0/54/65529":[],"0/54/65528":[],"0/60/65533":1,"0/60/65532":0,"0/60/0":0,"0/60/1":null,"0/60/2":null,"0/60/65531":[0,1,2,65528,65529,65530,65531,65532,65533],"0/60/65530":[],"0/60/65529":[0,2],"0/60/65528":[],"0/62/65533":1,"0/62/0":[{"1":"FTABAQIkAgE3AyQUABgmBEMCDTAmBcM4ukQ3BiQVASQRDxgkBwEkCAEwCUEEQIGQd0LUqvygvbrbH6xVRvAQHA+2ikIT6LBwWbWMtG1EWkivxT87q7l0uutodJHaj0vRm7DMXHS/Ex13q9FmOzcKNQEoARgkAgE2AwQCBAEYMAQU02SH2LAYbdfHhuEy+NvSOBg3+34wBRQ86QyBjSSJ40IN5wtGaRSh5bWxbhgwC0AN80t+4zh0ZeFWgMI/75ks/aSwOmgIsTA1cbjIgxBDyVBJ2RhFWrd7vTQ4ePmOdtZkHG/Woc1YaOYhH/rijYuoGA==","2":null,"254":1}],"0/62/1":[{"1":"BJCO3Fk6Ul2t/y7v+TWsXtPrwcz1XbuKwf9KDW/8ZZDLn1lakFhtLO80CHmoLLdQxjFEK0oDDep4XwguFqBMoOQ=","2":65521,"3":1,"4":15,"5":"FamSchaeffler","254":1}],"0/62/2":5,"0/62/3":1,"0/62/4":["FTABAQAkAgE3AyQUABgmBPK8/y8mBXLzrEQ3BiQUABgkBwEkCAEwCUEEkI7cWTpSXa3/Lu/5Naxe0+vBzPVdu4rB/0oNb/xlkMufWVqQWG0s7zQIeagst1DGMUQrSgMN6nhfCC4WoEyg5DcKNQEpARgkAmAwBBQ86QyBjSSJ40IN5wtGaRSh5bWxbjAFFDzpDIGNJInjQg3nC0ZpFKHltbFuGDALQPVuq7G5eILn6kQ4c7Uax43mnYtGnkrcQui8h5lS4Z9eo5f19bg219ssudUUn8HK7lUGawoSsx0iUVOGMNRt8O4Y"],"0/62/5":1,"0/62/65532":0,"0/62/65531":[0,1,2,3,4,5,65528,65529,65530,65531,65532,65533],"0/62/65530":[],"0/62/65529":[0,2,4,6,7,9,10,11],"0/62/65528":[1,3,5,8],"0/63/65533":2,"0/63/65532":0,"0/63/0":[],"0/63/1":[],"0/63/2":8,"0/63/3":3,"0/63/65531":[0,1,2,3,65528,65529,65530,65531,65532,65533],"0/63/65530":[],"0/63/65529":[0,1,3,4],"0/63/65528":[2,5],"0/70/65532":7,"0/70/3":[],"0/70/4":27433,"0/70/5":2,"0/70/6":4096,"0/70/8":1,"0/70/65533":2,"0/70/0":43200,"0/70/1":5000,"0/70/2":5000,"0/70/9":1,"0/70/65531":[0,1,2,3,4,5,6,8,65528,65529,65530,65531,65532,65533],"0/70/65530":[],"0/70/65529":[0,2,3],"0/70/65528":[1,4],"1/3/65533":4,"1/3/0":0,"1/3/1":2,"1/3/65532":0,"1/3/65531":[0,1,65528,65529,65530,65531,65532,65533],"1/3/65530":[],"1/3/65529":[0],"1/3/65528":[],"1/29/65533":2,"1/29/65532":0,"1/29/0":[{"0":67,"1":1}],"1/29/1":[3,29,69,128],"1/29/2":[],"1/29/3":[],"1/29/65531":[0,1,2,3,65528,65529,65530,65531,65532,65533],"1/29/65530":[],"1/29/65529":[],"1/29/65528":[],"1/69/65533":1,"1/69/65532":0,"1/69/0":false,"1/69/65531":[0,65528,65529,65530,65531,65532,65533],"1/69/65530":[],"1/69/65529":[],"1/69/65528":[],"1/128/65532":2,"1/128/3":0,"1/128/5":2,"1/128/6":2,"1/128/7":1,"1/128/65533":1,"1/128/65531":[3,5,6,7,65528,65529,65530,65531,65532,65533],"1/128/65530":[0],"1/128/65529":[1],"1/128/65528":[]},"attribute_subscriptions":[],"matter_version":"1.3.0"}]';
 
   it('should work with vaccum robot', async function () {
-      let matter = new Matter();
+      let sendCallback = sinon.spy();
+      let matter = new Matter( sendCallback );
       matter.storeNodes( JSON.parse(rvc) );
       matter.should.have.a.property("_dataById");
       matter._dataById.should.have.a.property("8");
@@ -82,57 +83,35 @@ describe( 'matter data handling', function () {
       matter._dataById[8].should.have.a.property("online",false);
       matter.should.have.a.property("_changed",{8:true});
       //
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Rocky","rvc.clean",null,callback);
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
-    }
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Rocky","rvc.clean",["Bad OG"],callback);
-      callback.should.be.calledTwice();
-      callback.should.be.calledWith("device_command","SelectAreas",{node_id:8,endpoint_id:1,cluster_id:336,command_name:'SelectAreas',payload:{newAreas:[1]}});
-      callback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
-    }
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Rocky","rvc.stop",null,callback);
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:0}});
-    }
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Rocky","rvc.gohome",null,callback);
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","GoHome",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'GoHome',payload:{}});
-    }
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Rocky","rvc.resume",null,callback);
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","Resume",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'Resume',payload:{}});
-    }
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Rocky","rvc.selectareas",[],callback);
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","SelectAreas",{node_id:8,endpoint_id:1,cluster_id:336,command_name:'SelectAreas',payload:{newAreas:[]}});
-    }
-    {
-      let callback = sinon.spy();
-      should(function(){matter.sendCommand("FooBar","rvc.stop",null,callback)}).throw();
-      callback.should.not.be.called();
-    }
-    {
-      let callback = sinon.spy();
-      should(function(){matter.sendCommand("Rocky","foobar",null,callback)}).throw();
-      callback.should.not.be.called();
-    }
+      matter.sendCommand("Rocky","rvc.clean",null);
+      sendCallback.should.be.calledOnce();
+      sendCallback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
+      //
+      matter.sendCommand("Rocky","rvc.clean",["Bad OG"]);
+      sendCallback.should.be.calledWith("device_command","SelectAreas",{node_id:8,endpoint_id:1,cluster_id:336,command_name:'SelectAreas',payload:{newAreas:[1]}});
+      sendCallback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
+      //
+      matter.sendCommand("Rocky","rvc.stop",null);
+      sendCallback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:0}});
+      //
+      matter.sendCommand("Rocky","rvc.gohome",null);
+      sendCallback.should.be.calledWith("device_command","GoHome",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'GoHome',payload:{}});
+      //
+      matter.sendCommand("Rocky","rvc.resume",null);
+      sendCallback.should.be.calledWith("device_command","Resume",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'Resume',payload:{}});
+      //
+      matter.sendCommand("Rocky","rvc.selectareas",[]);
+      sendCallback.should.be.calledWith("device_command","SelectAreas",{node_id:8,endpoint_id:1,cluster_id:336,command_name:'SelectAreas',payload:{newAreas:[]}});
+      //
+      should(function(){matter.sendCommand("FooBar","rvc.stop",null)}).throw();
+      //
+      should(function(){matter.sendCommand("Rocky","foobar",null)}).throw();
+      sendCallback.should.have.callCount( 7 );
   });
 
   it('should work with shelly plus2pm', async function () {
-      let matter = new Matter();
+      let sendCallback = sinon.spy();
+      let matter = new Matter( sendCallback );
       matter.storeNodes( JSON.parse(plus2pm) );
       matter.should.have.a.property("_dataById");
       matter._dataById.should.have.a.property("12");
@@ -174,24 +153,16 @@ describe( 'matter data handling', function () {
       callback.should.be.calledWith("12");
     }
       //
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Shelly_E4B32322A954/1","onoff.on",null,callback);
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","On",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'On',payload:{}});
-    }
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Shelly_E4B32322A954/1","onoff.off",null,callback);
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","Off",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'Off',payload:{}});
-    }
-    {
-      let callback = sinon.spy();
-      matter.sendCommand("Shelly_E4B32322A954/2","onoff.toggle",null,callback);
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("device_command","Toggle",{node_id:12,endpoint_id:2,cluster_id:6,command_name:'Toggle',payload:{}});
-    }
+      matter.sendCommand("Shelly_E4B32322A954/1","onoff.on",null);
+      sendCallback.should.be.calledOnce();
+      sendCallback.should.be.calledWith("device_command","On",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'On',payload:{}});
+      //
+      matter.sendCommand("Shelly_E4B32322A954/1","onoff.off",null);
+      sendCallback.should.be.calledWith("device_command","Off",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'Off',payload:{}});
+      //
+      matter.sendCommand("Shelly_E4B32322A954/2","onoff.toggle",null);
+      sendCallback.should.be.calledWith("device_command","Toggle",{node_id:12,endpoint_id:2,cluster_id:6,command_name:'Toggle',payload:{}});
+      sendCallback.should.have.callCount( 3 );
   });
 
 });

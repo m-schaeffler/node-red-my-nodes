@@ -45,6 +45,29 @@ class OperationalStatusBitmap_Global {
 }
 Object.freeze(OperationalStatusBitmap_Global)
 
+class AirQualityEnum {
+    static 0 = "Unknown";
+    static 1 = "Good";
+    static 2 = "Fair";
+    static 3 = "Moderate";
+    static 4 = "Poor";
+    static 5 = "VeryPoor";
+    static 6 = "ExtremelyPoor";
+}
+Object.freeze(AirQualityEnum)
+
+class MeasurementUnitEnum {
+    static 0 = "PPM"; // Parts per Million (106) MEA
+    static 1 = "PPB"; // Parts per Billion (109) MEA
+    static 2 = "PPT"; // Parts per Trillion (1012) MEA
+    static 3 = "MGM3"; // Milligram per m3 MEA
+    static 4 = "UGM3"; // Microgram per m3 MEA
+    static 5 = "NGM3"; // Nanogram per m3 MEA
+    static 6 = "PM3"; // Particles per m3 MEA
+    static 7 = "BQM3"; // Becquerel per m3
+}
+Object.freeze(MeasurementUnitEnum)
+
 // LUTs
 
 class MatterClusters {
@@ -174,6 +197,14 @@ class MatterData {
                             break;
                     }
                     break;
+                case "91": // AirQuality
+                    switch( attribute )
+                    {
+                        case "0": // AirQuality
+                            setDataValue( "airQuality", AirQualityEnum[value] );
+                            break;
+                    }
+                    break;
                 case "97": // RVC Operational State
                     switch( attribute )
                     {
@@ -261,6 +292,39 @@ class MatterData {
                     {
                         case "0": // MeasuredValue
                             setDataValue( "humidity", value !== null ? value / 100 : null );
+                            break;
+                    }
+                    break;
+                case "1036": // Carbon Monoxide Concentration Measurement
+                    switch( attribute )
+                    {
+                        case "0": // MeasuredValue
+                            setDataValue( "CO", value );
+                            break;
+                        case "8": // MeasurementUnit
+                            setDataValue( "CO_unit", MeasurementUnitEnum[value] );
+                            break;
+                    }
+                    break;
+                case "1037": // CarbonDioxideConcentrationMeasurement
+                    switch( attribute )
+                    {
+                        case "0": // MeasuredValue
+                            setDataValue( "CO_2", value );
+                            break;
+                        case "8": // MeasurementUnit
+                            setDataValue( "CO_2_unit", MeasurementUnitEnum[value] );
+                            break;
+                    }
+                    break;
+                case "1066": // PM2.5 Concentration Measurement
+                    switch( attribute )
+                    {
+                        case "0": // MeasuredValue
+                            setDataValue( "pm25", value );
+                            break;
+                        case "8": // MeasurementUnit
+                            setDataValue( "pm25_unit", MeasurementUnitEnum[value] );
                             break;
                     }
                     break;

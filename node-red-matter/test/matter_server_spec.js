@@ -162,6 +162,7 @@ describe( 'matter_server Node', function () {
         for( const i in n1.matter._dataById )
         {
           const n = n1.matter._dataById[i];
+          console.log(n);
           n.should.have.a.property("online").which.is.Boolean();
           n.should.have.a.property("time").which.is.a.Number();
           n.should.have.a.property("make").which.is.a.String();

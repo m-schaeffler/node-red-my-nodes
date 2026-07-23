@@ -69,7 +69,57 @@ module.exports = function(RED) {
                                         setBoolean( msg.payload.data.on );
                                         break;
                                     case "brightness":
-                                        sendCommand( "levelcontrol.movetolevel", { level: Math.round(msg.payload.data.brightness*2.54), transitionTime: msg.payload.data.transition ?? null, optionsMask: 0x00, optionsOverride: 0x00 } );
+                                        sendCommand( "levelcontrol.movetolevel", {
+                                            level:          Math.round( msg.payload.data.brightness * 2.54 ),
+                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
+                                        } );
+                                        break;
+                                    case "temp":
+                                        sendCommand( "colorcontrol.movetocolortemperature", {
+                                            colorTemperatureMireds: Math.round( 1_000_000 / msg.payload.data.temp ),
+                                            transitionTime:         Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
+                                        } );
+                                        break;
+                                    case "rgb":
+                                      {
+                                        const r = msg.payload.data.rgb.red   / 255;
+                                        const g = msg.payload.data.rgb.green / 255;
+                                        const b = msg.payload.data.rgb.blue  / 255;
+                                        const max = Math.max( r, g, b );
+                                        const min = Math.min( r, g, b );
+                                        const delta = max - min;
+                                        let hue;
+                                        switch( max )
+                                        {
+                                            case min:
+                                                hue = 0;
+                                                break;
+                                            case r:
+                                                hue = 60 * ( (g-b)/delta );
+                                                break;
+                                            case g:
+                                                hue = 60 * ( (b-r)/delta + 2 );
+                                                break;
+                                            case b:
+                                                hue = 60 * ( (r-g)/delta + 4 );
+                                                break;
+                                        }
+                                        if( hue < 0 )
+                                        {
+                                            hue += 360;
+                                        }
+                                        const saturation = max == 0 ? 0 : delta / max;
+                                        const brightness = max;
+                                        sendCommand( "levelcontrol.movetolevel", {
+                                            level:          Math.round( brightness * 254 ),
+                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
+                                        } );
+                                        sendCommand( "colorcontrol.movetohueandsaturation", {
+                                            hue:            Math.round( hue ),
+                                            saturation:     Math.round( saturation * 254 ),
+                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
+                                        } );
+                                      }
                                         break;
                                     case "transition":
                                         break;

@@ -98,6 +98,7 @@ class MatterClusters {
     static RvcOperationalState = 0x0061;
     static WindowCovering      = 0x0102;
     static ServiceArea         = 0x0150;
+    static ColorControl        = 0x0300;
 }
 Object.freeze(MatterClusters);
 
@@ -599,7 +600,22 @@ class MatterData {
                 this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.OnOff, "Toggle" );
                 break;
             case "levelcontrol.movetolevel":
+                data.optionsMask     ??= 0x00;
+                data.optionsOverride ??= 0x00;
                 this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.LevelControl, "MoveToLevel", data );
+                break;
+            case "colorcontrol.movetohueandsaturation":
+                data.optionsMask     ??= 0x00;
+                data.optionsOverride ??= 0x00;
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ColorControl, "MoveToHueAndSaturation", data );
+            case "colorcontrol.movetocolor":
+                data.optionsMask     ??= 0x00;
+                data.optionsOverride ??= 0x00;
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ColorControl, "MoveToColor", data );
+            case "colorcontrol.movetocolortemperature":
+                data.optionsMask     ??= 0x00;
+                data.optionsOverride ??= 0x00;
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ColorControl, "MoveToColorTemperature", data );
                 break;
             case "rvc.clean":
                 if( data != null )

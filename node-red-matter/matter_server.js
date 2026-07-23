@@ -11,7 +11,7 @@ module.exports = function(RED) {
         this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar ?? "";
-        this.matter     = new Matter( sendCommand );
+        this.matter     = new Matter( sendCommand, handleEvent );
         this.state      = "closed";
         this.socket     = null;
         this.timStartup = null;
@@ -77,6 +77,16 @@ module.exports = function(RED) {
             {
                 node.error( "websocket is closed" );
             }
+        }
+
+        function handleEvent(name,event,data)
+        {
+            node.send( [
+                null,
+                { topic: `${node.eventPrefix}${name}/${event}`, payload: { event:event, ...data } },
+                null,
+                null
+            ] );
         }
 
         node.on('input', function(msg,send,done) {

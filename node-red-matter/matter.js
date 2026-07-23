@@ -75,6 +75,19 @@ class MeasurementUnitEnum {
 }
 Object.freeze(MeasurementUnitEnum)
 
+// Events
+
+class EventSwitchCluster {
+    static 0 = "Changed";
+    static 1 = "Pressed";
+    static 2 = "LongPress";
+    static 3 = "S";
+    static 4 = "L";
+    static 5 = "MultiPressOngoing";
+    static 6 = "MultiPress";
+}
+Object.freeze(EventSwitchCluster);
+
 // LUTs
 
 class MatterClusters {
@@ -91,12 +104,13 @@ Object.freeze(MatterClusters);
 // MatterData
 
 class MatterData {
-    constructor(sendCallback)
+    constructor(sendCallback,eventCallback)
     {
-        this._dataById = {};
-        this._namesLut = {};
-        this._changed  = {};
+        this._dataById           = {};
+        this._namesLut           = {};
+        this._changed            = {};
         this.sendCommandCallback = sendCallback;
+        this.eventCallback       = eventCallback;
     }
 
     _doSetAttribute(id,attr,value)
@@ -390,10 +404,31 @@ class MatterData {
     {
         switch( data.cluster_id )
         {
-            case 40:
-            case 51:
-            case 56:
-            case 145:
+            case 40:  // BasicInformation
+            case 51:  // GeneralDiagnostics
+            case 56:  // TimeSynchronization
+            case 145: // ElectricalEnergyMeasurement
+                break;
+            case 59: // Switch
+                const name = this._dataById[data.node_id].internal[data.endpoint_id].name;
+                switch( data.event_id )
+                {
+                    case 0: // SwitchLatched
+                    case 1: // InitialPress
+                    case 2: // LongPress
+                        this.eventCallback( name, EventSwitchCluster[data.event_id], { pos: data.data.newPosition } );
+                        break;
+                    case 3: // ShortRelease
+                    case 4: // LongRelease
+                        this.eventCallback( name, EventSwitchCluster[data.event_id], { pos: data.data.previousPosition } );
+                    	break;
+                    case 5: // MultiPressOngoing
+                        this.eventCallback( name, EventSwitchCluster[data.event_id], { pos: data.data.newPosition, count: data.data.currentNumberOfPressesCounted  } );
+                        break;
+                    case 6: // MultiPressComplete
+                        this.eventCallback( name, EventSwitchCluster[data.event_id], { pos: data.data.previousPosition, count: data.data.totalNumberOfPressesCounted  } );
+                        break;
+                }
                 break;
             default:
                 console.log(data);

@@ -120,10 +120,10 @@ describe( 'matter data handling', function () {
       matter._dataById[12].should.have.a.property("make","Shelly");
       matter._dataById[12].should.have.a.property("model","Shelly 2PM Gen3");
       matter._dataById[12].should.have.a.property("label","");
-      matter._dataById[12].should.have.a.property("name","Shelly_E4B32322A954");
+      matter._dataById[12].should.have.a.property("name","Shelly 2PM Gen3");
       matter._dataById[12].should.have.a.property("internal",{
-        '1': {name: 'Shelly_E4B32322A954/1' },
-        '2': {name: 'Shelly_E4B32322A954/2' }
+        '1': {name: 'Shelly 2PM Gen3/1' },
+        '2': {name: 'Shelly 2PM Gen3/2' }
       });
       matter._dataById[12].should.have.a.property("data",{
         '1': { output: false, power: 0, energy: 0, returned_energy: 0 },
@@ -132,8 +132,8 @@ describe( 'matter data handling', function () {
       matter._dataById[12].should.not.have.a.property("ip4");
       matter._dataById[12].should.not.have.a.property("ip6");
       matter.should.have.a.property("_namesLut",{
-        'Shelly_E4B32322A954/1': { node: 12, endpoint: 1 },
-        'Shelly_E4B32322A954/2': { node: 12, endpoint: 2 }
+        'Shelly 2PM Gen3/1': { node: 12, endpoint: 1 },
+        'Shelly 2PM Gen3/2': { node: 12, endpoint: 2 }
       });
       matter.should.have.a.property("_changed",{12:true});
       //
@@ -153,14 +153,14 @@ describe( 'matter data handling', function () {
       callback.should.be.calledWith("12");
     }
       //
-      matter.sendCommand("Shelly_E4B32322A954/1","onoff.on",null);
+      matter.sendCommand("Shelly 2PM Gen3/1","onoff.on",null);
       sendCallback.should.be.calledOnce();
       sendCallback.should.be.calledWith("device_command","On",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'On',payload:{}});
       //
-      matter.sendCommand("Shelly_E4B32322A954/1","onoff.off",null);
+      matter.sendCommand("Shelly 2PM Gen3/1","onoff.off",null);
       sendCallback.should.be.calledWith("device_command","Off",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'Off',payload:{}});
       //
-      matter.sendCommand("Shelly_E4B32322A954/2","onoff.toggle",null);
+      matter.sendCommand("Shelly 2PM Gen3/2","onoff.toggle",null);
       sendCallback.should.be.calledWith("device_command","Toggle",{node_id:12,endpoint_id:2,cluster_id:6,command_name:'Toggle',payload:{}});
       sendCallback.should.have.callCount( 3 );
   });

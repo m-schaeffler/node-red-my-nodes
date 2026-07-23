@@ -72,7 +72,7 @@ describe( 'matter_server Node', function () {
       var c4 = 0;
       var actualState;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         try {
           msg.should.have.property('topic').which.is.a.String();
           msg.should.have.property('payload').which.is.an.Object();
@@ -162,7 +162,6 @@ describe( 'matter_server Node', function () {
         for( const i in n1.matter._dataById )
         {
           const n = n1.matter._dataById[i];
-          console.log(n);
           n.should.have.a.property("online").which.is.Boolean();
           n.should.have.a.property("time").which.is.a.Number();
           n.should.have.a.property("make").which.is.a.String();

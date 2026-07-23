@@ -80,6 +80,19 @@ module.exports = function(RED) {
         }
 
         node.on('input', function(msg,send,done) {
+
+            function sendServerCommand(cmd,args={})
+            {
+                if( node.state == "connected" )
+                {
+                    sendCommand( cmd, args );
+                }
+                else
+                {
+                    node.error( `cannot send in ${node.state} state` );
+                }
+            }
+
             switch( msg.topic )
             {
                 case "open":
@@ -131,30 +144,19 @@ module.exports = function(RED) {
                         setStatus( "closed" );
                     }
                     break;
+                case "get_nodes":
+                    sendServerCommand( "get_nodes", { only_available: false } );
+                    break;
                 case "get_thread_border_routers":
-                    if( node.state == "connected" )
-                    {
-                         sendCommand( "get_thread_border_routers" );
-                    }
-                    else
-                    {
-                        node.error( `cannot send in ${node.state} state` );
-                    }
+                    sendServerCommand( "get_thread_border_routers" );
                     break;
                 case "get_thread_diagnostics":
-                    if( node.state == "connected" )
-                    {
-                         sendCommand( "get_thread_diagnostics", { force: true } );
-                    }
-                    else
-                    {
-                        node.error( `cannot send in ${node.state} state` );
-                    }
+                    sendServerCommand( "get_thread_diagnostics", { force: true } );
                     break;
                 case "timeSync":
                     if( node.state == "connected" )
                     {
-                         node.matter.timeSync();
+                        node.matter.timeSync();
                     }
                     else
                     {

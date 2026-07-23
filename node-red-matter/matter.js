@@ -1,5 +1,12 @@
 // Matter Enums
 
+class ColorModeEnum {
+    static 0 = "HueSaturation";
+    static 1 = "XY";
+    static 2 = "Temperature";
+}
+Object.freeze(ColorModeEnum);
+
 class OperationalStateEnum {
     static 0x00 = "Stopped";
     static 0x01 = "Running";
@@ -115,6 +122,13 @@ class MatterData {
                 changed[id] = true;
             }
 
+            function setColorValue(name,value)
+            {
+                item.data[endpoint].color ??= { mode:null };
+                item.data[endpoint].color[name] = value;
+                changed[id] = true;
+            }
+
             function convertErrors(errors)
             {
                 let result = [];
@@ -166,7 +180,15 @@ class MatterData {
                 case "56": // TimeSynchronization
                     item.timeSync = true;
                     break;
-                case "69": // BooleanStateswitch( attribute )
+                case "59": // Switch
+                    switch( attribute )
+                    {
+                        case "1": // CurrentPosition
+                            setDataValue( "input", value );
+                            break;
+                    }
+                    break;
+                case "69": // BooleanState
                     switch( attribute )
                     {
                         case "0": // StateValue
@@ -281,6 +303,29 @@ class MatterData {
                             break;
                     }
                     break;
+                case "768": // ColorControl
+                    switch( attribute )
+                    {
+                        case "0": // CurrentHue
+                            setColorValue( "hue", value * 360 / 254 );
+                            break;
+                        case "1": // CurrentSaturation
+                            setColorValue( "saturation", value / 254 );
+                            break;
+                        case "3": // CurrentX
+                            setColorValue( "x", value / 65536 );
+                            break;
+                        case "4": // CurrentY
+                            setColorValue( "y", value / 65536 );
+                            break;
+                        case "7": // ColorTemperatureMireds
+                            setColorValue( "temp", 1_000_000 / value );
+                            break;
+                        case "8": // ColorMode
+                            setColorValue( "mode", ColorModeEnum[value] );
+                            break;
+                    }
+                    break;
                 case "1026": // TemperatureMeasurement
                     switch( attribute )
                     {
@@ -363,7 +408,8 @@ class MatterData {
         help.make     = n.attributes["0/40/1"];
         help.model    = n.attributes["0/40/3"];
         help.label    = n.attributes["0/40/5"];
-        help.name     = n.attributes["0/40/5"] || `${n.attributes["0/40/1"]}_${n.attributes["0/40/18"]}`;
+        help.location = n.attributes["0/40/6"];
+        help.name     = help.label || help.model;
         help.internal ??= {};
         help.data     ??= {};
         for( const e of n.attributes["0/29/3"] )

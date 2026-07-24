@@ -107,11 +107,16 @@ Object.freeze(MatterClusters);
 class MatterData {
     constructor(sendCallback,eventCallback)
     {
-        this._dataById           = {};
-        this._namesLut           = {};
-        this._changed            = {};
         this.sendCommandCallback = sendCallback;
         this.eventCallback       = eventCallback;
+        this.clear();
+    }
+
+    clear()
+    {
+        this._dataById = {};
+        this._namesLut = {};
+        this._changed  = {};
     }
 
     _doSetAttribute(id,attr,value)
@@ -200,6 +205,9 @@ class MatterData {
                     {
                         case "1": // CurrentPosition
                             setDataValue( "input", value );
+                            break;
+                        case "65532": // FeatureMap
+                            setDataValue( "inputType", value & 0x01 ? "switch" : "button" );
                             break;
                     }
                     break;
@@ -608,10 +616,12 @@ class MatterData {
                 data.optionsMask     ??= 0x00;
                 data.optionsOverride ??= 0x00;
                 this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ColorControl, "MoveToHueAndSaturation", data );
+                break;
             case "colorcontrol.movetocolor":
                 data.optionsMask     ??= 0x00;
                 data.optionsOverride ??= 0x00;
                 this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ColorControl, "MoveToColor", data );
+                break;
             case "colorcontrol.movetocolortemperature":
                 data.optionsMask     ??= 0x00;
                 data.optionsOverride ??= 0x00;

@@ -14,6 +14,7 @@ module.exports = function(RED) {
         this.matter     = new Matter( sendCommand, handleEvent );
         this.state      = "closed";
         this.socket     = null;
+        this.sendCounter= 0;
         this.timStartup = null;
         this.timRecv    = null;
         this.timReopen  = null;
@@ -58,7 +59,7 @@ module.exports = function(RED) {
         {
             //console.log("send command "+command+" "+id,args)
             const payload = {
-                message_id: `${command}|${id}`,
+                message_id: `${command}|${id}|${++node.sendCounter}`,
                 command:    command,
                 args:       args
             };
@@ -210,7 +211,7 @@ module.exports = function(RED) {
                     sendCommand( "start_listening" );
                     break;
                 case "start_listening":
-                    if( data.result !== undefined && data.message_id == "start_listening|" )
+                    if( data.result !== undefined && data.message_id.startsWith( "start_listening" ) )
                     {
                         clearTimeout( node.timStartup );
                         node.matter.storeNodes( data.result );
@@ -244,16 +245,15 @@ module.exports = function(RED) {
                         switch( message )
                         {
                             case "get_nodes":
+                                node.matter.clear();
                                 node.matter.storeNodes( data.result );
                                 break;
                             case "get_node_ip_addresses":
                                 node.matter.storeIP( param, data.result );
                                 break;
-                            /*
                             case "device_command":
-                            	console.log("device_command",data.result)
+                            	node.warn(data.message_id);
                             	break;
-                            */
                             case "get_thread_border_routers":
                                 node.warn(data.result);
                                 break;

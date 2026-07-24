@@ -189,8 +189,8 @@ describe( 'matter data handling', function () {
         '2': {name: 'BILRESA dual button/2' }
       });
       matter._dataById[32].should.have.a.property("data",{
-        '1': { input: 0 },
-        '2': { input: 0 }
+        '1': { inputType: 'button', input: 0 },
+        '2': { inputType: 'button', input: 0 }
       });
       matter._dataById[32].should.not.have.a.property("ip4");
       matter._dataById[32].should.not.have.a.property("ip6");

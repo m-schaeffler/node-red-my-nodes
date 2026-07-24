@@ -84,7 +84,7 @@ module.exports = function(RED) {
             {
                 if( node.state == "connected" )
                 {
-                    sendCommand( cmd, args );
+                    sendCommand( cmd, "", args );
                 }
                 else
                 {
@@ -142,6 +142,10 @@ module.exports = function(RED) {
                     break;
                 case "get_nodes":
                     sendServerCommand( "get_nodes", { only_available: false } );
+                    break;
+                case "ping_node":
+                    node.pingStart = Temporal.Now.instant();
+                    sendServerCommand( "ping_node", { node_id: msg.payload, attempts: 1 } );
                     break;
                 case "get_thread_border_routers":
                     sendServerCommand( "get_thread_border_routers" );
@@ -244,17 +248,21 @@ module.exports = function(RED) {
                                     node.matter.clear();
                                     node.matter.storeNodes( data.result );
                                     break;
+                                case "ping_node":
+                                    console.log( "ping", node.pingStart.until( Temporal.Now.instant() ).total( "milliseconds" ) );
+                                    node.pingStart = null;
+                                    break;
                                 case "get_node_ip_addresses":
                                     node.matter.storeIP( param, data.result );
                                     break;
                                 case "device_command":
-                                    //console.log(data.message_id);
+                                    //console.log( data.message_id );
                                     break;
                                 case "get_thread_border_routers":
-                                    node.warn(data.result);
+                                    node.warn( data.result );
                                     break;
                                 case "get_thread_diagnostics":
-                                    node.warn(data.result);
+                                    node.warn( data.result );
                                     break;
                             }
                         }

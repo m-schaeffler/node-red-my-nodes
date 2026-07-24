@@ -651,7 +651,7 @@ describe( 'matter_server Node', function () {
         c2.should.match( 0 );
         c3.should.match( 4 );
         n1.queue.isEmpty().should.match( false );
-        await delay(10000);
+        await delay(12000);
         n1.queue.isEmpty().should.match( true );
         //
         n1.receive({ topic:"close" });
@@ -661,6 +661,70 @@ describe( 'matter_server Node', function () {
         actualState.should.match( 'closed' );
         c2.should.match( 0 );
         c3.should.match( 6 );
+        n1.queue.isEmpty().should.match( true );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should ping Alpstuga (#21)', function (done) {
+    this.timeout( 30000 );
+    var flow = [{ id: 'flow', type: 'tab' },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "n4", type: "helper", z: "flow" }];
+    helper.load([node], flow, async function () {
+      var n4 = helper.getNode("n4");
+      var n3 = helper.getNode("n3");
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var actualState;
+      n2.on("input", function (msg) {
+      });
+      n3.on("input", function (msg) {
+      });
+      n4.on("input", function (msg) {
+        actualState = msg.payload;
+      });
+      try{
+        n1.should.have.a.property('name', 'test');
+        n1.should.have.a.property('host', 'localhost');
+        n1.should.have.a.property('port', 5580);
+        n1.should.have.a.property('statusPrefix', "");
+        n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('contextVar', "");
+        n1.should.have.a.property('state','closed');
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.queue.isEmpty().should.match( true );
+        n1.receive({ topic:"open" });
+        await delay(150);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        actualState.should.match( 'connected' );
+        await delay(4000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        actualState.should.match( 'connected' );
+        n1.queue.isEmpty().should.match( true );
+        //
+        n1.receive({ topic:"ping_node", payload:21 });
+        await delay(8000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.queue.isEmpty().should.match( true );
+        //
+        n1.receive({ topic:"close" });
+        await delay(150);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        actualState.should.match( 'closed' );
+        n1.queue.isEmpty().should.match( true );
         done();
       }
       catch(err) {

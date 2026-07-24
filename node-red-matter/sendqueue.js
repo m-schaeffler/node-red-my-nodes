@@ -66,6 +66,7 @@ class SendQueue {
             }
             else
             {
+                console.assert( this.queues[args.node_id].length == 0 );
                 this.inflight[args.node_id] = true;
                 this._doSendCommand( msg );
                 console.log("  direct send",this.counter)

@@ -1,4 +1,5 @@
-const Matter = require( './matter.js' );
+const Matter    = require( './matter.js' );
+const SendQueue = require( './sendqueue.js' );
 
 module.exports = function(RED) {
 
@@ -12,9 +13,8 @@ module.exports = function(RED) {
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.contextVar   = config.contextVar ?? "";
         this.matter     = new Matter( sendCommand, handleEvent );
+        this.queue      = new SendQueue();
         this.state      = "closed";
-        this.socket     = null;
-        this.sendCounter= 0;
         this.timStartup = null;
         this.timRecv    = null;
         this.timReopen  = null;
@@ -40,7 +40,7 @@ module.exports = function(RED) {
         function setStatus(state)
         {
             //console.log("state "+state)
-            doSetState( state, node.socket ? ( state == "connected" ? "green" : "yellow" ) : "gray", state );
+            doSetState( state, node.queue.isOpened() ? ( state == "connected" ? "green" : "yellow" ) : "gray", state );
         }
 
         function setError(error)
@@ -48,9 +48,9 @@ module.exports = function(RED) {
             console.log("error "+error)
             clearTimeout( node.timStartup );
             clearTimeout( node.timRecv );
+            node.queue.close();
             node.timStartup = null;
             node.timRecv    = null;
-            node.socket     = null;
             doSetState( "error", "red", error );
             node.error( error );
         }
@@ -58,25 +58,13 @@ module.exports = function(RED) {
         function sendCommand(command,id="",args={})
         {
             //console.log("send command "+command+" "+id,args)
-            const payload = {
-                message_id: `${command}|${id}|${++node.sendCounter}`,
-                command:    command,
-                args:       args
-            };
-            if( node.socket )
+            try
             {
-                try
-                {
-                    node.socket.send( JSON.stringify( payload ) );
-                }
-                catch( e )
-                {
-                    setError( e.message );
-                }
+                node.queue.sendCommand( command, id, args );
             }
-            else
+            catch( e )
             {
-                node.error( "websocket is closed" );
+                setError( e.message );
             }
         }
 
@@ -111,18 +99,17 @@ module.exports = function(RED) {
                     {
                         try
                         {
-                            if( node.socket )
+                            if( node.queue.close() )
                             {
                                 clearTimeout( node.timStartup );
-                                node.socket.close();
                             }
                             clearTimeout( node.timReopen );
                             node.timReopen = null;
-                            node.socket = new WebSocket( `ws://${node.host}:${node.port}/ws` );
-                            node.socket.addEventListener( 'open',    wsConnected );
-                            node.socket.addEventListener( 'message', wsReceived  );
-                            node.socket.addEventListener( 'close',   wsClosed    );
-                            node.socket.addEventListener( 'error',   wsError     );
+                            let socket = node.queue.open( `ws://${node.host}:${node.port}/ws` );
+                            socket.addEventListener( 'open',    wsConnected );
+                            socket.addEventListener( 'message', wsReceived  );
+                            socket.addEventListener( 'close',   wsClosed    );
+                            socket.addEventListener( 'error',   wsError     );
                             setStatus( "opening" );
                             node.timStartup = setTimeout( wsTimeout, 1000 );
                         }
@@ -139,14 +126,12 @@ module.exports = function(RED) {
                     }
                     break;
                 case "close":
-                    if( node.socket )
+                    if( node.queue.close() )
                     {
                         clearTimeout( node.timStartup );
                         clearTimeout( node.timReopen );
                         node.timStartup = null;
                         node.timReopen  = null;
-                        node.socket.close();
-                        node.socket = null;
                         setStatus( "closing" );
                     }
                     else
@@ -211,21 +196,26 @@ module.exports = function(RED) {
                     sendCommand( "start_listening" );
                     break;
                 case "start_listening":
-                    if( data.result !== undefined && data.message_id.startsWith( "start_listening" ) )
+                    if( data.result !== undefined )
                     {
-                        clearTimeout( node.timStartup );
-                        node.matter.storeNodes( data.result );
-                        setStatus( "connected" );
-                        node.matter.forAllIds( function(id){
-                            sendCommand( "get_node_ip_addresses", id, {
-                                node_id:      id,
-                                prefer_cache: false,
-                                scoped:       false
-                            } );
-                        } );
-                        if( node.contextVar )
+                        // command result
+                        const [message,param] = node.queue.acknowledgeCommand( data.message_id );
+                        if( message == "start_listening" )
                         {
-                            node.flowcontext.set( node.contextVar, node.matter._dataById );
+                            clearTimeout( node.timStartup );
+                            node.matter.storeNodes( data.result );
+                            setStatus( "connected" );
+                            node.matter.forAllIds( function(id){
+                                sendCommand( "get_node_ip_addresses", id, {
+                                    node_id:      id,
+                                    prefer_cache: false,
+                                    scoped:       false
+                                } );
+                            } );
+                            if( node.contextVar )
+                            {
+                                node.flowcontext.set( node.contextVar, node.matter._dataById );
+                            }
                         }
                     }
                     else
@@ -241,7 +231,7 @@ module.exports = function(RED) {
                     if( data.result !== undefined )
                     {
                         // command result
-                        const [message,param] = data.message_id.split( "|" );
+                        const [message,param] = node.queue.acknowledgeCommand( data.message_id );
                         switch( message )
                         {
                             case "get_nodes":
@@ -252,7 +242,7 @@ module.exports = function(RED) {
                                 node.matter.storeIP( param, data.result );
                                 break;
                             case "device_command":
-                            	node.warn(data.message_id);
+                            	//console.log(data.message_id);
                             	break;
                             case "get_thread_border_routers":
                                 node.warn(data.result);
@@ -322,7 +312,7 @@ module.exports = function(RED) {
         function wsError(event)
         {
             //console.error('WebSocket error:', event);
-            if( node.socket )
+            if( node.queue.isOpened() )
             {
                 setError( "websocket error" );
             }
@@ -331,7 +321,7 @@ module.exports = function(RED) {
         function wsClosed(event)
         {
             //console.log('WebSocket connection closed:', event.code, event.reason);
-            node.socket = null;
+            node.queue.socket = null;
             if( node.state !== "error" )
             {
                 setStatus( "closed" );
@@ -345,9 +335,7 @@ module.exports = function(RED) {
         function wsTimeout()
         {
             //console.log('WebSocket startup timeout');
-            const help = node.socket;
             setError( "websocket startup timeout" );
-            help.close();
         }
 
         function wsTimeoutReceive()
@@ -369,13 +357,13 @@ module.exports = function(RED) {
         }
 
         node.on('close', function() {
-            if( node.socket )
+            if( node.queue.isOpened() )
             {
-                node.socket.removeEventListener( 'open',    wsConnected );
-                node.socket.removeEventListener( 'message', wsReceived  );
-                node.socket.removeEventListener( 'close',   wsClosed    );
-                node.socket.removeEventListener( 'error',   wsError     );
-                node.socket.close();
+                node.queue.socket.removeEventListener( 'open',    wsConnected );
+                node.queue.socket.removeEventListener( 'message', wsReceived  );
+                node.queue.socket.removeEventListener( 'close',   wsClosed    );
+                node.queue.socket.removeEventListener( 'error',   wsError     );
+                node.queue.close();
             }
             clearTimeout( node.timStartup );
             clearTimeout( node.timRecv );

@@ -110,12 +110,10 @@ module.exports = function(RED) {
                                         }
                                         const saturation = max == 0 ? 0 : delta / max;
                                         const brightness = max;
-                                        /*
                                         sendCommand( "levelcontrol.movetolevel", {
                                             level:          Math.round( brightness * 254 ),
                                             transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
                                         } );
-                                        */
                                         sendCommand( "colorcontrol.movetohueandsaturation", {
                                             hue:            Math.round( hue ),
                                             saturation:     Math.round( saturation * 254 ),

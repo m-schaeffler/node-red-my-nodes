@@ -3,6 +3,7 @@ var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runt
 var helper = require("node-red-node-test-helper");
 var node   = require("../matter_server.js");
 require("./matter_spec.js");
+require("./sendqueue_spec.js");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -43,6 +44,7 @@ describe( 'matter_server Node', function () {
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         n1.should.have.a.property('matter');
+        n1.queue.isEmpty().should.match( true );
         should.not.exist( n1.context().flow.get("matter") );
         done();
       }
@@ -129,6 +131,7 @@ describe( 'matter_server Node', function () {
         c2.should.match( 0 );
         c3.should.match( 0 );
         c4.should.match( 0 );
+        n1.queue.isEmpty().should.match( true );
         n1.receive({ topic:"open" });
         await delay(150);
         n1.warn.should.have.callCount(0);
@@ -138,6 +141,7 @@ describe( 'matter_server Node', function () {
         c2.should.match( 0 );
         c3.should.match( 4 );
         c4.should.be.aboveOrEqual( 2 );
+        n1.queue.isEmpty().should.match( false );
         let c1_soll = c1;
         n1.receive({ topic:"open" }); // 2nd
         await delay(50);
@@ -148,7 +152,7 @@ describe( 'matter_server Node', function () {
         c2.should.match( 0 );
         c3.should.match( 5 );
         c4.should.be.aboveOrEqual( 2 );
-        await delay(6000);
+        await delay(4000);
         n1.warn.should.have.callCount(1);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );
@@ -158,6 +162,7 @@ describe( 'matter_server Node', function () {
         c3.should.match( 5 );
         c4.should.be.aboveOrEqual( 2 );
         n1.should.have.a.property("matter");
+        n1.queue.isEmpty().should.match( true );
 
         for( const i in n1.matter._dataById )
         {
@@ -185,6 +190,7 @@ describe( 'matter_server Node', function () {
         c2.should.match( 0 );
         c3.should.match( 7 );
         c4.should.be.aboveOrEqual( 2 );
+        n1.queue.isEmpty().should.match( true );
         done();
       }
       catch(err) {
@@ -246,6 +252,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 1 );
+        n1.queue.isEmpty().should.match( true );
         done();
       }
       catch(err) {
@@ -307,6 +314,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 2 );
+        n1.queue.isEmpty().should.match( true );
         done();
       }
       catch(err) {
@@ -368,6 +376,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 2 );
+        n1.queue.isEmpty().should.match( true );
         done();
       }
       catch(err) {
@@ -437,6 +446,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 1 );
+        n1.queue.isEmpty().should.match( true );
         done();
       }
       catch(err) {
@@ -446,7 +456,7 @@ describe( 'matter_server Node', function () {
   });
 
   it('should send commands', function (done) {
-    this.timeout( 2500 );
+    this.timeout( 10000 );
     var flow = [{ id: 'flow', type: 'tab' },
                 { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
@@ -515,6 +525,9 @@ describe( 'matter_server Node', function () {
         c1.should.be.above( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
+        n1.queue.isEmpty().should.match( false );
+        await delay(4000);
+        n1.queue.isEmpty().should.match( true );
         //
         n1.receive({ topic:"Rocky", payload:{command:"rvc.stop"} });
         await delay(150);
@@ -544,6 +557,7 @@ describe( 'matter_server Node', function () {
         actualState.should.match( 'closed' );
         c2.should.match( 0 );
         c3.should.match( 6 );
+        n1.queue.isEmpty().should.match( true );
         done();
       }
       catch(err) {
@@ -553,7 +567,7 @@ describe( 'matter_server Node', function () {
   });
 
   it('should do time sync', function (done) {
-    this.timeout( 2500 );
+    this.timeout( 15000 );
     var flow = [{ id: 'flow', type: 'tab' },
                 { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
@@ -614,6 +628,7 @@ describe( 'matter_server Node', function () {
         c1.should.match( 0 );
         c2.should.match( 0 );
         c3.should.match( 0 );
+        n1.queue.isEmpty().should.match( true );
         n1.receive({ topic:"open" });
         await delay(150);
         n1.warn.should.have.callCount(0);
@@ -622,16 +637,28 @@ describe( 'matter_server Node', function () {
         c1.should.be.above( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
+        n1.queue.isEmpty().should.match( false );
+        await delay(4000);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        actualState.should.match( 'connected' );
+        c1.should.be.above( 0 );
+        c2.should.match( 0 );
+        c3.should.match( 4 );
+        n1.queue.isEmpty().should.match( true );
         //
         n1.receive({ topic:"timeSync" });
-        await delay(150);
+        await delay(10);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         c2.should.match( 0 );
         c3.should.match( 4 );
+        n1.queue.isEmpty().should.match( false );
+        await delay(6000);
+        n1.queue.isEmpty().should.match( true );
         //
         n1.receive({ topic:"close" });
-        await delay(200);
+        await delay(150);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'closed' );

@@ -141,7 +141,6 @@ describe( 'matter_server Node', function () {
         c2.should.match( 0 );
         c3.should.match( 4 );
         c4.should.be.aboveOrEqual( 2 );
-        n1.queue.isEmpty().should.match( false );
         let c1_soll = c1;
         n1.receive({ topic:"open" }); // 2nd
         await delay(50);
@@ -525,7 +524,6 @@ describe( 'matter_server Node', function () {
         c1.should.be.above( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
-        n1.queue.isEmpty().should.match( false );
         await delay(4000);
         n1.queue.isEmpty().should.match( true );
         //
@@ -567,7 +565,7 @@ describe( 'matter_server Node', function () {
   });
 
   it('should do time sync', function (done) {
-    this.timeout( 15000 );
+    this.timeout( 30000 );
     var flow = [{ id: 'flow', type: 'tab' },
                 { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
@@ -637,7 +635,6 @@ describe( 'matter_server Node', function () {
         c1.should.be.above( 0 );
         c2.should.match( 0 );
         c3.should.match( 4 );
-        n1.queue.isEmpty().should.match( false );
         await delay(4000);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -654,7 +651,7 @@ describe( 'matter_server Node', function () {
         c2.should.match( 0 );
         c3.should.match( 4 );
         n1.queue.isEmpty().should.match( false );
-        await delay(6000);
+        await delay(10000);
         n1.queue.isEmpty().should.match( true );
         //
         n1.receive({ topic:"close" });

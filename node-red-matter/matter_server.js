@@ -199,8 +199,8 @@ module.exports = function(RED) {
                     if( data.result !== undefined )
                     {
                         // command result
-                        const [message,param] = node.queue.acknowledgeCommand( data.message_id );
-                        if( message == "start_listening" )
+                        const [command,param] = node.queue.acknowledgeCommand( data.message_id );
+                        if( command == "start_listening" )
                         {
                             clearTimeout( node.timStartup );
                             node.matter.storeNodes( data.result );
@@ -208,7 +208,7 @@ module.exports = function(RED) {
                             node.matter.forAllIds( function(id){
                                 sendCommand( "get_node_ip_addresses", id, {
                                     node_id:      id,
-                                    prefer_cache: false,
+                                    prefer_cache: true,
                                     scoped:       false
                                 } );
                             } );
@@ -216,6 +216,10 @@ module.exports = function(RED) {
                             {
                                 node.flowcontext.set( node.contextVar, node.matter._dataById );
                             }
+                        }
+                        else
+                        {
+                            setError( "invalid answer" );
                         }
                     }
                     else
@@ -228,34 +232,37 @@ module.exports = function(RED) {
                     {
                         node.timRecv.refresh();
                     }
-                    if( data.result !== undefined )
+                    if( data.message_id !== undefined )
                     {
-                        // command result
-                        const [message,param] = node.queue.acknowledgeCommand( data.message_id );
-                        switch( message )
+                        const [command,param] = node.queue.acknowledgeCommand( data.message_id );
+                        if( data.result !== undefined )
                         {
-                            case "get_nodes":
-                                node.matter.clear();
-                                node.matter.storeNodes( data.result );
-                                break;
-                            case "get_node_ip_addresses":
-                                node.matter.storeIP( param, data.result );
-                                break;
-                            case "device_command":
-                            	//console.log(data.message_id);
-                            	break;
-                            case "get_thread_border_routers":
-                                node.warn(data.result);
-                                break;
-                            case "get_thread_diagnostics":
-                                node.warn(data.result);
-                                break;
+                            // command result
+                            switch( command )
+                            {
+                                case "get_nodes":
+                                    node.matter.clear();
+                                    node.matter.storeNodes( data.result );
+                                    break;
+                                case "get_node_ip_addresses":
+                                    node.matter.storeIP( param, data.result );
+                                    break;
+                                case "device_command":
+                                    //console.log(data.message_id);
+                                    break;
+                                case "get_thread_border_routers":
+                                    node.warn(data.result);
+                                    break;
+                                case "get_thread_diagnostics":
+                                    node.warn(data.result);
+                                    break;
+                            }
                         }
-                    }
-                    else if( data.error_code !== undefined )
-                    {
-                        // command error
-                        node.error( `${data.message_id}: ${data.details}` );
+                        else
+                        {
+                            // command error
+                            node.error( `${data.message_id}: ${data.details}` );
+                        }
                     }
                     else
                     {

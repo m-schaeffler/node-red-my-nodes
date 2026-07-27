@@ -62,20 +62,20 @@ class SendQueue {
             if( this.inflight[args.node_id] )
             {
                 this.queues[args.node_id].push( msg );
-                console.log("  stored in queue",this.counter)
+                //console.log("  stored in queue",this.counter)
             }
             else
             {
                 console.assert( this.queues[args.node_id].length == 0 );
                 this.inflight[args.node_id] = true;
                 this._doSendCommand( msg );
-                console.log("  direct send",this.counter)
+                //console.log("  direct send",this.counter)
             }
         }
         else
         {
             this._doSendCommand( msg );
-            console.log("  unqueued send",this.counter)
+            //console.log("  unqueued send",this.counter)
         }
         this.missingAcks.add( this.counter );
     }
@@ -85,7 +85,7 @@ class SendQueue {
         const [command,param,seqStr,node_id] = message_id.split( "|" );
         const sequence = Number( seqStr );
         this.missingAcks.delete( sequence );
-        console.log("    ack",sequence,`(${this.missingAcks.size})`)
+        //console.log("    ack",sequence,`(${this.missingAcks.size})`)
         if( command == "device_command" )
         {
             console.assert( node_id > 0 );
@@ -95,7 +95,7 @@ class SendQueue {
             {
                 this.inflight[node_id] = true;
                 this._doSendCommand( next );
-                console.log("  queued send",)
+                //console.log("  queued send",)
             }
             else
             {

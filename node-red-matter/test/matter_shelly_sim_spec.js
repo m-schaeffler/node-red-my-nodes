@@ -304,7 +304,7 @@ describe( 'matter_shelly_sim Node', function () {
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:127,transitionTime:1} });
               break;
             case 6:
-            case 11:
+            case 12:
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:0,transitionTime:1} });
               break;
             case 7:
@@ -319,33 +319,33 @@ describe( 'matter_shelly_sim Node', function () {
             case 10:
               msg.should.have.a.property('payload',{ command: "colorcontrol.movetocolortemperature", data: {colorTemperatureMireds:222,transitionTime:1} });
               break;
-            case 12:
-            case 14:
+            case 11:
+            case 13:
               msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:0,saturation:0,transitionTime:1} });
               break;
-            case 13:
+            case 14:
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:254,transitionTime:1} });
               break;
-            case 15:
+            case 16:
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:199,transitionTime:1} });
               break;
-            case 16:
+            case 15:
               msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:0,saturation:254,transitionTime:1} });
               break;
-            case 17:
-            case 21:
+            case 18:
+            case 22:
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:149,transitionTime:1} });
               break;
-            case 18:
+            case 17:
               msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:120,saturation:254,transitionTime:1} });
               break;
-            case 19:
+            case 20:
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:100,transitionTime:1} });
               break;
-            case 20:
+            case 19:
               msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:240,saturation:254,transitionTime:1} });
               break;
-            case 22:
+            case 21:
               msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:210,saturation:169,transitionTime:1} });
               break;
             default:

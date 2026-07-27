@@ -96,11 +96,11 @@ describe( 'matter data handling', function () {
       matter.sendCommand("Rocky","rvc.stop",null);
       sendCallback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:0}});
       //
-      matter.sendCommand("Rocky","rvc.gohome",null);
-      sendCallback.should.be.calledWith("device_command","GoHome",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'GoHome',payload:{}});
+      matter.sendCommand("Rocky","rvcoperationalstate.gohome",null);
+      sendCallback.should.be.calledWith("device_command","gohome",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'gohome',payload:{}});
       //
-      matter.sendCommand("Rocky","rvc.resume",null);
-      sendCallback.should.be.calledWith("device_command","Resume",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'Resume',payload:{}});
+      matter.sendCommand("Rocky","rvcoperationalstate.resume",null);
+      sendCallback.should.be.calledWith("device_command","resume",{node_id:8,endpoint_id:1,cluster_id:97,command_name:'resume',payload:{}});
       //
       matter.sendCommand("Rocky","rvc.selectareas",[]);
       sendCallback.should.be.calledWith("device_command","SelectAreas",{node_id:8,endpoint_id:1,cluster_id:336,command_name:'SelectAreas',payload:{newAreas:[]}});
@@ -159,13 +159,13 @@ describe( 'matter data handling', function () {
       //
       matter.sendCommand("Shelly 2PM Gen3/1","onoff.on",null);
       sendCallback.should.be.calledOnce();
-      sendCallback.should.be.calledWith("device_command","On",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'On',payload:{}});
+      sendCallback.should.be.calledWith("device_command","on",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'on',payload:{}});
       //
       matter.sendCommand("Shelly 2PM Gen3/1","onoff.off",null);
-      sendCallback.should.be.calledWith("device_command","Off",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'Off',payload:{}});
+      sendCallback.should.be.calledWith("device_command","off",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'off',payload:{}});
       //
       matter.sendCommand("Shelly 2PM Gen3/2","onoff.toggle",null);
-      sendCallback.should.be.calledWith("device_command","Toggle",{node_id:12,endpoint_id:2,cluster_id:6,command_name:'Toggle',payload:{}});
+      sendCallback.should.be.calledWith("device_command","toggle",{node_id:12,endpoint_id:2,cluster_id:6,command_name:'toggle',payload:{}});
       sendCallback.should.have.callCount( 3 );
       eventCallback.should.have.callCount( 0 );
   });

@@ -44,7 +44,7 @@ module.exports = function(RED) {
                 }
             }
 
-            switch( msg.payload.command )
+            switch( msg.payload.command.toLowerCase() )
             {
                 case "relay":
                 case "switch":
@@ -110,13 +110,13 @@ module.exports = function(RED) {
                                         }
                                         const saturation = max == 0 ? 0 : delta / max;
                                         const brightness = max;
-                                        sendCommand( "levelcontrol.movetolevel", {
-                                            level:          Math.round( brightness * 254 ),
-                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
-                                        } );
                                         sendCommand( "colorcontrol.movetohueandsaturation", {
                                             hue:            Math.round( hue ),
                                             saturation:     Math.round( saturation * 254 ),
+                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
+                                        } );
+                                        sendCommand( "levelcontrol.movetolevel", {
+                                            level:          Math.round( brightness * 254 ),
                                             transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
                                         } );
                                       }

@@ -74,11 +74,11 @@ describe( 'matter_server Node', function () {
       var c4 = 0;
       var actualState;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
+        c1++;
         try {
           msg.should.have.property('topic').which.is.a.String();
           msg.should.have.property('payload').which.is.an.Object();
-          ++c1;
         }
         catch(err) {
           done(err);
@@ -86,6 +86,7 @@ describe( 'matter_server Node', function () {
       });
       n3.on("input", function (msg) {
         console.log(msg);
+        c2++;
         try {
           done("tbd")
         }
@@ -94,7 +95,7 @@ describe( 'matter_server Node', function () {
         }
       });
       n4.on("input", function (msg) {
-        console.log(msg.payload);
+        //console.log(msg.payload);
         c3++;
         try {
           msg.should.have.property('topic','matter');
@@ -107,10 +108,10 @@ describe( 'matter_server Node', function () {
       });
       n5.on("input", function (msg) {
         //console.log(msg);
+        c4++;
         try {
           msg.should.have.property('topic').which.is.a.String();
           msg.should.not.have.property('payload');
-          ++c4;
         }
         catch(err) {
           done(err);
@@ -133,7 +134,7 @@ describe( 'matter_server Node', function () {
         c4.should.match( 0 );
         n1.queue.isEmpty().should.match( true );
         n1.receive({ topic:"open" });
-        await delay(150);
+        await delay(200);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         actualState.should.match( 'connected' );

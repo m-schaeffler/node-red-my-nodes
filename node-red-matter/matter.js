@@ -91,14 +91,15 @@ Object.freeze(EventSwitchCluster);
 // LUTs
 
 class MatterClusters {
-    static OnOff               = 0x0006;
-    static LevelControl        = 0x0008;
-    static TimeSynchronization = 0x0038;
-    static RvcRunMode          = 0x0054;
-    static RvcOperationalState = 0x0061;
-    static WindowCovering      = 0x0102;
-    static ServiceArea         = 0x0150;
-    static ColorControl        = 0x0300;
+    static onoff               = 0x0006;
+    static levelcontrol        = 0x0008;
+    static timesynchronization = 0x0038;
+    static rvcrunmode          = 0x0054;
+    static rvccleanmode        = 0x0055;
+    static rvcoperationalstate = 0x0061;
+    static windowcovering      = 0x0102;
+    static servicearea         = 0x0150;
+    static colorcontrol        = 0x0300;
 }
 Object.freeze(MatterClusters);
 
@@ -596,73 +597,56 @@ class MatterData {
             return help;
         }
 
-        switch( command )
+        switch( command.toLowerCase() )
         {
-            case "onoff.on":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.OnOff, "On" );
-                break;
-            case "onoff.off":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.OnOff, "Off" );
-                break;
-            case "onoff.toggle":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.OnOff, "Toggle" );
-                break;
             case "levelcontrol.movetolevel":
                 data.optionsMask     ??= 0x00;
                 data.optionsOverride ??= 0x00;
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.LevelControl, "MoveToLevel", data );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.levelcontrol, "MoveToLevel", data );
                 break;
             case "colorcontrol.movetohueandsaturation":
                 data.optionsMask     ??= 0x00;
                 data.optionsOverride ??= 0x00;
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ColorControl, "MoveToHueAndSaturation", data );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToHueAndSaturation", data );
                 break;
             case "colorcontrol.movetocolor":
                 data.optionsMask     ??= 0x00;
                 data.optionsOverride ??= 0x00;
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ColorControl, "MoveToColor", data );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToColor", data );
                 break;
             case "colorcontrol.movetocolortemperature":
                 data.optionsMask     ??= 0x00;
                 data.optionsOverride ??= 0x00;
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ColorControl, "MoveToColorTemperature", data );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToColorTemperature", data );
                 break;
             case "rvc.clean":
                 if( data != null )
                 {
-                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ServiceArea, "SelectAreas", { newAreas: convertAreas( data ) } );
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.servicearea, "SelectAreas", { newAreas: convertAreas( data ) } );
                 }
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcRunMode, "ChangeToMode", { newMode: 1 } );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.rvcrunmode, "ChangeToMode", { newMode: 1 } );
                 break;
             case "rvc.stop":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcRunMode, "ChangeToMode", { newMode: 0 });
-                break;
-            case "rvc.gohome":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcOperationalState, "GoHome" );
-                break;
-            case "rvc.pause":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcOperationalState, "Pause" );
-                break;
-            case "rvc.resume":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.RvcOperationalState, "Resume" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.rvcrunmode, "ChangeToMode", { newMode: 0 });
                 break;
             case "rvc.selectareas":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.ServiceArea, "SelectAreas", { newAreas: convertAreas( data ) } );
-                break;
-            case "windowcovering.open":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.WindowCovering, "UpOrOpen" );
-                break;
-            case "windowcovering.close":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.WindowCovering, "DownOrClose" );
-                break;
-            case "windowcovering.stop":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.WindowCovering, "StopMotion" );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.servicearea, "SelectAreas", { newAreas: convertAreas( data ) } );
                 break;
             case "windowcovering.gotolift":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.WindowCovering, "GoToLiftPercentage", { liftPercent100thsValue: (100-data)*100 } );
+                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.windowcovering, "GoToLiftPercentage", { liftPercent100thsValue: (100-data)*100 } );
                 break;
             default:
-                throw new Error( "not implemented "+command );
+              {
+                const [cluster,subcommand] = command.split( '.' );
+                if( MatterClusters[cluster] )
+                {
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters[cluster], subcommand, data ?? {} );
+                }
+                else
+                {
+                    throw new Error( "cluster not implemented "+cluster );
+                }
+              }
         }
     }
 
@@ -683,11 +667,11 @@ class MatterData {
             {
                 console.log("time sync",n.name)
                 // Set TimeZone FIRST
-                this.sendDeviceCommand( i, 0, MatterClusters.TimeSynchronization, "SetTimeZone", { timeZone:tz_list } );
+                this.sendDeviceCommand( i, 0, MatterClusters.timesynchronization, "SetTimeZone", { timeZone:tz_list } );
                 // Set DST Offset SECOND
-                this.sendDeviceCommand( i, 0, MatterClusters.TimeSynchronization, "SetDSTOffset", { dstOffset:dst_list } );
+                this.sendDeviceCommand( i, 0, MatterClusters.timesynchronization, "SetDSTOffset", { dstOffset:dst_list } );
                 // Set UTC Time LAST
-                this.sendDeviceCommand( i, 0, MatterClusters.TimeSynchronization, "SetUTCTime", { utcTime:utc, granularity:4 } );
+                this.sendDeviceCommand( i, 0, MatterClusters.timesynchronization, "SetUTCTime", { utcTime:utc, granularity:4 } );
             }
         }
     }

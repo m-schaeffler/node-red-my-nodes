@@ -495,11 +495,8 @@ class MatterData {
 
     deleteNode(id)
     {
-        if( this._dataById[id] )
-        {
-            this._dataById[id].online = false;
-            this.onlineCallback( this._dataById[id].name, false );
-        }
+        this.onlineCallback( this._dataById[id].name, false );
+        delete this._dataById[id];
     }
 
     storeIP(id,ips)

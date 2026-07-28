@@ -74,11 +74,6 @@ describe( 'matter data handling', function () {
       matter._dataById[8].time.should.be.approximately(Temporal.Now.instant().epochMilliseconds,5);
       matter._dataById[8].data.should.match({1:{runMode:"Cleaning"}});
       //
-      matter.deleteNode( 8 );
-      matter._dataById[8].should.have.a.property("online",false);
-      onlineCallback.should.be.calledTwice();
-      onlineCallback.should.be.calledWith("Rocky",false);
-      //
       matter.sendCommand("Rocky","rvc.clean",null);
       sendCallback.should.be.calledOnce();
       sendCallback.should.be.calledWith("device_command","ChangeToMode",{node_id:8,endpoint_id:1,cluster_id:84,command_name:'ChangeToMode',payload:{newMode:1}});
@@ -105,7 +100,12 @@ describe( 'matter data handling', function () {
       sendCallback.should.have.callCount( 7 );
       dataCallback.should.be.calledTwice();
       eventCallback.should.have.callCount( 0 );
+      onlineCallback.should.be.calledOnce();
+      //
+      matter.deleteNode( 8 );
+      should.not.exist(matter._dataById[8]);
       onlineCallback.should.be.calledTwice();
+      onlineCallback.should.be.calledWith("Rocky",false);
   });
 
   it('should work with shelly plus2pm', async function () {

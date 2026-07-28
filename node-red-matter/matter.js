@@ -106,10 +106,12 @@ Object.freeze(MatterClusters);
 // MatterData
 
 class MatterData {
-    constructor(sendCallback,eventCallback)
+    constructor(sendCallback,dataCallback,eventCallback,onlineCallback)
     {
         this.sendCommandCallback = sendCallback;
+        this.dataCallback        = dataCallback;
         this.eventCallback       = eventCallback;
+        this.onlineCallback      = onlineCallback;
         this.clear();
     }
 
@@ -117,13 +119,12 @@ class MatterData {
     {
         this._dataById = {};
         this._namesLut = {};
-        this._changed  = {};
     }
 
     _doSetAttribute(id,attr,value)
     {
         let item    = this._dataById[id];
-        let changed = this._changed;
+        let changed = false;
         if( item )
         {
             const [endpoint,cluster,attribute] = attr.split( "/" );
@@ -140,14 +141,14 @@ class MatterData {
             function setDataValue(name,value)
             {
                 item.data[endpoint][name] = value;
-                changed[id] = true;
+                changed = true;
             }
 
             function setColorValue(name,value)
             {
                 item.data[endpoint].color ??= { mode:null };
                 item.data[endpoint].color[name] = value;
-                changed[id] = true;
+                changed = true;
             }
 
             function convertErrors(errors)
@@ -401,13 +402,20 @@ class MatterData {
                     break;
             }
         }
+        return changed;
     }
 
     setAttribute(id,attr,value)
     {
-        this._dataById[id].time = Temporal.Now.instant().epochMilliseconds;
-        this._doSetAttribute( id, attr, value );
-        this._changed[id] = true;
+        const n = this._dataById[id];
+        n.time = Temporal.Now.instant().epochMilliseconds;
+        if( this._doSetAttribute( id, attr, value ) )
+        {
+            for( const e in n.data )
+            {
+                this.dataCallback( n.internal[e].name, n.data[e] );
+            }
+        }
     }
 
     handleEvent(data)
@@ -466,10 +474,14 @@ class MatterData {
             this._namesLut[channel] = { node: n.node_id, endpoint: e };
         }
         this._dataById[n.node_id] = help;
-        this._changed [n.node_id] = true;
         for( const a in n.attributes )
         {
             this._doSetAttribute( n.node_id, a, n.attributes[a] );
+        }
+        this.onlineCallback( help.name, help.online );
+        for( const e in help.data )
+        {
+            this.dataCallback( help.internal[e].name, help.data[e] );
         }
     }
 
@@ -486,7 +498,7 @@ class MatterData {
         if( this._dataById[id] )
         {
             this._dataById[id].online = false;
-            this._changed[id] = true;
+            this.onlineCallback( this._dataById[id].name, false );
         }
     }
 
@@ -511,26 +523,6 @@ class MatterData {
         for( const i in this._dataById )
         {
             callback( i );
-        }
-    }
-
-    sendChanged(sendData,sendTimeout)
-    {
-        for( const i in this._changed )
-        {
-            if( this._changed[i] )
-            {
-                this._changed[i] = false;
-                const n = this._dataById[i];
-                if( n.label )
-                {
-                    for( const e in n.data )
-                    {
-                        sendData( n.internal[e].name, n.data[e] );
-                    }
-                    sendTimeout( n.name );
-                }
-            }
         }
     }
 

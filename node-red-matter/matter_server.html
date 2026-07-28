@@ -8,7 +8,8 @@
             port: {value:"5580", required:true, validate:RED.validators.number()},
             statusPrefix:{value:""},
             eventPrefix:{value:""},
-            contextVar:{value:""},
+            onlinePrefix:{value:""},
+            contextVar:{value:""}
         },
         inputs:1,
         outputs:4,
@@ -21,7 +22,7 @@
         },
         paletteLabel: "Matter",
         inputLabels: 'command',
-        outputLabels: ['received data','received events','state','node timeout']
+        outputLabels: ['received data','received events','connection state','node online state']
     });
 </script>
 
@@ -45,6 +46,10 @@
     <div class="form-row">
         <label for="node-input-eventPrefix"><i class="fa fa-star-o"></i> Event-Prefix</label>
         <input type="text" id="node-input-eventPrefix"></input>
+    </div>
+    <div class="form-row">
+        <label for="node-input-onlinePrefix"><i class="fa fa-star-o"></i> Online-Prefix</label>
+        <input type="text" id="node-input-onlinePrefix"></input>
     </div>
     <div class="form-row">
         <label for="node-input-contextVar"><i class="fa fa-database"></i> Context-Variable</label>

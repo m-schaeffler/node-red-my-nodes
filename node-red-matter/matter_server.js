@@ -11,8 +11,9 @@ module.exports = function(RED) {
         this.port         = config.port ?? 5580;
         this.statusPrefix = config.statusPrefix ? config.statusPrefix+'/' : "";
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
+        this.onlinePrefix = config.onlinePrefix ? config.onlinePrefix+'/' : "";
         this.contextVar   = config.contextVar ?? "";
-        this.matter     = new Matter( sendCommand, handleEvent );
+        this.matter     = new Matter( sendCommand, handleData, handleEvent, handleOnline );
         this.queue      = new SendQueue();
         this.state      = "closed";
         this.timStartup = null;
@@ -68,13 +69,35 @@ module.exports = function(RED) {
             }
         }
 
+        function handleData(name,data)
+        {
+            //console.log(name,data)
+            node.send( [
+                { topic: `${node.statusPrefix}${name}`, payload: data },
+                null,
+                null,
+                null
+            ] );
+        }
+
         function handleEvent(name,event,data)
         {
+            node.warn(name+" "+event)
             node.send( [
                 null,
                 { topic: `${node.eventPrefix}${name}/${event}`, payload: { event:event, ...data } },
                 null,
                 null
+            ] );
+        }
+
+        function handleOnline(name,online)
+        {
+            node.send( [
+                null,
+                null,
+                null,
+                { topic: `${node.onlinePrefix}${name}`, payload: online },
             ] );
         }
 
@@ -307,21 +330,6 @@ module.exports = function(RED) {
                 default:
                     node.error( "wsReceived: unkown state " + node.state );
             }
-            node.matter.sendChanged( function(name,data){
-                node.send( [
-                    { topic: node.statusPrefix+name, payload: data },
-                    null,
-                    null,
-                    null
-                ] );
-            }, function(name){
-                node.send( [
-                    null,
-                    null,
-                    null,
-                    { topic: name }
-                ] );
-            } );
         }
 
         function wsError(event)

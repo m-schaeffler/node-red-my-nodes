@@ -38,6 +38,7 @@ describe( 'matter_server Node', function () {
         n1.should.have.a.property('port', 5580);
         n1.should.have.a.property('statusPrefix', "");
         n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('onlinePrefix', "");
         n1.should.have.a.property('contextVar', "");
         n1.should.have.a.property('state','closed');
         await delay(50);
@@ -85,7 +86,7 @@ describe( 'matter_server Node', function () {
         }
       });
       n3.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         c2++;
         try {
           done("tbd")
@@ -111,7 +112,7 @@ describe( 'matter_server Node', function () {
         c4++;
         try {
           msg.should.have.property('topic').which.is.a.String();
-          msg.should.not.have.property('payload');
+          msg.should.have.property('payload').which.is.a.Boolean();
         }
         catch(err) {
           done(err);
@@ -123,6 +124,7 @@ describe( 'matter_server Node', function () {
         n1.should.have.a.property('port', 5580);
         n1.should.have.a.property('statusPrefix', "");
         n1.should.have.a.property('eventPrefix', "");
+        n1.should.have.a.property('onlinePrefix', "");
         n1.should.have.a.property('contextVar', "");
         n1.should.have.a.property('state','closed');
         await delay(50);
@@ -181,6 +183,16 @@ describe( 'matter_server Node', function () {
           }
         }
 
+        n1.receive({ topic:"get_nodes" });
+        await delay(200);
+        n1.warn.should.have.callCount(1);
+        n1.error.should.have.callCount(0);
+        actualState.should.match( 'connected' );
+        c1.should.be.above( c1_soll );
+        c1_soll = c1;
+        c2.should.match( 0 );
+        c3.should.match( 5 );
+        c4.should.be.aboveOrEqual( 4 );
         n1.receive({ topic:"close" });
         await delay(200);
         n1.warn.should.have.callCount(1);

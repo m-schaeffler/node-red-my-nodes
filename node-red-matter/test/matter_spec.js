@@ -20,8 +20,10 @@ describe( 'matter data handling', function () {
 
   it('should work with vaccum robot', async function () {
       let sendCallback = sinon.spy();
+      let dataCallback = sinon.spy();
       let eventCallback = sinon.spy();
-      let matter = new Matter( sendCallback, eventCallback );
+      let onlineCallback = sinon.spy();
+      let matter = new Matter( sendCallback, dataCallback, eventCallback, onlineCallback );
       matter.storeNodes( JSON.parse(rvc) );
       matter.should.have.a.property("_dataById");
       matter._dataById.should.have.a.property("8");
@@ -46,23 +48,15 @@ describe( 'matter data handling', function () {
       matter._dataById[8].should.not.have.a.property("ip4");
       matter._dataById[8].should.not.have.a.property("ip6");
       matter.should.have.a.property("_namesLut",{Rocky:{ node: 8, endpoint: 1 }});
-      matter.should.have.a.property("_changed",{8:true});
-      //
-    {
-      let callback1 = sinon.spy();
-      let callback2 = sinon.spy();
-      matter.sendChanged( callback1, callback2 );
-      callback1.should.be.calledOnce();
-      callback1.should.be.calledWith("Rocky",{
+      dataCallback.should.be.calledOnce();
+      dataCallback.should.be.calledWith("Rocky",{
           runMode:'Idle',
           cleanMode: 'Auto, Vacuum and Mop',
           state: 'Docked',
           stateErrors: [],
           selectedAreas: [] });
-      callback2.should.be.calledOnce();
-      callback2.should.be.calledWith("Rocky");
-    }
-      matter.should.have.a.property("_changed",{8:false});
+      onlineCallback.should.be.calledOnce();
+      onlineCallback.should.be.calledWith("Rocky",true);
       //
     {
       let callback = sinon.spy();
@@ -79,11 +73,11 @@ describe( 'matter data handling', function () {
       matter.setAttribute(8,"1/84/1",1);
       matter._dataById[8].time.should.be.approximately(Temporal.Now.instant().epochMilliseconds,5);
       matter._dataById[8].data.should.match({1:{runMode:"Cleaning"}});
-      matter.should.have.a.property("_changed",{8:true});
       //
       matter.deleteNode( 8 );
       matter._dataById[8].should.have.a.property("online",false);
-      matter.should.have.a.property("_changed",{8:true});
+      onlineCallback.should.be.calledTwice();
+      onlineCallback.should.be.calledWith("Rocky",false);
       //
       matter.sendCommand("Rocky","rvc.clean",null);
       sendCallback.should.be.calledOnce();
@@ -109,13 +103,17 @@ describe( 'matter data handling', function () {
       //
       should(function(){matter.sendCommand("Rocky","foobar",null)}).throw();
       sendCallback.should.have.callCount( 7 );
+      dataCallback.should.be.calledTwice();
       eventCallback.should.have.callCount( 0 );
+      onlineCallback.should.be.calledTwice();
   });
 
   it('should work with shelly plus2pm', async function () {
       let sendCallback = sinon.spy();
+      let dataCallback = sinon.spy();
       let eventCallback = sinon.spy();
-      let matter = new Matter( sendCallback, eventCallback );
+      let onlineCallback = sinon.spy();
+      let matter = new Matter( sendCallback, dataCallback, eventCallback, onlineCallback );
       matter.storeNodes( JSON.parse(plus2pm) );
       matter.should.have.a.property("_dataById");
       matter._dataById.should.have.a.property("12");
@@ -139,16 +137,9 @@ describe( 'matter data handling', function () {
         'Shelly 2PM Gen3/1': { node: 12, endpoint: 1 },
         'Shelly 2PM Gen3/2': { node: 12, endpoint: 2 }
       });
-      matter.should.have.a.property("_changed",{12:true});
-      //
-    {
-      let callback1 = sinon.spy();
-      let callback2 = sinon.spy();
-      matter.sendChanged( callback1, callback2 );
-      callback1.should.not.be.called();
-      callback2.should.not.be.called();
-    }
-      matter.should.have.a.property("_changed",{12:false});
+      dataCallback.should.be.calledTwice();
+      onlineCallback.should.be.calledOnce();
+      onlineCallback.should.be.calledWith("Shelly 2PM Gen3",false);
       //
     {
       let callback = sinon.spy();
@@ -167,13 +158,17 @@ describe( 'matter data handling', function () {
       matter.sendCommand("Shelly 2PM Gen3/2","onoff.toggle",null);
       sendCallback.should.be.calledWith("device_command","toggle",{node_id:12,endpoint_id:2,cluster_id:6,command_name:'toggle',payload:{}});
       sendCallback.should.have.callCount( 3 );
+      dataCallback.should.be.calledTwice();
       eventCallback.should.have.callCount( 0 );
+      onlineCallback.should.be.calledOnce();
   });
 
   it('should work with Ikea Bilresa', async function () {
       let sendCallback = sinon.spy();
+      let dataCallback = sinon.spy();
       let eventCallback = sinon.spy();
-      let matter = new Matter( sendCallback, eventCallback );
+      let onlineCallback = sinon.spy();
+      let matter = new Matter( sendCallback, dataCallback, eventCallback, onlineCallback );
       matter.storeNodes( JSON.parse(bilresa) );
       matter.should.have.a.property("_dataById");
       matter._dataById.should.have.a.property("32");
@@ -198,16 +193,9 @@ describe( 'matter data handling', function () {
         'BILRESA dual button/1': { node: 32, endpoint: 1 },
         'BILRESA dual button/2': { node: 32, endpoint: 2 }
       });
-      matter.should.have.a.property("_changed",{32:true});
-      //
-    {
-      let callback1 = sinon.spy();
-      let callback2 = sinon.spy();
-      matter.sendChanged( callback1, callback2 );
-      callback1.should.not.be.called();
-      callback2.should.not.be.called();
-    }
-      matter.should.have.a.property("_changed",{32:false});
+      dataCallback.should.be.calledTwice();
+      onlineCallback.should.be.calledOnce();
+      onlineCallback.should.be.calledWith("BILRESA dual button",true);
       //
     {
       let callback = sinon.spy();
@@ -235,7 +223,9 @@ describe( 'matter data handling', function () {
       matter.handleEvent({node_id:32,endpoint_id:1,cluster_id:59,event_id:6,event_number:1,priority:1,timestamp:1704067200000,timestamp_type:1,data:{previousPosition:1,totalNumberOfPressesCounted:3}});
       eventCallback.should.be.calledWith('BILRESA dual button/1', 'MultiPress', { pos: 1, count: 3 });
       sendCallback.should.have.callCount( 0 );
+      dataCallback.should.be.calledTwice();
       eventCallback.should.have.callCount( 6 );
+      onlineCallback.should.be.calledOnce();
   });
 
 });

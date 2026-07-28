@@ -58,7 +58,7 @@ describe( 'matter_server Node', function () {
   it('should connect and get data', function (done) {
     this.timeout( 10000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"],["n5"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n5"],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -112,7 +112,7 @@ describe( 'matter_server Node', function () {
         c4++;
         try {
           msg.should.have.property('topic').which.is.a.String();
-          msg.should.have.property('payload').which.is.a.Boolean();
+          msg.should.have.property('online').which.is.a.Boolean();
         }
         catch(err) {
           done(err);
@@ -214,7 +214,7 @@ describe( 'matter_server Node', function () {
   it('should handle invalid URLs', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"foobar:lan", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"foobar:lan", name: "test", wires: [["n2"],["n3"],[],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" }];
@@ -276,7 +276,7 @@ describe( 'matter_server Node', function () {
   it('should handle invalid addresses', function (done) {
     this.timeout( 5000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"foobar.lan", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"foobar.lan", name: "test", wires: [["n2"],["n3"],[],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" }];
@@ -338,7 +338,7 @@ describe( 'matter_server Node', function () {
   it('should handle invalid IPs', function (done) {
     this.timeout( 2500 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"192.168.254.254", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"192.168.254.254", name: "test", wires: [["n2"],["n3"],[],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" }];
@@ -400,7 +400,7 @@ describe( 'matter_server Node', function () {
   it('should handle other requests without open', function (done) {
     this.timeout( 2500 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],[],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" }];
@@ -470,7 +470,7 @@ describe( 'matter_server Node', function () {
   it('should send commands', function (done) {
     this.timeout( 10000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],[],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" }];
@@ -580,7 +580,7 @@ describe( 'matter_server Node', function () {
   it('should do time sync', function (done) {
     this.timeout( 30000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],[],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" }];
@@ -686,7 +686,7 @@ describe( 'matter_server Node', function () {
   it('should ping Alpstuga (#21)', function (done) {
     this.timeout( 30000 );
     var flow = [{ id: 'flow', type: 'tab' },
-                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],["n4"]], z: "flow" },
+                { id: "n1", type: "matterServer", host:"localhost", name: "test", wires: [["n2"],["n3"],[],["n4"]], z: "flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" }];

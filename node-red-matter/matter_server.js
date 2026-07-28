@@ -33,8 +33,8 @@ module.exports = function(RED) {
             node.send( [
                 null,
                 null,
-                { topic:"matter", payload:state },
-                null
+                null,
+                { topic:"matter", payload:state }
             ] );
         }
 
@@ -96,8 +96,8 @@ module.exports = function(RED) {
             node.send( [
                 null,
                 null,
-                null,
-                { topic: `${node.onlinePrefix}${name}`, payload: online },
+                { topic: `${node.onlinePrefix}${name}`, online: online },
+                null
             ] );
         }
 
@@ -368,8 +368,8 @@ module.exports = function(RED) {
             node.send( [
                 null,
                 null,
-                { topic:"matter", payload:"timeout" },
-                null
+                null,
+                { topic:"matter", payload:"timeout" }
             ] );
         }
 

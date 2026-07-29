@@ -1,0 +1,55 @@
+<script type="text/javascript">
+    RED.nodes.registerType('matterConnMan',{
+        category: 'input',
+        color: '#008B8B',
+        defaults: {
+            name:{value:""},
+            restart:{value:5,required:true,validate:RED.validators.number()}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "matter.svg",
+        label: function() {
+            return this.name||"Connection Manager";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        paletteLabel: "Matter CM",
+        inputLabels: 'WS state',
+        outputLabels: 'WS command'
+    });
+</script>
+
+<script type="text/x-red" data-template-name="matterConnMan">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-restart"><i class="fa fa-refresh"></i> restart time</label>
+        <input type="number" id="node-input-restart">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="matterConnMan">
+    <p>A Node Red node to manage the state of a <code>matterServer</code> node.</p>
+    
+    <h3>Input</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">string</span></dt>
+        <dd> state message from <code>matterServer</code> node.</dd>
+    </dl>
+    
+    <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>open</code> command for a <code>matterServer</code> node.</dd>
+    </dl>
+    
+    <h3>Parameters</h3>
+    <dl class="message-properties">
+        <dt>cyclic <span class="property-type">number</span></dt>
+        <dd> cyclic time of the manager in s; 15s is here the recommended value.</dd>
+    </dl>
+</script>

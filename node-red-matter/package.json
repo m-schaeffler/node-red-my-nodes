@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-matterserver",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "Node Red nodes to do Matter communication via a matter.js server",
     "author": {
         "name": "Mathias Schäffler",
@@ -24,6 +24,7 @@
         "version": ">=3.1.0",
         "nodes": {
             "matterServer": "matter_server.js",
+            "matterConnMan": "matter_connection_manager.js",
             "matterShellySim": "matter_shelly_sim.js"
         }
     },

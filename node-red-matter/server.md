@@ -37,7 +37,7 @@ all needed configuration is in the startup script `/srv/matter/start`:
 
 export NOBLE_BINDINGS=dbus
 
-node ~/server/node_modules/matter-server/dist/esm/MatterServer.js --primary-interface eth0 --storage-path ~/data --production-mode --bluetooth-adapter 0
+node ~/server/node_modules/matter-server/dist/esm/MatterServer.js --primary-interface eth0 --storage-path ~/data --production-mode --enable-time-sync --bluetooth-adapter 0
 ```
 
 ## Autostart

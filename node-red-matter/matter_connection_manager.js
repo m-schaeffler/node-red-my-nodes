@@ -23,14 +23,14 @@ module.exports = function(RED) {
             //console.log("  checkState",node.state)
             switch( node.state )
             {
+                case "init":
+                    openConnection();
+                    color = "gray";
+                    break;
                 case "connected":
                     clearTimeout ( node.timRestart );
                     node.timRestart = null;
                     color = "green";
-                    break;
-                case "init":
-                    openConnection();
-                    color = "gray";
                     break;
                 case "closed":
                 case "error":
@@ -59,7 +59,7 @@ module.exports = function(RED) {
         }
 
         function restart() {
-            console.log("restart")
+            //console.log("restart")
             openConnection();
             node.timRestart = setTimeout( restart, node.restart );
         }

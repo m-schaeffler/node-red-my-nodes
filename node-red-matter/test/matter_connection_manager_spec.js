@@ -56,7 +56,7 @@ describe( 'matter_connection_manager Node', function () {
       var nf = helper.getNode("nf");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg.topic);
+        //console.log(msg.topic);
         c++;
         try {
           msg.should.have.property('topic',"open");

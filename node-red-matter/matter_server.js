@@ -176,6 +176,7 @@ module.exports = function(RED) {
                 case "get_thread_diagnostics":
                     sendServerCommand( "get_thread_diagnostics", { force: true } );
                     break;
+                /*
                 case "timeSync":
                     if( node.state == "connected" )
                     {
@@ -186,6 +187,7 @@ module.exports = function(RED) {
                         node.error( `cannot timesync in ${node.state} state` );
                     }
                     break;
+                */
                 default:
                     if( node.state == "connected" )
                     {

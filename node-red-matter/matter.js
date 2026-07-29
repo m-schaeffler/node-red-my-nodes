@@ -639,6 +639,7 @@ class MatterData {
         }
     }
 
+    /*
     timeSync()
     {
         const now        = Temporal.Now.zonedDateTimeISO();
@@ -664,6 +665,7 @@ class MatterData {
             }
         }
     }
+    */
 }
 
 // Export

@@ -10,6 +10,7 @@ module.exports = function(RED) {
             true:  Number( config.timeTrue  ?? 1 ),
             false: Number( config.timeFalse ?? 1 )
         };
+        this.contextStore = config.contextStore ?? "none";
         this.restart      = Boolean( config.restart );
         this.byTopic      = Boolean( config.bytopic );
         this.state        = config.showState ? { fill:"gray", shape:"dot", text:"-" } : null;
@@ -55,6 +56,24 @@ module.exports = function(RED) {
         }
         setTimeout( function() { node.emit("started"); }, 100 );
         node.status( "" );
+        if( node.contextStore != "none" )
+        {
+            context.get( "last", node.contextStore, function(err,value)
+            {
+                if( err )
+                {
+                    node.error( err );
+                }
+                else
+                {
+                    //console.log( "context read", value );
+                    if( value !== undefined )
+                    {
+                        node.last = value;
+                    }
+                }
+            } );
+        }
 
         function defaultStat()
         {
@@ -63,14 +82,20 @@ module.exports = function(RED) {
 
         function sendMsg(msg,shape)
         {
-            node.last[node.byTopic ? msg.topic : "all_topics"] = msg.payload;
+            const topic = node.byTopic ? msg.topic : "all_topics";
+            node.last[topic] = msg.payload;
             node.send( msg );
+            node.data[topic].message = null;
             if( node.state )
             {
                 node.state.fill  = "green";
                 node.state.shape = shape;
                 node.state.text  = msg.payload;
                 node.status( node.state )
+            }
+            if( node.contextStore != "none" )
+            {
+                context.set( "last", node.last, node.contextStore );
             }
         }
 

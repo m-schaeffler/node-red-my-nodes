@@ -55,6 +55,7 @@ describe( 'debounceBool Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('time', {true:1000,false:1000});
+        n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('restart', false);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
@@ -99,10 +100,11 @@ describe( 'debounceBool Node', function () {
           await delay(50);
         }
         await delay(100);
-        //c.should.match(numbers.length);
-        //n1.context().get("data").should.have.ValidData("all_topics");
+        c.should.match(numbers.length);
+        n1.context().get("data").should.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        should.not.exist( n1.context().get("last") );
         done();
       }
       catch(err) {
@@ -240,7 +242,7 @@ describe( 'debounceBool Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg);
+        //console.log(msg);
         try {
           msg.should.have.a.property('topic',c+1);
           msg.should.have.a.property('payload',c<4 ? Boolean(c&0x01) : !(c&0x01));
@@ -499,6 +501,70 @@ describe( 'debounceBool Node', function () {
         done(err);
       }
     });
+  });
+
+  it('should forward store last state', function (done) {
+    var flow = [{ id: "n1", type: "debounceBool", name: "test", contextStore:"memoryOnly", timeTrue:2, timeTrueUnit:"secs", timeFalse:200, timeFalseUnit:"msecs", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg)
+        try {
+          msg.should.have.a.property('topic',"value");
+          msg.should.have.a.property('payload',true);
+        }
+        catch(err) {
+          done(err);
+        }
+        c++;
+      });
+      try {
+        n1.should.have.a.property('time', {true:2000,false:200});
+        n1.should.have.a.property('byTopic', false);
+        n1.should.have.a.property('contextStore', "memoryOnly");
+        await delay(500);
+        c.should.match(0);
+        n1.receive({ topic: "value", payload: true });
+        await delay(20);
+        c.should.match(1);
+        n1.context().get("data").should.have.ValidData("all_topics");
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.context().get("last").should.match({"all_topics":true});
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n2 = helper.getNode("n2");
+        n2.on("input", function (msg) {
+          //console.log(msg)
+          try {
+            msg.should.have.a.property('topic',"value2");
+            msg.should.have.a.property('payload',false);
+          }
+          catch(err) {
+            done(err);
+          }
+          c++;
+        });
+        n1.context().get("last").should.match({"all_topics":true});
+        n1.last.should.match({"all_topics":true});
+        c.should.match(1);
+        n1.receive({ topic: "value2", payload: false });
+        await delay(180);
+        c.should.match(1);
+        await delay(40);
+        c.should.match(2);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+   });
   });
 
 });

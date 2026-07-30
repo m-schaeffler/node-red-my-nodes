@@ -32,6 +32,28 @@ $ npm install @mschaeffler/node-red-matterServer
 |config  | type        | description                       |
 |:-------|:------------|:----------------------------------|
 
+## matterConnMan node
+
+A Node Red node to manage the state of a `matterServer` node.
+
+### Input
+
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|payload|string  | state message from `matterServer` node. |
+
+### Output
+
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|topic  |string  | `open` command for a `matterserver` node. |
+
+### Parameters
+
+|config  | type  | description                       |
+|:-------|:------|:----------------------------------|
+|restart time |number | delay after an error before the first restart, it will be cyclically retried until the connection can be established. |
+
 ## matterShellySim node
 
 ### Input

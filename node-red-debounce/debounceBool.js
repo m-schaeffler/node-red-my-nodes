@@ -200,7 +200,15 @@ module.exports = function(RED) {
                             else if( node.restart )
                             {
                                 clearTimeout( statistic.timer );
-                                statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
+                                if( msg.payload !== last )
+                                {
+                                    statistic.timer = setTimeout( function(stat) { node.emit( "cyclic", stat ); }, debounceTime, statistic );
+                                }
+                                else
+                                {
+                                    statistic.timer = null;
+                                    sendMsg( msg, "ring" );
+                                }
                             }
                         }
                     }
@@ -219,7 +227,6 @@ module.exports = function(RED) {
             if( stat.message )
             {
                 sendMsg( stat.message, "dot" );
-                stat.message = null;
             }
         } );
 

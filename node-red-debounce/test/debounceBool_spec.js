@@ -370,14 +370,12 @@ describe( 'debounceBool Node', function () {
         await delay(450);
         c.should.match(5);
         n1.receive({ topic: 6, payload: true });
-        await delay(475);
-        c.should.match(5);
-        await delay(50);
+        await delay(25);
         c.should.match(6);
         n1.receive({ topic: "7a", payload: false });
         await delay(475);
         c.should.match(6);
-        n1.receive({ topic: "7b", payload: true });
+        n1.receive({ topic: "7b", payload: false });
         await delay(475);
         c.should.match(6);
         n1.receive({ topic: 7, payload: false });
@@ -448,7 +446,7 @@ describe( 'debounceBool Node', function () {
   });
 
   it('should use debounceMs override with restart', function (done) {
-    var flow = [{ id: "n1", type: "debounceBool", name: "test", restart:true, timeTrue:200, timeTrueUnit:"msecs", timeFalse:200, timeFalseUnit:"msecs", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "debounceBool", name: "test", restart:true, timeTrue:2000, timeTrueUnit:"msecs", timeFalse:2000, timeFalseUnit:"msecs", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -459,8 +457,8 @@ describe( 'debounceBool Node', function () {
         //console.log(msg);
         try {
           timestamp = Date.now();
-          msg.should.have.a.property('topic',"t");
-          msg.should.have.a.property('payload',false);
+          msg.should.have.a.property('topic').which.is.oneOf("t","v");
+          msg.should.have.a.property('payload',msg.topic=="t");
         }
         catch(err) {
           done(err);
@@ -468,25 +466,25 @@ describe( 'debounceBool Node', function () {
         c++;
       });
       try {
-        n1.should.have.a.property('time', {true:200,false:200});
+        n1.should.have.a.property('time', {true:2000,false:2000});
         n1.should.have.a.property('restart', true);
         n1.should.have.a.property('byTopic', false);
         await delay(500);
         c.should.match(0);
         // Send first message immediately
         start = Date.now();
-        n1.receive({ topic: "t", payload: false, debounceMs: 10000 });
+        n1.receive({ topic: "t", payload: true, debounceMs: 10000 });
         await delay(25);
         c.should.match(1);
         (timestamp-start).should.be.within(0,5);
         // Send first message with debounceMs
         //start = Date.now();
-        n1.receive({ topic: "u", payload: true, debounceMs: 5000 });
+        n1.receive({ topic: "u", payload: false, debounceMs: 5000 });
         await delay(25);
         c.should.match(1);
         // Send second message with debounceMs:
         start = Date.now();
-        n1.receive({ topic: "t", payload: false, debounceMs: 50 });
+        n1.receive({ topic: "v", payload: false, debounceMs: 50 });
         await delay(25);
         c.should.match(1);
         await delay(50);

@@ -134,7 +134,7 @@ describe( 'debounceBool Node', function () {
         n1.receive({ invalid: true, payload: true });
         await delay(150);
         c.should.match(0);
-        n1.context().get("data").should.have.ValidData("all_topics");
+        n1.context().get("data").should.not.have.ValidData("all_topics");
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
         done();
@@ -240,7 +240,7 @@ describe( 'debounceBool Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        //console.log(msg);
+        console.log(msg);
         try {
           msg.should.have.a.property('topic',c+1);
           msg.should.have.a.property('payload',c<4 ? Boolean(c&0x01) : !(c&0x01));
@@ -278,6 +278,8 @@ describe( 'debounceBool Node', function () {
         n1.context().get("data").should.have.ValidData("all_topics");
         n1.receive({ topic: 4, payload: true });
         await delay(25);
+        c.should.match(3);
+        await delay(100);
         c.should.match(4);
         n1.receive({ topic: 5, payload: true });
         await delay(25);
@@ -356,6 +358,8 @@ describe( 'debounceBool Node', function () {
         n1.context().get("data").should.have.ValidData("all_topics");
         n1.receive({ topic: 4, payload: true });
         await delay(25);
+        c.should.match(3);
+        await delay(100);
         c.should.match(4);
         n1.receive({ topic: 5, payload: true });
         await delay(25);

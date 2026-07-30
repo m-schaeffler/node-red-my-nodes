@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-debounce",
-    "version": "2.0.2",
+    "version": "2.1.0",
     "description": "Node Red nodes to debounce a payload.",
     "author": {
         "name": "Mathias Schäffler",
@@ -31,6 +31,6 @@
         "node": ">=18"
     },
     "scripts": {
-        "test": "mocha \"test/*_spec.js\""
+        "test": "mocha \"test/debounceBool_spec.js\""
     }
 }

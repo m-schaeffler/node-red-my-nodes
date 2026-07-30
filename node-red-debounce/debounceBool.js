@@ -14,6 +14,7 @@ module.exports = function(RED) {
         this.byTopic      = Boolean( config.bytopic );
         this.state        = config.showState ? { fill:"gray", shape:"dot", text:"-" } : null;
         this.data         = {};
+        this.last         = {};
         if( this.propertyType === "jsonata" )
         {
             try {
@@ -62,7 +63,7 @@ module.exports = function(RED) {
 
         function sendMsg(msg,shape)
         {
-            node.data[node.byTopic ? msg.topic : "all_topics"].last = msg.payload;
+            node.last[node.byTopic ? msg.topic : "all_topics"] = msg.payload;
             node.send( msg );
             if( node.state )
             {
@@ -91,13 +92,7 @@ module.exports = function(RED) {
         node.on('input', function(msg,send,done) {
             //console.log( "debounce input" );
             //console.log( node.data );
-            const topic     = node.byTopic ? msg.topic : "all_topics";
-            let   statistic = node.data[topic];
-            if( statistic === undefined )
-            {
-                statistic = defaultStat();
-                node.data[topic] = statistic;
-            }
+            const topic = node.byTopic ? msg.topic : "all_topics";
 
             if( msg.invalid )
             {
@@ -107,7 +102,7 @@ module.exports = function(RED) {
             {
                 if( topic )
                 {
-                    clearTimeout( statistic.timer );
+                    clearTimeout( node.data[topic].timer );
                     node.data[topic] = defaultStat();
                 }
                 else
@@ -149,12 +144,19 @@ module.exports = function(RED) {
                     if( value !== undefined )
                     {
                         msg.payload = Boolean( value );
-                        const debounceTime = msg.debounceMs ?? node.time[!(statistic.last??!msg.payload)];
-                        //console.log(msg.payload,statistic.last,debounceTime)
+                        const last         = node.last[topic];
+                        const debounceTime = msg.debounceMs ?? node.time[!last];
+                        let   statistic    = node.data[topic];
+                        if( statistic === undefined )
+                        {
+                            statistic = defaultStat();
+                            node.data[topic] = statistic;
+                        }
                         statistic.message = msg;
+                        //console.log(msg.payload,last,debounceTime)
                         if( ! statistic.timer )
                         {
-                            if( statistic.last === undefined || msg.payload === statistic.last || debounceTime == 0 )
+                            if( last === undefined || msg.payload === last || debounceTime == 0 )
                             {
                                 sendMsg( msg, "ring" );
                             }

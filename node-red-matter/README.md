@@ -60,20 +60,19 @@ This node converts several commands with data similar to the [Shelly RPC API](ht
 
 Any unknown command is forwarded unchanged, so also Matter commands can be routed through the node.
 
-This commands are implemented:
+This commands are implemented with the corresponding data indented:
 - relay
 - switch
 - output
-- light  
-    with this data:
+- light
     - `true` or `false`
     - `"on"` or `"off"`
     - `"toggle"`
-    - on object with at least one of these elements:
+    - an object with at least one of these elements:
         - `turn` or `on` with one of the values above
         - `brightness` with a number
         - `temp` with a color temperature in K
-        - `rgb` with an object with `red`, `green`and `blue` values.
+        - `rgb` with an object with `red`, `green` and `blue` values.
 - roller
 - cover
     - `"open"`, `"close"` or `"stop"` 

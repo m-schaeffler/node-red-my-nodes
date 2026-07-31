@@ -28,18 +28,74 @@
 
 <script type="text/x-red" data-help-name="matterShellySim">
 
-    <p></p>
+    <p>This node converts several commands with data similar to the <a href="https://shelly-api-docs.shelly.cloud/gen2/">Shelly RPC API</a> into matter compatible commands.</p>
+
+    <p>Any unknown command is forwarded unchanged, so also Matter commands can be routed through the node.</p>
+
+    <p>This commands are implemented with the corresponding data indented:</p>
+    <ul>
+       <li>relay</li>
+       <li>switch</li>
+       <li>output</li>
+       <li>light
+         <ul>
+           <li><code>true</code> or <code>false</code></li>
+           <li><code>"on"</code> or <code>"off"</code></li>
+           <li><code>"toggle"</code></li>
+           <li>an object with at least one of these elements:
+             <ul>
+               <li><code>turn</code> or <code>on</code> with one of the values above</li>
+               <li><code>brightness</code> with a number</li>
+               <li><code>temp</code> with a color temperature in K</li>
+               <li><code>rgb</code> with an object with <code>red</code>, <code>green</code> and <code>blue</code> values.</li>
+             </ul></li>
+         </ul></li>
+       <li>roller</li>
+       <li>cover
+         <ul>
+           <li><code>"open"</code>, <code>"close"</code> or <code>"stop"</code></li>
+         </ul></li>
+       <li>position
+         <ul>
+           <li>with a position for the cover in %</li>
+         </ul></li>
+    </ul>
+    
+    <p>Example:</p>
+    <pre><code>{
+    "command": "light",
+    "data": {
+        "on": true,
+        "brightness": 80,
+        "rgb": {
+            "red": 255,
+            "green": 0,
+            "blue": 0
+        }
+    }
+}</code></pre>
     
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
-        <dd> </dd>
-        <dt>payload <span class="property-type">number</span></dt>
-        <dd> </dd>
+        <dd> target of the command</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> object with the command</dd>
+        <dt>payload.command <span class="property-type">string</span></dt>
+        <dd> Shelly or Matter command</dd>
+        <dt>payload.data <span class="property-type">object or value</span></dt>
+        <dd> Data for the command</dd>
     </dl>
 
     <h3>Output</h3>
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> same as on input, target of the command</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> object with the command</dd>
+        <dt>payload.command <span class="property-type">string</span></dt>
+        <dd> Matter command</dd>
+        <dt>payload.data <span class="property-type">object or value</span></dt>
+        <dd> Data for the command</dd>
     
-    <h3>Parameters</h3>
-
 </script>

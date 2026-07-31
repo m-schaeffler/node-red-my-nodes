@@ -5,10 +5,9 @@
         "z": "3e03fa27c088b35e",
         "name": "",
         "x": 540,
-        "y": 400,
+        "y": 120,
         "wires": [
             [
-                "47d5ccc9c47ce6da",
                 "14b0cc638168bd90"
             ]
         ]
@@ -22,29 +21,13 @@
             "10836ea8b544832a"
         ],
         "x": 200,
-        "y": 400,
+        "y": 120,
         "wires": [
             [
                 "a235a31250bd6dbb"
             ]
         ],
         "l": true
-    },
-    {
-        "id": "47d5ccc9c47ce6da",
-        "type": "debug",
-        "z": "3e03fa27c088b35e",
-        "name": "debug 11",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 880,
-        "y": 400,
-        "wires": []
     },
     {
         "id": "a235a31250bd6dbb",
@@ -66,7 +49,7 @@
         "to": "",
         "reg": false,
         "x": 380,
-        "y": 400,
+        "y": 120,
         "wires": [
             [
                 "594c25a1a7c18ed5"
@@ -82,9 +65,10 @@
         "port": "5580",
         "statusPrefix": "",
         "eventPrefix": "Event",
+        "onlinePrefix": "Online",
         "contextVar": "matter",
         "x": 540,
-        "y": 180,
+        "y": 300,
         "wires": [
             [
                 "9bc716c8200179bf"
@@ -92,33 +76,11 @@
             [
                 "e04ef15d82b84870"
             ],
-            [],
             [
-                "cb99ca472de54d2c"
-            ]
-        ]
-    },
-    {
-        "id": "1707dccfd7456bd2",
-        "type": "inject",
-        "z": "3e03fa27c088b35e",
-        "name": "",
-        "props": [
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": "1",
-        "topic": "open",
-        "x": 370,
-        "y": 180,
-        "wires": [
+                "e04ef15d82b84870"
+            ],
             [
-                "14b0cc638168bd90"
+                "e9b8f8b06c399fc2"
             ]
         ]
     },
@@ -135,7 +97,7 @@
         "finalize": "",
         "libs": [],
         "x": 710,
-        "y": 140,
+        "y": 260,
         "wires": [
             [
                 "1f6fd1eb9b8ef4ba"
@@ -157,50 +119,9 @@
             "1cd03f11c99b572d"
         ],
         "x": 900,
-        "y": 140,
+        "y": 260,
         "wires": [],
         "l": true
-    },
-    {
-        "id": "908fd6194a6a70df",
-        "type": "link out",
-        "z": "3e03fa27c088b35e",
-        "name": "Matter RX",
-        "mode": "link",
-        "links": [
-            "5950725d0edd8b5f"
-        ],
-        "x": 880,
-        "y": 220,
-        "wires": [],
-        "l": true
-    },
-    {
-        "id": "cb99ca472de54d2c",
-        "type": "change",
-        "z": "3e03fa27c088b35e",
-        "name": "timeout",
-        "rules": [
-            {
-                "t": "set",
-                "p": "timeout",
-                "pt": "msg",
-                "to": "900",
-                "tot": "num"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 720,
-        "y": 220,
-        "wires": [
-            [
-                "908fd6194a6a70df"
-            ]
-        ]
     },
     {
         "id": "e04ef15d82b84870",
@@ -212,7 +133,7 @@
             "37073234dd1a3c99"
         ],
         "x": 890,
-        "y": 180,
+        "y": 300,
         "wires": [],
         "l": true
     },
@@ -223,7 +144,7 @@
         "name": "Command",
         "info": "",
         "x": 100,
-        "y": 320,
+        "y": 60,
         "wires": []
     },
     {
@@ -233,15 +154,158 @@
         "name": "Receive",
         "info": "",
         "x": 100,
-        "y": 100,
+        "y": 220,
         "wires": []
     },
     {
-        "id": "ebf4d1148095af2a",
+        "id": "8591518eefecc705",
+        "type": "ui-button",
+        "z": "3e03fa27c088b35e",
+        "group": "d2e5bd6fe543663c",
+        "name": "config button",
+        "label": "",
+        "order": 2,
+        "width": "1",
+        "height": "1",
+        "emulateClick": false,
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "cog",
+        "iconPosition": "left",
+        "payload": "get_nodes",
+        "payloadType": "str",
+        "topic": "get_nodes",
+        "topicType": "str",
+        "buttonColor": "",
+        "textColor": "",
+        "iconColor": "",
+        "enableClick": true,
+        "enablePointerdown": false,
+        "pointerdownPayload": "",
+        "pointerdownPayloadType": "str",
+        "enablePointerup": false,
+        "pointerupPayload": "",
+        "pointerupPayloadType": "str",
+        "x": 310,
+        "y": 300,
+        "wires": [
+            [
+                "14b0cc638168bd90"
+            ]
+        ]
+    },
+    {
+        "id": "e9b8f8b06c399fc2",
+        "type": "matterConnMan",
+        "z": "3e03fa27c088b35e",
+        "name": "",
+        "restart": "5",
+        "x": 540,
+        "y": 440,
+        "wires": [
+            [
+                "14b0cc638168bd90"
+            ]
+        ]
+    },
+    {
+        "id": "d2e5bd6fe543663c",
+        "type": "ui-group",
+        "name": "Matter Geräte",
+        "page": "1e149f17c9c827a4",
+        "width": "8",
+        "height": 1,
+        "order": 1,
+        "showTitle": true,
+        "className": "",
+        "visible": "true",
+        "disabled": "false",
+        "groupType": "default"
+    },
+    {
+        "id": "1e149f17c9c827a4",
+        "type": "ui-page",
+        "name": "Matter / Zigbee",
+        "ui": "fd06eabec55c4e5d",
+        "path": "/matter",
+        "icon": "zigbee",
+        "layout": "flex",
+        "theme": "a965ccfef139317a",
+        "breakpoints": [
+            {
+                "name": "Default",
+                "px": "0",
+                "cols": "3"
+            },
+            {
+                "name": "Tablet",
+                "px": "576",
+                "cols": "6"
+            },
+            {
+                "name": "Small Desktop",
+                "px": "768",
+                "cols": "9"
+            },
+            {
+                "name": "Desktop",
+                "px": "1024",
+                "cols": "12"
+            }
+        ],
+        "order": 22,
+        "className": "",
+        "visible": "true",
+        "disabled": "false"
+    },
+    {
+        "id": "fd06eabec55c4e5d",
+        "type": "ui-base",
+        "name": "Dashboard 2.0",
+        "path": "/dashboard",
+        "appIcon": "",
+        "includeClientData": false,
+        "acceptsClientConfig": [
+            "ui-notification",
+            "ui-control"
+        ],
+        "showPathInSidebar": false,
+        "headerContent": "page",
+        "navigationStyle": "default",
+        "titleBarStyle": "fixed",
+        "showReconnectNotification": false,
+        "notificationDisplayTime": "5",
+        "showDisconnectNotification": false,
+        "allowInstall": true
+    },
+    {
+        "id": "a965ccfef139317a",
+        "type": "ui-theme",
+        "name": "Default",
+        "colors": {
+            "surface": "#6db046",
+            "primary": "#32cd32",
+            "bgPage": "#000000",
+            "groupBg": "#333333",
+            "groupOutline": "#616161"
+        },
+        "sizes": {
+            "pagePadding": "12px",
+            "groupGap": "12px",
+            "groupBorderRadius": "4px",
+            "widgetGap": "12px",
+            "density": "default"
+        }
+    },
+    {
+        "id": "81513bd2a72e2686",
         "type": "global-config",
         "env": [],
         "modules": {
-            "@mschaeffler/node-red-matterServer": "0.0.1"
+            "@mschaeffler/node-red-matterserver": "0.5.3",
+            "@flowfuse/node-red-dashboard": "1.30.2"
         }
     }
 ]

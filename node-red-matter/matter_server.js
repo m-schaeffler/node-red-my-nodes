@@ -82,7 +82,7 @@ module.exports = function(RED) {
 
         function handleEvent(name,event,data)
         {
-            node.warn(name+" "+event)
+            //console.log(name,event)
             node.send( [
                 null,
                 { topic: `${node.eventPrefix}${name}/${event}`, payload: { event:event, ...data } },

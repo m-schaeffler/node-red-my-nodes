@@ -64,8 +64,7 @@ This commands are implemented:
 - relay
 - switch
 - output
-- light
-    
+- light  
     with this data:
     - `true` or `false`
     - `"on"` or `"off"`

@@ -57,6 +57,7 @@ A Node Red node to manage the state of a `matterServer` node.
 ## matterShellySim node
 
 This node converts several commands with data similar to the [Shelly RPC API](https://shelly-api-docs.shelly.cloud/gen2/) into matter compatible commands.
+
 Any unknown command is forwarded unchanged, so also Matter commands can be routed through the node.
 
 This commands are implemented:
@@ -64,11 +65,12 @@ This commands are implemented:
 - switch
 - output
 - light
+    
     with this data:
     - `true` or `false`
     - `"on"` or `"off"`
     - `"toggle"`
-    - on object with on of these elements:
+    - on object with at least one of these elements:
         - `turn` or `on` with one of the values above
         - `brightness` with a number
         - `temp` with a color temperature in K

@@ -36,6 +36,19 @@ This node connects to a matter.js server, decodes received data (Matter attribut
 
 #### Node Control
 
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|topic  | string | name of the device ( + number of the endpoint )|
+|payload| object | command and data|
+|payload.command| string | command in the form `clustername.commandname`|
+|payload.data| object | data for this command|
+
+additional commands:
+- `rvc.clean` starts a vacuum robot for the rooms in the `data` array.
+- `rvc.stop`
+- `windowcovering.gotolift` moves the cover to the `data` position.
+
+
 ### Outputs
 
 #### Received Data
@@ -85,6 +98,8 @@ Actual state of the websocket connection.
 |contextVar  | string | name of the variable in flow context storage |
 
 ### Context Storage
+
+In the flow context variable are all data for the different nodes stored.
 
 ## matterConnMan node
 

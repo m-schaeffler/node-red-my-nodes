@@ -316,6 +316,13 @@ class MatterData {
                                 item.internal[endpoint].supportedAreas[value[v][0]] = value[v][2][0][0];
                             }
                             break;
+                        case "1": // SupportedMaps
+                            item.internal[endpoint].supportedMaps = {};
+                            for( const v in value )
+                            {
+                                item.internal[endpoint].supportedMaps[value[v][0]] = value[v][1];
+                            }
+                            break;
                         case "2": // SelectedAreas
                           {
                             let selectedAreas = [];

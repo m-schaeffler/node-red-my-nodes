@@ -309,13 +309,10 @@ module.exports = function(RED) {
                                 node.matter.handleEvent( data.data );
                                 break;
                             case "node_added":
-                                node.warn( data.event );
-                                // fall through
                             case "node_updated":
                                 node.matter.storeNode( data.data );
                                 break;
                             case "node_removed":
-                                node.warn( data.event );
                                 node.matter.deleteNode( data.data );
                                 break;
                             case "server_shutdown":

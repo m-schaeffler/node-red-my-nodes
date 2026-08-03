@@ -14,11 +14,27 @@ $ npm install @mschaeffler/node-red-matterServer
 
 ## matterServer Node
 
+This node connects to a matter.js server, decodes received data (Matter attributes and events) and controls nodes via Matter commands.
 
 ### Input
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
+|topic  | string | comnmand to be executed by the server or name of the node to be controled.|
+|payload| | data for the control of a node|
+
+#### Server Commands
+
+|msg.topic|msg.payload|description|
+|:------|:----------|:----------------------------------|
+|open|null|opens the connection to the server|
+|close|null|closes the connection to the server|
+|get_nodes|null|rereads all avaliable nodes, normally not neccessary|
+|ping_node|node id to be pinged|pings a node|
+|get_thread_border_routers|null|requests all available TBRs; data is outputed via `node.warn`|
+|get_thread_diagnostics|null|requests available Thread diag data; data is outputed via `node.warn`|
+
+#### Node Control
 
 ### Outputs
 
@@ -67,6 +83,8 @@ Actual state of the websocket connection.
 |eventPrefix | string | prefix for the topic for event output |
 |onlinePrefix| string | prefix for the topic for online output |
 |contextVar  | string | name of the variable in flow context storage |
+
+### Context Storage
 
 ## matterConnMan node
 

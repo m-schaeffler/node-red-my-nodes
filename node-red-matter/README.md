@@ -20,17 +20,53 @@ $ npm install @mschaeffler/node-red-matterServer
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
 
-### Output
+### Outputs
+
+#### Received Data
+
+Received and decoded values of selected cluster attributes  the node.
 
 |msg.   | type   | description |
 |:------|:-------|:------------|
-|topic  | string | |
-|payload| object | |
+|topic  | string | `State-Prefix` + name of the device ( + number of the endpoint )|
+|payload| object | decoded state (attribute) data|
+
+#### Received Events
+
+Received and decoded events of the node.
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | `Event-Prefix` + name of the device ( + number of the endpoint )|
+|payload | object | data of the decoded event|
+
+#### Node Online State
+
+Online status of the node as reported by the matter.js server.
+
+|msg.    | type   | description                       |
+|:-------|:-------|:----------------------------------|
+|topic   | string | `Online-Prefix` + name of the device|
+|payload | boolean| online status of the node|
+
+#### Connection Status
+
+Actual state of the websocket connection.
+
+|msg.   | type   | description |
+|:------|:-------|:------------|
+|payload| string | state of the websocket.|
 
 ### Parameters
 
 |config  | type        | description                       |
 |:-------|:------------|:----------------------------------|
+|host    | string | hostname of the matter.js server |
+|port    | number | port for the websocket API |
+|statusPrefix| string | prefix for the topic for state / data output |
+|eventPrefix | string | prefix for the topic for event output |
+|onlinePrefix| string | prefix for the topic for online output |
+|contextVar  | string | name of the variable in flow context storage |
 
 ## matterConnMan node
 

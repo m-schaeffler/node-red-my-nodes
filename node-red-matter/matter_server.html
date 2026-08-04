@@ -6,6 +6,7 @@
             name: {value:""},
             host: {value:"", required:true},
             port: {value:"5580", required:true, validate:RED.validators.number()},
+            renaming:{value:"{}",required:true},
             statusPrefix:{value:""},
             eventPrefix:{value:""},
             onlinePrefix:{value:""},
@@ -22,7 +23,74 @@
         },
         paletteLabel: "Matter",
         inputLabels: 'command',
-        outputLabels: ['received data','received events','node online state','connection status']
+        outputLabels: ['received data','received events','node online state','connection status'],
+        oneditprepare: function() {
+            const node = this;
+            // Devices-List
+            const renamingsList = $("#node-input-renaming-container").css('min-height','150px').css('min-width','450px').editableList({
+                addItem: function(container,i,rename) {
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    const row = $('<div/>').appendTo(container);
+                    $('<div/>',{style: 'display:inline-block; padding:0px 6px;'})
+                        .text('id')
+                        .appendTo(row);
+                    const propertyId = $('<input/>',{class:"node-input-renaming-id",type:"text"})
+                        .css("width","70")
+                        .appendTo(row)
+                        .typedInput({types:['num']});
+                    $('<div/>',{style: 'display:inline-block; padding:0px 6px;'})
+                        .text('/')
+                        .appendTo(row);
+                    const propertyEndpoint = $('<input/>',{class:"node-input-renaming-endpoint",type:"text"})
+                        .css("width","60")
+                        .appendTo(row)
+                        .typedInput({types:['num']});
+                    $('<div/>',{style: 'display:inline-block; padding:0px 6px;'})
+                        .text('name')
+                        .appendTo(row);
+                    const propertyName = $('<input/>',{class:"node-input-renaming-name",type:"text"})
+                        .css("width","350")
+                        .appendTo(row)
+                        .typedInput({types:['str']});
+                    propertyId      .typedInput('value',rename.id      ?? "");
+                    propertyEndpoint.typedInput('value',rename.edpoint ?? 0);
+                    propertyName    .typedInput('value',rename.name    ?? "");
+                },
+                sortable: true,
+                removable: true
+            });
+            console.log(this.renaming)
+            const help = JSON.parse( this.renaming ?? "[]" );
+            for( const v of help ) {
+                renamingsList.editableList('addItem',v);
+            }
+        },
+        oneditresize: function(size) {
+            const rows = $("#dialog-form>div:not(.node-input-renaming-container-row)");
+            let height = size.height;
+            for(let i=0; i<rows.length; i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            const editorRow = $("#dialog-form>div.node-input-renaming-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            $("#node-input-renaming-container").editableList('height',height);
+        },
+        oneditsave: function() {
+            const renaming = $("#node-input-renaming-container").editableList('items');
+            let help = [];
+            renaming.each(function(i) {
+                const rename = $(this);
+                const id       = rename.find(".node-input-renaming-id")      .typedInput('value');
+                const endpoint = rename.find(".node-input-renaming-endpoint").typedInput('value');
+                const name     = rename.find(".node-input-renaming-name")    .typedInput('value');
+                help.push( { id: id, endpoint: endpoint, name: name } );
+            });
+            console.log(JSON.stringify( help ))
+            this.renaming = JSON.stringify( help );
+        }
     });
 </script>
 
@@ -54,6 +122,10 @@
     <div class="form-row">
         <label for="node-input-contextVar"><i class="fa fa-database"></i> Context-Variable</label>
         <input type="text" id="node-input-contextVar"></input>
+    </div>
+    <div class="form-row node-input-renaming-container-row">
+        <label for="node-input-renaming"><i class="fa fa-bluetooth-b"></i> Node Renaming</label>
+        <ol id="node-input-renaming-container"></ol>
     </div>
 </script>
 

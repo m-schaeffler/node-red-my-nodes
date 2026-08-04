@@ -106,8 +106,9 @@ Object.freeze(MatterClusters);
 // MatterData
 
 class MatterData {
-    constructor(sendCallback,dataCallback,eventCallback,onlineCallback)
+    constructor(renaming,sendCallback,dataCallback,eventCallback,onlineCallback)
     {
+        this.renaming            = renaming;
         this.sendCommandCallback = sendCallback;
         this.dataCallback        = dataCallback;
         this.eventCallback       = eventCallback;
@@ -119,6 +120,18 @@ class MatterData {
     {
         this._dataById = {};
         this._namesLut = {};
+    }
+
+    _getName(id,endpoint=0)
+    {
+        for( const v of this.renaming )
+        {
+            if( v.id == id && v.endpoint == endpoint )
+            {
+                return v.name;
+            }
+        }
+        return null;
     }
 
     _doSetAttribute(id,attr,value)
@@ -469,12 +482,12 @@ class MatterData {
         help.model    = n.attributes["0/40/3"];
         help.label    = n.attributes["0/40/5"];
         help.location = n.attributes["0/40/6"];
-        help.name     = help.label || help.model;
+        help.name     = this._getName( n.node_id ) || help.label || help.model;
         help.internal ??= {};
         help.data     ??= {};
         for( const e of n.attributes["0/29/3"] )
         {
-            const channel = n.attributes["0/29/3"].length == 1 ? help.name : `${help.name}/${e}`;
+            const channel = n.attributes["0/29/3"].length == 1 ? help.name : this._getName( n.node_id, e ) || `${help.name}/${e}`;
             help.internal[e] ??= {};
             help.data    [e] ??= {};
             help.internal[e].name = channel;

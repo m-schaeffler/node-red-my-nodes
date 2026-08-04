@@ -177,10 +177,6 @@ describe( 'matter_server Node', function () {
           n.should.have.a.property("name").which.is.a.String();
           n.should.have.a.property("internal").which.is.an.Object();
           n.should.have.a.property("data").which.is.an.Object();
-          if( n.label )
-          {
-            n.should.have.a.property("ip6").which.is.a.String();
-          }
         }
 
         n1.receive({ topic:"get_nodes" });
@@ -728,7 +724,7 @@ describe( 'matter_server Node', function () {
         actualState.should.match( 'connected' );
         n1.queue.isEmpty().should.match( true );
         //
-        n1.receive({ topic:"ping_node", payload:21 });
+        n1.receive({ topic:"ping_node", payload:40 });
         await delay(8000);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);

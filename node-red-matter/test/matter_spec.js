@@ -23,7 +23,7 @@ describe( 'matter data handling', function () {
       let dataCallback = sinon.spy();
       let eventCallback = sinon.spy();
       let onlineCallback = sinon.spy();
-      let matter = new Matter( sendCallback, dataCallback, eventCallback, onlineCallback );
+      let matter = new Matter( [], sendCallback, dataCallback, eventCallback, onlineCallback );
       matter.storeNodes( JSON.parse(rvc) );
       matter.should.have.a.property("_dataById");
       matter._dataById.should.have.a.property("8");
@@ -38,6 +38,7 @@ describe( 'matter data handling', function () {
           name:'Rocky',
           supportedRunModes:{'0':'Idle','1':'Cleaning','2':'Mapping'},
           supportedCleanModes: {'1': 'Quiet, Vacuum Only','2': 'Auto, Vacuum Only','3': 'Deep Clean, Vacuum Only','4': 'Quiet, Mop Only','5': 'Auto, Mop Only','6': 'Deep Clean, Mop Only','7': 'Quiet, Vacuum and Mop','8': 'Auto, Vacuum and Mop','9': 'Deep Clean, Vacuum and Mop'},
+          supportedMaps: { '0': 'Karte OG', '1': 'Karte EG', '2': 'Karte DG' },
           supportedAreas: {'1': 'Bad OG','2': 'Flur OG','3': 'Schlafzimmer','4': 'Treppe','5': 'Clara','6': 'Küche','7': 'Flur','8': 'Toilette','9': 'Wohnzimmer','10': 'Johanna','11': 'Flur','12': 'Bad DG','13': 'Schlafzimmer'} }});
       matter._dataById[8].should.have.a.property("data",{ '1': {
           runMode:'Idle',
@@ -113,7 +114,7 @@ describe( 'matter data handling', function () {
       let dataCallback = sinon.spy();
       let eventCallback = sinon.spy();
       let onlineCallback = sinon.spy();
-      let matter = new Matter( sendCallback, dataCallback, eventCallback, onlineCallback );
+      let matter = new Matter( [], sendCallback, dataCallback, eventCallback, onlineCallback );
       matter.storeNodes( JSON.parse(plus2pm) );
       matter.should.have.a.property("_dataById");
       matter._dataById.should.have.a.property("12");
@@ -163,12 +164,12 @@ describe( 'matter data handling', function () {
       onlineCallback.should.be.calledOnce();
   });
 
-  it('should work with Ikea Bilresa', async function () {
+  it('should work with Ikea Bilresa, with renaming', async function () {
       let sendCallback = sinon.spy();
       let dataCallback = sinon.spy();
       let eventCallback = sinon.spy();
       let onlineCallback = sinon.spy();
-      let matter = new Matter( sendCallback, dataCallback, eventCallback, onlineCallback );
+      let matter = new Matter( [{id:32,endpoint:0,name:"Remote"}], sendCallback, dataCallback, eventCallback, onlineCallback );
       matter.storeNodes( JSON.parse(bilresa) );
       matter.should.have.a.property("_dataById");
       matter._dataById.should.have.a.property("32");
@@ -178,10 +179,10 @@ describe( 'matter data handling', function () {
       matter._dataById[32].should.have.a.property("make","IKEA of Sweden");
       matter._dataById[32].should.have.a.property("model","BILRESA dual button");
       matter._dataById[32].should.have.a.property("label","");
-      matter._dataById[32].should.have.a.property("name","BILRESA dual button");
+      matter._dataById[32].should.have.a.property("name","Remote");
       matter._dataById[32].should.have.a.property("internal",{
-        '1': {name: 'BILRESA dual button/1' },
-        '2': {name: 'BILRESA dual button/2' }
+        '1': {name: 'Remote/1' },
+        '2': {name: 'Remote/2' }
       });
       matter._dataById[32].should.have.a.property("data",{
         '1': { inputType: 'button', input: 0 },
@@ -190,12 +191,12 @@ describe( 'matter data handling', function () {
       matter._dataById[32].should.not.have.a.property("ip4");
       matter._dataById[32].should.not.have.a.property("ip6");
       matter.should.have.a.property("_namesLut",{
-        'BILRESA dual button/1': { node: 32, endpoint: 1 },
-        'BILRESA dual button/2': { node: 32, endpoint: 2 }
+        'Remote/1': { node: 32, endpoint: 1 },
+        'Remote/2': { node: 32, endpoint: 2 }
       });
       dataCallback.should.be.calledTwice();
       onlineCallback.should.be.calledOnce();
-      onlineCallback.should.be.calledWith("BILRESA dual button",true);
+      onlineCallback.should.be.calledWith("Remote",true);
       //
     {
       let callback = sinon.spy();
@@ -206,22 +207,22 @@ describe( 'matter data handling', function () {
       //
       matter.handleEvent({node_id:32,endpoint_id:1,cluster_id:59,event_id:1,event_number:1,priority:1,timestamp:1704067200000,timestamp_type:1,data:{newPosition:1}});
       eventCallback.should.be.calledOnce();
-      eventCallback.should.be.calledWith('BILRESA dual button/1', 'Pressed', { pos: 1 });
+      eventCallback.should.be.calledWith('Remote/1', 'Pressed', { pos: 1 });
       //
       matter.handleEvent({node_id:32,endpoint_id:1,cluster_id:59,event_id:2,event_number:1,priority:1,timestamp:1704067200000,timestamp_type:1,data:{newPosition:1}});
-      eventCallback.should.be.calledWith('BILRESA dual button/1', 'LongPress', { pos: 1 });
+      eventCallback.should.be.calledWith('Remote/1', 'LongPress', { pos: 1 });
       //
       matter.handleEvent({node_id:32,endpoint_id:1,cluster_id:59,event_id:3,event_number:1,priority:1,timestamp:1704067200000,timestamp_type:1,data:{previousPosition:1}});
-      eventCallback.should.be.calledWith('BILRESA dual button/1', 'S', { pos: 1 });
+      eventCallback.should.be.calledWith('Remote/1', 'S', { pos: 1 });
       //
       matter.handleEvent({node_id:32,endpoint_id:1,cluster_id:59,event_id:4,event_number:1,priority:1,timestamp:1704067200000,timestamp_type:1,data:{previousPosition:1}});
-      eventCallback.should.be.calledWith('BILRESA dual button/1', 'L', { pos: 1 });
+      eventCallback.should.be.calledWith('Remote/1', 'L', { pos: 1 });
       //
       matter.handleEvent({node_id:32,endpoint_id:1,cluster_id:59,event_id:5,event_number:1,priority:1,timestamp:1704067200000,timestamp_type:1,data:{newPosition:1,currentNumberOfPressesCounted:2}});
-      eventCallback.should.be.calledWith('BILRESA dual button/1', 'MultiPressOngoing', { pos: 1, count: 2 });
+      eventCallback.should.be.calledWith('Remote/1', 'MultiPressOngoing', { pos: 1, count: 2 });
       //
       matter.handleEvent({node_id:32,endpoint_id:1,cluster_id:59,event_id:6,event_number:1,priority:1,timestamp:1704067200000,timestamp_type:1,data:{previousPosition:1,totalNumberOfPressesCounted:3}});
-      eventCallback.should.be.calledWith('BILRESA dual button/1', 'MultiPress', { pos: 1, count: 3 });
+      eventCallback.should.be.calledWith('Remote/1', 'MultiPress', { pos: 1, count: 3 });
       sendCallback.should.have.callCount( 0 );
       dataCallback.should.be.calledTwice();
       eventCallback.should.have.callCount( 6 );

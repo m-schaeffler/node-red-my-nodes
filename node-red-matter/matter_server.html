@@ -174,20 +174,34 @@
     
     <h3>Outputs</h3>
     
-    <h4>subscribed data</h4>
-    <p>Cyclic output of the subscribed data points.</p>
+    <h4>Received Data</h4>
+    <p>Received and decoded values of selected cluster attributes  the node.</p>
     
     <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>State-Prefix</code> + name of the device ( + number of the endpoint )</dd>
         <dt>payload <span class="property-type">object</span></dt>
-        <dd> received data points. It is an object with key/value pairs.</dd>
+        <dd> decoded state (attribute) data.</dd>
     </dl>
     
-    <h4>config data</h4>
-    <p>Config data of the FEMS.</p>
+    <h4>Received Events</h4>
+    <p>Received and decoded events of the node.</p>
     
     <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>Event-Prefix</code> + name of the device ( + number of the endpoint )</dd>
         <dt>payload <span class="property-type">object</span></dt>
-        <dd> received config data.</dd>
+        <dd> data of the decoded event.</dd>
+    </dl>
+
+    <h4>Node Online State</h4>
+    <p>Online status of the node as reported by the matter.js server.</p>
+
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> <code>Online-Prefix</code> + name of the device ( + number of the endpoint )</dd>
+        <dt>payload <span class="property-type">boolean</span></dt>
+        <dd> online status of the node.</dd>
     </dl>
 
     <h4>state</h4>

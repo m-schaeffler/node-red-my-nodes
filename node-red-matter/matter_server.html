@@ -6,7 +6,7 @@
             name: {value:""},
             host: {value:"", required:true},
             port: {value:"5580", required:true, validate:RED.validators.number()},
-            renaming:{value:"{}",required:true},
+            renaming:{value:"[]",required:true},
             statusPrefix:{value:""},
             eventPrefix:{value:""},
             onlinePrefix:{value:""},
@@ -131,15 +131,46 @@
 
 <script type="text/x-red" data-help-name="matterServer">
 
-    <p>.</p>
+    <p>This node connects to a matter.js server, decodes received data (Matter attributes and events) and controls nodes via Matter commands.</p>
     
     <h3>Input</h3>
     <dl class="message-properties">
         <dt>topic <span class="property-type">string</span></dt>
-        <dd> <code>open</code>, <code>close</code> or name of the config parameter to be written</dd>
-        <dt>payload <span class="property-type">number / string</span></dt>
-        <dd> value of the config parameter to be written</dd>
+        <dd> comnmand to be executed by the server or name of the node to be controlled.</dd>
+        <dt>payload <span class="property-type"></span></dt>
+        <dd> data for the control of a node.</dd>
     </dl>
+
+    <h4>Server Commands</h4>
+
+    <ul>
+      <li><code>open</code> opens the connection to the server</li>
+      <li><code>close</code> closes the connection to the server</li>
+      <li><code>get_nodes</code> rereads all avaliable nodes, normally not neccessary</li>
+      <li><code>ping_node</code> pings the node with its node id in the <code>paylod</code></li>
+      <li><code>get_thread_border_routers</code> requests all available TBRs; data is outputed via <code>node.warn</code></li>
+      <li><code>get_thread_diagnostics</code> requests available Thread diag data; data is outputed via <code>node.warn</code></li>
+    </ul>
+
+    <h4>Node Control</h4>
+
+    <dl class="message-properties">
+        <dt>topic <span class="property-type">string</span></dt>
+        <dd> name of the device ( + number of the endpoint ).</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd> command and data.</dd>
+        <dt>payload.command <span class="property-type">string</span></dt>
+        <dd> command in the form <code>clustername.commandname</code>.</dd>
+        <dt>payload.data <span class="property-type">object</span></dt>
+        <dd> data for this command.</dd>
+    </dl>
+
+    <p>additional commands:</p>
+    <ul>
+      <li><code>rvc.clean</code> starts a vacuum robot for the rooms in the <code>data</code> array.</li>
+      <li><code>rvc.stop</code></li>
+      <li><code>windowcovering.gotolift</code> moves the cover to the <code>data</code> position.</li>
+    </ul>
     
     <h3>Outputs</h3>
     
@@ -169,16 +200,18 @@
     
     <h3>Parameters</h3>
     <dl class="message-properties">
-        <dt>fems <span class="property-type">feneconFems</span></dt>
-        <dd> configuration of the FEMS.</dd>
-        <dt>Edge <span class="property-type">string</span></dt>
-        <dd> id of the edge; normally <code>"0"</code>.</dd>
-        <dt>Inlist <span class="property-type">array</span></dt>
-        <dd> list of subscribed data points.</dd>
-        <dt>Risk <span class="property-type">boolean</span></dt>
-        <dd> risk accepted, enables writing.</dd>
-        <dt>Timeout <span class="property-type">boolean</span></dt>
-        <dd> send <code>"timeout"</code> as state, if 10s no subscribed message arrives.</dd>
+        <dt>host <span class="property-type">string</span></dt>
+        <dd> hostname of the matter.js server.</dd>
+        <dt>port <span class="property-type">number</span></dt>
+        <dd> port for the websocket API.</dd>
+        <dt>statusPrefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for state / data output.</dd>
+        <dt>eventPrefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for event output.</dd>
+        <dt>onlinePrefix <span class="property-type">string</span></dt>
+        <dd> prefix for the topic for online output.</dd>
+        <dt>contextVar <span class="property-type">string</span></dt>
+        <dd> name of the variable in flow context storage.</dd>
     </dl>
     
 </script>

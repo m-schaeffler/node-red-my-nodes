@@ -13,7 +13,7 @@ module.exports = function(RED) {
         this.eventPrefix  = config.eventPrefix  ? config.eventPrefix +'/' : "";
         this.onlinePrefix = config.onlinePrefix ? config.onlinePrefix+'/' : "";
         this.contextVar   = config.contextVar ?? "";
-        this.matter     = new Matter( [{ id:42, endpoint:0, name:"Ikea HT" }], sendCommand, handleData, handleEvent, handleOnline );
+        this.matter     = new Matter( JSON.parse( config.renaming ?? "[]" ), sendCommand, handleData, handleEvent, handleOnline );
         this.queue      = new SendQueue();
         this.state      = "closed";
         this.timStartup = null;
@@ -270,6 +270,7 @@ module.exports = function(RED) {
                             switch( command )
                             {
                                 case "get_nodes":
+                                    node.warn( data.result );
                                     node.matter.clear();
                                     node.matter.storeNodes( data.result );
                                     break;

@@ -20,8 +20,8 @@ This node connects to a matter.js server, decodes received data (Matter attribut
 
 |msg.    | type   | description                       |
 |:-------|:-------|:----------------------------------|
-|topic  | string | comnmand to be executed by the server or name of the node to be controled.|
-|payload| | data for the control of a node|
+|topic  | string | comnmand to be executed by the server or name of the node to be controlled.|
+|payload| | data for the control of a node.|
 
 #### Server Commands
 

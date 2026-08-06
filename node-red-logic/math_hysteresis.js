@@ -11,8 +11,6 @@ module.exports = function(RED) {
         this.propertyType   = config.propertyType ?? "msg";
         this.threshold_rise = Number( config.threshold_raise );
         this.threshold_fall = Number( config.threshold_fall );
-        this.consecutiveRise= Number( config.consecutive ?? 1 );
-        this.consecutiveFall= Number( config.consecutiveFall ?? 1 );
         this.outputRise     = RED.util.evaluateNodeProperty( config.outputRise ?? "true", config.outputRiseType ?? "bool" );
         this.outputFall     = RED.util.evaluateNodeProperty( config.outputFall ?? "false",config.outputFallType ?? "bool" );
         this.noInit         = Boolean( config.noInit );
@@ -27,8 +25,6 @@ module.exports = function(RED) {
                 return;
             }
         }
-        node.cntRise = 0;
-        node.cntFall = 0;
         node.status( "" );
 
         function msgSetEdge(msg,edge)
@@ -110,34 +106,11 @@ module.exports = function(RED) {
 
                         if( msg.value > node.threshold_rise && last !== true )
                         {
-                            if( ++node.cntRise >= node.consecutiveRise )
-                            {
-                                sendMsg( true );
-                                node.cntRise = 0;
-                            }
-                            else
-                            {
-                                status.fill = "gray";
-                            }
-                            node.cntFall = 0;
+                            sendMsg( true );
                         }
                         else if( msg.value < node.threshold_fall && last !== false )
                         {
-                            if( ++node.cntFall >= node.consecutiveFall )
-                            {
-                                sendMsg( false );
-                                node.cntFall = 0;
-                            }
-                            else
-                            {
-                                status.fill = "gray";
-                            }
-                            node.cntRise = 0;
-                        }
-                        else
-                        {
-                            node.cntRise = 0;
-                            node.cntFall = 0;
+                            sendMsg( false );
                         }
                     }
                     else

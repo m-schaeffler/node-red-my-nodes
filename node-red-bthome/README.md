@@ -218,6 +218,8 @@ This classes should be defined (for an example check the `ui-template` in the
 |:------------|:-------|:----------------------------------|
 |Contextstore | string | context store to be used. |
 |reference height|number| height of the installation over the sea level, to caculate the relative air pressure (QFF).<br>If set to `0` no caclulation is done and the absolute air pressure (QFE) is outputed.|
+|moist time   | number | timeout for rain because of moisture.|
+|rain time    | number | timeout for rain because of precipitation.|
 
 ## Example Flow
 

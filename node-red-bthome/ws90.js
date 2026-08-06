@@ -6,7 +6,8 @@ module.exports = function(RED) {
         var context = this.context();
         this.contextStore = config.contextStore ?? "none";
         this.refheight    = Number( config.refheight ?? 0 );
-        this.timebase     = Number( config.timebase ?? 60 ) * 1000;
+        this.moisttime    = Number( config.moisttime ?? 15 ) * 60*1000;
+        this.raintime     = Number( config.raintime  ?? 20 ) * 60*1000;
         this.last         = {};
         this.storage      = {Raining:false,RegenHeute:0,RegenGestern:0,WindMax:0};
         node.status( "" );
@@ -98,7 +99,7 @@ module.exports = function(RED) {
                 function setRaining(value,timeout)
                 {
                     raining = value;
-                    setStorage( "rainingDate", value ? now + timeout*node.timebase : 8640000000000000 );
+                    setStorage( "rainingDate", value ? now + timeout : 8640000000000000 );
                     if( node.storage.Raining !== value )
                     {
                         setStorage( "Raining", value );
@@ -106,7 +107,7 @@ module.exports = function(RED) {
                 }
                 if( msg.payload.moisture && ! node.storage.moisture )
                 {
-                    setRaining( true, 15 );
+                    setRaining( true, node.moisttime );
                 }
                 else if( now >= node.storage.rainingDate )
                 {
@@ -118,12 +119,12 @@ module.exports = function(RED) {
                 if( msg.payload.precipitation > node.storage.Regen )
                 {
                     setStorage( "RegenHeute", node.storage.RegenHeute + msg.payload.precipitation - node.storage.Regen );
-                    setRaining( true, 20 );
+                    setRaining( true, node.raintime );
                 }
                 else if( msg.payload.precipitation < node.storage.Regen && msg.payload.precipitation <= 10 )
                 {
                     setStorage( "RegenHeute", node.storage.RegenHeute + msg.payload.precipitation );
-                    setRaining( true, 20 );
+                    setRaining( true, node.raintime );
                 }
                 setStorage( "Regen", msg.payload.precipitation );
 

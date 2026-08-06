@@ -50,7 +50,8 @@ describe( 'ws90 Node', function () {
         n1.should.have.a.property('name', 'test');
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 0);
-        n1.should.have.a.property('timebase', 60000);
+        n1.should.have.a.property('moisttime', 15*60000);
+        n1.should.have.a.property('raintime', 20*60000);
         await delay(50);
         n1.should.have.a.property('storage', {Raining:false, RegenHeute: 0, RegenGestern: 0, WindMax: 0} );
         should.not.exist( n1.context().get("storage") );
@@ -130,7 +131,8 @@ describe( 'ws90 Node', function () {
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
-        n1.should.have.a.property('timebase', 60000);
+        n1.should.have.a.property('moisttime', 15*60000);
+        n1.should.have.a.property('raintime', 20*60000);
         await delay(50);
         n1.receive( { topic:"WS90", invalid:true, payload:{ temperature:20} });
         n1.receive( { topic:"WS90" });
@@ -166,7 +168,7 @@ describe( 'ws90 Node', function () {
     const wind      = [10.08, 0, 11.16];
     const windMax   = [10.08, 11.16];
     const illuminat = [8920, 0];
-    let flow = [{ id: "n1", type: "ws90", refheight:"500", timebase:"0.1", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", raintime:"0.025", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -269,7 +271,7 @@ describe( 'ws90 Node', function () {
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
-        n1.should.have.a.property('timebase', 100);
+        n1.should.have.a.property('raintime', 1500);
         await delay(50);
         // first message
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
@@ -332,7 +334,7 @@ describe( 'ws90 Node', function () {
 
   it('should process raining without rain', function (done) {
     this.timeout( 5000 );
-    let flow = [{ id: "n1", type: "ws90", refheight:"500", timebase:"0.1", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", moisttime:"0.025", raintime:"0.0333", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -435,7 +437,8 @@ describe( 'ws90 Node', function () {
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
-        n1.should.have.a.property('timebase', 100);
+        n1.should.have.a.property('moisttime', 1500);
+        n1.should.have.a.property('raintime', 1998.0000000000002);
         await delay(50);
         // first message
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[20,20],uv:5,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
@@ -473,7 +476,7 @@ describe( 'ws90 Node', function () {
 
   it('should process rain overflow', function (done) {
     const rainToday = [0, 0.2, 1];
-    let flow = [{ id: "n1", type: "ws90", refheight:"500", timebase:"0.1", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", raintime:"0.025", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -576,7 +579,7 @@ describe( 'ws90 Node', function () {
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
-        n1.should.have.a.property('timebase', 100);
+        n1.should.have.a.property('raintime', 1500);
         await delay(50);
         // first message
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[20,20],uv:6,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );
@@ -752,7 +755,7 @@ describe( 'ws90 Node', function () {
     const rainToday = [0, 6.5, 3.5];
     const wind      = [18, 7.2];
     const windMax   = [18, 7.2];
-    let flow = [{ id: "n1", type: "ws90", refheight:"500", timebase:"0.1", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", raintime:"0.025", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -855,7 +858,7 @@ describe( 'ws90 Node', function () {
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
-        n1.should.have.a.property('timebase', 100);
+        n1.should.have.a.property('raintime', 1500);
         await delay(50);
         // first message
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[5,5],uv:0,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1234} } );

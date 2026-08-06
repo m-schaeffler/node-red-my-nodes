@@ -5,7 +5,9 @@
         defaults: {
             name: {value:""},
             contextStore:{value:"none",required:true},
-            refheight:{value:0,validate:RED.validators.number(),required:true}
+            refheight:{value:0,validate:RED.validators.number(),required:true},
+            moisttime:{value:15,validate:RED.validators.number(),required:true},
+            raintime:{value:20,validate:RED.validators.number(),required:true}
         },
         inputs:1,
         outputs:12,
@@ -50,6 +52,14 @@
     <div class="form-row">
         <label for="node-input-refheight"><i class="fa fa-level-up"></i> reference height</label>
         <input type="text" id="node-input-refheight">
+    </div>
+    <div class="form-row">
+        <label for="node-input-moisttime"><i class="fa fa-hourglass-start"></i> moist time</label>
+        <input type="number" id="node-input-moisttime">
+    </div>
+    <div class="form-row">
+        <label for="node-input-raintime"><i class="fa fa-hourglass-start"></i> rain time</label>
+        <input type="number" id="node-input-raintime">
     </div>
 </script>
 

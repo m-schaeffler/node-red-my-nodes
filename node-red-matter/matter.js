@@ -539,7 +539,10 @@ class MatterData {
     {
         for( const i in this._dataById )
         {
-            callback( i );
+            if( this._dataById[i].online )
+            {
+                callback( i );
+            }
         }
     }
 
@@ -606,56 +609,63 @@ class MatterData {
             return help;
         }
 
-        switch( command.toLowerCase() )
+        if( this._dataById[id.node].online )
         {
-            case "levelcontrol.movetolevel":
-                data.optionsMask     ??= 0x00;
-                data.optionsOverride ??= 0x00;
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.levelcontrol, "MoveToLevel", data );
-                break;
-            case "colorcontrol.movetohueandsaturation":
-                data.optionsMask     ??= 0x00;
-                data.optionsOverride ??= 0x00;
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToHueAndSaturation", data );
-                break;
-            case "colorcontrol.movetocolor":
-                data.optionsMask     ??= 0x00;
-                data.optionsOverride ??= 0x00;
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToColor", data );
-                break;
-            case "colorcontrol.movetocolortemperature":
-                data.optionsMask     ??= 0x00;
-                data.optionsOverride ??= 0x00;
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToColorTemperature", data );
-                break;
-            case "rvc.clean":
-                if( data != null )
-                {
+            switch( command.toLowerCase() )
+            {
+                case "levelcontrol.movetolevel":
+                    data.optionsMask     ??= 0x00;
+                    data.optionsOverride ??= 0x00;
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.levelcontrol, "MoveToLevel", data );
+                    break;
+                case "colorcontrol.movetohueandsaturation":
+                    data.optionsMask     ??= 0x00;
+                    data.optionsOverride ??= 0x00;
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToHueAndSaturation", data );
+                    break;
+                case "colorcontrol.movetocolor":
+                    data.optionsMask     ??= 0x00;
+                    data.optionsOverride ??= 0x00;
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToColor", data );
+                    break;
+                case "colorcontrol.movetocolortemperature":
+                    data.optionsMask     ??= 0x00;
+                    data.optionsOverride ??= 0x00;
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.colorcontrol, "MoveToColorTemperature", data );
+                    break;
+                case "rvc.clean":
+                    if( data != null )
+                    {
+                        this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.servicearea, "SelectAreas", { newAreas: convertAreas( data ) } );
+                    }
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.rvcrunmode, "ChangeToMode", { newMode: 1 } );
+                    break;
+                case "rvc.stop":
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.rvcrunmode, "ChangeToMode", { newMode: 0 });
+                    break;
+                case "rvc.selectareas":
                     this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.servicearea, "SelectAreas", { newAreas: convertAreas( data ) } );
-                }
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.rvcrunmode, "ChangeToMode", { newMode: 1 } );
-                break;
-            case "rvc.stop":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.rvcrunmode, "ChangeToMode", { newMode: 0 });
-                break;
-            case "rvc.selectareas":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.servicearea, "SelectAreas", { newAreas: convertAreas( data ) } );
-                break;
-            case "windowcovering.gotolift":
-                this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.windowcovering, "GoToLiftPercentage", { liftPercent100thsValue: (100-data)*100 } );
-                break;
-            default:
-              {
-                const [cluster,subcommand] = command.split( '.' );
-                if( MatterClusters[cluster] )
-                {
-                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters[cluster], subcommand, data ?? {} );
-                }
-                else
-                {
-                    throw new Error( "cluster not implemented "+cluster );
-                }
-              }
+                    break;
+                case "windowcovering.gotolift":
+                    this.sendDeviceCommand( id.node, id.endpoint, MatterClusters.windowcovering, "GoToLiftPercentage", { liftPercent100thsValue: (100-data)*100 } );
+                    break;
+                default:
+                  {
+                    const [cluster,subcommand] = command.split( '.' );
+                    if( MatterClusters[cluster] )
+                    {
+                        this.sendDeviceCommand( id.node, id.endpoint, MatterClusters[cluster], subcommand, data ?? {} );
+                    }
+                    else
+                    {
+                        throw new Error( "cluster not implemented "+cluster );
+                    }
+                  }
+            }
+        }
+        else
+        {
+            throw new Error( "node not online: "+this._dataById[id.node].name );
         }
     }
 

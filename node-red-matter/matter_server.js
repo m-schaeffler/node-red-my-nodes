@@ -270,7 +270,6 @@ module.exports = function(RED) {
                             switch( command )
                             {
                                 case "get_nodes":
-                                    node.warn( data.result );
                                     node.matter.clear();
                                     node.matter.storeNodes( data.result );
                                     break;

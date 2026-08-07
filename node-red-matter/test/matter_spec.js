@@ -145,20 +145,11 @@ describe( 'matter data handling', function () {
     {
       let callback = sinon.spy();
       matter.forAllIds( callback );
-      callback.should.be.calledOnce();
-      callback.should.be.calledWith("12");
+      callback.should.not.be.called();
     }
       //
-      matter.sendCommand("Shelly 2PM Gen3/1","onoff.on",null);
-      sendCallback.should.be.calledOnce();
-      sendCallback.should.be.calledWith("device_command","on",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'on',payload:{}});
-      //
-      matter.sendCommand("Shelly 2PM Gen3/1","onoff.off",null);
-      sendCallback.should.be.calledWith("device_command","off",{node_id:12,endpoint_id:1,cluster_id:6,command_name:'off',payload:{}});
-      //
-      matter.sendCommand("Shelly 2PM Gen3/2","onoff.toggle",null);
-      sendCallback.should.be.calledWith("device_command","toggle",{node_id:12,endpoint_id:2,cluster_id:6,command_name:'toggle',payload:{}});
-      sendCallback.should.have.callCount( 3 );
+      should(function(){matter.sendCommand("Shelly 2PM Gen3/1","onoff.on",null)}).throw();
+      sendCallback.should.have.callCount( 0 );
       dataCallback.should.be.calledTwice();
       eventCallback.should.have.callCount( 0 );
       onlineCallback.should.be.calledOnce();

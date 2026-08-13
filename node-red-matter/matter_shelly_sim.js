@@ -111,7 +111,7 @@ module.exports = function(RED) {
                                         const saturation = max == 0 ? 0 : delta / max;
                                         const brightness = max;
                                         sendCommand( "colorcontrol.movetohueandsaturation", {
-                                            hue:            Math.round( hue ),
+                                            hue:            Math.round( hue / 360 * 254 ),
                                             saturation:     Math.round( saturation * 254 ),
                                             transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
                                         } );

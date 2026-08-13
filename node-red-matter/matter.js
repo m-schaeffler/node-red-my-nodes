@@ -192,7 +192,7 @@ class MatterData {
                     switch( attribute )
                     {
                         case "0": // CurrentLevel
-                            setDataValue( "brightness", Math.round( value / 2.54 ) );
+                            setDataValue( "brightness", value / 2.54 );
                             break;
                     }
                     break;

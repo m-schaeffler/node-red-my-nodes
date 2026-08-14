@@ -82,9 +82,10 @@ module.exports = function(RED) {
                                         break;
                                     case "rgb":
                                       {
-                                        const r = msg.payload.data.rgb.red   / 255;
-                                        const g = msg.payload.data.rgb.green / 255;
-                                        const b = msg.payload.data.rgb.blue  / 255;
+                                        const rgb = msg.payload.data.rgb;
+                                        const r = ( rgb.red   ?? rgb[0] ) / 255;
+                                        const g = ( rgb.green ?? rgb[1] ) / 255;
+                                        const b = ( rgb.blue  ?? rgb[2] ) / 255;
                                         const max = Math.max( r, g, b );
                                         const min = Math.min( r, g, b );
                                         const delta = max - min;
@@ -123,8 +124,8 @@ module.exports = function(RED) {
                                         break;
                                     case "transition":
                                         break;
-                                    default:
-                                        node.error( "invalid attribute " + i );
+                                    //default:
+                                    //    node.error( "invalid attribute " + i );
                                 }
                             }
                             break;

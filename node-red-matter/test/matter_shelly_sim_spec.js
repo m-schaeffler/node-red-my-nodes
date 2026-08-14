@@ -337,16 +337,16 @@ describe( 'matter_shelly_sim Node', function () {
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:149,transitionTime:1} });
               break;
             case 17:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:120,saturation:254,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:85,saturation:254,transitionTime:1} });
               break;
             case 20:
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:100,transitionTime:1} });
               break;
             case 19:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:240,saturation:254,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:169,saturation:254,transitionTime:1} });
               break;
             case 21:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:210,saturation:169,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:148,saturation:169,transitionTime:1} });
               break;
             default:
               msg.should.have.a.property('payload',{ command: c%2?"onoff.off":"onoff.on", data: null });
@@ -388,11 +388,11 @@ describe( 'matter_shelly_sim Node', function () {
         await delay(50);
         n1.receive({ topic:"Light", payload: { command:"light", data: { rgb:{red:200,green:0,blue:0} } } });
         await delay(50);
-        n1.receive({ topic:"Light", payload: { command:"light", data: { rgb:{red:0,green:150,blue:0} } } });
+        n1.receive({ topic:"Light", payload: { command:"light", data: { rgb:[0,150,0] } } });
         await delay(50);
-        n1.receive({ topic:"Light", payload: { command:"light", data: { rgb:{red:0,green:0,blue:100} } } });
+        n1.receive({ topic:"Light", payload: { command:"light", data: { rgb:[0,0,100] } } });
         await delay(50);
-        n1.receive({ topic:"Light", payload: { command:"light", data: { rgb:{red:50,green:100,blue:150} } } });
+        n1.receive({ topic:"Light", payload: { command:"light", data: { rgb:[50,100,150 ] } } });
         await delay(50);
         n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);

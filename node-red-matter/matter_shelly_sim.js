@@ -27,7 +27,7 @@ module.exports = function(RED) {
                     case true:
                     case "true":
                         sendCommand( "onoff.on" );
-                        break;
+                        return true;
                     case 0:
                     case "0":
                     case "off":
@@ -35,13 +35,14 @@ module.exports = function(RED) {
                     case "false":
                     case "disabled":
                         sendCommand( "onoff.off" );
-                        break;
+                        return false;
                     case "toggle":
                         sendCommand( "onoff.toggle" );
                         break;
                     default:
                         node.error( "invalid value "+value );
                 }
+                return null;
             }
 
             switch( msg.payload.command.toLowerCase() )
@@ -60,11 +61,19 @@ module.exports = function(RED) {
                         case "object":
                             if( msg.payload.data.turn !== undefined )
                             {
-                                setBoolean( msg.payload.data.turn );
+                                if( setBoolean( msg.payload.data.turn ) === false )
+                                {
+                                    done();
+                                    return;
+                                }
                             }
                             if( msg.payload.data.on !== undefined )
                             {
-                                setBoolean( msg.payload.data.on );
+                                if( setBoolean( msg.payload.data.on ) === false )
+                                {
+                                    done();
+                                    return;
+                                }
                             }
                             if( msg.payload.data.brightness !== undefined )
                             {

@@ -394,10 +394,12 @@ describe( 'matter_shelly_sim Node', function () {
         await delay(50);
         n1.receive({ topic:"Light", payload: { command:"light", data: { rgb:[50,100,150 ] } } });
         await delay(50);
+        n1.receive({ topic:"Light", payload: { command:"light", data: { on:false, brightness:50, temp:4500, rgb:[0,150,0] } } });
+        await delay(50);
         n1.log.should.have.callCount(0);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( 23 );
+        c.should.match( 24 );
         done();
       }
       catch(err) {

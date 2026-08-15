@@ -71,13 +71,13 @@ module.exports = function(RED) {
                                     case "brightness":
                                         sendCommand( "levelcontrol.movetolevel", {
                                             level:          Math.round( msg.payload.data.brightness * 2.54 ),
-                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
+                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) / 100 )
                                         } );
                                         break;
                                     case "temp":
                                         sendCommand( "colorcontrol.movetocolortemperature", {
                                             colorTemperatureMireds: Math.round( 1_000_000 / msg.payload.data.temp ),
-                                            transitionTime:         Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
+                                            transitionTime:         Math.round( ( msg.payload.data.transition ?? 0 ) / 100 )
                                         } );
                                         break;
                                     case "rgb":

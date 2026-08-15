@@ -301,52 +301,52 @@ describe( 'matter_shelly_sim Node', function () {
           switch( c )
           {
             case 5:
-              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:127,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:127,transitionTime:0} });
               break;
             case 6:
             case 12:
-              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:0,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:0,transitionTime:0} });
               break;
             case 7:
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:254,transitionTime:50} });
               break;
             case 8:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetocolortemperature", data: {colorTemperatureMireds:370,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetocolortemperature", data: {colorTemperatureMireds:370,transitionTime:0} });
               break;
             case 9:
-              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:191,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:191,transitionTime:0} });
               break;
             case 10:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetocolortemperature", data: {colorTemperatureMireds:222,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetocolortemperature", data: {colorTemperatureMireds:222,transitionTime:0} });
               break;
             case 11:
             case 13:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:0,saturation:0,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:0,saturation:0,transitionTime:0} });
               break;
             case 14:
-              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:254,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:254,transitionTime:0} });
               break;
             case 16:
-              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:199,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:199,transitionTime:0} });
               break;
             case 15:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:0,saturation:254,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:0,saturation:254,transitionTime:0} });
               break;
             case 18:
             case 22:
-              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:149,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:149,transitionTime:0} });
               break;
             case 17:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:85,saturation:254,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:85,saturation:254,transitionTime:0} });
               break;
             case 20:
-              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:100,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:100,transitionTime:0} });
               break;
             case 19:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:169,saturation:254,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:169,saturation:254,transitionTime:0} });
               break;
             case 21:
-              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:148,saturation:169,transitionTime:1} });
+              msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:148,saturation:169,transitionTime:0} });
               break;
             default:
               msg.should.have.a.property('payload',{ command: c%2?"onoff.off":"onoff.on", data: null });
@@ -372,9 +372,9 @@ describe( 'matter_shelly_sim Node', function () {
         await delay(50);
         n1.receive({ topic:"Light", payload: { command:"light", data: { brightness:0 } } });
         await delay(50);
-        n1.receive({ topic:"Light", payload: { command:"light", data: { brightness:100, transition:5 } } });
+        n1.receive({ topic:"Light", payload: { command:"light", data: { brightness:100, transition:5000 } } });
         await delay(50);
-        n1.receive({ topic:"Light", payload: { command:"light", data: { transition:1 } } });
+        n1.receive({ topic:"Light", payload: { command:"light", data: { transition:100 } } });
         await delay(50);
         n1.receive({ topic:"Light", payload: { command:"light", data: { temp:2700 } } });
         await delay(50);

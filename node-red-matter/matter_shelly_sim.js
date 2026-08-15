@@ -58,75 +58,68 @@ module.exports = function(RED) {
                             setBoolean( msg.payload.data );
                             break;
                         case "object":
-                            for( const i in msg.payload.data )
+                            if( msg.payload.data.turn !== undefined )
                             {
-                                switch( i )
+                                setBoolean( msg.payload.data.turn );
+                            }
+                            if( msg.payload.data.on !== undefined )
+                            {
+                                setBoolean( msg.payload.data.on );
+                            }
+                            if( msg.payload.data.brightness !== undefined )
+                            {
+                                sendCommand( "levelcontrol.movetolevel", {
+                                    level:          Math.round( msg.payload.data.brightness * 2.54 ),
+                                    transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) / 100 )
+                                } );
+                            }
+                            if( msg.payload.data.temp !== undefined )
+                            {
+                                sendCommand( "colorcontrol.movetocolortemperature", {
+                                    colorTemperatureMireds: Math.round( 1_000_000 / msg.payload.data.temp ),
+                                    transitionTime:         Math.round( ( msg.payload.data.transition ?? 0 ) / 100 )
+                                } );
+                            }
+                            if( msg.payload.data.rgb !== undefined )
+                            {
+                                const rgb = msg.payload.data.rgb;
+                                const r = ( rgb.red   ?? rgb[0] ) / 255;
+                                const g = ( rgb.green ?? rgb[1] ) / 255;
+                                const b = ( rgb.blue  ?? rgb[2] ) / 255;
+                                const max = Math.max( r, g, b );
+                                const min = Math.min( r, g, b );
+                                const delta = max - min;
+                                let hue;
+                                switch( max )
                                 {
-                                    case "turn":
-                                        setBoolean( msg.payload.data.turn );
+                                    case min:
+                                        hue = 0;
                                         break;
-                                    case "on":
-                                        setBoolean( msg.payload.data.on );
+                                    case r:
+                                        hue = 60 * ( (g-b)/delta );
                                         break;
-                                    case "brightness":
-                                        sendCommand( "levelcontrol.movetolevel", {
-                                            level:          Math.round( msg.payload.data.brightness * 2.54 ),
-                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) / 100 )
-                                        } );
+                                    case g:
+                                        hue = 60 * ( (b-r)/delta + 2 );
                                         break;
-                                    case "temp":
-                                        sendCommand( "colorcontrol.movetocolortemperature", {
-                                            colorTemperatureMireds: Math.round( 1_000_000 / msg.payload.data.temp ),
-                                            transitionTime:         Math.round( ( msg.payload.data.transition ?? 0 ) / 100 )
-                                        } );
+                                    case b:
+                                        hue = 60 * ( (r-g)/delta + 4 );
                                         break;
-                                    case "rgb":
-                                      {
-                                        const rgb = msg.payload.data.rgb;
-                                        const r = ( rgb.red   ?? rgb[0] ) / 255;
-                                        const g = ( rgb.green ?? rgb[1] ) / 255;
-                                        const b = ( rgb.blue  ?? rgb[2] ) / 255;
-                                        const max = Math.max( r, g, b );
-                                        const min = Math.min( r, g, b );
-                                        const delta = max - min;
-                                        let hue;
-                                        switch( max )
-                                        {
-                                            case min:
-                                                hue = 0;
-                                                break;
-                                            case r:
-                                                hue = 60 * ( (g-b)/delta );
-                                                break;
-                                            case g:
-                                                hue = 60 * ( (b-r)/delta + 2 );
-                                                break;
-                                            case b:
-                                                hue = 60 * ( (r-g)/delta + 4 );
-                                                break;
-                                        }
-                                        if( hue < 0 )
-                                        {
-                                            hue += 360;
-                                        }
-                                        const saturation = max == 0 ? 0 : delta / max;
-                                        const brightness = max;
-                                        sendCommand( "colorcontrol.movetohueandsaturation", {
-                                            hue:            Math.round( hue / 360 * 254 ),
-                                            saturation:     Math.round( saturation * 254 ),
-                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
-                                        } );
-                                        sendCommand( "levelcontrol.movetolevel", {
-                                            level:          Math.round( brightness * 254 ),
-                                            transitionTime: Math.round( ( msg.payload.data.transition ?? 0.1 ) * 10 )
-                                        } );
-                                      }
-                                        break;
-                                    case "transition":
-                                        break;
-                                    //default:
-                                    //    node.error( "invalid attribute " + i );
                                 }
+                                if( hue < 0 )
+                                {
+                                    hue += 360;
+                                }
+                                const saturation = max == 0 ? 0 : delta / max;
+                                const brightness = max;
+                                sendCommand( "colorcontrol.movetohueandsaturation", {
+                                    hue:            Math.round( hue / 360 * 254 ),
+                                    saturation:     Math.round( saturation * 254 ),
+                                    transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
+                                } );
+                                sendCommand( "levelcontrol.movetolevel", {
+                                    level:          Math.round( brightness * 254 ),
+                                    transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
+                                } );
                             }
                             break;
                     }

@@ -1,53 +1,35 @@
 <script type="text/javascript">
-    RED.nodes.registerType('timerelay',{
+    RED.nodes.registerType('blinker',{
         category: 'logic',
         color: "#C0DEED",
         defaults: {
             name:{value:""},
             property:{value:"payload",required:true},
-            delay:{value:"0",required:true},
-            delayUnit:{value:"secs"},
-            minOn:{value:"0",required:true},
-            minOnUnit:{value:"secs"},
-            maxOn:{value:"0",required:true},
-            maxOnUnit:{value:"secs"},
-            postrun:{value:"0",required:true},
-            postrunUnit:{value:"secs"},
+            onTime:{value:"1",required:true},
+            onTimeUnit:{value:"secs"},
+            offTime:{value:"1",required:true},
+            offTimeUnit:{value:"secs"},
             outputOn:{value:true,required:true},
             outputOnType:{value:"bool"},
+            outputPause:{value:false,required:true},
+            outputPauseType:{value:"bool"},
             outputOff:{value:false,required:true},
             outputOffType:{value:"bool"},
             showState:{value:false}
         },
         inputs:1,
         outputs:1,
-        icon: "font-awesome/fa-clock-o",
+        icon: "font-awesome/fa-refresh",
         label: function() {
-            return this.name||"timerelay";
+            return this.name||"blinker";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
-        paletteLabel: "timerelay",
+        paletteLabel: "blinker",
         inputLabels: 'input',
-        outputLabels: 'boolean',
+        outputLabels: 'blinken',
         oneditprepare: function() {
-            if( this.delayUnit === undefined )
-            {
-                $("#node-input-delayUnit").val( "msecs" );
-            }
-            if( this.minOnUnit === undefined )
-            {
-                $("#node-input-minOnUnit").val( "msecs" );
-            }
-            if( this.maxOnUnit === undefined )
-            {
-                $("#node-input-maxOnUnit").val( "msecs" );
-            }
-            if( this.postrunUnit === undefined )
-            {
-                $("#node-input-postrunUnit").val( "msecs" );
-            }
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg"],
@@ -67,7 +49,7 @@
     });
 </script>7
 
-<script type="text/html" data-template-name="timerelay">
+<script type="text/html" data-template-name="blinker">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -78,9 +60,9 @@
         <input type="hidden" id="node-input-property-type">
     </div>
     <div class="form-row">
-        <label for="node-input-delay"><i class="fa fa-play"></i> Delay</label>
-        <input type="number" id="node-input-delay" style="width:70px;" placeholder="Time">
-        <select id="node-input-delayUnit" style="width:140px;">
+        <label for="node-input-onTime"><i class="fa fa-hourglass-start"></i> on time</label>
+        <input type="number" id="node-input-onTime" style="width:70px;" placeholder="Time">
+        <select id="node-input-onTimeUnit" style="width:140px;">
             <option value="msecs">MilliSeconds</option>
             <option value="secs">Seconds</option>
             <option value="mins">Minutes</option>
@@ -88,29 +70,9 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-postrun"><i class="fa fa-stop"></i> Postrun</label>
-        <input type="number" id="node-input-postrun" style="width:70px;" placeholder="Time">
-        <select id="node-input-postrunUnit" style="width:140px;">
-            <option value="msecs">MilliSeconds</option>
-            <option value="secs">Seconds</option>
-            <option value="mins">Minutes</option>
-            <option value="hours">Hours</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-minOn"><i class="fa fa-hourglass-start"></i> min on time</label>
-        <input type="number" id="node-input-minOn" style="width:70px;" placeholder="Time">
-        <select id="node-input-minOnUnit" style="width:140px;">
-            <option value="msecs">MilliSeconds</option>
-            <option value="secs">Seconds</option>
-            <option value="mins">Minutes</option>
-            <option value="hours">Hours</option>
-        </select>
-    </div>
-    <div class="form-row">
-        <label for="node-input-maxOn"><i class="fa fa-hourglass-end"></i> max on time</label>
-        <input type="number" id="node-input-maxOn" style="width:70px;" placeholder="Time">
-        <select id="node-input-maxOnUnit" style="width:140px;">
+        <label for="node-input-pauseTime"><i class="fa fa-hourglass-end"></i> pause time</label>
+        <input type="number" id="node-input-pauseTime" style="width:70px;" placeholder="Time">
+        <select id="node-input-pauseTimeUnit" style="width:140px;">
             <option value="msecs">MilliSeconds</option>
             <option value="secs">Seconds</option>
             <option value="mins">Minutes</option>
@@ -123,6 +85,11 @@
         <input type="hidden" id="node-input-outputOnType">
     </div>
     <div class="form-row">
+        <label for="node-input-outputPause"><i class="fa fa-sign-out"></i> pause Output</label>
+        <input type="text" id="node-input-outputPause">
+        <input type="hidden" id="node-input-outputPauseType">
+    </div>
+    <div class="form-row">
         <label for="node-input-outputOff"><i class="fa fa-sign-out"></i> off Output</label>
         <input type="text" id="node-input-outputOff">
         <input type="hidden" id="node-input-outputOffType">
@@ -133,7 +100,7 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="timerelay">
+<script type="text/html" data-help-name="blinker">
     
     <p>Sends the payload converted to boolean delayed. The delay time can de controlled for on and off switching individually.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>

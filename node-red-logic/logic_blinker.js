@@ -8,10 +8,10 @@ module.exports = function(RED) {
         this.property    = config.property || "payload";
         this.onTime      = Number( config.onTime  ?? 1 ) * tools.timeUnits( config.onTimeUnit  );
         this.offTime     = Number( config.offTime ?? 1 ) * tools.timeUnits( config.offTimeUnit );
-        this.outputFirst = RED.util.evaluateNodeProperty( config.outputFirst ?? "true", config.outputFirstType ?? "bool" );
-        this.outputOn    = RED.util.evaluateNodeProperty( config.outputOn    ?? "true", config.outputOnType    ?? "bool" );
-        this.outputOff   = RED.util.evaluateNodeProperty( config.outputOff   ?? "false",config.outputOffType   ?? "bool" );
-        this.outputLast  = RED.util.evaluateNodeProperty( config.outputLast  ?? "false",config.outputLastType  ?? "bool" );
+        this.outputFirst = config.outputFirstType != "nul" ? RED.util.evaluateNodeProperty( config.outputFirst ?? "true", config.outputFirstType ?? "bool" ) : null;
+        this.outputOn    = RED.util.evaluateNodeProperty( config.outputOn  ?? "true", config.outputOnType  ?? "bool" );
+        this.outputOff   = RED.util.evaluateNodeProperty( config.outputOff ?? "false",config.outputOffType ?? "bool" );
+        this.outputLast  = config.outputLastType != "nul" ? RED.util.evaluateNodeProperty( config.outputLast ?? "false",config.outputLastType ?? "bool" ) : null;
         this.showState   = Boolean( config.showState );
         this.timerOn     = null;
         this.timerOff    = null;
@@ -27,8 +27,11 @@ module.exports = function(RED) {
 
         function sendFirst()
         {
-            node.msg.payload = node.outputFirst;
-            node.send( node.msg );
+            if( node.outputFirst != null )
+            {
+                node.msg.payload = node.outputFirst;
+                node.send( node.msg );
+            }
             setStatus( "green", "first" );
             node.timerOn  = null;
             node.timerOff = setTimeout( sendOff, node.onTime );
@@ -58,8 +61,11 @@ module.exports = function(RED) {
             clearTimeout( node.timerOff );
             node.timerOn  = null;
             node.timerOff = null;
-            node.msg.payload = node.outputLast;
-            node.send( node.msg );
+            if( node.outputLast != null )
+            {
+                node.msg.payload = node.outputLast;
+                node.send( node.msg );
+            }
             setStatus( "gray", "last" );
         }
 

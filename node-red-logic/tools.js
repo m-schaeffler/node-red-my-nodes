@@ -1,4 +1,4 @@
-         // general functions
+// general functions
 
 exports.property2boolean = function(input)
 {

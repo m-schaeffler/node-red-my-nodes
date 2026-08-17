@@ -1,6 +1,6 @@
 {
   "name": "@mschaeffler/node-red-logic",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "nodes for simple operations.",
   "license": "LGPL-2.1",
   "homepage": "https://github.com/m-schaeffler/node-red-my-nodes/tree/main/node-red-logic",
@@ -23,6 +23,7 @@
       "or": "logic_or.js",
       "and": "logic_and.js",
       "timerelay": "logic_timerelay.js",
+      "blinker": "logic_blinker.js",
       "tonumber": "math_number.js",
       "negate": "math_minus.js",
       "reduce": "math_reduce.js",

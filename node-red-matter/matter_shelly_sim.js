@@ -6,9 +6,11 @@ module.exports = function(RED) {
         node.status( "" );
 
         node.on('input', function(msg,send,done) {
+            let msgs = [];
+
             function sendCommand(command,data=null)
             {
-                send( {
+                msgs.push( {
                     topic:   msg.topic,
                     payload: {
                         command: command,
@@ -27,15 +29,16 @@ module.exports = function(RED) {
                     case true:
                     case "true":
                         sendCommand( "onoff.on" );
-                        return true;
+                        break;
                     case 0:
                     case "0":
                     case "off":
                     case false:
                     case "false":
                     case "disabled":
+                        msgs = [];
                         sendCommand( "onoff.off" );
-                        return false;
+                        break;
                     case "toggle":
                         sendCommand( "onoff.toggle" );
                         break;
@@ -59,22 +62,6 @@ module.exports = function(RED) {
                             setBoolean( msg.payload.data );
                             break;
                         case "object":
-                            if( msg.payload.data.turn !== undefined )
-                            {
-                                if( setBoolean( msg.payload.data.turn ) === false )
-                                {
-                                    done();
-                                    return;
-                                }
-                            }
-                            if( msg.payload.data.on !== undefined )
-                            {
-                                if( setBoolean( msg.payload.data.on ) === false )
-                                {
-                                    done();
-                                    return;
-                                }
-                            }
                             if( msg.payload.data.brightness !== undefined )
                             {
                                 sendCommand( "levelcontrol.movetolevel", {
@@ -130,6 +117,14 @@ module.exports = function(RED) {
                                     transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
                                 } );
                             }
+                            if( msg.payload.data.turn !== undefined )
+                            {
+                                setBoolean( msg.payload.data.turn );
+                            }
+                            if( msg.payload.data.on !== undefined )
+                            {
+                                setBoolean( msg.payload.data.on );
+                            }
                             break;
                     }
                     break;
@@ -152,8 +147,9 @@ module.exports = function(RED) {
                     sendCommand( "windowcovering.gotolift", msg.payload.data );
                     break;
                 default:
-                    send( msg );
+                    msgs = msg;
             }
+            send( [msgs] );
             done();
         });
     }

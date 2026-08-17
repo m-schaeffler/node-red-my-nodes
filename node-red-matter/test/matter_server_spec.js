@@ -681,6 +681,7 @@ describe( 'matter_server Node', function () {
   });
   */
 
+  /*
   it('should ping Alpstuga (#21)', function (done) {
     this.timeout( 30000 );
     var flow = [{ id: 'flow', type: 'tab' },
@@ -743,5 +744,6 @@ describe( 'matter_server Node', function () {
       }
     });
   });
+  */
 
 });

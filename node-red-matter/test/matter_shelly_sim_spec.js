@@ -297,10 +297,21 @@ describe( 'matter_shelly_sim Node', function () {
       n2.on("input", function (msg) {
         try {
           //console.log(msg)
+          //console.log(c)
           msg.should.have.a.property('topic',"Light");
           switch( c )
           {
+            case 0:
+            case 2:
             case 5:
+              msg.should.have.a.property('payload',{ command: 'onoff.on', data: null });
+              break;
+            case 1:
+            case 3:
+            case 23:
+              msg.should.have.a.property('payload',{ command: "onoff.off", data: null });
+              break;
+            case 4:
               msg.should.have.a.property('payload',{ command: "levelcontrol.movetolevel", data: {level:127,transitionTime:0} });
               break;
             case 6:
@@ -349,7 +360,7 @@ describe( 'matter_shelly_sim Node', function () {
               msg.should.have.a.property('payload',{ command: "colorcontrol.movetohueandsaturation", data: {hue:148,saturation:169,transitionTime:0} });
               break;
             default:
-              msg.should.have.a.property('payload',{ command: c%2?"onoff.off":"onoff.on", data: null });
+              done("invalid message");
           }
           ++c;
         }

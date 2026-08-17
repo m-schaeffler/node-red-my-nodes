@@ -9,12 +9,14 @@
             onTimeUnit:{value:"secs"},
             offTime:{value:"1",required:true},
             offTimeUnit:{value:"secs"},
+            outputFirst:{value:true},
+            outputFirstType:{value:"bool"},
             outputOn:{value:true,required:true},
             outputOnType:{value:"bool"},
-            outputPause:{value:false,required:true},
-            outputPauseType:{value:"bool"},
             outputOff:{value:false,required:true},
             outputOffType:{value:"bool"},
+            outputLast:{value:false},
+            outputLastType:{value:"bool"},
             showState:{value:false}
         },
         inputs:1,
@@ -35,6 +37,12 @@
                 types:["msg"],
                 typeField: "#node-input-property-type"
             })
+            var optionNothing = {value:"nul",label:"none",hasValue:false};
+            $("#node-input-outputFirst").typedInput({
+                type:"bool",
+                types:["str","num","bool","json",optionNothing],
+                typeField: "#node-input-outputFirstType"
+            })
             $("#node-input-outputOn").typedInput({
                 type:"bool",
                 types:["str","num","bool","json"],
@@ -44,6 +52,11 @@
                 type:"bool",
                 types:["str","num","bool","json"],
                 typeField: "#node-input-outputOffType"
+            })
+            $("#node-input-outputLast").typedInput({
+                type:"bool",
+                types:["str","num","bool","json",optionNothing],
+                typeField: "#node-input-outputLastType"
             })
         }
     });
@@ -70,9 +83,9 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-pauseTime"><i class="fa fa-hourglass-end"></i> pause time</label>
-        <input type="number" id="node-input-pauseTime" style="width:70px;" placeholder="Time">
-        <select id="node-input-pauseTimeUnit" style="width:140px;">
+        <label for="node-input-offTime"><i class="fa fa-hourglass-end"></i> off time</label>
+        <input type="number" id="node-input-offTime" style="width:70px;" placeholder="Time">
+        <select id="node-input-offTimeUnit" style="width:140px;">
             <option value="msecs">MilliSeconds</option>
             <option value="secs">Seconds</option>
             <option value="mins">Minutes</option>
@@ -80,19 +93,24 @@
         </select>
     </div>
     <div class="form-row">
+        <label for="node-input-outputFirst"><i class="fa fa-sign-out"></i> 1st Output</label>
+        <input type="text" id="node-input-outputFirst">
+        <input type="hidden" id="node-input-outputFirstType">
+    </div>
+    <div class="form-row">
         <label for="node-input-outputOn"><i class="fa fa-sign-out"></i> on Output</label>
         <input type="text" id="node-input-outputOn">
         <input type="hidden" id="node-input-outputOnType">
     </div>
     <div class="form-row">
-        <label for="node-input-outputPause"><i class="fa fa-sign-out"></i> pause Output</label>
-        <input type="text" id="node-input-outputPause">
-        <input type="hidden" id="node-input-outputPauseType">
-    </div>
-    <div class="form-row">
         <label for="node-input-outputOff"><i class="fa fa-sign-out"></i> off Output</label>
         <input type="text" id="node-input-outputOff">
         <input type="hidden" id="node-input-outputOffType">
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputLast"><i class="fa fa-sign-out"></i> last Output</label>
+        <input type="text" id="node-input-outputLast">
+        <input type="hidden" id="node-input-outputLastType">
     </div>
     <div class="form-row">
         <label for="node-input-howStatus"><i class="fa fa-star-o"></i> Status</label>

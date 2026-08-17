@@ -6,52 +6,61 @@ module.exports = function(RED) {
         //this.config = config;
         var node = this;
         this.property    = config.property || "payload";
-        this.onTime      = Number( config.onTime    ?? 1 ) * tools.timeUnits( config.onTimeUnit );
-        this.pauseTime   = Number( config.pauseTime ?? 1 ) * tools.timeUnits( config.pauseTimeUnit );
+        this.onTime      = Number( config.onTime  ?? 1 ) * tools.timeUnits( config.onTimeUnit  );
+        this.offTime     = Number( config.offTime ?? 1 ) * tools.timeUnits( config.offTimeUnit );
+        this.outputFirst = RED.util.evaluateNodeProperty( config.outputFirst ?? "true", config.outputFirstType ?? "bool" );
         this.outputOn    = RED.util.evaluateNodeProperty( config.outputOn    ?? "true", config.outputOnType    ?? "bool" );
-        this.outputPause = RED.util.evaluateNodeProperty( config.outputPause ?? "false",config.outputPauseType ?? "bool" );
         this.outputOff   = RED.util.evaluateNodeProperty( config.outputOff   ?? "false",config.outputOffType   ?? "bool" );
+        this.outputLast  = RED.util.evaluateNodeProperty( config.outputLast  ?? "false",config.outputLastType  ?? "bool" );
         this.showState   = Boolean( config.showState );
         this.timerOn     = null;
-        this.timerPause  = null;
+        this.timerOff    = null;
         node.status( "" );
 
         function setStatus(color,text)
         {
-            //console.log( text );
             if( node.showState )
             {
                 node.status( { text:text, shape:"dot", fill:color } );
             }
         }
 
+        function sendFirst()
+        {
+            node.msg.payload = node.outputFirst;
+            node.send( node.msg );
+            setStatus( "green", "first" );
+            node.timerOn  = null;
+            node.timerOff = setTimeout( sendOff, node.onTime );
+        }
+
         function sendOn()
         {
             node.msg.payload = node.outputOn;
             node.send( node.msg );
-            setStatus( "gren", "on" );
-            node.timerOn    = null;
-            node.timerPause = setTimeout( sendPause, node.onTime );
-        }
-
-        function sendPause()
-        {
-            node.msg.payload = node.outputPause;
-            node.send( node.msg );
-            setStatus( "gray", "pause" );
-            node.timerOn    = setTimeout( sendOn, node.pauseTime );
-            node.timerPause = null;
+            setStatus( "green", "on" );
+            node.timerOn  = null;
+            node.timerOff = setTimeout( sendOff, node.onTime );
         }
 
         function sendOff()
         {
-            clearTimeout( node.timerOn    );
-            clearTimeout( node.timerPause );
-            node.timerOn    = null;
-            node.timerPause = null;
             node.msg.payload = node.outputOff;
             node.send( node.msg );
             setStatus( "gray", "off" );
+            node.timerOn  = setTimeout( sendOn, node.offTime );
+            node.timerOff = null;
+        }
+
+        function sendLast()
+        {
+            clearTimeout( node.timerOn  );
+            clearTimeout( node.timerOff );
+            node.timerOn  = null;
+            node.timerOff = null;
+            node.msg.payload = node.outputLast;
+            node.send( node.msg );
+            setStatus( "gray", "last" );
         }
 
         node.on('input', function(msg,send,done) {
@@ -70,25 +79,24 @@ module.exports = function(RED) {
                     node.msg.state = node.state;
                     if( node.state )
                     {
-                        sendOn();
+                        sendFirst();
                     }
                     else
                     {
-                        sendOff();
+                        sendLast();
                     }
                 }
             }
             else
             {
-                //console.log("error")
                 setStatus( "red", "error" );
             }
             done();
         });
 
         node.on('close', function() {
-            clearTimeout( node.timerOn    );
-            clearTimeout( node.timerPause );
+            clearTimeout( node.timerOn  );
+            clearTimeout( node.timerOff );
         });
     }
 

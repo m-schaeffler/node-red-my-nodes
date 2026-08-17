@@ -8,6 +8,22 @@ function delay(ms) {
   });
 }
 
+function c2payload(c,max)
+{
+    if( c == 1 )
+    {
+      return "first";
+    }
+    else if( c < max )
+    {
+      return c%2 ? "on" : "off";
+    }
+    else
+    {
+      return "last";
+    }
+}
+
 describe( 'logic_blinker Node', function () {
     "use strict";
 
@@ -30,10 +46,11 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 1000);
-        n1.should.have.a.property('pauseTime', 1000);
+        n1.should.have.a.property('offTime', 1000);
+        n1.should.have.a.property('outputFirst', true);
         n1.should.have.a.property('outputOn', true);
-        n1.should.have.a.property('outputPause', false);
         n1.should.have.a.property('outputOff', false);
+        n1.should.have.a.property('outputLast', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -48,7 +65,7 @@ describe( 'logic_blinker Node', function () {
 
   it('should forward and filter bool values', function (done) {
     const numbers = [true,1,"1","true","on",false,0,"0","false","off"];
-    var flow = [{ id: "n1", type: "blinker", onTimeUnit:"mins", pauseTimeUnit:"mins", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "blinker", onTimeUnit:"mins", offTimeUnit:"mins", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -70,10 +87,11 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 60000);
-        n1.should.have.a.property('pauseTime', 60000);
+        n1.should.have.a.property('offTime', 60000);
+        n1.should.have.a.property('outputFirst', true);
         n1.should.have.a.property('outputOn', true);
-        n1.should.have.a.property('outputPause', false);
         n1.should.have.a.property('outputOff', false);
+        n1.should.have.a.property('outputLast', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         for( const i of numbers )
@@ -113,10 +131,11 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 1000);
-        n1.should.have.a.property('pauseTime', 1000);
+        n1.should.have.a.property('offTime', 1000);
+        n1.should.have.a.property('outputFirst', true);
         n1.should.have.a.property('outputOn', true);
-        n1.should.have.a.property('outputPause', false);
         n1.should.have.a.property('outputOff', false);
+        n1.should.have.a.property('outputLast', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ invalid:true, payload: false });
@@ -148,7 +167,7 @@ describe( 'logic_blinker Node', function () {
   });
 
   it('should blink, off in on phase', function (done) {
-    var flow = [{ id: "n1", type: "blinker", onTime:150, onTimeUnit:"msecs", pauseTime:100, pauseTimeUnit:"msecs", outputOn:'on', outputOnType:"str", outputPause:'pause', outputPauseType:"str",  outputOff:'off', outputOffType:"str", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "blinker", onTime:150, onTimeUnit:"msecs", offTime:100, offTimeUnit:"msecs", outputFirst:'first', outputFirstType:"str", outputOn:'on', outputOnType:"str", outputOff:'off', outputOffType:"str",  outputLast:'last', outputLastType:"str", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -158,7 +177,8 @@ describe( 'logic_blinker Node', function () {
         console.log(msg)
         c++;
         try {
-          msg.should.have.a.property('payload',c==10?"off":c%2?"on":"pause");
+          msg.should.have.a.property('payload',c2payload(c,10));
+          msg.should.have.property('state',c<10);
         }
         catch(err) {
           done(err);
@@ -168,10 +188,11 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 150);
-        n1.should.have.a.property('pauseTime', 100);
+        n1.should.have.a.property('offTime', 100);
+        n1.should.have.a.property('outputFirst', "first");
         n1.should.have.a.property('outputOn', "on");
-        n1.should.have.a.property('outputPause', "pause");
         n1.should.have.a.property('outputOff', "off");
+        n1.should.have.a.property('outputLast', "last");
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });
@@ -203,7 +224,7 @@ describe( 'logic_blinker Node', function () {
   });
 
   it('should blink, off in pause phase', function (done) {
-    var flow = [{ id: "n1", type: "blinker", onTime:150, onTimeUnit:"msecs", pauseTime:100, pauseTimeUnit:"msecs", outputOn:'on', outputOnType:"str", outputPause:'pause', outputPauseType:"str",  outputOff:'off', outputOffType:"str", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "blinker", onTime:150, onTimeUnit:"msecs", offTime:100, offTimeUnit:"msecs", outputFirst:'first', outputFirstType:"str", outputOn:'on', outputOnType:"str", outputOff:'off', outputOffType:"str",  outputLast:'last', outputLastType:"str", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -213,7 +234,8 @@ describe( 'logic_blinker Node', function () {
         console.log(msg)
         c++;
         try {
-          msg.should.have.a.property('payload',c==9?"off":c%2?"on":"pause");
+          msg.should.have.a.property('payload',c2payload(c,9));
+          msg.should.have.property('state',c<9);
         }
         catch(err) {
           done(err);
@@ -223,10 +245,11 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 150);
-        n1.should.have.a.property('pauseTime', 100);
+        n1.should.have.a.property('offTime', 100);
+        n1.should.have.a.property('outputFirst', "first");
         n1.should.have.a.property('outputOn', "on");
-        n1.should.have.a.property('outputPause', "pause");
         n1.should.have.a.property('outputOff', "off");
+        n1.should.have.a.property('outputLast', "last");
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });
@@ -258,7 +281,7 @@ describe( 'logic_blinker Node', function () {
   });
 
   it('should blink forever', function (done) {
-    var flow = [{ id: "n1", type: "blinker", onTime:150, onTimeUnit:"msecs", pauseTime:100, pauseTimeUnit:"msecs", outputOn:'on', outputOnType:"str", outputPause:'pause', outputPauseType:"str",  outputOff:'off', outputOffType:"str", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "blinker", onTime:150, onTimeUnit:"msecs", offTime:100, offTimeUnit:"msecs", outputFirst:'first', outputFirstType:"str", outputOn:'on', outputOnType:"str", outputOff:'off', outputOffType:"str",  outputLast:'last', outputLastType:"str", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -268,7 +291,8 @@ describe( 'logic_blinker Node', function () {
         console.log(msg)
         c++;
         try {
-          msg.should.have.a.property('payload',c==10?"off":c%2?"on":"pause");
+          msg.should.have.a.property('payload',c2payload(c,65535));
+          msg.should.have.property('state',true);
         }
         catch(err) {
           done(err);
@@ -278,10 +302,11 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('property', 'payload');
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 150);
-        n1.should.have.a.property('pauseTime', 100);
+        n1.should.have.a.property('offTime', 100);
+        n1.should.have.a.property('outputFirst', "first");
         n1.should.have.a.property('outputOn', "on");
-        n1.should.have.a.property('outputPause', "pause");
         n1.should.have.a.property('outputOff', "off");
+        n1.should.have.a.property('outputLast', "last");
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });

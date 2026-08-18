@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('mean',{
+    RED.nodes.registerType('kalman',{
         category: 'logic',
         color: "#C0DEED",
         defaults: {
@@ -7,13 +7,11 @@
             topic:{value:""},
             property:{value:"payload", required:true},
             propertyType:{value:"msg"},
-            deltaTime:{value:"60", required:true, validate:function(v){
-                return v!=='' && !isNaN(v) && Number(v)>0;}
-            },
-            deltaUnit:{value:"secs"},
-            minData:{value:"1", required:true, validate:function(v){
-                return v!=='' && !isNaN(v) && Number(v)>0;}
-            },
+            processNoise:{value:1, validate:RED.validators.number(), required:true );
+            measurementNoise:{value:1, validate:RED.validators.number(), required:true );
+            stateVector:{value:1, validate:RED.validators.number(), required:true );
+            controlVector:{value:0, validate:RED.validators.number(), required:true );
+            measurementVector:{value:1, validate:RED.validators.number(), required:true );
             filter:{value:0, validate:RED.validators.number()},
             filterUnit:{value:"secs"},
             filterVal:{value:0, validate:RED.validators.number()},
@@ -26,7 +24,7 @@
         outputs:1,
         icon:"smooth.png",
         label: function() {
-            return this.name||this.topic||"mean";
+            return this.name||this.topic||"kalman";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
@@ -34,14 +32,6 @@
         inputLabels: 'input',
         outputLabels: 'output',
         oneditprepare: function() {
-            if( this.deltaUnit === undefined )
-            {
-                $("#node-input-deltaUnit").val( "secs" );
-            }
-            if( this.filterUnit === undefined )
-            {
-                $("#node-input-filterUnit").val( "secs" );
-            }
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
@@ -51,7 +41,7 @@
     });
 </script>
 
-<script type="text/html" data-template-name="mean">
+<script type="text/html" data-template-name="kalman">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -65,20 +55,28 @@
         <input type="text" id="node-input-property">
         <input type="hidden" id="node-input-propertyType">
     </div>
+    
     <div class="form-row">
-       <label for="node-input-minMean"><i class="fa fa-hourglass-o"></i> Zeitspanne</label>
-       <input type="text" id="node-input-deltaTime" style="width:70px;" placeholder="Time">
-        <select id="node-input-deltaUnit" style="width:140px;">
-            <option value="msecs">MilliSeconds</option>
-            <option value="secs">Seconds</option>
-            <option value="mins">Minutes</option>
-            <option value="hours">Hours</option>
-        </select>
+        <label for="node-input-processNoise"><i class="fa fa-filter"></i> process noise</label>
+        <input type="text" id="node-input-processNoise">
     </div>
     <div class="form-row">
-        <label for="node-input-minData"><i class="fa fa-check-square-o"></i> min. Data</label>
-        <input type="number" id="node-input-minData">
+        <label for="node-input-measurementNoise"><i class="fa fa-filter"></i> measurement noise</label>
+        <input type="text" id="node-input-measurementNoise">
     </div>
+    <div class="form-row">
+        <label for="node-input-stateVector"><i class="fa fa-filter"></i> state vector</label>
+        <input type="text" id="node-input-stateVector">
+    </div>
+    <div class="form-row">
+        <label for="node-input-controlVector"><i class="fa fa-filter"></i> control vector</label>
+        <input type="text" id="node-input-controlVector">
+    </div>
+    <div class="form-row">
+        <label for="node-input-measurementVector"><i class="fa fa-filter"></i> measurement vector</label>
+        <input type="text" id="node-input-measurementVector">
+    </div>
+    
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter"></i> Filterzeit</label>
         <input type="number" id="node-input-filter" style="width:70px;" placeholder="Time">
@@ -111,7 +109,7 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="mean">
+<script type="text/html" data-help-name="kalman">
     
     <p>Calculate mean value of one or more data streams.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
@@ -142,10 +140,6 @@
         <dd> defines the topic for the output message, "" is <code>msg.topic</code>.</dd>
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
-        <dt>Delta time <span class="property-type">number</span></dt>
-        <dd> time frame to collect the data for the analysis.</dd>
-        <dt>min. Data <span class="property-type">number</span></dt>
-        <dd> min. amount of data points to generate an output.</dd>
         <dt>Filterzeit <span class="property-type">number</span></dt>
         <dd> send output only after this time.</dd>
         <dt>Filter Wert <span class="property-type">number</span></dt>

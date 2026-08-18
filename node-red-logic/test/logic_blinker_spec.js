@@ -452,6 +452,76 @@ describe( 'logic_blinker Node', function () {
     });
   });
 
+  it('should blink, with input messages as first and last', function (done) {
+    var flow = [{ id: "n1", type: "blinker", property:"payload.on", onTime:150, onTimeUnit:"msecs", offTime:100, offTimeUnit:"msecs", outputFirstType:"msg", outputOn:'on', outputOnType:"str", outputOff:'off', outputOffType:"str",  outputLastType:"msg", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        console.log(msg)
+        c++;
+        try {
+          msg.should.have.a.property('topic','FooBar');
+          switch( c )
+          {
+            case 1:
+              msg.should.have.a.property('payload',{ on: 'on', brightness: 80 });
+              break;
+            case 10:
+              msg.should.have.a.property('payload',{ on: 'off', brightness: 1 });
+              break;
+            default:
+              msg.should.have.a.property('payload',c2payload(c,10));
+          }
+          msg.should.have.property('state',c<10);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('property', 'payload.on');
+        //n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('onTime', 150);
+        n1.should.have.a.property('offTime', 100);
+        n1.should.have.a.property('firstType', "msg");
+        n1.should.have.a.property('lastType', "msg");
+        //n1.should.have.a.property('outputFirst', null);
+        n1.should.have.a.property('outputOn', "on");
+        n1.should.have.a.property('outputOff', "off");
+        //n1.should.have.a.property('outputLast', "last");
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ topic:"FooBar", payload: { on:"on", brightness: 80 } });
+        await delay(25);
+        c.should.match( 1 );
+        await delay(100);
+        c.should.match( 1 );
+        await delay(50);
+        c.should.match( 2 );
+        await delay(50);
+        c.should.match( 2 );
+        await delay(50);
+        c.should.match( 3 );
+        await delay(800);
+        c.should.match( 9 );
+        n1.receive({ topic:"FooBar", payload: { on:"off", brightness: 1 } });
+        await delay(50);
+        c.should.match( 10 );
+        await delay(500);
+        c.should.match( 10 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should work with objects', function (done) {
     var flow = [{ id: "n1", type: "blinker", name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

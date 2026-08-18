@@ -9,6 +9,8 @@ module.exports = function(RED) {
         this.topic            = config.topic || "";
         this.property         = config.property || "payload";
         this.propertyType     = config.propertyType ?? "msg";
+        this.control          = config.control || 0;
+        this.controlType      = config.controlType ?? "num";
         this.processNoise     = Number( config.processNoise ?? 1 );
         this.measurementNoise = Number( config.measurementNoise ?? 1 );
         this.stateVector      = Number( config.stateVector ?? 1 );
@@ -113,46 +115,56 @@ module.exports = function(RED) {
                     console.log( " 1",payload)
                     if( ! isNaN( payload ) )
                     {
-                        const now = Date.now();
-                        node.data[msg.topic] ??= { estimation:null, covariance: null };
+                        const control = RED.util.evaluateNodeProperty( node.control, node.controlType, node, msg );
+                        console.log( " ctrl", control );
+                        if( ! isNaN( control ) )
+                        {
+                            const now = Date.now();
+                            node.data[msg.topic] ??= { estimation:null, covariance: null };
 
-                        function sendValue(value)
-                        {
-                            console.log( " s",value)
-                            msg.payload = value;
-                            node.last[msg.topic] = {value:value,time:now};
-                            setStatus( "green", tools.formatNumber(value) );
-                            send( msg );
-                        }
-
-                        if( node.zeroIsZero && payload === 0 )
-                        {
-                            node.data[msg.topic].extimation = 0;
-                            sendValue( 0 );
-                        }
-                        else
-                        {
-                            let   value = kalmanFilter( payload, 0, node.data[msg.topic] );
-                            console.log(" 2", value)
-                            const help  = node.last[msg.topic];
-                            if( help === undefined ||
-                                ( help.time + node.filterTime < now && tools.distance( help.value, value ) >= node.filterValue ) ||
-                                ( node.filterLongTime > 0 && help.time + node.filterLongTime < now  ) )
+                            function sendValue(value)
                             {
-                                if( node.round )
-                                {
-                                    value = Math.round( value * node.round ) / node.round;
-                                }
-                                sendValue( value );
+                                console.log( " s",value)
+                                msg.payload = value;
+                                node.last[msg.topic] = {value:value,time:now};
+                                setStatus( "green", tools.formatNumber(value) );
+                                send( msg );
+                            }
+
+                            if( node.zeroIsZero && payload === 0 )
+                            {
+                                node.data[msg.topic].extimation = 0;
+                                sendValue( 0 );
                             }
                             else
                             {
-                                setStatus( "gray", `${item.length} / ${tools.formatNumber(value)}` );
+                                let   value = kalmanFilter( payload, 0, node.data[msg.topic] );
+                                console.log(" 2", value)
+                                const help  = node.last[msg.topic];
+                                if( help === undefined ||
+                                    ( help.time + node.filterTime < now && tools.distance( help.value, value ) >= node.filterValue ) ||
+                                    ( node.filterLongTime > 0 && help.time + node.filterLongTime < now  ) )
+                                {
+                                    if( node.round )
+                                    {
+                                        value = Math.round( value * node.round ) / node.round;
+                                    }
+                                    sendValue( value );
+                                }
+                                else
+                                {
+                                    setStatus( "gray", `${item.length} / ${tools.formatNumber(value)}` );
+                                }
+                            }
+                            if( node.contextStore != "none" )
+                            {
+                                context.set( "data", node.data, node.contextStore );
                             }
                         }
-                        if( node.contextStore != "none" )
+                        else
                         {
-                            context.set( "data", node.data, node.contextStore );
+                            setStatus( "red", "control is NaN" );
+                            node.warn( `control is NaN (${msg.topic}=${control})` );
                         }
                     }
                     else

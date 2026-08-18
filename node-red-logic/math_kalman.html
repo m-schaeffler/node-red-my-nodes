@@ -7,11 +7,13 @@
             topic:{value:""},
             property:{value:"payload", required:true},
             propertyType:{value:"msg"},
-            processNoise:{value:1, validate:RED.validators.number(), required:true );
-            measurementNoise:{value:1, validate:RED.validators.number(), required:true );
-            stateVector:{value:1, validate:RED.validators.number(), required:true );
-            controlVector:{value:0, validate:RED.validators.number(), required:true );
-            measurementVector:{value:1, validate:RED.validators.number(), required:true );
+            control:{value:0, required:true},
+            controlType:{value:"num"},
+            processNoise:{value:1, validate:RED.validators.number(), required:true },
+            measurementNoise:{value:1, validate:RED.validators.number(), required:true },
+            stateVector:{value:1, validate:RED.validators.number(), required:true },
+            controlVector:{value:0, validate:RED.validators.number(), required:true },
+            measurementVector:{value:1, validate:RED.validators.number(), required:true },
             contextStore:{value:"none",required:true},
             filter:{value:0, validate:RED.validators.number()},
             filterUnit:{value:"secs"},
@@ -23,7 +25,7 @@
         },
         inputs:1,
         outputs:1,
-        icon:"smooth.png",
+        icon:"font-awesome/fa-area-chart",
         label: function() {
             return this.name||this.topic||"kalman";
         },
@@ -38,6 +40,11 @@
                 type:"msg",
                 types:["msg","jsonata"],
                 typeField: "#node-input-propertyType"
+            });
+            $("#node-input-control").typedInput({
+                type:"num",
+                types:["msg","num"],
+                typeField: "#node-input-controlType"
             });
             // populate store names
             $("#node-input-contextStore").empty();
@@ -58,46 +65,51 @@
 
 <script type="text/html" data-template-name="kalman">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-input-topic"><i class="fa fa-envelope-o"></i> Topic</label>
+        <label for="node-input-topic"><i class="fa fa-envelope-o"></i> topic</label>
         <input type="text" id="node-input-topic" placeholder="Topic">
     </div>
     <div class="form-row">
-        <label for="node-input-input"><i class="fa fa-ellipsis-h"></i> Eigenschaft</label>
+        <label for="node-input-property"> measured value</label>
         <input type="text" id="node-input-property">
         <input type="hidden" id="node-input-propertyType">
     </div>
+    <div class="form-row">
+        <label for="node-input-control"> control value</label>
+        <input type="text" id="node-input-control">
+        <input type="hidden" id="node-input-controlType">
+    </div>
     
     <div class="form-row">
-        <label for="node-input-processNoise"><i class="fa fa-filter"></i> process noise</label>
+        <label for="node-input-processNoise"> process noise</label>
         <input type="text" id="node-input-processNoise">
     </div>
     <div class="form-row">
-        <label for="node-input-measurementNoise"><i class="fa fa-filter"></i> measurement noise</label>
+        <label for="node-input-measurementNoise"> measure noise</label>
         <input type="text" id="node-input-measurementNoise">
     </div>
     <div class="form-row">
-        <label for="node-input-stateVector"><i class="fa fa-filter"></i> state vector</label>
+        <label for="node-input-stateVector"> process vector</label>
         <input type="text" id="node-input-stateVector">
     </div>
     <div class="form-row">
-        <label for="node-input-controlVector"><i class="fa fa-filter"></i> control vector</label>
+        <label for="node-input-controlVector"> control vector</label>
         <input type="text" id="node-input-controlVector">
     </div>
     <div class="form-row">
-        <label for="node-input-measurementVector"><i class="fa fa-filter"></i> measurement vector</label>
+        <label for="node-input-measurementVector"> measure vector</label>
         <input type="text" id="node-input-measurementVector">
     </div>
     <div class="form-row">
-        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> context store</label>
         <select type="text" id="node-input-contextStore"></select>
     </div>
     
     <div class="form-row">
-        <label for="node-input-filter"><i class="fa fa-filter"></i> Filterzeit</label>
+        <label for="node-input-filter"><i class="fa fa-filter"></i> filter time</label>
         <input type="number" id="node-input-filter" style="width:70px;" placeholder="Time">
         <select id="node-input-filterUnit" style="width:140px;">
             <option value="msecs">MilliSeconds</option>
@@ -107,23 +119,23 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-filterVal"><i class="fa fa-filter"></i> Filter Wert</label>
+        <label for="node-input-filterVal"><i class="fa fa-filter"></i> filter value</label>
         <input type="text" id="node-input-filterVal">
     </div>
     <div class="form-row">
-        <label for="node-input-filterMul"><i class="fa fa-filter"></i> Filter Wiederholungsfaktor</label>
+        <label for="node-input-filterMul"><i class="fa fa-filter"></i> filter repetition</label>
         <input type="text" id="node-input-filterMul">
     </div>
     <div class="form-row">
-        <label for="node-input-decimals"><i class="fa fa-sort-numeric-asc"></i> Nachkommastellen</label>
+        <label for="node-input-decimals"><i class="fa fa-sort-numeric-asc"></i> decimals</label>
         <input type="text" id="node-input-decimals">
     </div>
     <div class="form-row">
-        <label for="node-input-zeroIsZero"><i class="fa fa-exclamation-circle"></i> Null ist Null</label>
+        <label for="node-input-zeroIsZero"><i class="fa fa-exclamation-circle"></i> null is null</label>
         <input type="checkbox" id="node-input-zeroIsZero" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
     <div class="form-row">
-        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> Status</label>
+        <label for="node-input-showStatus"><i class="fa fa-star-o"></i> status</label>
         <input type="checkbox" id="node-input-showState" style="display:inline-block; width:20px; vertical-align:baseline;">
     </div>
 </script>

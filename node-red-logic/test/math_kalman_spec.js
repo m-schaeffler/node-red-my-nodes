@@ -30,6 +30,8 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('topic', '');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('control', 0);
+        n1.should.have.a.property('controlType', 'num');
         n1.should.have.a.property('processNoise', 1);
         n1.should.have.a.property('measurementNoise', 1);
         n1.should.have.a.property('stateVector', 1);
@@ -55,6 +57,7 @@ describe( 'math_kalman Node', function () {
 
   it('should caclulate kalman values', function (done) {
     const numbers = [3,2,1];
+    const results = [3,2,1];
     var flow = [{ id: "n1", type: "kalman", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -64,7 +67,7 @@ describe( 'math_kalman Node', function () {
       n2.on("input", function (msg) {
         try {
           msg.should.have.property('topic',1);
-          msg.should.have.property('payload',numbers[c]);
+          msg.should.have.property('payload',results[c]);
           c++;
         }
         catch(err) {
@@ -75,6 +78,8 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('topic', '');
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('control', 0);
+        n1.should.have.a.property('controlType', 'num');
         n1.should.have.a.property('processNoise', 1);
         n1.should.have.a.property('measurementNoise', 1);
         n1.should.have.a.property('stateVector', 1);

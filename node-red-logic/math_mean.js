@@ -75,6 +75,10 @@ module.exports = function(RED) {
                 }
                 getPayload( function(value)
                 {
+                    if( node.topic )
+                    {
+                        msg.topic = node.topic;
+                    }
                     const payload = Number( value );
                     if( ! isNaN( payload ) )
                     {
@@ -95,10 +99,6 @@ module.exports = function(RED) {
                             msg.count   = count;
                             last[msg.topic] = {value:value,time:now};
                             context.set( "last", last );
-                            if( node.topic )
-                            {
-                                msg.topic = node.topic;
-                            }
                             node.status({fill:"green",shape:"dot",text:`${item.length} / ${tools.formatNumber(value)}`});
                             send( msg );
                         }

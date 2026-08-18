@@ -12,6 +12,7 @@
             stateVector:{value:1, validate:RED.validators.number(), required:true );
             controlVector:{value:0, validate:RED.validators.number(), required:true );
             measurementVector:{value:1, validate:RED.validators.number(), required:true );
+            contextStore:{value:"none",required:true},
             filter:{value:0, validate:RED.validators.number()},
             filterUnit:{value:"secs"},
             filterVal:{value:0, validate:RED.validators.number()},
@@ -32,11 +33,25 @@
         inputLabels: 'input',
         outputLabels: 'output',
         oneditprepare: function() {
+            const node = this;
             $("#node-input-property").typedInput({
                 type:"msg",
                 types:["msg","jsonata"],
                 typeField: "#node-input-propertyType"
             });
+            // populate store names
+            $("#node-input-contextStore").empty();
+            $("#node-input-contextStore").append(`<option value="none">None</option>`);
+            const defaultStore = RED.settings.hasOwnProperty("context") ? RED.settings.context.default : '';
+            RED.settings.context.stores.forEach(function(item){
+                if( item ) {
+                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
+                   $("#node-input-contextStore").append(opt);
+                }
+            });
+            const currentStore = node.contextStore || '';
+            // select the current option
+            $("#node-input-contextStore").val(currentStore);
         }
     });
 </script>
@@ -75,6 +90,10 @@
     <div class="form-row">
         <label for="node-input-measurementVector"><i class="fa fa-filter"></i> measurement vector</label>
         <input type="text" id="node-input-measurementVector">
+    </div>
+    <div class="form-row">
+        <label for="node-input-contextStore"><i class="fa fa-database"></i> Contextstore</label>
+        <select type="text" id="node-input-contextStore"></select>
     </div>
     
     <div class="form-row">

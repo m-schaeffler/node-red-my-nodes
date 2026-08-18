@@ -38,9 +38,10 @@
                 typeField: "#node-input-property-type"
             })
             var optionNothing = {value:"nul",label:"none",hasValue:false};
+            var optionMessage = {value:"msg",label:"message",hasValue:false};
             $("#node-input-outputFirst").typedInput({
                 type:"bool",
-                types:["str","num","bool","json",optionNothing],
+                types:["str","num","bool","json",optionNothing,optionMessage],
                 typeField: "#node-input-outputFirstType"
             })
             $("#node-input-outputOn").typedInput({
@@ -55,7 +56,7 @@
             })
             $("#node-input-outputLast").typedInput({
                 type:"bool",
-                types:["str","num","bool","json",optionNothing],
+                types:["str","num","bool","json",optionNothing,optionMessage],
                 typeField: "#node-input-outputLastType"
             })
         }

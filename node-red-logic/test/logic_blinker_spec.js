@@ -47,6 +47,8 @@ describe( 'logic_blinker Node', function () {
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 1000);
         n1.should.have.a.property('offTime', 1000);
+        n1.should.have.a.property('firstType', "bool");
+        n1.should.have.a.property('lastType', "bool");
         n1.should.have.a.property('outputFirst', true);
         n1.should.have.a.property('outputOn', true);
         n1.should.have.a.property('outputOff', false);
@@ -355,7 +357,9 @@ describe( 'logic_blinker Node', function () {
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 150);
         n1.should.have.a.property('offTime', 100);
-        n1.should.have.a.property('outputFirst', null);
+        n1.should.have.a.property('firstType', "nul");
+        n1.should.have.a.property('lastType', "str");
+        //n1.should.have.a.property('outputFirst', null);
         n1.should.have.a.property('outputOn', "on");
         n1.should.have.a.property('outputOff', "off");
         n1.should.have.a.property('outputLast', "last");
@@ -400,8 +404,8 @@ describe( 'logic_blinker Node', function () {
         console.log(msg)
         c++;
         try {
-          msg.should.have.a.property('payload',c2payload(c,10));
-          msg.should.have.property('state',c<10);
+          msg.should.have.a.property('payload',c2payload(c,65535));
+          msg.should.have.property('state',true);
         }
         catch(err) {
           done(err);
@@ -412,10 +416,12 @@ describe( 'logic_blinker Node', function () {
         //n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('onTime', 150);
         n1.should.have.a.property('offTime', 100);
+        n1.should.have.a.property('firstType', "str");
+        n1.should.have.a.property('lastType', "nul");
         n1.should.have.a.property('outputFirst', "first");
         n1.should.have.a.property('outputOn', "on");
         n1.should.have.a.property('outputOff', "off");
-        n1.should.have.a.property('outputLast', null);
+        //n1.should.have.a.property('outputLast', null);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });

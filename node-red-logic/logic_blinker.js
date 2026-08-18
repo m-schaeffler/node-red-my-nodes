@@ -8,10 +8,12 @@ module.exports = function(RED) {
         this.property    = config.property || "payload";
         this.onTime      = Number( config.onTime  ?? 1 ) * tools.timeUnits( config.onTimeUnit  );
         this.offTime     = Number( config.offTime ?? 1 ) * tools.timeUnits( config.offTimeUnit );
-        this.outputFirst = config.outputFirstType != "nul" ? RED.util.evaluateNodeProperty( config.outputFirst ?? "true", config.outputFirstType ?? "bool" ) : null;
-        this.outputOn    = RED.util.evaluateNodeProperty( config.outputOn  ?? "true", config.outputOnType  ?? "bool" );
-        this.outputOff   = RED.util.evaluateNodeProperty( config.outputOff ?? "false",config.outputOffType ?? "bool" );
-        this.outputLast  = config.outputLastType != "nul" ? RED.util.evaluateNodeProperty( config.outputLast ?? "false",config.outputLastType ?? "bool" ) : null;
+        this.firstType   = config.outputFirstType ?? "bool";
+        this.lastType    = config.outputLastType ?? "bool";
+        this.outputFirst = RED.util.evaluateNodeProperty( config.outputFirst ?? "true",  this.firstType );
+        this.outputOn    = RED.util.evaluateNodeProperty( config.outputOn    ?? "true",  config.outputOnType  ?? "bool" );
+        this.outputOff   = RED.util.evaluateNodeProperty( config.outputOff   ?? "false", config.outputOffType ?? "bool" );
+        this.outputLast  = RED.util.evaluateNodeProperty( config.outputLast  ?? "false", this.lastType );
         this.showState   = Boolean( config.showState );
         this.timerOn     = null;
         this.timerOff    = null;
@@ -27,10 +29,17 @@ module.exports = function(RED) {
 
         function sendFirst()
         {
-            if( node.outputFirst != null )
+            switch( node.firstType )
             {
-                node.msg.payload = node.outputFirst;
-                node.send( node.msg );
+                case "nul":
+                    break;
+                case "msg":
+                    node.send( node.msg );
+                    break;
+                default:
+                    let msg = RED.util.cloneMessage( node.msg );
+                    msg.payload = node.outputFirst;
+                    node.send( msg );
             }
             setStatus( "green", "first" );
             node.timerOn  = null;
@@ -61,10 +70,17 @@ module.exports = function(RED) {
             clearTimeout( node.timerOff );
             node.timerOn  = null;
             node.timerOff = null;
-            if( node.outputLast != null )
+            switch( node.lastType )
             {
-                node.msg.payload = node.outputLast;
-                node.send( node.msg );
+                case "nul":
+                    break;
+                case "msg":
+                    node.send( node.msg );
+                    break;
+                default:
+                    let msg = RED.util.cloneMessage( node.msg );
+                    msg.payload = node.outputLast;
+                    node.send( msg );
             }
             setStatus( "gray", "last" );
         }

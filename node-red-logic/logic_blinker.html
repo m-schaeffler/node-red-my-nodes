@@ -120,7 +120,7 @@
 
 <script type="text/html" data-help-name="blinker">
     
-    <p>Sends the payload converted to boolean delayed. The delay time can de controlled for on and off switching individually.</p>
+    <p>.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
     
     <table>
@@ -150,7 +150,9 @@
     
     <dl class="message-properties">
         <dt>payload <span class="property-type">boolean</span></dt>
-        <dd> bool value of payload.</dd>
+        <dd> blinking signal.</dd>
+        <dt>state <span class="property-type">boolean</span></dt>
+        <dd> received boolean value.</dd>
     </dl>
     
     <h3>Parameter</h3>
@@ -158,18 +160,19 @@
     <dl class="message-properties">
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
-        <dt>Delay <span class="property-type">number</span></dt>
-        <dd> delay time in msec for switching from off to on.</dd>
-        <dt>Postrun <span class="property-type">number</span></dt>
-        <dd> delay time in msec for switching from on to off.</dd>
-        <dt>min on time <span class="property-type">number</span></dt>
-        <dd> minimal time in msec to be in on state.</dd>
-        <dt>max on time <span class="property-type">number</span></dt>
-        <dd> maximal time in msec to be in on state; 0 is infinite.</dd>
+        <dt>on time <span class="property-type">number</span></dt>
+        <dd> time to be in on state.</dd>
+        <dt>off time <span class="property-type">number</span></dt>
+        <dd> time to be in off state.</dd>
+        <dt>first Output <span class="property-type">multi</span></dt>
+        <dd> value to be sent as first (on) mesage.</dd>
         <dt>on Output <span class="property-type">multi</span></dt>
-        <dd> Value to be sent in on case.</dd>
+        <dd> value to be sent in on case inside the sequence.</dd>
         <dt>off Output <span class="property-type">multi</span></dt>
-        <dd> Value to be sent in off case.</dd>
+        <dd> value to be sent in off case inside the sequence.</dd>
+        <dt>Status <span class="property-type">boolean</span></dt>
+        <dt>last Output <span class="property-type">multi</span></dt>
+        <dd> value to be sent as last (off) message.</dd>
         <dt>Status <span class="property-type">boolean</span></dt>
         <dd> shows the actual value as a node status.</dd>
     </dl>

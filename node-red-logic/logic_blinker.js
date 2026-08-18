@@ -14,9 +14,11 @@ module.exports = function(RED) {
         this.outputOn    = RED.util.evaluateNodeProperty( config.outputOn    ?? "true",  config.outputOnType  ?? "bool" );
         this.outputOff   = RED.util.evaluateNodeProperty( config.outputOff   ?? "false", config.outputOffType ?? "bool" );
         this.outputLast  = RED.util.evaluateNodeProperty( config.outputLast  ?? "false", this.lastType );
+        this.filter      = Boolean( config.filter );
         this.showState   = Boolean( config.showState );
         this.timerOn     = null;
         this.timerOff    = null;
+        this.last        = null;
         node.status( "" );
 
         function setStatus(color,text)
@@ -29,6 +31,8 @@ module.exports = function(RED) {
 
         function sendFirst()
         {
+            clearTimeout( node.timerOn  );
+            clearTimeout( node.timerOff );
             switch( node.firstType )
             {
                 case "nul":
@@ -94,7 +98,7 @@ module.exports = function(RED) {
             node.state = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
             if( node.state !== null )
             {
-                if( node.state !== node.last )
+                if( !node.filter || node.state !== node.last )
                 {
                     node.last      = node.state;
                     node.msg       = msg;

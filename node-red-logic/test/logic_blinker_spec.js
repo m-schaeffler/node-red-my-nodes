@@ -53,6 +53,7 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('outputOn', true);
         n1.should.have.a.property('outputOff', false);
         n1.should.have.a.property('outputLast', false);
+        n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.warn.should.have.callCount(0);
@@ -65,9 +66,57 @@ describe( 'logic_blinker Node', function () {
     });
   });
 
-  it('should forward and filter bool values', function (done) {
+  it('should forward bool values', function (done) {
     const numbers = [true,1,"1","true","on",false,0,"0","false","off"];
     var flow = [{ id: "n1", type: "blinker", onTimeUnit:"mins", offTimeUnit:"mins", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg)
+        c++;
+        try {
+          msg.should.have.property("topic","FooBar");
+          msg.should.have.property('payload',c<=5);
+          msg.should.have.property('state',c<=5);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('property', 'payload');
+        //n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('onTime', 60000);
+        n1.should.have.a.property('offTime', 60000);
+        n1.should.have.a.property('outputFirst', true);
+        n1.should.have.a.property('outputOn', true);
+        n1.should.have.a.property('outputOff', false);
+        n1.should.have.a.property('outputLast', false);
+        n1.should.have.a.property('filter', false);
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ topic: "FooBar", payload: i });
+          await delay(50);
+        }
+        c.should.match( 10 );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should forward and filter bool values', function (done) {
+    const numbers = [true,1,"1","true","on",false,0,"0","false","off"];
+    var flow = [{ id: "n1", type: "blinker", filter:true, onTimeUnit:"mins", offTimeUnit:"mins", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -94,6 +143,7 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('outputOn', true);
         n1.should.have.a.property('outputOff', false);
         n1.should.have.a.property('outputLast', false);
+        n1.should.have.a.property('filter', true);
         n1.should.have.a.property('showState', false);
         await delay(50);
         for( const i of numbers )
@@ -195,6 +245,7 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('outputOn', "on");
         n1.should.have.a.property('outputOff', "off");
         n1.should.have.a.property('outputLast', "last");
+        n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });
@@ -252,6 +303,7 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('outputOn', "on");
         n1.should.have.a.property('outputOff', "off");
         n1.should.have.a.property('outputLast', "last");
+        n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });
@@ -309,6 +361,7 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('outputOn', "on");
         n1.should.have.a.property('outputOff', "off");
         n1.should.have.a.property('outputLast', "last");
+        n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });
@@ -363,6 +416,7 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('outputOn', "on");
         n1.should.have.a.property('outputOff', "off");
         n1.should.have.a.property('outputLast', "last");
+        n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });
@@ -422,6 +476,7 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('outputOn', "on");
         n1.should.have.a.property('outputOff', "off");
         //n1.should.have.a.property('outputLast', null);
+        n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ payload: 1 });
@@ -492,6 +547,7 @@ describe( 'logic_blinker Node', function () {
         n1.should.have.a.property('outputOn', "on");
         n1.should.have.a.property('outputOff', "off");
         //n1.should.have.a.property('outputLast', "last");
+        n1.should.have.a.property('filter', false);
         n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ topic:"FooBar", payload: { on:"on", brightness: 80 } });

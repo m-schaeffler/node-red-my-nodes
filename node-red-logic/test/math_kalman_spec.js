@@ -217,7 +217,6 @@ describe( 'math_kalman Node', function () {
     });
   });
 
-
   it('should caclulate kalman values, with reduced decimals', function (done) {
     const numbers = [3,2,1,0,0,0,1,2,3];
     const results = [3,2.33,1.5,0.57,0.22,0.08,0.65,1.48,2.42];
@@ -548,6 +547,23 @@ describe( 'math_kalman Node', function () {
         }
       });
       try {
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('control', 0);
+        n1.should.have.a.property('controlType', 'num');
+        n1.should.have.a.property('processNoise', 1);
+        n1.should.have.a.property('measurementNoise', 1);
+        n1.should.have.a.property('stateVector', 1);
+        n1.should.have.a.property('controlVector', 0);
+        n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('contextStore', "");
+        n1.should.have.a.property('filterTime', 0);
+        n1.should.have.a.property('filterValue', 0);
+        n1.should.have.a.property('filterLongTime', 0);
+        n1.should.have.a.property('zeroIsZero', false);
+        n1.should.have.a.property('round', null );
+        n1.should.have.a.property('showState', false);
         await delay(50);
         n1.receive({ invalid:true, payload: 1000 });
         await delay(50);
@@ -566,6 +582,61 @@ describe( 'math_kalman Node', function () {
         await delay(50);
         c.should.match( 1 );
         n1.warn.should.have.callCount(2);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should not use invalid control input', function (done) {
+    var flow = [{ id: "n1", type: "kalman", control: "control", controlType:"msg",  controlVector:"0.1", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        c++;
+        try {
+          msg.should.have.a.property('payload',5000);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('control', 'control');
+        n1.should.have.a.property('controlType', 'msg');
+        n1.should.have.a.property('processNoise', 1);
+        n1.should.have.a.property('measurementNoise', 1);
+        n1.should.have.a.property('stateVector', 1);
+        n1.should.have.a.property('controlVector', 0.1);
+        n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('contextStore', "");
+        n1.should.have.a.property('filterTime', 0);
+        n1.should.have.a.property('filterValue', 0);
+        n1.should.have.a.property('filterLongTime', 0);
+        n1.should.have.a.property('zeroIsZero', false);
+        n1.should.have.a.property('round', null );
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        n1.receive({ payload: 1, control: undefined });
+        await delay(50);
+        n1.receive({ payload: 1, control: "FooBar" });
+        await delay(50);
+        n1.receive({ payload: 1, control: NaN });
+        await delay(50);
+        c.should.match( 0 );
+        n1.receive({ payload: 5000, control: 1 });
+        await delay(50);
+        c.should.match( 1 );
+        n1.warn.should.have.callCount(3);
         n1.error.should.have.callCount(0);
         done();
       }

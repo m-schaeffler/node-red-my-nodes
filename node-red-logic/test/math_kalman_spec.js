@@ -56,8 +56,8 @@ describe( 'math_kalman Node', function () {
   });
 
   it('should caclulate kalman values', function (done) {
-    const numbers = [3,2,1,0,0,0];
-    const results = [3,2.3333333333333335,1.5,0.5714285714285714,0.2181818181818182,0.08333333333333334];
+    const numbers = [3,2,1,0,0,0,1,2,3];
+    const results = [3,2.3333333333333335,1.5,0.5714285714285714,0.2181818181818182,0.08333333333333334,0.6498673740053051,1.4842958459979736,2.4210526315789473];
     var flow = [{ id: "n1", type: "kalman", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -108,23 +108,21 @@ describe( 'math_kalman Node', function () {
       }
     });
   });
-/*
-  it('should caclulate mean values, minData=3', function (done) {
-    const numbers = [1000,10,99.9,100,100.1,1000,0];
-    var flow = [{ id: "n1", type: "mean", minData:"3", decimals:"0", topic:"", name: "test", wires: [["n2"]] },
+
+  it('should have zeroIsZero', function (done) {
+    const numbers = [3,2,1,0,0,0,1,2,3];
+    const results = [3,2.3333333333333335,1.5,0,0,0,0.6190476190476191,1.4727272727272727,2.4166666666666665];
+    var flow = [{ id: "n1", type: "kalman", zeroIsZero:true, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
       var n1 = helper.getNode("n1");
       var c = 0;
-      var s = 17+34;
       n2.on("input", function (msg) {
-        //console.log(msg);
         try {
-          s += numbers[c++];
-          msg.should.have.property('topic',2);
-          msg.should.have.property('payload',Math.round(s/(c+2)));
-          msg.should.have.property('count',c+2);
+          msg.should.have.property('topic',1);
+          msg.should.have.property('payload',results[c]);
+          c++;
         }
         catch(err) {
           done(err);
@@ -132,59 +130,26 @@ describe( 'math_kalman Node', function () {
       });
       try {
         n1.should.have.a.property('topic', '');
-        n1.should.have.a.property('minData', 3);
-        n1.should.have.a.property('round', 1 );
-        await delay(50);
-        n1.receive({ topic:2, payload: 17 });
-        await delay(50);
-        n1.receive({ topic:2, payload: 34 });
-        await delay(50);
-        c.should.match( 0 );
-        for( const i of numbers )
-        {
-          n1.receive({ topic:2, payload: i });
-          await delay(50);
-        }
-        c.should.match( numbers.length );
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
-  it('should have zeroIsZero', function (done) {
-    const numbers = [10,10.1,10.1,10.2,10.2,10.1,10,0,5];
-    var flow = [{ id: "n1", type: "mean", zeroIsZero:true, decimals:"1", topic:"FooBar", name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      var s = 0;
-      n2.on("input", function (msg) {
-        //console.log(msg);
-        try {
-          s += numbers[c++];
-          msg.should.have.property('topic',"FooBar");
-          msg.should.have.property('payload',c===numbers.length-1?0:Math.round(s/c*10)/10);
-          msg.should.have.property('count',c===numbers.length-1?1:c);
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('topic', 'FooBar');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('control', 0);
+        n1.should.have.a.property('controlType', 'num');
+        n1.should.have.a.property('processNoise', 1);
+        n1.should.have.a.property('measurementNoise', 1);
+        n1.should.have.a.property('stateVector', 1);
+        n1.should.have.a.property('controlVector', 0);
+        n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('contextStore', "");
+        n1.should.have.a.property('filterTime', 0);
+        n1.should.have.a.property('filterValue', 0);
+        n1.should.have.a.property('filterLongTime', 0);
         n1.should.have.a.property('zeroIsZero', true);
-        n1.should.have.a.property('round', 10 );
+        n1.should.have.a.property('round', null );
+        n1.should.have.a.property('showState', false);
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ topic:"zero", payload: i });
+          n1.receive({ topic:1, payload: i });
           await delay(50);
         }
         c.should.match( numbers.length );
@@ -197,48 +162,7 @@ describe( 'math_kalman Node', function () {
       }
     });
   });
-
-  it('should mean data only for deltaTime window', function (done) {
-    var flow = [{ id: "n1", type: "mean", deltaTime: "100", deltaUnit:"msec", name: "test", wires: [["n2"]] },
-                { id: "n2", type: "helper" }];
-    helper.load(node, flow, async function () {
-      var n2 = helper.getNode("n2");
-      var n1 = helper.getNode("n1");
-      var c = 0;
-      var start;
-      n2.on("input", function (msg) {
-        c++;
-        try {
-          var delta = Date.now() - start;
-          delta.should.be.approximately((c-1)*200,25);
-          msg.should.have.a.property('payload',c*1000);
-          msg.should.have.a.property('count',1);
-        }
-        catch(err) {
-          done(err);
-        }
-      });
-      try {
-        n1.should.have.a.property('deltaTime', 100);
-        await delay(200);
-        start = Date.now();
-        n1.receive({ payload: 1000 });
-        await delay(200);
-        n1.receive({ payload: 2000 });
-        await delay(200);
-        n1.receive({ payload: 3000 });
-        await delay(50);
-        c.should.match( 3 );
-        n1.warn.should.have.callCount(0);
-        n1.error.should.have.callCount(0);
-        done();
-      }
-      catch(err) {
-        done(err);
-      }
-    });
-  });
-
+/*
   it('should filter data in time domain', function (done) {
     var flow = [{ id: "n1", type: "mean", filter: "1000", filterUnit:"msec", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
@@ -507,9 +431,9 @@ describe( 'math_kalman Node', function () {
       }
     });
   });
-
+*/
   it('should not forward invalid data', function (done) {
-    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -519,7 +443,6 @@ describe( 'math_kalman Node', function () {
         c++;
         try {
           msg.should.have.a.property('payload',5000);
-          msg.should.have.a.property('count',1);
         }
         catch(err) {
           done(err);
@@ -554,7 +477,7 @@ describe( 'math_kalman Node', function () {
   });
 
   it('should have reset', function (done) {
-    var flow = [{ id: "n1", type: "mean", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -567,15 +490,12 @@ describe( 'math_kalman Node', function () {
           {
             case 1:
               msg.should.have.a.property('payload',0);
-              msg.should.have.a.property('count',1);
               break;
             case 2:
               msg.should.have.a.property('payload',1000);
-              msg.should.have.a.property('count',1);
               break;
             case 3:
               msg.should.have.a.property('payload',5000);
-              msg.should.have.a.property('count',1);
               break;
           }
         }
@@ -605,7 +525,7 @@ describe( 'math_kalman Node', function () {
       }
     });
   });
-*/
+
   it('should work with objects', function (done) {
     var flow = [{ id: "n1", type: "kalman", name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

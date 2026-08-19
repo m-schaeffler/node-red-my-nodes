@@ -140,7 +140,7 @@ module.exports = function(RED) {
 
                             if( node.zeroIsZero && payload === 0 )
                             {
-                                node.data[msg.topic].extimation = 0;
+                                node.data[msg.topic].estimate = 0;
                                 sendValue( 0 );
                             }
                             else

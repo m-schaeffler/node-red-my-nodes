@@ -5,7 +5,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
-        this.property    = config.property || "payload";
+        this.property    = config.property ?? "payload";
         this.onTime      = Number( config.onTime  ?? 1 ) * tools.timeUnits( config.onTimeUnit  );
         this.offTime     = Number( config.offTime ?? 1 ) * tools.timeUnits( config.offTimeUnit );
         this.firstType   = config.outputFirstType ?? "bool";

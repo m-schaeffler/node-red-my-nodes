@@ -5,7 +5,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
-        this.property  = config.property || "payload";
+        this.property  = config.property ?? "payload";
         this.showState = Boolean( config.showState );
         this.filter    = Boolean( config.filter );
         this.last      = null;

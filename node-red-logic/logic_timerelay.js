@@ -5,7 +5,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node = this;
-        this.property  = config.property || "payload";
+        this.property  = config.property ?? "payload";
         this.delay     = Number( config.delay ?? 0 )   * tools.timeUnits( config.delayUnit );
         this.postrun   = Number( config.postrun ?? 0 ) * tools.timeUnits( config.postrunUnit );
         this.minOn     = Number( config.minOn ?? 0 )   * tools.timeUnits( config.minOnUnit );

@@ -109,6 +109,60 @@ describe( 'math_kalman Node', function () {
     });
   });
 
+  it('should caclulate kalman values with control input', function (done) {
+    const numbers = [3,2,1,0,0,0,1,2,3];
+    const results = [3,2.3666666666666667,1.55,0.6285714285714286,0.2781818181818182,0.14444444444444443,0.7114058355437666,1.5459979736575482,2.4828173374613005];
+    var flow = [{ id: "n1", type: "kalman", control: "control", controlType:"msg",  controlVector:"0.1", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          msg.should.have.property('topic',1);
+          msg.should.have.property('payload',results[c]);
+          c++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('control', 'control');
+        n1.should.have.a.property('controlType', 'msg');
+        n1.should.have.a.property('processNoise', 1);
+        n1.should.have.a.property('measurementNoise', 1);
+        n1.should.have.a.property('stateVector', 1);
+        n1.should.have.a.property('controlVector', 0.1);
+        n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('contextStore', "");
+        n1.should.have.a.property('filterTime', 0);
+        n1.should.have.a.property('filterValue', 0);
+        n1.should.have.a.property('filterLongTime', 0);
+        n1.should.have.a.property('zeroIsZero', false);
+        n1.should.have.a.property('round', null );
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:1, payload: i, control: 1 });
+          await delay(50);
+        }
+        c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should have zeroIsZero', function (done) {
     const numbers = [3,2,1,0,0,0,1,2,3];
     const results = [3,2.3333333333333335,1.5,0,0,0,0.6190476190476191,1.4727272727272727,2.4166666666666665];

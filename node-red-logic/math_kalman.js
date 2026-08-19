@@ -75,7 +75,6 @@ module.exports = function(RED) {
                 data.estimate   = predX + gain * ( value - node.measurementVector * predX );
                 data.covariance = predCov - gain * node.measurementVector * predCov;
             }
-            console.log(data);
             return data.estimate;
         }
 

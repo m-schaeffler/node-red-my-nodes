@@ -37,7 +37,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0);
         n1.should.have.a.property('measurementVector', 1);
-        n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -56,8 +56,8 @@ describe( 'math_kalman Node', function () {
   });
 
   it('should caclulate kalman values', function (done) {
-    const numbers = [3,2,1];
-    const results = [3,2,1];
+    const numbers = [3,2,1,0,0,0];
+    const results = [3,2.3333333333333335,1.5,0.5714285714285714,0.2181818181818182,0.08333333333333334];
     var flow = [{ id: "n1", type: "kalman", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
@@ -85,7 +85,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0);
         n1.should.have.a.property('measurementVector', 1);
-        n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -605,9 +605,9 @@ describe( 'math_kalman Node', function () {
       }
     });
   });
-
+*/
   it('should work with objects', function (done) {
-    var flow = [{ id: "n1", type: "mean", name: "test", property:"payload.value", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", name: "test", property:"payload.value", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -640,7 +640,7 @@ describe( 'math_kalman Node', function () {
   });
 
   it('should have Jsonata', function (done) {
-    var flow = [{ id: "n1", type: "mean", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", name: "test", property:"payload+5", propertyType:"jsonata", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -671,5 +671,5 @@ describe( 'math_kalman Node', function () {
       }
     });
   });
-*/
+
 });

@@ -16,7 +16,7 @@ module.exports = function(RED) {
         this.stateVector      = Number( config.stateVector ?? 1 );
         this.controlVector    = Number( config.controlVector ?? 0 );
         this.measurementVector= Number( config.measurementVector ?? 1 );
-        this.contextStore     = config.contextStore ?? "none";
+        this.contextStore     = config.contextStore ?? "";
         this.filterTime       = Number( config.filter ?? 0 ) * tools.timeUnits( config.filterUnit );
         this.filterValue      = Number( config.filterVal ?? 0 );
         this.filterLongTime   = this.filterTime * Number( config.filterMul ?? 10 );
@@ -36,37 +36,50 @@ module.exports = function(RED) {
             }
         }
         node.status( "" );
-        if( node.contextStore != "none" )
+        context.get( "data", node.contextStore, function(err,value)
         {
-            context.get( "data", node.contextStore, function(err,value)
+            if( err )
             {
-                if( err )
+                node.error( err );
+            }
+            else
+            {
+                //console.log( "context read", value );
+                if( value !== undefined )
                 {
-                    node.error( err );
+                    node.data = value;
                 }
-                else
-                {
-                    //console.log( "context read", value );
-                    if( value !== undefined )
-                    {
-                        node.data = value;
-                    }
-                }
-            } );
-        }
+            }
+        } );
 
         function setStatus(color,text)
         {
             node.status({ fill:color, shape:"dot", text:text });
         }
 
-        function kalmanFilter(value,control)
+        function kalmanFilter(value,control,data)
         {
-            return value;
+            if( data.estimate == null )
+            {
+                data.estimate   = value / node.measurementVector;
+                data.covariance = node.measurementNoise / node.measurementVector**2;
+            }
+            else
+            {
+                // Compute prediction
+                const predX     = node.stateVector * data.estimate + node.controlVector * control;
+                const predCov   = node.stateVector**2 * data.covariance + node.processNoise;
+                // Kalman gain
+                const gain      = predCov * node.measurementVector / ( predCov * node.measurementVector**2 + node.measurementNoise );
+                // Correction
+                data.estimate   = predX + gain * ( value - node.measurementVector * predX );
+                data.covariance = predCov - gain * node.measurementVector * predCov;
+            }
+            console.log(data);
+            return data.estimate;
         }
 
         node.on('input', function(msg,send,done) {
-            console.log(msg)
             if( msg.invalid )
             {
                 done();
@@ -75,10 +88,7 @@ module.exports = function(RED) {
             {
                 node.data = {};
                 node.last = {};
-                if( node.contextStore != "none" )
-                {
-                    context.set( "data", node.data, node.contextStore );
-                }
+                context.set( "data", node.data, node.contextStore );
                 node.status( "" );
                 done();
             }
@@ -112,19 +122,16 @@ module.exports = function(RED) {
                         msg.topic = node.topic;
                     }
                     const payload = Number( value );
-                    console.log( " 1",payload)
                     if( ! isNaN( payload ) )
                     {
                         const control = RED.util.evaluateNodeProperty( node.control, node.controlType, node, msg );
-                        console.log( " ctrl", control );
                         if( ! isNaN( control ) )
                         {
                             const now = Date.now();
-                            node.data[msg.topic] ??= { estimation:null, covariance: null };
+                            node.data[msg.topic] ??= { estimate:null, covariance: null };
 
                             function sendValue(value)
                             {
-                                console.log( " s",value)
                                 msg.payload = value;
                                 node.last[msg.topic] = {value:value,time:now};
                                 setStatus( "green", tools.formatNumber(value) );
@@ -138,8 +145,7 @@ module.exports = function(RED) {
                             }
                             else
                             {
-                                let   value = kalmanFilter( payload, 0, node.data[msg.topic] );
-                                console.log(" 2", value)
+                                let   value = kalmanFilter( payload, control, node.data[msg.topic] );
                                 const help  = node.last[msg.topic];
                                 if( help === undefined ||
                                     ( help.time + node.filterTime < now && tools.distance( help.value, value ) >= node.filterValue ) ||
@@ -156,10 +162,7 @@ module.exports = function(RED) {
                                     setStatus( "gray", `${item.length} / ${tools.formatNumber(value)}` );
                                 }
                             }
-                            if( node.contextStore != "none" )
-                            {
-                                context.set( "data", node.data, node.contextStore );
-                            }
+                            context.set( "data", node.data, node.contextStore );
                         }
                         else
                         {

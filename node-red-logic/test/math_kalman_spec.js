@@ -167,7 +167,7 @@ describe( 'math_kalman Node', function () {
   it('should caclulate kalman values, with reduced decimals', function (done) {
     const numbers = [3,2,1,0,0,0,1,2,3];
     const results = [3,2.33,1.5,0.57,0.22,0.08,0.65,1.48,2.42];
-    var flow = [{ id: "n1", type: "kalman", decimals:2, name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", decimals:"2", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -218,9 +218,8 @@ describe( 'math_kalman Node', function () {
     });
   });
 
-/*
   it('should filter data in time domain', function (done) {
-    var flow = [{ id: "n1", type: "mean", filter: "1000", filterUnit:"msec", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", filter: "1000", filterUnit:"msec", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -235,13 +234,11 @@ describe( 'math_kalman Node', function () {
           {
             case 1:
               delta.should.be.lessThan(10);
-              msg.should.have.a.property('payload',1000);
-              msg.should.have.a.property('count',1);
+              msg.should.have.a.property('payload',3);
               break;
             case 2:
               delta.should.be.approximately(1100,25);
-              msg.should.have.a.property('payload',(1000+2000+5000)/3);
-              msg.should.have.a.property('count',3);
+              msg.should.have.a.property('payload',1.5);
               break;
           }
         }
@@ -254,11 +251,11 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('filterLongTime', 10000);
         await delay(50);
         start = Date.now();
-        n1.receive({ payload: 1000 });
+        n1.receive({ payload: 3 });
         await delay(900);
-        n1.receive({ payload: 2000 });
+        n1.receive({ payload: 2 });
         await delay(200);
-        n1.receive({ payload: 5000 });
+        n1.receive({ payload: 1 });
         await delay(50);
         c.should.match( 2 );
         n1.warn.should.have.callCount(0);
@@ -272,7 +269,7 @@ describe( 'math_kalman Node', function () {
   });
 
   it('should filter data in value domain', function (done) {
-    var flow = [{ id: "n1", type: "mean", filterVal: "100", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", filterVal: "1", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -285,12 +282,10 @@ describe( 'math_kalman Node', function () {
           switch( c )
           {
             case 1:
-              msg.should.have.a.property('payload',1000);
-              msg.should.have.a.property('count',1);
+              msg.should.have.a.property('payload',3);
               break;
             case 2:
-              msg.should.have.a.property('payload',(1000+1199+1102)/3);
-              msg.should.have.a.property('count',3);
+              msg.should.have.a.property('payload',1.5);
               break;
           }
         }
@@ -299,14 +294,14 @@ describe( 'math_kalman Node', function () {
         }
       });
       try {
-        n1.should.have.a.property('filterValue', 100);
+        n1.should.have.a.property('filterValue', 1);
         await delay(50);
         start = Date.now();
-        n1.receive({ payload: 1000 });
+        n1.receive({ payload: 3 });
         await delay(50);
-        n1.receive({ payload: 1199 });
+        n1.receive({ payload: 2 });
         await delay(50);
-        n1.receive({ payload: 1102 });
+        n1.receive({ payload: 1 });
         await delay(50);
         c.should.match( 2 );
         n1.warn.should.have.callCount(0);
@@ -321,7 +316,7 @@ describe( 'math_kalman Node', function () {
 
   it('should filter data in both domains 1', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "mean", filter: "250", filterUnit:"msec", filterVal: "100", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", filter: "250", filterUnit:"msec", filterVal: "100", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -337,12 +332,10 @@ describe( 'math_kalman Node', function () {
             case 1:
               delta.should.be.lessThan(20);
               msg.should.have.a.property('payload',1000);
-              msg.should.have.a.property('count',1);
               break;
             case 2:
               delta.should.be.approximately(2900,50);
-              msg.should.have.a.property('payload',1010);
-              msg.should.have.a.property('count',5);
+              msg.should.have.a.property('payload',1025.3454545454545);
               break;
           }
         }
@@ -378,7 +371,7 @@ describe( 'math_kalman Node', function () {
   });
 
   it('should filter data in both domains 2', function (done) {
-    var flow = [{ id: "n1", type: "mean", filter: "0.25", filterVal: "100", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", filter: "0.25", filterVal: "100", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -394,12 +387,10 @@ describe( 'math_kalman Node', function () {
             case 1:
               delta.should.be.lessThan(20);
               msg.should.have.a.property('payload',1000);
-              msg.should.have.a.property('count',1);
               break;
             case 2:
               delta.should.be.approximately(300,25);
-              msg.should.have.a.property('payload',1500);
-              msg.should.have.a.property('count',2);
+              msg.should.have.a.property('payload',1666.6666666666665);
               break;
           }
         }
@@ -430,7 +421,7 @@ describe( 'math_kalman Node', function () {
 
   it('should filter data in both domains 3', function (done) {
     this.timeout( 5000 );
-    var flow = [{ id: "n1", type: "mean", filter: "0.25", filterMul: "0", filterVal: "100", name: "test", wires: [["n2"]] },
+    var flow = [{ id: "n1", type: "kalman", filter: "0.25", filterMul: "0", filterVal: "100", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -446,12 +437,10 @@ describe( 'math_kalman Node', function () {
             case 1:
               delta.should.be.lessThan(20);
               msg.should.have.a.property('payload',1000);
-              msg.should.have.a.property('count',1);
               break;
             case 2:
               delta.should.be.approximately(3500,50);
-              msg.should.have.a.property('payload',1175);
-              msg.should.have.a.property('count',6);
+              msg.should.have.a.property('payload',1627.736111111111);
               break;
           }
         }
@@ -487,7 +476,7 @@ describe( 'math_kalman Node', function () {
       }
     });
   });
-*/
+
   it('should not forward invalid data', function (done) {
     var flow = [{ id: "n1", type: "kalman", name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];

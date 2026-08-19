@@ -159,7 +159,7 @@ module.exports = function(RED) {
                                 }
                                 else
                                 {
-                                    setStatus( "gray", `${item.length} / ${tools.formatNumber(value)}` );
+                                    setStatus( "gray", tools.formatNumber(value) );
                                 }
                             }
                             context.set( "data", node.data, node.contextStore );

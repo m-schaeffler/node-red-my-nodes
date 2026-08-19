@@ -14,6 +14,7 @@
             stateVector:{value:1, validate:RED.validators.number(), required:true },
             controlVector:{value:0, validate:RED.validators.number(), required:true },
             measurementVector:{value:1, validate:RED.validators.number(), required:true },
+            adaptionCount:{value:0, validate:RED.validators.number(), required:true },
             contextStore:{value:"none",required:true},
             filter:{value:0, validate:RED.validators.number()},
             filterUnit:{value:"secs"},
@@ -103,6 +104,10 @@
         <input type="text" id="node-input-measurementVector">
     </div>
     <div class="form-row">
+        <label for="node-input-adaptionCount"> adaption counts</label>
+        <input type="number" id="node-input-adaptionCount">
+    </div>
+    <div class="form-row">
         <label for="node-input-contextStore"><i class="fa fa-database"></i> context store</label>
         <select type="text" id="node-input-contextStore"></select>
     </div>
@@ -123,11 +128,11 @@
     </div>
     <div class="form-row">
         <label for="node-input-filterMul"><i class="fa fa-filter"></i> filter repetition</label>
-        <input type="text" id="node-input-filterMul">
+        <input type="number" id="node-input-filterMul">
     </div>
     <div class="form-row">
         <label for="node-input-decimals"><i class="fa fa-sort-numeric-asc"></i> decimals</label>
-        <input type="text" id="node-input-decimals">
+        <input type="number" id="node-input-decimals">
     </div>
     <div class="form-row">
         <label for="node-input-zeroIsZero"><i class="fa fa-exclamation-circle"></i> null is null</label>

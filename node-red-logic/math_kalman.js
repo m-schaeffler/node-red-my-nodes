@@ -16,6 +16,7 @@ module.exports = function(RED) {
         this.stateVector      = Number( config.stateVector ?? 1 );
         this.controlVector    = Number( config.controlVector ?? 0 );
         this.measurementVector= Number( config.measurementVector ?? 1 );
+        this.adaptionCount    = Number( config.adaptionCount ?? 0 );
         this.contextStore     = config.contextStore ?? "";
         this.filterTime       = Number( config.filter ?? 0 ) * tools.timeUnits( config.filterUnit );
         this.filterValue      = Number( config.filterVal ?? 0 );

@@ -1,6 +1,7 @@
 var should = require("should");
 var helper = require("node-red-node-test-helper");
 var node   = require("../math_kalman.js");
+var Context= require("/usr/lib/node_modules/node-red/node_modules/@node-red/runtime/lib/nodes/context/");
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -15,8 +16,29 @@ describe( 'math_kalman Node', function () {
       helper.startServer(done);
   });
 
+  function initContext(done) {
+    Context.init({
+      contextStorage: {
+        default: "memoryOnly",
+        memoryOnly: {
+          module: "memory"
+        },
+        storeInFile: {
+          module: "memory"
+        }
+      }
+    });
+    Context.load().then(function () {
+      done();
+    });
+  }
+
   afterEach(function(done) {
       helper.unload().then(function() {
+          return Context.clean({allNodes: {}});
+      }).then(function () {
+          return Context.close();
+      }).then(function () {
           helper.stopServer(done);
       });
   });
@@ -37,6 +59,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0);
         n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('adaptionCount', 0);
         n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
@@ -85,6 +108,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0);
         n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('adaptionCount', 0);
         n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
@@ -139,6 +163,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0.1);
         n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('adaptionCount', 0);
         n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
@@ -193,6 +218,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0);
         n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('adaptionCount', 0);
         n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
@@ -247,6 +273,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0);
         n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('adaptionCount', 0);
         n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
@@ -557,6 +584,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0);
         n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('adaptionCount', 0);
         n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
@@ -618,6 +646,7 @@ describe( 'math_kalman Node', function () {
         n1.should.have.a.property('stateVector', 1);
         n1.should.have.a.property('controlVector', 0.1);
         n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('adaptionCount', 0);
         n1.should.have.a.property('contextStore', "");
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
@@ -762,4 +791,83 @@ describe( 'math_kalman Node', function () {
     });
   });
 
+  it('should store the internal state', function (done) {
+    const numbers = [3,2,1,0,0,0,1,2,3];
+    const results = [3,2.3333333333333335,1.5,0.5714285714285714,0.2181818181818182,0.08333333333333334,0.6498673740053051,1.4842958459979736,2.4210526315789473];
+    var flow = [{ id: "n1", type: "kalman", contextStore:"memoryOnly", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, function () {
+     initContext(async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          msg.should.have.property('topic',1);
+          msg.should.have.property('payload',results[c]);
+          c++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('control', 0);
+        n1.should.have.a.property('controlType', 'num');
+        n1.should.have.a.property('processNoise', 1);
+        n1.should.have.a.property('measurementNoise', 1);
+        n1.should.have.a.property('stateVector', 1);
+        n1.should.have.a.property('controlVector', 0);
+        n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('contextStore', "memoryOnly");
+        n1.should.have.a.property('filterTime', 0);
+        n1.should.have.a.property('filterValue', 0);
+        n1.should.have.a.property('filterLongTime', 0);
+        n1.should.have.a.property('zeroIsZero', false);
+        n1.should.have.a.property('round', null );
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        for( let i = 0; i < 3; i++ )
+        {
+          n1.receive({ topic:1, payload: numbers[i] });
+          await delay(50);
+        }
+        n1.context().get("data").should.be.an.Object();
+        await helper._redNodes.stopFlows();
+        await helper._redNodes.startFlows();
+        n1 = helper.getNode("n1");
+        n2 = helper.getNode("n2");
+        n2.on("input", function (msg) {
+          try {
+            msg.should.have.property('topic',1);
+            msg.should.have.property('payload',results[c]);
+            c++;
+          }
+          catch(err) {
+            done(err);
+          }
+        });
+        await delay(50);
+        n1.context().get("data").should.be.an.Object();
+        for( let i = 3; i < numbers.length; i++ )
+        {
+          n1.receive({ topic:1, payload: numbers[i] });
+          await delay(50);
+        }
+        c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+   });
+  });
+
 });
+

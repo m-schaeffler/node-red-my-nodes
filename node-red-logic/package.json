@@ -32,7 +32,8 @@
       "hysteresisEdge": "math_hysteresis.js",
       "threePoint": "math_3point.js",
       "statistics": "math_statistics.js",
-      "mean": "math_mean.js"
+      "mean": "math_mean.js",
+      "kalman": "math_kalman.js"
     }
   },
   "author": {

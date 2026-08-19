@@ -226,7 +226,7 @@ describe( 'logic_blinker Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg)
+        //console.log(msg)
         c++;
         try {
           msg.should.have.a.property('payload',c2payload(c,10));
@@ -284,7 +284,7 @@ describe( 'logic_blinker Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg)
+        //console.log(msg)
         c++;
         try {
           msg.should.have.a.property('payload',c2payload(c,9));
@@ -342,7 +342,7 @@ describe( 'logic_blinker Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg)
+        //console.log(msg)
         c++;
         try {
           msg.should.have.a.property('payload',c2payload(c,65535));
@@ -395,7 +395,7 @@ describe( 'logic_blinker Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg)
+        //console.log(msg)
         c++;
         try {
           msg.should.have.a.property('payload',c2payload(c+1,10));
@@ -455,7 +455,7 @@ describe( 'logic_blinker Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg)
+        //console.log(msg)
         c++;
         try {
           msg.should.have.a.property('payload',c2payload(c,65535));
@@ -515,7 +515,7 @@ describe( 'logic_blinker Node', function () {
       var n1 = helper.getNode("n1");
       var c = 0;
       n2.on("input", function (msg) {
-        console.log(msg)
+        //console.log(msg)
         c++;
         try {
           msg.should.have.a.property('topic','FooBar');

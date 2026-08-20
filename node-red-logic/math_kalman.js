@@ -62,7 +62,10 @@ module.exports = function(RED) {
 
         function setStatus(color,text)
         {
-            node.status({ fill:color, shape:"dot", text:text });
+            if( node.showState )
+            {
+                node.status({ fill:color, shape:"dot", text:text });
+            }
         }
 
         node.on('input', function(msg,send,done) {
@@ -72,8 +75,9 @@ module.exports = function(RED) {
             }
             else if( msg.reset || msg.topic==="init" )
             {
-                node.data = {};
-                node.last = {};
+                node.data       = {};
+                node.last       = {};
+                node.adaptation = {};
                 context.set( "data", node.data, node.contextStore );
                 node.status( "" );
                 done();
@@ -121,9 +125,9 @@ module.exports = function(RED) {
                             {
                                 if( data.estimate === undefined )
                                 {
+                                    data.processNoise   = node.processNoise;
                                     data.estimate       = measurement / node.measurementVector;
                                     data.covariance     = node.measurementNoise / node.measurementVector**2;
-                                    data.processNoise   = node.processNoise;
                                 }
                                 else
                                 {
@@ -139,16 +143,15 @@ module.exports = function(RED) {
                                     // adaptation
                                     if( node.adaptionCount )
                                     {
-                                    delete data.adaptation
                                         const adaptation = node.adaptation[msg.topic] ?? [];
                                         adaptation.push( innovation );
                                         if( adaptation.length > node.adaptionCount )
                                         {
                                             adaptation.shift();
-                                            const mean     = adaptation.reduce( (a,b) => a + b, 0 ) / adaptation.length;
-                                            const variance = adaptation.reduce( (a,b) => a + ( b - mean ) ** 2, 0) / ( adaptation.length - 1 );
+                                            const mean     = adaptation.reduce( (a,b) => a + b ) / adaptation.length;
+                                            const variance = adaptation.reduce( (a,b) => a + ( b - mean ) ** 2, 0 ) / ( adaptation.length - 1 );
                                             data.r = Math.max( variance, 1e-6 );
-                                            data.rt2 = ( variance + node.processNoise ) / 2;
+                                            data.r2 = ( 2 * variance + node.processNoise ) / 3;
                                         }
                                         node.adaptation[msg.topic] = adaptation;
                                     }

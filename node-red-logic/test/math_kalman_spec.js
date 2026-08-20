@@ -133,6 +133,63 @@ describe( 'math_kalman Node', function () {
     });
   });
 
+  it('should caclulate kalman values with process factor', function (done) {
+    this.timeout( 6000 );
+    const numbers = [3,2,1,0,0,0,1,2,3];
+    const results = [3,2.370668815471394,1.5421497978969319,0.599487158290473,0.23364282067650166,0.09108532818071305,0.6642207258155731,1.5163885409207476,2.4773509107225813];
+    var flow = [{ id: "n1", type: "kalman", stateVector:"1.1", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          //console.log(msg.payload)
+          msg.should.have.property('topic',1);
+          msg.should.have.property('payload').which.is.approximately( results[c], 0.0005 );
+          c++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('control', 0);
+        n1.should.have.a.property('controlType', 'num');
+        n1.should.have.a.property('processNoise', 1);
+        n1.should.have.a.property('measurementNoise', 1);
+        n1.should.have.a.property('stateVector', 1.1);
+        n1.should.have.a.property('controlVector', 0);
+        n1.should.have.a.property('measurementVector', 1);
+        n1.should.have.a.property('adaptionCount', 0);
+        n1.should.have.a.property('contextStore', "");
+        n1.should.have.a.property('filterTime', 0);
+        n1.should.have.a.property('filterValue', 0);
+        n1.should.have.a.property('filterLongTime', 0);
+        n1.should.have.a.property('zeroIsZero', false);
+        n1.should.have.a.property('round', null );
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:1, payload: i });
+          await delay(500);
+        }
+        c.should.match( numbers.length );
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should caclulate kalman values with control input', function (done) {
     this.timeout( 6000 );
     const numbers = [3,2,1,0,0,0,1,2,3];

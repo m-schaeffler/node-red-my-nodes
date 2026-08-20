@@ -92,15 +92,15 @@
         <input type="text" id="node-input-measurementNoise">
     </div>
     <div class="form-row">
-        <label for="node-input-stateVector"> process vector</label>
+        <label for="node-input-stateVector"> process factor</label>
         <input type="text" id="node-input-stateVector">
     </div>
     <div class="form-row">
-        <label for="node-input-controlVector"> control vector</label>
+        <label for="node-input-controlVector"> control factor</label>
         <input type="text" id="node-input-controlVector">
     </div>
     <div class="form-row">
-        <label for="node-input-measurementVector"> measure vector</label>
+        <label for="node-input-measurementVector"> measur. factor</label>
         <input type="text" id="node-input-measurementVector">
     </div>
     <div class="form-row">
@@ -146,7 +146,7 @@
 
 <script type="text/html" data-help-name="kalman">
     
-    <p>Calculate mean value of one or more data streams.</p>
+    <p>Filter the values of one or more data streams wuth an adaptive Kalman filter.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
 
     <h3>Input</h3>
@@ -159,13 +159,15 @@
         <dd> name of the input channel.</dd>
         <dt>payload <span class="property-type">number</span></dt>
         <dd> input value for <code>topic</code>.</dd>
+        <dt>control <span class="property-type">number</span></dt>
+        <dd> control value, THe message property can be selected  with the <code>Control</code> property.</dd>
     </dl>
     
     <h3>Output</h3>
     
     <dl class="message-properties">
         <dt>payload <span class="property-type">number</span></dt>
-        <dd> average value.</dd>
+        <dd> filtered value.</dd>
     </dl>
     
     <h3>Parameter</h3>
@@ -175,6 +177,7 @@
         <dd> defines the topic for the output message, "" is <code>msg.topic</code>.</dd>
         <dt>Property <span class="property-type">string</span></dt>
         <dd> defines the message property to be used as payload.</dd>
+        
         <dt>Filterzeit <span class="property-type">number</span></dt>
         <dd> send output only after this time.</dd>
         <dt>Filter Wert <span class="property-type">number</span></dt>

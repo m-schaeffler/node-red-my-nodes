@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('kalman',{
+    RED.nodes.registerType('lowpass',{
         category: 'logic',
         color: "#C0DEED",
         defaults: {
@@ -7,15 +7,7 @@
             topic:{value:""},
             property:{value:"payload", required:true},
             propertyType:{value:"msg"},
-            control:{value:0, required:true},
-            controlType:{value:"num"},
-            processNoise:{value:1, validate:RED.validators.number(), required:true },
-            measurementNoise:{value:1, validate:RED.validators.number(), required:true },
-            stateVector:{value:1, validate:RED.validators.number(), required:true },
-            controlVector:{value:0, validate:RED.validators.number(), required:true },
-            measurementVector:{value:1, validate:RED.validators.number(), required:true },
-            adaptionCount:{value:0, validate:RED.validators.number(), required:true },
-            contextStore:{value:"none",required:true},
+            alpha:{value:0.5, validate:RED.validators.number(), required:true },
             filter:{value:0, validate:RED.validators.number()},
             filterUnit:{value:"secs"},
             filterVal:{value:0, validate:RED.validators.number()},
@@ -26,13 +18,14 @@
         },
         inputs:1,
         outputs:1,
-        icon:"font-awesome/fa-area-chart",
+        icon:"Low-pass_filter.svg",
         label: function() {
-            return this.name||this.topic||"kalman";
+            return this.name||this.topic||"lowPass";
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
+        paletteLabel: "lowPass",
         inputLabels: 'input',
         outputLabels: 'output',
         oneditprepare: function() {
@@ -42,28 +35,11 @@
                 types:["msg","jsonata"],
                 typeField: "#node-input-propertyType"
             });
-            $("#node-input-control").typedInput({
-                type:"num",
-                types:["msg","num"],
-                typeField: "#node-input-controlType"
-            });
-            // populate store names
-            $("#node-input-contextStore").empty();
-            const defaultStore = RED.settings.hasOwnProperty("context") ? RED.settings.context.default : '';
-            RED.settings.context.stores.forEach(function(item){
-                if( item ) {
-                   const opt = $(`<option value="${item}">${item}${item===defaultStore?" (default)":""}</option>`);
-                   $("#node-input-contextStore").append(opt);
-                }
-            });
-            const currentStore = node.contextStore || '';
-            // select the current option
-            $("#node-input-contextStore").val(currentStore);
         }
     });
 </script>
 
-<script type="text/html" data-template-name="kalman">
+<script type="text/html" data-template-name="lowpass">
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -78,40 +54,9 @@
         <input type="hidden" id="node-input-propertyType">
     </div>
     <div class="form-row">
-        <label for="node-input-control"> control value</label>
-        <input type="text" id="node-input-control">
-        <input type="hidden" id="node-input-controlType">
+        <label for="node-input-alpha"> alpha</label>
+        <input type="text" id="node-input-alpha">
     </div>
-    
-    <div class="form-row">
-        <label for="node-input-processNoise"> process noise</label>
-        <input type="text" id="node-input-processNoise">
-    </div>
-    <div class="form-row">
-        <label for="node-input-measurementNoise"> measure noise</label>
-        <input type="text" id="node-input-measurementNoise">
-    </div>
-    <div class="form-row">
-        <label for="node-input-stateVector"> process factor</label>
-        <input type="text" id="node-input-stateVector">
-    </div>
-    <div class="form-row">
-        <label for="node-input-controlVector"> control factor</label>
-        <input type="text" id="node-input-controlVector">
-    </div>
-    <div class="form-row">
-        <label for="node-input-measurementVector"> measur. factor</label>
-        <input type="text" id="node-input-measurementVector">
-    </div>
-    <div class="form-row">
-        <label for="node-input-adaptionCount"> adaption counts</label>
-        <input type="number" id="node-input-adaptionCount">
-    </div>
-    <div class="form-row">
-        <label for="node-input-contextStore"><i class="fa fa-database"></i> context store</label>
-        <select type="text" id="node-input-contextStore"></select>
-    </div>
-    
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter"></i> filter time</label>
         <input type="number" id="node-input-filter" style="width:70px;" placeholder="Time">
@@ -144,9 +89,9 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="kalman">
+<script type="text/html" data-help-name="lowpass">
     
-    <p>Filter the values of one or more data streams wuth an adaptive Kalman filter.</p>
+    <p>Filter the values of one or more data streams with a recursive low pass filter.</p>
     <p>If the msg property <code>invalid</code> is present in the message, all nodes ignore the message.</p>
 
     <h3>Input</h3>
@@ -159,8 +104,6 @@
         <dd> name of the input channel.</dd>
         <dt>payload <span class="property-type">number</span></dt>
         <dd> input value for <code>topic</code>.</dd>
-        <dt>control <span class="property-type">number</span></dt>
-        <dd> control value, THe message property can be selected  with the <code>Control</code> property.</dd>
     </dl>
     
     <h3>Output</h3>

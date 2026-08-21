@@ -349,6 +349,9 @@ Trigger message, in case an edge is detected.
 for `falling edge`, `raising edge` and `hysteresis`:
 * [Eugene Schava](https://github.com/eschava/node-red-contrib-edge-trigger)
 
+for lowpass icon:
+* [Cabfdb - Eigenes Werk, CC BY-SA 3.0](https://commons.wikimedia.org/w/index.php?curid=9651125)
+
 ## License
 
 LGPL-2.1

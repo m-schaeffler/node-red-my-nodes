@@ -5,11 +5,12 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
         //this.config = config;
         var node      = this;
-        //var context   = this.context();
+        var context   = this.context();
         this.topic          = config.topic ?? "";
         this.property       = config.property ?? "payload";
         this.propertyType   = config.propertyType ?? "msg";
         this.alpha          = Number( config.alpha ?? 0.5 );
+        this.beta           = Number( config.beta ?? 0 );
         this.filterTime     = Number( config.filter ?? 0 ) * tools.timeUnits( config.filterUnit );
         this.filterValue    = Number( config.filterVal ?? 0 );
         this.filterLongTime = this.filterTime * Number( config.filterMul ?? 10 );
@@ -77,56 +78,45 @@ module.exports = function(RED) {
                     {
                         msg.topic = node.topic;
                     }
-                    const payload = Number( value );
-                    if( ! isNaN( payload ) )
+                    const measurement = Number( value );
+                    if( ! isNaN( measurement ) )
                     {
-                        const now = Date.now();
+                        const now  = Date.now();
+                        let   data = node.data[msg.topic];
 
-                        function lowPassFilter(measurement)
+                        // Filter
+                        if( data == undefined || node.zeroIsZero && measurement === 0 )
                         {
-                            if( node.data[msg.topic] == undefined )
-                            {
-                                node.data[msg.topic] = measurement;
-                            }
-                            else
-                            {
-                                node.data[msg.topic] += node.alpha * ( measurement - node.data[msg.topic] );
-                            }
-                            return node.data[msg.topic];
-                        }
-
-                        function sendValue(value)
-                        {
-                            msg.payload = value;
-                            node.last[msg.topic] = {value:value,time:now};
-                            setStatus( "green", tools.formatNumber(value) );
-                            send( msg );
-                        }
-
-                        if( node.zeroIsZero && payload === 0 )
-                        {
-                            node.data[msg.topic] = 0;
-                            sendValue( 0 );
+                            node.data[msg.topic] = data = { estimate:measurement, derivative:0 };
+                            context.set( "data", node.data );
                         }
                         else
                         {
-                            let   value = lowPassFilter( payload );
-                            const help  = node.last[msg.topic];
-                            if( help === undefined ||
-                                ( help.time + node.filterTime < now && tools.distance( help.value, value ) >= node.filterValue ) ||
-                                ( node.filterLongTime > 0 && help.time + node.filterLongTime < now  ) )
-                            {
-                                if( node.round )
-                                {
-                                    value = Math.round( value * node.round ) / node.round;
-                                }
-                                sendValue( value );
-                            }
-                            else
-                            {
-                                setStatus( "gray", tools.formatNumber(value) );
-                            }
+                            const deltatime  = now - data.time;
+                            const estimate   = data.estimate + data.derivative * deltatime;
+                            const innovation = measurement - estimate;
+                            data.derivative += node.beta * innovation / deltatime;
+                            data.estimate    = estimate + node.alpha * innovation;
                         }
+                        data.time = now;
+
+                        msg.payload = node.round ? Math.round( data.estimate * node.round ) / node.round : data.estimate;
+
+                        const help = node.last[msg.topic];
+                        let   color;
+                        if( help === undefined ||
+                            ( help.time + node.filterTime < now && tools.distance( help.value, data.estimate ) >= node.filterValue ) ||
+                            ( node.filterLongTime > 0 && help.time + node.filterLongTime < now  ) )
+                        {
+                            node.last[msg.topic] = { value:msg.payload, time:now };
+                            send( msg );
+                            color = "green";
+                        }
+                        else
+                        {
+                            color = "gray";
+                        }
+                        setStatus( color, tools.formatNumber(msg.payload)+" / "+tools.formatNumber(data.derivative) );
                     }
                     else
                     {

@@ -31,6 +31,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -73,6 +74,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -85,9 +87,9 @@ describe( 'math_lowpass Node', function () {
           n1.receive({ topic:1, payload: i });
           await delay(50);
         }
-        c.should.match( numbers.length );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        c.should.match( numbers.length );
         done();
       }
       catch(err) {
@@ -121,6 +123,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -169,6 +172,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -472,6 +476,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -610,9 +615,9 @@ describe( 'math_lowpass Node', function () {
         await delay(50);
         n1.receive({ payload: 98 });
         await delay(50);
-        c.should.match( 1 );
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
+        c.should.match( 1 );
         done();
       }
       catch(err) {

@@ -8,6 +8,7 @@
             property:{value:"payload", required:true},
             propertyType:{value:"msg"},
             alpha:{value:0.5, validate:RED.validators.number(), required:true },
+            beta:{value:0.5, validate:RED.validators.number(), required:true },
             filter:{value:0, validate:RED.validators.number()},
             filterUnit:{value:"secs"},
             filterVal:{value:0, validate:RED.validators.number()},
@@ -18,7 +19,7 @@
         },
         inputs:1,
         outputs:1,
-        icon:"Low-pass_filter.svg",
+        icon:"lowpassfilter.svg",
         label: function() {
             return this.name||this.topic||"lowPass";
         },
@@ -56,6 +57,10 @@
     <div class="form-row">
         <label for="node-input-alpha"> alpha</label>
         <input type="text" id="node-input-alpha">
+    </div>
+    <div class="form-row">
+        <label for="node-input-beta"> beta</label>
+        <input type="text" id="node-input-beta">
     </div>
     <div class="form-row">
         <label for="node-input-filter"><i class="fa fa-filter"></i> filter time</label>

@@ -469,7 +469,7 @@ class MatterData {
                 }
                 break;
             default:
-                console.log(data);
+                //console.log(data);
         }
     }
 

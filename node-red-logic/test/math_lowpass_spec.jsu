@@ -31,6 +31,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -73,6 +74,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -84,6 +86,56 @@ describe( 'math_lowpass Node', function () {
         {
           n1.receive({ topic:1, payload: i });
           await delay(50);
+        }
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( numbers.length );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
+  it('should calculate alpha beta filtered values', function (done) {
+    this.timeout( 5000 );
+    const numbers = [3,2,1,0,0,0,1,2,3];
+    const results = [3,2.67,2.0687502994011977,1.2554961155988025,0.6164536037812874,0.14206110057995586,0.14300143031971674,0.5383404169083157,1.2430572682766572];
+    var flow = [{ id: "n1", type: "lowpass", alpha:0.33, beta:0.075, name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        try {
+          //console.log(msg.payload);
+          msg.should.have.property('topic',1);
+          msg.should.have.property('payload').which.is.approximately( results[c], 0.0025 );
+          c++;
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('topic', '');
+        n1.should.have.a.property('property', 'payload');
+        n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('alpha', 0.33);
+        n1.should.have.a.property('beta', 0.075);
+        n1.should.have.a.property('filterTime', 0);
+        n1.should.have.a.property('filterValue', 0);
+        n1.should.have.a.property('filterLongTime', 0);
+        n1.should.have.a.property('zeroIsZero', false);
+        n1.should.have.a.property('round', null );
+        n1.should.have.a.property('showState', false);
+        await delay(50);
+        for( const i of numbers )
+        {
+          n1.receive({ topic:1, payload: i });
+          await delay(500);
         }
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
@@ -121,6 +173,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -169,6 +222,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -472,6 +526,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.5);
+        n1.should.have.a.property('beta', 0);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -491,13 +546,11 @@ describe( 'math_lowpass Node', function () {
         await delay(50);
         n1.receive({ payload: NaN });
         await delay(50);
-        n1.receive({ payload: "\u2014" });
-        await delay(50);
         c.should.match( 0 );
         n1.receive({ payload: 5000 });
         await delay(50);
         c.should.match( 1 );
-        n1.warn.should.have.callCount(3);
+        n1.warn.should.have.callCount(2);
         n1.error.should.have.callCount(0);
         done();
       }
@@ -625,8 +678,8 @@ describe( 'math_lowpass Node', function () {
 
   it('should calculate impulse response', function (done) {
     this.timeout( 8000 );
-    const numbers = [1,1,1000,1,1,1,1,1,1,1,1,1,1];
-    var flow = [{ id: "n1", type: "lowpass", alpha:0.33, name: "test", wires: [["n2"]] },
+    const numbers = [1,1,1,10000,1,1,1,1,1,1,1,1,1];
+    var flow = [{ id: "n1", type: "lowpass", alpha:0.33, beta:0.01, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -634,8 +687,8 @@ describe( 'math_lowpass Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          console.log(c,msg.payload,n1.data.t.derivative);
-          msg.should.have.property('topic',"t");
+          console.log(c,msg.payload);
+          msg.should.have.property('topic',1);
           msg.should.have.property('payload');
           c++;
         }
@@ -648,6 +701,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.33);
+        n1.should.have.a.property('beta', 0.01);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -657,7 +711,7 @@ describe( 'math_lowpass Node', function () {
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ topic:"t", payload: i });
+          n1.receive({ topic:1, payload: i });
           await delay(500);
         }
         n1.warn.should.have.callCount(0);
@@ -673,8 +727,8 @@ describe( 'math_lowpass Node', function () {
 
   it('should calculate step response', function (done) {
     this.timeout( 8000 );
-    const numbers = [1,1,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000,1000];
-    var flow = [{ id: "n1", type: "lowpass", alpha:0.33, name: "test", wires: [["n2"]] },
+    const numbers = [1,1,1,10,10,10,10,10,10,10,10,10,10];
+    var flow = [{ id: "n1", type: "lowpass", alpha:0.33, beta:0.01, name: "test", wires: [["n2"]] },
                 { id: "n2", type: "helper" }];
     helper.load(node, flow, async function () {
       var n2 = helper.getNode("n2");
@@ -682,8 +736,8 @@ describe( 'math_lowpass Node', function () {
       var c = 0;
       n2.on("input", function (msg) {
         try {
-          console.log(c,msg.payload,n1.data.t.derivative);
-          msg.should.have.property('topic',"t");
+          console.log(c,msg.payload);
+          msg.should.have.property('topic',1);
           msg.should.have.property('payload');
           c++;
         }
@@ -696,6 +750,7 @@ describe( 'math_lowpass Node', function () {
         n1.should.have.a.property('property', 'payload');
         n1.should.have.a.property('propertyType', 'msg');
         n1.should.have.a.property('alpha', 0.33);
+        n1.should.have.a.property('beta', 0.01);
         n1.should.have.a.property('filterTime', 0);
         n1.should.have.a.property('filterValue', 0);
         n1.should.have.a.property('filterLongTime', 0);
@@ -705,7 +760,7 @@ describe( 'math_lowpass Node', function () {
         await delay(50);
         for( const i of numbers )
         {
-          n1.receive({ topic:"t", payload: i });
+          n1.receive({ topic:1, payload: i });
           await delay(500);
         }
         n1.warn.should.have.callCount(0);

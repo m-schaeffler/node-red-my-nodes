@@ -10,10 +10,10 @@ module.exports = function(RED) {
         this.offTime     = Number( config.offTime ?? 1 ) * tools.timeUnits( config.offTimeUnit );
         this.firstType   = config.outputFirstType ?? "bool";
         this.lastType    = config.outputLastType ?? "bool";
-        this.outputFirst = RED.util.evaluateNodeProperty( config.outputFirst ?? "true",  this.firstType );
-        this.outputOn    = RED.util.evaluateNodeProperty( config.outputOn    ?? "true",  config.outputOnType  ?? "bool" );
-        this.outputOff   = RED.util.evaluateNodeProperty( config.outputOff   ?? "false", config.outputOffType ?? "bool" );
-        this.outputLast  = RED.util.evaluateNodeProperty( config.outputLast  ?? "false", this.lastType );
+        this.configOutputFirst = RED.util.evaluateNodeProperty( config.outputFirst ?? "true",  this.firstType );
+        this.configOutputOn    = RED.util.evaluateNodeProperty( config.outputOn    ?? "true",  config.outputOnType  ?? "bool" );
+        this.configOutputOff   = RED.util.evaluateNodeProperty( config.outputOff   ?? "false", config.outputOffType ?? "bool" );
+        this.configOutputLast  = RED.util.evaluateNodeProperty( config.outputLast  ?? "false", this.lastType );
         this.filter      = Boolean( config.filter );
         this.showState   = Boolean( config.showState );
         this.timerOn     = null;
@@ -94,6 +94,13 @@ module.exports = function(RED) {
             {
                 done();
                 return;
+            }
+            if( msg.output || node.outputFirst === undefined )
+            {
+                node.outputFirst = msg.output?.first ?? node.configOutputFirst;
+                node.outputOn    = msg.output?.on    ?? node.configOutputOn;
+                node.outputOff   = msg.output?.off   ?? node.configOutputOff;
+                node.outputLast  = msg.output?.last  ?? node.configOutputLast;
             }
             node.state = tools.property2boolean( RED.util.getMessageProperty( msg, node.property ) );
             if( node.state !== null )

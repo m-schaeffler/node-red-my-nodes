@@ -646,4 +646,76 @@ describe( 'logic_blinker Node', function () {
   });
 */
 
+  it('should have msg.output', function (done) {
+    var flow = [{ id: "n1", type: "blinker", onTime:150, onTimeUnit:"msecs", offTime:100, offTimeUnit:"msecs", name: "test", wires: [["n2"]] },
+                { id: "n2", type: "helper" }];
+    helper.load(node, flow, async function () {
+      var n2 = helper.getNode("n2");
+      var n1 = helper.getNode("n1");
+      var c = 0;
+      n2.on("input", function (msg) {
+        //console.log(msg)
+        c++;
+        try {
+          msg.should.have.a.property('payload',c2payload(c,10));
+          msg.should.have.property('state',c<10);
+        }
+        catch(err) {
+          done(err);
+        }
+      });
+      try {
+        n1.should.have.a.property('property', 'payload');
+        //n1.should.have.a.property('propertyType', 'msg');
+        n1.should.have.a.property('onTime', 150);
+        n1.should.have.a.property('offTime', 100);
+        n1.should.have.a.property('configOutputFirst', true);
+        n1.should.have.a.property('configOutputOn', true);
+        n1.should.have.a.property('configOutputOff', false);
+        n1.should.have.a.property('configOutputLast', false);
+        n1.should.have.a.property('filter', false);
+        n1.should.have.a.property('showState', false);
+        n1.should.not.have.a.property('outputFirst');
+        n1.should.not.have.a.property('outputOn');
+        n1.should.not.have.a.property('outputOff');
+        n1.should.not.have.a.property('outputLast');
+        await delay(50);
+        n1.receive({ payload: 1, output: {first:"first",on:"on",off:"off",last:"last"} });
+        await delay(25);
+        n1.should.have.a.property('outputFirst', "first");
+        n1.should.have.a.property('outputOn', "on");
+        n1.should.have.a.property('outputOff', "off");
+        n1.should.have.a.property('outputLast', "last");
+        c.should.match( 1 );
+        await delay(100);
+        c.should.match( 1 );
+        await delay(50);
+        c.should.match( 2 );
+        await delay(50);
+        c.should.match( 2 );
+        await delay(50);
+        c.should.match( 3 );
+        await delay(800);
+        c.should.match( 9 );
+        n1.receive({ payload: 0 });
+        await delay(50);
+        c.should.match( 10 );
+        await delay(500);
+        c.should.match( 10 );
+        n1.receive({ output: {} });
+        await delay(25);
+        n1.should.have.a.property('outputFirst', true);
+        n1.should.have.a.property('outputOn', true);
+        n1.should.have.a.property('outputOff', false);
+        n1.should.have.a.property('outputLast', false);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
 });

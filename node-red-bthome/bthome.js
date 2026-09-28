@@ -10,6 +10,8 @@ class TypeIds {
     static bluDwZb      = 20;
     static bluDwMini    = 32;
     static bluDwOutdoor = 33;
+    static bluMcbFirst  = 0x201A;
+    static bluMcbLast   = 0x203F;
 }
 class DeviceNames {
     static 0x01 = "SBBT-002C";
@@ -31,6 +33,8 @@ class DeviceNames {
     static 0x17 = "SBBT-102C";
     static 0x20 = "SBDW-203C";
     static 0x21 = "SBDW-302C";
+    static 0x29 = "SBCO2-104A";
+    static 0x31 = "SBSN-001B";
     static 0x1827 = "SMSN-0031ZL";
     static 0x201A = "SBCB-01PXNEUB6";
     static 0x201B = "SBCB-01PXNEUB10";
@@ -388,6 +392,41 @@ module.exports = function(RED) {
                 {
                     events.pushEvent( "rotation", "rotation", item.data.tilt );
                     delete item.data.tilt;
+                }
+                else if( item.typeId >= TypeIds.bluMcbFirst && item.typeId <= TypeIds.bluMcbLast && item.data?.voltage !== undefined && item.data?.raw !== undefined )
+                {
+                    let output;
+                    let out_errors = [];
+                    if( item.data.voltage )
+                    {
+                        output = true;
+                    }
+                    else
+                    {
+                        output = false;
+                        if( item.data.raw[1] & 1 )
+                        {
+                            out_errors.push( "overcurrent" );
+                        }
+                        if( item.data.raw[1] & 2 )
+                        {
+                            out_errors.push( "overvoltage" );
+                        }
+                        if( item.data.raw[1] & 4 )
+                        {
+                            out_errors.push( "overpower" );
+                        }
+                        if( item.data.raw[1] & 8 )
+                        {
+                            out_errors.push( "software" );
+                        }
+                        if( item.data.raw[1] & 16 )
+                        {
+                            out_errors.push( "MCB" );
+                        }
+                    }
+                    setData( "output", output );
+                    setData( "out_errors", out_errors );
                 }
             }
 

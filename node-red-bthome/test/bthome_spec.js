@@ -1353,7 +1353,17 @@ describe( 'bthome Node', function () {
         try {
           c1++;
           msg.should.have.a.property('topic','State/dev_unencrypted_1');
-          msg.should.have.a.property('payload',{ energy:[0,0], raw:Buffer.from([0,0]), power:0 });
+          switch( c1 )
+          {
+            case 1:
+              msg.should.have.a.property('payload',{ energy:[0,0], raw:Buffer.from([0,0]), power:0 });
+              break;
+            case 2:
+              msg.should.have.a.property('payload',{ energy:[0,0], raw:Buffer.from([0,0]), power:0, problem: false, current: 0, voltage: 230, output: true, out_errors: [] });
+              break;
+            default:
+              done("too much messages");
+          }
         }
         catch(err) {
           done(err);
@@ -1398,7 +1408,7 @@ describe( 'bthome Node', function () {
           addr:    "11:22:33:44:55:66",
           rssi:    -50,
           time:    Date.now(),
-          data:    [64,0,105,]
+          data:    [64,0,105,38,0,67,0,0,74,252,8,92,0,0,0,0]
         } });
         await delay(50);
         n1.warn.should.have.callCount(0);

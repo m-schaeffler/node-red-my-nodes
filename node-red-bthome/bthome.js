@@ -193,26 +193,24 @@ module.exports = function(RED) {
 
                 function setData(name,value)
                 {
-                    if( item.data === undefined )
+                    item.data ??= {};
+                    counter[name] ??= 0;
+                    if( Array.isArray( item.data[name] ) )
                     {
-                        item.data = {};
+                        item.data[name][counter[name]] = value;
                     }
-                    switch( counter[name] )
+                    else
                     {
-                        case undefined:
-                            counter[name] = 1;
+                        if( counter[name] === 0 )
+                        {
                             item.data[name] = value;
-                            break;
-                        case 1:
-                            item.data[name] = [ item.data[name] ];
-                            // fall through
-                        case 2:
-                        case 3:
-                        case 4:
-                            counter[name]++;
-                            item.data[name].push( value );
-                            break;
+                        }
+                        else
+                        {
+                            item.data[name] = [ item.data[name], value ];
+                        }
                     }
+                    counter[name]++;
                 }
 
                 rawdata = new Rawdata( rawdata );
@@ -437,7 +435,10 @@ module.exports = function(RED) {
                 {
                     // veraltete Nachricht und nicht reboot
                     node.statistics.old++;
-                    node.warn( `old ble message ${name} dropped, ${pid} < ${item.pid}` );
+                    if( pid < item.pid - 1 )
+                    {
+                        node.warn( `old ble message ${name} dropped, ${pid} < ${item.pid}` );
+                    }
                     return false;
                 }
                 if( msg.payload.gateway )

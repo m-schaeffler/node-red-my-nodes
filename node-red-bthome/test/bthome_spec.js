@@ -293,6 +293,8 @@ describe( 'bthome Node', function () {
               msg.should.have.a.property('topic','dev_unencrypted_2');
               msg.should.have.a.property('payload',{ humidity: 75, temperature: -5.5, battery: 94 });
               break;
+            default:
+              done("too much messages");
           }
         }
         catch(err) {
@@ -423,6 +425,11 @@ describe( 'bthome Node', function () {
             case 2:
               msg.should.have.a.property('payload',{ lux: 660.51, state: false, tilt: 6 });
               break;
+            case 3:
+              msg.should.have.a.property('payload',{ lux: 0, state: true, tilt: 0 });
+              break;
+            default:
+              done("too much messages");
           }
         }
         catch(err) {
@@ -628,6 +635,22 @@ describe( 'bthome Node', function () {
                 precipitation: 400
               });
               break;
+            case 3:
+              msg.should.have.a.property('payload',{
+                lux: 13460.67,
+                moisture: true,
+                wind: [ 11.02, 133.9 ],
+                uv: 12.8,
+                direction: 359.99,
+                pressure: 1008.83,
+                dewpoint: 17.38,
+                humidity: 55,
+                temperature: 27.3,
+                precipitation: [ 128, 153.6 ]
+              });
+              break;
+            default:
+              done("too much messages");
           }
         }
         catch(err) {
@@ -697,8 +720,35 @@ describe( 'bthome Node', function () {
           temperature: 27.3,
           precipitation: 400
         });
-        n1.should.have.a.property('statistics',{ok:3,err:0,old:0,dup:0});
+        //
         c1.should.match( 2 );
+        c2.should.match( 0 );
+        n1.receive({ topic:"Shelly2/NodeRed/bleraw", payload: {
+          gateway: "UnitTest",
+          addr:    "11:22:33:44:55:66",
+          rssi:    -50,
+          time:    Date.now(),
+          data:    [68,0,4,95,0,5,95,0,6]
+         } }); // packet type 3
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        n1.should.have.a.property('data');
+        n1.data.should.have.ValidData("dev_unencrypted_1",{pid:4,encrypted:false,battery:45},"UnitTest",{
+          lux: 13460.67,
+          moisture: true,
+          wind: [ 11.02, 133.9 ],
+          uv: 12.8,
+          direction: 359.99,
+          pressure: 1008.83,
+          dewpoint: 17.38,
+          humidity: 55,
+          temperature: 27.3,
+          precipitation: [ 128, 153.6 ]
+        });
+        //
+        n1.should.have.a.property('statistics',{ok:4,err:0,old:0,dup:0});
+        c1.should.match( 3 );
         c2.should.match( 0 );
         done();
       }
@@ -736,6 +786,8 @@ describe( 'bthome Node', function () {
               msg.should.have.a.property('topic','EP/dev_unencrypted_1/L');
               msg.should.have.a.property('payload',{type:'button',event:'L'});
               break;
+            default:
+              done("too much messages");
           }
         }
         catch(err) {
@@ -873,6 +925,8 @@ describe( 'bthome Node', function () {
               msg.should.have.a.property('topic','dev_unencrypted_1/4/L');
               msg.should.have.a.property('payload',{type:'button',event:'L',id:4});
               break;
+            default:
+              done("too much messages");
           }
         }
         catch(err) {
@@ -1006,6 +1060,8 @@ describe( 'bthome Node', function () {
             case 6:
               msg.should.have.a.property('payload',{channel:4});
               break;
+            default:
+              done("too much messages");
           }
         }
         catch(err) {
@@ -1038,6 +1094,8 @@ describe( 'bthome Node', function () {
               msg.should.have.a.property('topic','dev_unencrypted_1/4/rotation');
               msg.should.have.a.property('payload',{type:'rotation',event:'rotation',channel:4,data:[5.5,-54.5,76]});
               break;
+            default:
+              done("too much messages");
           }
         }
         catch(err) {
@@ -1623,6 +1681,8 @@ describe( 'bthome Node', function () {
                   msg.should.have.a.property('topic','dev_encrypted_2');
                   msg.should.have.a.property('payload',{ lux: 660.51, state: 0, tilt: 0 });
                   break;
+              default:
+                  done("too much messages");
           }
         }
         catch(err) {
@@ -2048,6 +2108,8 @@ describe( 'bthome Node', function () {
               msg.should.have.a.property('topic','dev_unencrypted_2');
               msg.should.have.a.property('payload',{ raw: Buffer.from([0x48,0x65,0x6C,0x6C,0x6F,0x20,0x57,0x6F,0x72,0x6C,0x64,0x21]), text: "Hello World!" });
               break;
+            default:
+              done("too much messages");
           }
         }
         catch(err) {

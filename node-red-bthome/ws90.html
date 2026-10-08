@@ -10,7 +10,7 @@
             raintime:{value:20,validate:RED.validators.number(),required:true}
         },
         inputs:1,
-        outputs:12,
+        outputs:13,
         icon: "font-awesome/fa-sun-o",
         label: function() {
             return this.name||"WS 90";
@@ -20,7 +20,7 @@
         },
         paletteLabel: "ws 90",
         inputLabels: 'decoded bthome frame from ws90',
-        outputLabels: ['temperature','dew point','humidity','raining','rain yesterday','rain today','uv','air pressure','direction','wind','wind max','illumination'],
+        outputLabels: ['temperature','dew point','humidity','raining','rain yesterday','rain today','uv','air pressure','direction','wind','wind max','illumination','rain last hour'],
         oneditprepare: function() {
             const node = this;
             // populate store names
@@ -125,6 +125,8 @@
       <dd>maximal wind speed today, so since the last <code>newday==true</code> received</dd>
       <dt>illumination</dt>
       <dd>no calculation, directly from the input data</dd>
+      <dt>rain last hour</dt>
+      <dd>rain last hour, directly from the input data, only if firmware version >= 1.3.2</dd>
     </dl>
 
     <h4>style classes</h4>

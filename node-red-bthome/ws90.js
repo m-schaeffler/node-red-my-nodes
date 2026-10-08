@@ -117,6 +117,7 @@ module.exports = function(RED) {
 
                 // Regenmenge
                 const precipitation = msg.payload.precipitation[0] ?? msg.payload.precipitation;
+                const rainLastHour  = msg.payload.precipitation[1];
                 if( precipitation > node.storage.Regen )
                 {
                     setStorage( "RegenHeute", node.storage.RegenHeute + precipitation - node.storage.Regen );
@@ -149,7 +150,8 @@ module.exports = function(RED) {
                     genMessage( "wind direction",      msg.payload.direction ),
                     genMessage( "wind",                wind, ampel( wind, 25, 50 ) ),
                     genMessage( "wind_max",            node.storage.WindMax ),
-                    genMessage( "illumination",        msg.payload.lux )
+                    genMessage( "illumination",        msg.payload.lux ),
+                    rainLastHour !== undefined ? genMessage( "rain last hour", rainLastHour, msg.payload.moisture ? "blueValue" : "" ) : null
                 ] );
             }
             done();

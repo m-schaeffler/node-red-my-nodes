@@ -168,7 +168,7 @@ describe( 'ws90 Node', function () {
     const wind      = [10.08, 0, 11.16];
     const windMax   = [10.08, 11.16];
     const illuminat = [8920, 0];
-    let flow = [{ id: "n1", type: "ws90", refheight:"500", raintime:"0.025", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", raintime:"0.025", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"],["n14"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -180,7 +180,8 @@ describe( 'ws90 Node', function () {
                 { id: "n10", type: "helper", z: "flow" },
                 { id: "n11", type: "helper", z: "flow" },
                 { id: "n12", type: "helper", z: "flow" },
-                { id: "n13", type: "helper", z: "flow" }];
+                { id: "n13", type: "helper", z: "flow" },
+                { id: "n14", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
       let n1 = helper.getNode("n1");
       let n2 = helper.getNode("n2");
@@ -195,7 +196,8 @@ describe( 'ws90 Node', function () {
       let n11 = helper.getNode("n11");
       let n12 = helper.getNode("n12");
       let n13 = helper.getNode("n13");
-      let c = [0,0,0,0,0,0,0,0,0,0,0,0];
+      let n14 = helper.getNode("n14")
+      let c = [0,0,0,0,0,0,0,0,0,0,0,0,0];
       n2.on("input", function (msg) {
         c[0]++;
         msg.should.have.a.property('topic','outside temperature');
@@ -268,6 +270,10 @@ describe( 'ws90 Node', function () {
         msg.should.have.a.property('payload',illuminat[c[11]-1]);
         msg.should.not.have.a.property('ui_update');
       });
+      n14.on("input", function (msg) {
+        c[12]++;
+        done("should not be called");
+      });
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
@@ -278,50 +284,50 @@ describe( 'ws90 Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1,0] );
         // second message with some rain
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,2,1,1,1,1,1,1,0] );
         // dry
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1,0] );
         // not raining
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
         await delay(1750);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1,0] );
         await delay(200);
-        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,3,1,1,1,1,1,1,0] );
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,2,1,3,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,2,1,3,1,1,1,1,1,1,0] );
         // no wind
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,0],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,2,1,3,1,1,1,2,1,1] );
+        c.should.match( [1,1,1,2,1,3,1,1,1,2,1,1,0] );
         // more wind
         n1.receive( { topic:"WS90", payload:{lux:8920,moisture:false,wind:[2.8,3.1],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:1235.2} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,2,1,3,1,1,1,3,2,1] );
+        c.should.match( [1,1,1,2,1,3,1,1,1,3,2,1,0] );
         // others different
         n1.receive( { topic:"WS90", payload:{lux:0,moisture:false,wind:[2.8,3.1],uv:6,direction:0,pressure:980,dewpoint:15,humidity:40,temperature:24,precipitation:1235.2} } );
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [2,2,2,2,1,3,2,2,2,3,2,2] );
+        c.should.match( [2,2,2,2,1,3,2,2,2,3,2,2,0] );
         n1.should.have.a.property('storage');
         should.not.exist( n1.context().get("storage") );
         done();
@@ -345,7 +351,7 @@ describe( 'ws90 Node', function () {
     const wind      = [10.08];
     const windMax   = [10.08];
     const illuminat = [8920];
-    let flow = [{ id: "n1", type: "ws90", refheight:"500", raintime:"0.025", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", raintime:"0.025", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"],["n14"]], z:"flow" },
                 { id: "n2", type: "helper", z: "flow" },
                 { id: "n3", type: "helper", z: "flow" },
                 { id: "n4", type: "helper", z: "flow" },
@@ -357,7 +363,8 @@ describe( 'ws90 Node', function () {
                 { id: "n10", type: "helper", z: "flow" },
                 { id: "n11", type: "helper", z: "flow" },
                 { id: "n12", type: "helper", z: "flow" },
-                { id: "n13", type: "helper", z: "flow" }];
+                { id: "n13", type: "helper", z: "flow" },
+                { id: "n14", type: "helper", z: "flow" }];
     helper.load(node, flow, async function () {
       let n1 = helper.getNode("n1");
       let n2 = helper.getNode("n2");
@@ -372,7 +379,8 @@ describe( 'ws90 Node', function () {
       let n11 = helper.getNode("n11");
       let n12 = helper.getNode("n12");
       let n13 = helper.getNode("n13");
-      let c = [0,0,0,0,0,0,0,0,0,0,0,0];
+      let n14 = helper.getNode("n14");
+      let c = [0,0,0,0,0,0,0,0,0,0,0,0,0];
       n2.on("input", function (msg) {
         c[0]++;
         msg.should.have.a.property('topic','outside temperature');
@@ -445,6 +453,12 @@ describe( 'ws90 Node', function () {
         msg.should.have.a.property('payload',illuminat[c[11]-1]);
         msg.should.not.have.a.property('ui_update');
       });
+      n14.on("input", function (msg) {
+        c[12]++;
+        msg.should.have.a.property('topic','rain last hour');
+        msg.should.have.a.property('payload',56);
+        msg.should.have.a.property('ui_update', { class: 'blueValue' } );
+      });
       try {
         n1.should.have.a.property('contextStore', "none");
         n1.should.have.a.property('refheight', 500);
@@ -455,7 +469,7 @@ describe( 'ws90 Node', function () {
         await delay(50);
         n1.warn.should.have.callCount(0);
         n1.error.should.have.callCount(0);
-        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1,1] );
         n1.should.have.a.property('storage');
         should.not.exist( n1.context().get("storage") );
         done();

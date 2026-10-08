@@ -332,6 +332,140 @@ describe( 'ws90 Node', function () {
     });
   });
 
+  it('should process data, new ws90 firmware', function (done) {
+    this.timeout( 5000 );
+    const temp      = [11.425];
+    const dewPoint  = [10.24];
+    const humidity  = [92];
+    const rainToday = [0];
+    const uv        = [2];
+    const uvClass   = ["greenValue"];
+    const air       = [1016.1804342610798];
+    const windDir   = [167];
+    const wind      = [10.08];
+    const windMax   = [10.08];
+    const illuminat = [8920];
+    let flow = [{ id: "n1", type: "ws90", refheight:"500", raintime:"0.025", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },
+                { id: "n2", type: "helper", z: "flow" },
+                { id: "n3", type: "helper", z: "flow" },
+                { id: "n4", type: "helper", z: "flow" },
+                { id: "n5", type: "helper", z: "flow" },
+                { id: "n6", type: "helper", z: "flow" },
+                { id: "n7", type: "helper", z: "flow" },
+                { id: "n8", type: "helper", z: "flow" },
+                { id: "n9", type: "helper", z: "flow" },
+                { id: "n10", type: "helper", z: "flow" },
+                { id: "n11", type: "helper", z: "flow" },
+                { id: "n12", type: "helper", z: "flow" },
+                { id: "n13", type: "helper", z: "flow" }];
+    helper.load(node, flow, async function () {
+      let n1 = helper.getNode("n1");
+      let n2 = helper.getNode("n2");
+      let n3 = helper.getNode("n3");
+      let n4 = helper.getNode("n4");
+      let n5 = helper.getNode("n5");
+      let n6 = helper.getNode("n6");
+      let n7 = helper.getNode("n7");
+      let n8 = helper.getNode("n8");
+      let n9 = helper.getNode("n9");
+      let n10 = helper.getNode("n10");
+      let n11 = helper.getNode("n11");
+      let n12 = helper.getNode("n12");
+      let n13 = helper.getNode("n13");
+      let c = [0,0,0,0,0,0,0,0,0,0,0,0];
+      n2.on("input", function (msg) {
+        c[0]++;
+        msg.should.have.a.property('topic','outside temperature');
+        msg.should.have.a.property('payload',temp[c[0]-1]);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n3.on("input", function (msg) {
+        c[1]++;
+        msg.should.have.a.property('topic','dew point');
+        msg.should.have.a.property('payload',dewPoint[c[1]-1]);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n4.on("input", function (msg) {
+        c[2]++;
+        msg.should.have.a.property('topic','humidity');
+        msg.should.have.a.property('payload',humidity[c[2]-1]);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n5.on("input", function (msg) {
+        c[3]++;
+        msg.should.have.a.property('topic','raining');
+        msg.should.have.a.property('payload',c[3]==1);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n6.on("input", function (msg) {
+        c[4]++;
+        msg.should.have.a.property('topic','rain yesterday');
+        msg.should.have.a.property('payload',0);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n7.on("input", function (msg) {
+        c[5]++;
+        msg.should.have.a.property('topic','rain today');
+        msg.should.have.a.property('payload').which.is.approximately(rainToday[c[5]-1],0.00001);
+        msg.should.have.a.property('ui_update', { class: c[5]<=2?'blueValue':'' } );
+      });
+      n8.on("input", function (msg) {
+        c[6]++;
+        msg.should.have.a.property('topic','uv index');
+        msg.should.have.a.property('payload',uv[c[6]-1]);
+        msg.should.have.a.property('ui_update', { class: uvClass[c[6]-1] } );
+      });
+      n9.on("input", function (msg) {
+        c[7]++;
+        msg.should.have.a.property('topic','air pressure');
+        msg.should.have.a.property('payload',air[c[7]-1]);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n10.on("input", function (msg) {
+        c[8]++;
+        msg.should.have.a.property('topic','wind direction');
+        msg.should.have.a.property('payload',windDir[c[8]-1]);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n11.on("input", function (msg) {
+        c[9]++;
+        msg.should.have.a.property('topic','wind');
+        msg.should.have.a.property('payload',wind[c[9]-1]);
+        msg.should.have.a.property('ui_update', { class: '' } );
+      });
+      n12.on("input", function (msg) {
+        c[10]++;
+        msg.should.have.a.property('topic','wind_max');
+        msg.should.have.a.property('payload',windMax[c[10]-1]);
+        msg.should.not.have.a.property('ui_update');
+      });
+      n13.on("input", function (msg) {
+        c[11]++;
+        msg.should.have.a.property('topic','illumination');
+        msg.should.have.a.property('payload',illuminat[c[11]-1]);
+        msg.should.not.have.a.property('ui_update');
+      });
+      try {
+        n1.should.have.a.property('contextStore', "none");
+        n1.should.have.a.property('refheight', 500);
+        n1.should.have.a.property('raintime', 1500);
+        await delay(50);
+        // first message
+        n1.receive( { topic:"WS90", payload:{lux:8920,moisture:true,wind:[2.8,2.8],uv:2,direction:167,pressure:957.6,dewpoint:10.24,humidity:92,temperature:11.425,precipitation:[1234,56,78]} } );
+        await delay(50);
+        n1.warn.should.have.callCount(0);
+        n1.error.should.have.callCount(0);
+        c.should.match( [1,1,1,1,1,1,1,1,1,1,1,1] );
+        n1.should.have.a.property('storage');
+        should.not.exist( n1.context().get("storage") );
+        done();
+      }
+      catch(err) {
+        done(err);
+      }
+    });
+  });
+
   it('should process raining without rain', function (done) {
     this.timeout( 5000 );
     let flow = [{ id: "n1", type: "ws90", refheight:"500", moisttime:"0.025", raintime:"0.0333", name: "test", wires: [["n2"],["n3"],["n4"],["n5"],["n6"],["n7"],["n8"],["n9"],["n10"],["n11"],["n12"],["n13"]], z:"flow" },

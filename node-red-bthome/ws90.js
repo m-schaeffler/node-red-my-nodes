@@ -116,17 +116,18 @@ module.exports = function(RED) {
                 setStorage( "moisture", msg.payload.moisture );
 
                 // Regenmenge
-                if( msg.payload.precipitation > node.storage.Regen )
+                const precipitation = msg.payload.precipitation[0] ?? msg.payload.precipitation;
+                if( precipitation > node.storage.Regen )
                 {
-                    setStorage( "RegenHeute", node.storage.RegenHeute + msg.payload.precipitation - node.storage.Regen );
+                    setStorage( "RegenHeute", node.storage.RegenHeute + precipitation - node.storage.Regen );
                     setRaining( true, node.raintime );
                 }
-                else if( msg.payload.precipitation < node.storage.Regen && msg.payload.precipitation <= 10 )
+                else if( precipitation < node.storage.Regen && precipitation <= 10 )
                 {
-                    setStorage( "RegenHeute", node.storage.RegenHeute + msg.payload.precipitation );
+                    setStorage( "RegenHeute", node.storage.RegenHeute + precipitation );
                     setRaining( true, node.raintime );
                 }
-                setStorage( "Regen", msg.payload.precipitation );
+                setStorage( "Regen", precipitation );
 
                 // Wind
                 const wind = msg.payload.wind[1] * 3.6;

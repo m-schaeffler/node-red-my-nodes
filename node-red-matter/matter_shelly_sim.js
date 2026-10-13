@@ -20,6 +20,20 @@ module.exports = function(RED) {
                 } );
             }
 
+            function sendHsv(hsv)
+            {
+                const [hue,saturation,brightness] = hsv;
+                sendCommand( "colorcontrol.movetohueandsaturation", {
+                    hue:            Math.round( hue        / 360 * 254 ),
+                    saturation:     Math.round( saturation / 100 * 254 ),
+                    transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
+                } );
+                sendCommand( "levelcontrol.movetolevel", {
+                    level:          Math.round( brightness / 100 * 254 ),
+                    transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
+                } );
+            }
+
             function setBoolean(value)
             {
                 switch( value )
@@ -77,19 +91,18 @@ module.exports = function(RED) {
                                     transitionTime:         Math.round( ( msg.payload.data.transition ?? 0 ) / 100 )
                                 } );
                             }
-                            if( msg.payload.data.rgb !== undefined )
+                            if( msg.payload.data.hsv !== undefined )
+                            {
+                                sendHsv( msg.payload.data.hsv );
+                            }
+                            else if( msg.payload.data.rgb !== undefined )
                             {
                                 const rgb = msg.payload.data.rgb;
-                                const [hue,saturation,brightness] = color_convert.rgb.hsv.raw( rgb.red ?? rgb[0], rgb.green ?? rgb[1], rgb.blue ?? rgb[2] );
-                                sendCommand( "colorcontrol.movetohueandsaturation", {
-                                    hue:            Math.round( hue        / 360 * 254 ),
-                                    saturation:     Math.round( saturation / 100 * 254 ),
-                                    transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
-                                } );
-                                sendCommand( "levelcontrol.movetolevel", {
-                                    level:          Math.round( brightness / 100 * 254 ),
-                                    transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
-                                } );
+                                sendHsv( color_convert.rgb.hsv.raw( rgb.red ?? rgb[0], rgb.green ?? rgb[1], rgb.blue ?? rgb[2] ) );
+                            }
+                            else if( msg.payload.data.hsl !== undefined )
+                            {
+                                sendHsv( color_convert.hsl.hsv.raw( msg.payload.data.hsl ) );
                             }
                             if( msg.payload.data.turn !== undefined )
                             {

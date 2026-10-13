@@ -1,6 +1,6 @@
 {
     "name": "@mschaeffler/node-red-matterserver",
-    "version": "0.5.8",
+    "version": "0.6.0",
     "description": "Node Red nodes to do Matter communication via a matter.js server",
     "author": {
         "name": "Mathias Schäffler",
@@ -19,6 +19,9 @@
     "repository": {
         "type": "git",
         "url": "git+https://github.com/m-schaeffler/node-red-my-nodes.git"
+    },
+    "dependencies": {
+      "color-convert": ">=3.1.3"
     },
     "node-red": {
         "version": ">=3.1.0",

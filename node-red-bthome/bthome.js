@@ -437,7 +437,7 @@ module.exports = function(RED) {
                     node.statistics.old++;
                     if( pid < item.pid - 1 )
                     {
-                        node.warn( `old ble message ${name} dropped, ${pid} < ${item.pid}` );
+                        node.warn( `old ble message ${name} from ${msg.payload.gateway} dropped, ${pid} < ${item.pid}` );
                     }
                     return false;
                 }

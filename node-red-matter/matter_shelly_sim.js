@@ -1,4 +1,5 @@
 module.exports = function(RED) {
+    var color_convert = require( 'color-convert' );
 
     function MatterShellySimNode(config) {
         RED.nodes.createNode(this,config);
@@ -79,41 +80,14 @@ module.exports = function(RED) {
                             if( msg.payload.data.rgb !== undefined )
                             {
                                 const rgb = msg.payload.data.rgb;
-                                const r = ( rgb.red   ?? rgb[0] ) / 255;
-                                const g = ( rgb.green ?? rgb[1] ) / 255;
-                                const b = ( rgb.blue  ?? rgb[2] ) / 255;
-                                const max = Math.max( r, g, b );
-                                const min = Math.min( r, g, b );
-                                const delta = max - min;
-                                let hue;
-                                switch( max )
-                                {
-                                    case min:
-                                        hue = 0;
-                                        break;
-                                    case r:
-                                        hue = 60 * ( (g-b)/delta );
-                                        break;
-                                    case g:
-                                        hue = 60 * ( (b-r)/delta + 2 );
-                                        break;
-                                    case b:
-                                        hue = 60 * ( (r-g)/delta + 4 );
-                                        break;
-                                }
-                                if( hue < 0 )
-                                {
-                                    hue += 360;
-                                }
-                                const saturation = max == 0 ? 0 : delta / max;
-                                const brightness = max;
+                                const [hue,saturation,brightness] = color_convert.rgb.hsv.raw( rgb.red ?? rgb[0], rgb.green ?? rgb[1], rgb.blue ?? rgb[2] );
                                 sendCommand( "colorcontrol.movetohueandsaturation", {
-                                    hue:            Math.round( hue / 360 * 254 ),
-                                    saturation:     Math.round( saturation * 254 ),
+                                    hue:            Math.round( hue        / 360 * 254 ),
+                                    saturation:     Math.round( saturation / 100 * 254 ),
                                     transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
                                 } );
                                 sendCommand( "levelcontrol.movetolevel", {
-                                    level:          Math.round( brightness * 254 ),
+                                    level:          Math.round( brightness / 100 * 254 ),
                                     transitionTime: Math.round( ( msg.payload.data.transition ?? 0 ) * 10 )
                                 } );
                             }

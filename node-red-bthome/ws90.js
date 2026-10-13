@@ -120,11 +120,13 @@ module.exports = function(RED) {
                 const rainLastHour  = msg.payload.precipitation[1];
                 if( precipitation > node.storage.Regen )
                 {
+                    node.log( `Regenmenge plus ${precipitation} - ${node.storage.Regen}` );
                     setStorage( "RegenHeute", node.storage.RegenHeute + precipitation - node.storage.Regen );
                     setRaining( true, node.raintime );
                 }
-                else if( precipitation < node.storage.Regen && precipitation <= 10 )
+                else if( precipitation < node.storage.Regen && precipitation <= 2 )
                 {
+                    node.warn( `Regenmenge übergelaufen ${precipitation} (${node.storage.Regen})` );
                     setStorage( "RegenHeute", node.storage.RegenHeute + precipitation );
                     setRaining( true, node.raintime );
                 }

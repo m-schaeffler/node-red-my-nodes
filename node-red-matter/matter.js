@@ -147,7 +147,7 @@ class MatterData {
                 item.internal[endpoint][name] = {};
                 for( const v of modeList )
                 {
-                    item.internal[endpoint][name][v.mode] = v.label;
+                    item.internal[endpoint][name][v[1]] = v[0];
                 }
             }
 
@@ -241,6 +241,7 @@ class MatterData {
                     switch( attribute )
                     {
                         case "0": // SupportedModes
+                            //console.log("run mode: "+JSON.stringify(value));
                             setInternalMode( "supportedRunModes", value );
                             break;
                         case "1": // Current­Mode
@@ -252,6 +253,7 @@ class MatterData {
                     switch( attribute )
                     {
                         case "0": // SupportedModes
+                            //console.log("clean mode: "+JSON.stringify(value));
                             setInternalMode( "supportedCleanModes", value );
                             break;
                         case "1": // Current­Mode

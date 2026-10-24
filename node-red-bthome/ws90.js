@@ -130,6 +130,10 @@ module.exports = function(RED) {
                     setStorage( "RegenHeute", node.storage.RegenHeute + precipitation );
                     setRaining( true, node.raintime );
                 }
+                else if( precipitation != node.storage.Regen )
+                {
+                    node.warn( `Regenmenge unplausibel ${precipitation} != ${node.storage.Regen}` );
+                }
                 setStorage( "Regen", precipitation );
 
                 // Wind

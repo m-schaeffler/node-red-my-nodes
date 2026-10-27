@@ -9,8 +9,6 @@ module.exports = function(RED) {
         this.topic    = config.topic ?? "";
         this.property = config.property ?? "payload";
         this.propertyType = config.propertyType ?? "msg";
-        this.minMean  = Number( config.minMean ?? 1 );
-        this.maxMean  = Number( config.maxMean ?? 1 );
         this.minData  = Number( config.minData ?? 1 );
         this.algo     = config.algo;
         this.showState= Boolean( config.showState );
@@ -69,9 +67,8 @@ module.exports = function(RED) {
                     if( ! isNaN( payload ) )
                     {
                         let data = context.get( "data" ) ?? {};
-                        let item = data[msg.topic] ?? [];
-                        item.push( payload )
-                        data[msg.topic] = item;
+                        data[msg.topic] = payload;
+                        context.set( "data", data );
 
                         msg.topic = node.topic;
                         msg.count = 0;
@@ -87,25 +84,17 @@ module.exports = function(RED) {
                         }
                         for( const key in data )
                         {
-                            if( data[key].length >= node.minMean )
+                            msg.count++;
+                            const help = data[key];
+                            switch( node.algo )
                             {
-                                msg.count++;
-                                while( data[key].length > node.maxMean )
-                                {
-                                    data[key].shift();
-                                }
-                                const help = data[key].reduce( (accumulator,value)=>accumulator+value ) / data[key].length;
-                                switch( node.algo )
-                                {
-                                    case "add":
-                                    case "mean": msg.payload += help; break;
-                                    case "prod": msg.payload *= help; break;
-                                    case "min":  msg.payload  = Math.min( msg.payload, help ); break;
-                                    case "max":  msg.payload  = Math.max( msg.payload, help ); break;
-                                }
+                                case "add":
+                                case "mean": msg.payload += help; break;
+                                case "prod": msg.payload *= help; break;
+                                case "min":  msg.payload  = Math.min( msg.payload, help ); break;
+                                case "max":  msg.payload  = Math.max( msg.payload, help ); break;
                             }
                         }
-                        context.set( "data", data );
 
                         if( msg.count >= node.minData )
                         {
